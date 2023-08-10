@@ -10,6 +10,7 @@ import {
   Link,
   Select,
   Notification,
+  Checkbox,
 } from "@stellar/design-system";
 
 import { DropdownMenu } from "components/DropdownMenu";
@@ -50,11 +51,11 @@ export const Profile = () => {
     "owner",
     "financial_controller",
   ]);
-
   const [isEditAccount, setIsEditAccount] = useState(false);
   const [isEditOrganization, setIsEditOrganization] = useState(false);
   const [imageFile, setImageFile] = useState<File>();
   const [imageFileUrl, setImageFileUrl] = useState<string>();
+  const [isApprovalRequired, setIsApprovalRequired] = useState(false);
 
   const [accountDetails, setAccountDetails] = useState<AccountProfile>({
     firstName: "",
@@ -106,6 +107,12 @@ export const Profile = () => {
       dispatch(orgClearUpdateMessageAction());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (organization.data.isApprovalRequired != undefined) {
+      setIsApprovalRequired(organization.data.isApprovalRequired);
+    }
+  }, [organization.data]);
 
   const ImageUploadInput = ({ isReadOnly }: { isReadOnly?: boolean }) => {
     const getInfoMessage = () => {
@@ -222,6 +229,7 @@ export const Profile = () => {
             organization.data.name,
           ),
           logo: imageFile,
+          isApprovalRequired,
         }),
       );
     }
@@ -237,6 +245,7 @@ export const Profile = () => {
       name: organization.data.name,
       logo: organization.data.logo,
     });
+    setIsApprovalRequired(organization.data.isApprovalRequired!);
     dispatch(orgClearErrorAction());
 
     if (imageFileUrl) {
@@ -429,6 +438,18 @@ export const Profile = () => {
                 </div>
               </>
             )}
+            <Checkbox
+              fieldSize="sm"
+              id="is-approval-required"
+              label="Approval Required"
+              disabled={
+                !isEditOrganization ||
+                (profile.data.role != "owner" &&
+                  profile.data.role != "financial_controller")
+              }
+              checked={isApprovalRequired}
+              onChange={(e) => setIsApprovalRequired(e.target.checked)}
+            />
 
             <ImageUploadInput isReadOnly={!isEditOrganization} />
           </div>
@@ -445,7 +466,8 @@ export const Profile = () => {
               type="submit"
               disabled={
                 organizationDetails.name === organization.data.name &&
-                !imageFile
+                !imageFile &&
+                isApprovalRequired === organization.data.isApprovalRequired
               }
               isLoading={profile.status === "PENDING"}
             >
@@ -564,6 +586,9 @@ export const Profile = () => {
                         name: organization.data.name,
                         logo: organization.data.logo,
                       });
+                      setIsApprovalRequired(
+                        organization.data.isApprovalRequired!,
+                      );
                     }}
                   >
                     Edit details

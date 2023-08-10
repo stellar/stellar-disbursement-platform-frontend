@@ -28,6 +28,9 @@ export const patchOrgInfo = async (
       case "logo":
         formData.append("logo", value as Blob);
         break;
+      case "isApprovalRequired":
+        formData.append("data", `{"is_approval_required": ${value}}`);
+        break;
       default:
         throw Error(`Update organization does not accept ${key} field`);
     }
