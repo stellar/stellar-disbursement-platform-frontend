@@ -444,8 +444,7 @@ export const Profile = () => {
               label="Approval Required"
               disabled={
                 !isEditOrganization ||
-                (profile.data.role != "owner" &&
-                  profile.data.role != "financial_controller")
+                !["owner", "financial_controller"].includes(profile.data.role || "")
               }
               checked={isApprovalRequired}
               onChange={(e) => setIsApprovalRequired(e.target.checked)}
