@@ -435,20 +435,27 @@ export const Profile = () => {
             </div>
           </>
         )}
-
-        <Checkbox
-          fieldSize="sm"
-          className="CardStack__infoItem__value"
-          id="is-approval-required"
-          label="Approval required"
-          disabled={
-            !isEditOrganization ||
-            !["owner", "financial_controller"].includes(profile.data.role || "")
-          }
-          checked={isApprovalRequired}
-          onChange={(e) => setIsApprovalRequired(e.target.checked)}
-        />
-
+        <div className="Label Label--sm">
+          <Checkbox
+            fieldSize="sm"
+            className="CardStack__infoItem__value"
+            id="is-approval-required"
+            label="Approval required"
+            disabled={
+              !isEditOrganization ||
+              !["owner", "financial_controller"].includes(
+                profile.data.role || "",
+              )
+            }
+            checked={isApprovalRequired}
+            onChange={(e) => setIsApprovalRequired(e.target.checked)}
+          />
+          <div className="CardStack__infoItem__value --xs">
+            If the approver flow is enabled, the person who uploads the
+            disbursement will not be able to submit it. Another permissioned
+            user must approve the disbursement to start it.
+          </div>
+        </div>
         <ImageUploadInput isReadOnly={!isEditOrganization} />
 
         {isEditOrganization ? (
