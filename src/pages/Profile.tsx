@@ -112,7 +112,7 @@ export const Profile = () => {
     if (organization.data.isApprovalRequired != undefined) {
       setIsApprovalRequired(organization.data.isApprovalRequired);
     }
-  }, [organization.data]);
+  }, [organization.data.isApprovalRequired]);
 
   const ImageUploadInput = ({ isReadOnly }: { isReadOnly?: boolean }) => {
     const getInfoMessage = () => {
@@ -221,7 +221,7 @@ export const Profile = () => {
   ) => {
     event.preventDefault();
 
-    if (organizationDetails.name || imageFile) {
+    if (organizationDetails.name || imageFile || isApprovalRequired) {
       dispatch(
         updateOrgInfoAction({
           name: emptyValueIfNotChanged(
@@ -252,7 +252,6 @@ export const Profile = () => {
       URL.revokeObjectURL(imageFileUrl);
     }
   };
-
   const handleAccountDetailsChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
