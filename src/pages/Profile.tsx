@@ -415,44 +415,42 @@ export const Profile = () => {
             }
           : {})}
       >
-        <div className="CardStack__body">
-          <div className="CardStack__grid">
-            {isEditOrganization ? (
-              <>
-                <Input
-                  id="name"
-                  name="name"
-                  label="Name"
-                  fieldSize="sm"
-                  value={organizationDetails.name}
-                  onChange={handleOrgDetailsChange}
-                />
-              </>
-            ) : (
-              <>
-                <div className="CardStack__infoItem">
-                  <label className="Label Label--sm">Name</label>
-                  <div className="CardStack__infoItem__value">
-                    {organization.data.name}
-                  </div>
-                </div>
-              </>
-            )}
-            <Checkbox
+        {isEditOrganization ? (
+          <>
+            <Input
+              id="name"
+              name="name"
+              label="Name"
               fieldSize="sm"
-              id="is-approval-required"
-              label="Approval Required"
-              disabled={
-                !isEditOrganization ||
-                !["owner", "financial_controller"].includes(profile.data.role || "")
-              }
-              checked={isApprovalRequired}
-              onChange={(e) => setIsApprovalRequired(e.target.checked)}
+              value={organizationDetails.name}
+              onChange={handleOrgDetailsChange}
             />
+          </>
+        ) : (
+          <>
+            <div className="CardStack__infoItem">
+              <label className="Label Label--sm">Name</label>
+              <div className="CardStack__infoItem__value">
+                {organization.data.name}
+              </div>
+            </div>
+          </>
+        )}
 
-            <ImageUploadInput isReadOnly={!isEditOrganization} />
-          </div>
-        </div>
+        <Checkbox
+          fieldSize="sm"
+          className="CardStack__infoItem__value"
+          id="is-approval-required"
+          label="Approval required"
+          disabled={
+            !isEditOrganization ||
+            !["owner", "financial_controller"].includes(profile.data.role || "")
+          }
+          checked={isApprovalRequired}
+          onChange={(e) => setIsApprovalRequired(e.target.checked)}
+        />
+
+        <ImageUploadInput isReadOnly={!isEditOrganization} />
 
         {isEditOrganization ? (
           <div className="CardStack__buttons">
