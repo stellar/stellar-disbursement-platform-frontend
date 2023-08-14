@@ -245,7 +245,7 @@ export const Profile = () => {
       name: organization.data.name,
       logo: organization.data.logo,
     });
-    setIsApprovalRequired(organization.data.isApprovalRequired!);
+    setIsApprovalRequired(Boolean(organization.data.isApprovalRequired));
     dispatch(orgClearErrorAction());
 
     if (imageFileUrl) {
@@ -591,7 +591,7 @@ export const Profile = () => {
                         logo: organization.data.logo,
                       });
                       setIsApprovalRequired(
-                        organization.data.isApprovalRequired!,
+                        Boolean(organization.data.isApprovalRequired),
                       );
                     }}
                   >
