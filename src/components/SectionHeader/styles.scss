@@ -1,0 +1,35 @@
+@use "./styles-utils.scss" as *;
+
+.SectionHeader {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: pxToRem(24px);
+  gap: pxToRem(24px);
+
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    padding: 0;
+    color: var(--color-gray-90);
+  }
+
+  &__row {
+    display: flex;
+    gap: pxToRem(8px);
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  &__container {
+    display: flex;
+    gap: pxToRem(8px);
+    align-items: center;
+    flex: 1;
+
+    &--right {
+      justify-content: flex-end;
+    }
+  }
+}

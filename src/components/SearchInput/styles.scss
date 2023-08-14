@@ -1,0 +1,48 @@
+@use "./styles-utils.scss" as *;
+
+.SearchInput {
+  width: 100%;
+  height: pxToRem(34px);
+  position: relative;
+
+  &__button {
+    position: absolute;
+    width: pxToRem(32px);
+    height: pxToRem(34px);
+    top: 1px;
+    right: 1px;
+    border: none;
+    border-top-right-radius: pxToRem(4px);
+    border-bottom-right-radius: pxToRem(4px);
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gray-80);
+    transition: color var(--anim-transition-default);
+
+    svg {
+      width: pxToRem(14px);
+      height: pxToRem(14px);
+      fill: currentColor;
+    }
+
+    &:hover {
+      color: var(--color-gray-70);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: var(--color-gray-60);
+    }
+  }
+
+  .Input input {
+    padding-right: pxToRem(34px);
+
+    &[type="search"] {
+      outline-offset: 0;
+    }
+  }
+}

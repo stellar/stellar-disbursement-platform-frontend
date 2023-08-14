@@ -1,0 +1,14 @@
+@use "./styles-utils.scss" as *;
+
+.DisbursementButtons {
+  margin-top: pxToRem(8px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &--continue {
+    display: flex;
+    align-items: center;
+    gap: pxToRem(8px);
+  }
+}

@@ -1,0 +1,14 @@
+@use "./styles-utils.scss" as *;
+
+.CsvUpload {
+  margin-top: pxToRem(16px);
+
+  .FileUpload {
+    height: pxToRem(120px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: pxToRem(12px);
+  }
+}

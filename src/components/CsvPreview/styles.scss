@@ -1,0 +1,38 @@
+@use "./styles-utils.scss" as *;
+
+.CsvPreview {
+  max-height: pxToRem(400px);
+  overflow: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+
+    th,
+    td {
+      font-size: pxToRem(8px);
+      line-height: 1;
+      color: var(--color-gray-90);
+      font-weight: var(--font-weight-regular);
+      padding: 0 pxToRem(8px);
+      border: 1px solid var(--color-gray-50);
+      box-sizing: border-box;
+      height: pxToRem(16px);
+    }
+
+    th {
+      background-color: var(--color-gray-40);
+    }
+
+    td {
+      background-color: var(--color-gray-00);
+    }
+
+    th:first-child,
+    td:first-child {
+      padding-left: pxToRem(4px);
+      padding-right: pxToRem(4px);
+    }
+  }
+}

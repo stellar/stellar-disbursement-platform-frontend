@@ -1,0 +1,35 @@
+@use "../../styles-utils.scss" as *;
+
+.InfoTooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: pxToRem(5px);
+  position: relative;
+
+  // Make sure tooltip covers other info buttons
+  &:has(.trigger--active) {
+    z-index: var(--z-index-tooltip);
+  }
+
+  &__button {
+    width: pxToRem(14px);
+    height: pxToRem(24px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: var(--color-gray-60);
+
+    svg {
+      display: block;
+      width: pxToRem(12px);
+      height: pxToRem(12px);
+      fill: currentColor;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-gray-70);
+      }
+    }
+  }
+}

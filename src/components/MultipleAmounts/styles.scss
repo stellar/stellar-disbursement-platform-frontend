@@ -1,0 +1,31 @@
+@use "./styles-utils.scss" as *;
+
+.MultipleAmounts {
+  display: inline-flex !important;
+  gap: pxToRem(4px);
+  align-items: center;
+
+  &__count {
+    background-color: var(--color-gray-30);
+    border-radius: pxToRem(4px);
+    color: var(--color-gray-60);
+    font-size: pxToRem(12px);
+    line-height: pxToRem(20px);
+    font-weight: var(--font-weight-medium);
+    text-align: center;
+    padding: 1px pxToRem(4px);
+    cursor: pointer;
+  }
+
+  &__container {
+    padding: pxToRem(8px);
+    display: flex;
+    flex-direction: column;
+
+    & > *:not(:first-child) {
+      border-top: 1px solid var(--color-gray-30);
+      padding-top: pxToRem(6px);
+      margin-top: pxToRem(6px);
+    }
+  }
+}

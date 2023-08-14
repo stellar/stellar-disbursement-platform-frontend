@@ -1,0 +1,28 @@
+name: Test and build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call: # allows this workflow to be called from another workflow
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+      - run: yarn install
+      - run: yarn build
+
+  complete:
+    if: always()
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - if:
+          contains(needs.*.result, 'failure') || contains(needs.*.result,
+          'cancelled')
+        run: exit 1

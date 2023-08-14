@@ -1,0 +1,35 @@
+@use "./styles-utils.scss" as *;
+
+.FileUpload {
+  background-color: var(--color-gray-10);
+  border: 1px solid var(--color-gray-30);
+  border-radius: pxToRem(4px);
+  padding: pxToRem(16px);
+  transition: border-color var(--anim-transition-default),
+    background-color var(--anim-transition-default);
+
+  &--active {
+    background-color: var(--color-gray-20);
+    border: 1px dashed var(--color-gray-50);
+  }
+
+  &--disabled {
+    background-color: var(--color-red-20);
+    border: 1px dashed var(--color-red-50);
+  }
+
+  &__button {
+    flex-shrink: 0;
+  }
+
+  &__message {
+    font-size: pxToRem(12px);
+    line-height: pxToRem(20px);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-gray-60);
+
+    &--error {
+      color: var(--color-red-60);
+    }
+  }
+}

@@ -1,0 +1,29 @@
+@use "./styles-utils.scss" as *;
+
+.CsvUploadButton {
+  label {
+    cursor: pointer;
+  }
+
+  &[aria-disabled="true"] {
+    label {
+      cursor: not-allowed;
+
+      color: var(--Button-color-text-disabled);
+      background-color: var(--Button-color-background-disabled);
+      border-color: var(--Button-color-border-disabled);
+    }
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      &[aria-disabled="true"] {
+        label {
+          color: var(--Button-color-text-disabled);
+          background-color: var(--Button-color-background-disabled);
+          border-color: var(--Button-color-border-disabled);
+        }
+      }
+    }
+  }
+}

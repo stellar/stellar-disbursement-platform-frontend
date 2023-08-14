@@ -1,0 +1,17 @@
+@use "./styles-utils.scss" as *;
+
+.DisbursementInstructions {
+  &__titleWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: pxToRem(16px);
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: pxToRem(8px);
+  }
+}

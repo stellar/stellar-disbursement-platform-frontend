@@ -1,0 +1,52 @@
+@use "./styles-utils.scss" as *;
+
+.Pagination-v2 {
+  display: flex;
+  align-items: center;
+  gap: pxToRem(4px);
+  flex-shrink: 0;
+
+  font-size: pxToRem(12px);
+  line-height: pxToRem(20px);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-gray-80);
+
+  span {
+    flex-shrink: 0;
+  }
+
+  &__input {
+    width: pxToRem(50px);
+    flex-shrink: 0;
+
+    input {
+      text-align: center;
+      font-size: pxToRem(12px);
+      line-height: pxToRem(20px);
+      height: pxToRem(34px);
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    margin-left: pxToRem(8px);
+
+    button {
+      width: pxToRem(36px);
+      height: pxToRem(36px);
+      border-radius: pxToRem(2px);
+
+      &:first-child {
+        border-right-color: transparent;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      &:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+}

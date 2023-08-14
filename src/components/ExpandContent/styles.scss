@@ -1,0 +1,46 @@
+@use "../../styles-utils.scss" as *;
+
+.ExpandContent {
+  &__heading {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: pxToRem(16px);
+  }
+
+  &__icon {
+    width: pxToRem(20px);
+    height: pxToRem(20px);
+    flex-shrink: 0;
+    flex-grow: 0;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      fill: currentColor;
+    }
+  }
+
+  &__content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows ease-in-out 400ms;
+    font-size: pxToRem(14px);
+    line-height: pxToRem(22px);
+    color: var(--color-gray-70);
+
+    &--open {
+      grid-template-rows: 1fr;
+    }
+
+    & > div {
+      overflow: hidden;
+
+      & > div {
+        padding-top: pxToRem(16px);
+      }
+    }
+  }
+}

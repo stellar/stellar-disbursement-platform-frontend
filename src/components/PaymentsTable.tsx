@@ -1,0 +1,147 @@
+import { useNavigate } from "react-router-dom";
+import { Link, Profile, Notification, Card } from "@stellar/design-system";
+import { Routes } from "constants/settings";
+
+import { AssetAmount } from "components/AssetAmount";
+import { PaymentStatus } from "components/PaymentStatus";
+import { Table } from "components/Table";
+import { formatDateTime } from "helpers/formatIntlDateTime";
+import { ApiPayment, ActionStatus } from "types";
+
+interface PaymentsTableProps {
+  paymentItems: ApiPayment[];
+  apiError: string | boolean | undefined;
+  isFiltersSelected: boolean | undefined;
+  status: ActionStatus | undefined;
+}
+
+export const PaymentsTable = ({
+  paymentItems,
+  apiError,
+  isFiltersSelected,
+  status,
+}: PaymentsTableProps) => {
+  const navigate = useNavigate();
+
+  const handlePaymentClicked = (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    paymentId: string,
+  ) => {
+    event.preventDefault();
+    navigate(`${Routes.PAYMENTS}/${paymentId}`);
+  };
+
+  const handlePaymentDisbursementClicked = (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    disbursementId: string,
+  ) => {
+    event.preventDefault();
+    navigate(`${Routes.DISBURSEMENTS}/${disbursementId}`);
+  };
+
+  if (apiError) {
+    return (
+      <Notification variant="error" title="Error">
+        {apiError}
+      </Notification>
+    );
+  }
+
+  if (paymentItems?.length === 0) {
+    if (status === "PENDING") {
+      return <div className="Note">Loading…</div>;
+    }
+
+    if (isFiltersSelected) {
+      return (
+        <div className="Note">
+          There are no payments matching your selected filters
+        </div>
+      );
+    }
+
+    return <div className="Note">There are no payments</div>;
+  }
+
+  return (
+    <div className="FiltersWithSearch">
+      <Card noPadding>
+        <Table>
+          <Table.Header>
+            {/* TODO: put back once ready */}
+            {/* <Table.HeaderCell>
+            <Checkbox id="payments-select-all" fieldSize="xs" />
+          </Table.HeaderCell> */}
+            <Table.HeaderCell>Payment ID</Table.HeaderCell>
+            <Table.HeaderCell>Wallet address</Table.HeaderCell>
+            <Table.HeaderCell>Disbursement name</Table.HeaderCell>
+            <Table.HeaderCell width="9.375rem">Completed at</Table.HeaderCell>
+            <Table.HeaderCell textAlign="right" width="8.125rem">
+              Amount
+            </Table.HeaderCell>
+            <Table.HeaderCell textAlign="right" width="6rem">
+              Status
+            </Table.HeaderCell>
+          </Table.Header>
+
+          <Table.Body>
+            {paymentItems.map((p, index) => (
+              // Using index here to make sure UI works if we have duplicate entries
+              // Otherwise, table data is not updating
+              <Table.BodyRow key={`${p.id}-${p.created_at}-${index}`}>
+                {/* TODO: put back once ready */}
+                {/* <Table.BodyCell width="1rem">
+                <Checkbox id={`payment-${p.id}`} fieldSize="xs" />
+              </Table.BodyCell> */}
+                <Table.BodyCell width="7.5rem" title={p.id}>
+                  <Link onClick={(event) => handlePaymentClicked(event, p.id)}>
+                    {p.id}
+                  </Link>
+                </Table.BodyCell>
+                <Table.BodyCell width="7.5rem" allowOverflow>
+                  {p.receiver_wallet?.stellar_address ? (
+                    <Profile
+                      publicAddress={p.receiver_wallet?.stellar_address}
+                      size="sm"
+                      isCopy
+                      isShort
+                      hideAvatar
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </Table.BodyCell>
+                <Table.BodyCell width="7.5rem" title={p.disbursement.name}>
+                  <Link
+                    onClick={(event) =>
+                      handlePaymentDisbursementClicked(event, p.disbursement.id)
+                    }
+                  >
+                    {p.disbursement.name}
+                  </Link>
+                </Table.BodyCell>
+                <Table.BodyCell>
+                  <span className="Table-v2__cell--secondary">
+                    {p.status === "SUCCESS"
+                      ? formatDateTime(p.updated_at)
+                      : "-"}
+                  </span>
+                </Table.BodyCell>
+                <Table.BodyCell textAlign="right">
+                  <AssetAmount
+                    amount={p.amount}
+                    assetCode={p.asset.code}
+                    fallback="-"
+                  />
+                </Table.BodyCell>
+                <Table.BodyCell textAlign="right">
+                  <PaymentStatus status={p.status} />
+                </Table.BodyCell>
+              </Table.BodyRow>
+            ))}
+          </Table.Body>
+        </Table>
+      </Card>
+    </div>
+  );
+};

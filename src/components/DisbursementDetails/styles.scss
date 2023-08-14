@@ -1,0 +1,22 @@
+@use "./styles-utils.scss" as *;
+
+.DisbursementDetailsFields {
+  &__inputs {
+    margin-top: pxToRem(16px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: pxToRem(24px);
+
+    & > * {
+      flex: 1 1 45%;
+    }
+  }
+
+  &__value {
+    font-size: pxToRem(12px);
+    line-height: pxToRem(20px);
+    color: var(--color-gray-80);
+    font-weight: var(--font-weight-medium);
+    margin-top: pxToRem(4px);
+  }
+}

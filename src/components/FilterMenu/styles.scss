@@ -1,0 +1,30 @@
+@use "./styles-utils.scss" as *;
+
+.FilterMenu {
+  width: pxToRem(308px);
+  padding: pxToRem(24px);
+
+  &__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(24px);
+  }
+
+  &__item {
+    .Label {
+      color: var(--color-gray-80);
+    }
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: pxToRem(12px);
+    margin-top: pxToRem(24px);
+
+    button {
+      flex: 1;
+    }
+  }
+}
