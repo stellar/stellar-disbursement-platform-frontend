@@ -110,11 +110,15 @@ export const submitDisbursementDraftAction = createAsyncThunk<
   "disbursementDrafts/submitDisbursementDraftAction",
   async ({ details, file }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
+    const { id: savedDraftId } = getState().disbursementDetails.details;
     const { newDraftId } = getState().disbursementDrafts;
     let draftId;
 
     try {
-      draftId = newDraftId ?? (await postDisbursement(token, details)).id;
+      draftId =
+        savedDraftId ??
+        newDraftId ??
+        (await postDisbursement(token, details)).id;
       await postDisbursementFile(token, draftId, file);
       await patchDisbursementStatus(token, draftId, "STARTED");
       refreshSessionToken(dispatch);
