@@ -12,7 +12,7 @@ The SDP's comprehensive dashboard includes the following pages:
 * Receivers Page (Overview): List of individuals set to receive payments, with wallet information and payment history. May also search, filter, and export receiver data in CSV.
 * Payments Page (Overview): Summary of all payments, including search by payment ID, filters, and export options. Payment detail includes Payment ID, wallet address, disbursement name, completion time, amount, and status information.
 * Wallets Page (Management): View Distribution Account information including public key, balance, adding funds, and more, and manage which assets you want to use on the Stellar network.
-* Analytics Page (Overview): Provides insights into financial transactions, including successful payment rate, total successful/failed/remaining payments, total disbursed, average amount, total amount in USDC, and individuals and wallets involved.
+* Analytics Page (Overview): Provides insights into financial transactions, including successful payment rate, total successful/failed/remaining payments, total disbursed, average amount, total amount per asset, and individuals and wallets involved.
 
 Feedback and contributions are welcome!
 
