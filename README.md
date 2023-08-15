@@ -1,34 +1,30 @@
-# stellar-relief-backoffice
+# Stellar Disbursement Platform Frontend
 
-## Add `/public/settings/env-config.js` file locally with the following keys:
+## Introduction
 
-### SSO
+The Stellar Disbursement Platform (SDP) enables organizations to disburse bulk payments to recipients using Stellar.
 
-- USE_SSO - variable for switch to current/old Login or to SSO Login;
-- If you are going to use SSO - you need provide OIDC_REDIRECT_URI to specialist
-  who will configure OIDC Provider and get from them OIDC_AUTHORITY,
-  OIDC_CLIENT_ID, OIDC_SCOPE, OIDC_USERNAME_MAPPING;
-- OIDC_USERNAME_MAPPING - is using for show in web page in "username" field;
-- Options of OIDC_USERNAME_MAPPING you could find in ID Token body (in user
-  claims) or in OIDC Provider configure page;
-- When you will switch to using SSO - it must be synchronously changed in
-  BackEnd side - as in current moment its possible to use only tokens from one
-  issuer;
+This repo contains the SDP dashboard UI, which is to be used with the [Stellar Disbursement Platform Backend](https://github.com/stellar/stellar-disbursement-platform-backend). For more information on how to get started, see the Stellar [dev docs](https://developers.stellar.org/docs/category/use-the-stellar-disbursement-platform) and [API reference](https://developers.stellar.org/api/stellar-disbursement-platform).
+
+The SDP's comprehensive dashboard includes the following pages:
+* Dashboard Home (Overview): Summary of recent disbursement activities and key metrics, including successful payment rate, total successful/failed/remaining payments, total disbursed, individuals, and wallets.
+* Disbursements Page (Management): Create, draft, search, filter, and export disbursements.  Detailed disbursement page includes names, total payments, successes, failures, remaining, creation date, total amount, and disbursed amount.
+* Receivers Page (Overview): List of individuals set to receive payments, with wallet information and payment history. May also search, filter, and export receiver data in CSV.
+* Payments Page (Overview): Summary of all payments, including search by payment ID, filters, and export options. Payment detail includes Payment ID, wallet address, disbursement name, completion time, amount, and status information.
+* Wallets Page (Management): View Distribution Account information including public key, balance, adding funds, and more, and manage which assets you want to use on the Stellar network.
+* Analytics Page (Overview): Provides insights into financial transactions, including successful payment rate, total successful/failed/remaining payments, total disbursed, average amount, total amount in USDC, and individuals and wallets involved.
+
+Feedback and contributions are welcome!
+
+### Config
+
+Make sure to set the following for initial local testing:
 
 ```javascript
 window._env_ = {
-  API_URL: "",
-  STELLAR_EXPERT_URL: "",
-  HORIZON_URL: "",
-  USDC_ASSET_ISSUER: "",
-  RECAPTCHA_SITE_KEY: "",
-
-  USE_SSO: false,
-  OIDC_AUTHORITY:
-    "https://<tenant_name>.b2clogin.com/<tenant_name>.onmicrosoft.com/<policy_name>",
-  OIDC_CLIENT_ID: "<client_id>",
-  OIDC_REDIRECT_URI: "http://localhost:3000/signin-oidc",
-  OIDC_SCOPE: "openid",
-  OIDC_USERNAME_MAPPING: "name",
-};
+  API_URL: "https://localhost:8000",
+  STELLAR_EXPERT_URL: "https://stellar.expert/explorer/testnet",
+  HORIZON_URL: "https://horizon-testnet.stellar.org",
+  RECAPTCHA_SITE_KEY: "6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn",
+}; 
 ```
