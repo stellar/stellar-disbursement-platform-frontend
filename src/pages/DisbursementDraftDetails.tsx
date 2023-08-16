@@ -147,6 +147,7 @@ export const DisbursementDraftDetails = () => {
     if (draftDetails && csvFile) {
       dispatch(
         submitDisbursementDraftAction({
+          type: "draft",
           details: draftDetails.details,
           file: csvFile,
         }),
@@ -176,6 +177,13 @@ export const DisbursementDraftDetails = () => {
         !hasUserWorkedOnThisDraft()
       : true;
 
+    let tooltip;
+
+    if (!canUserSubmit) {
+      tooltip =
+        "Your organization requires disbursements to be approved by another user. Save as a draft and make sure another user reviews and submits.";
+    }
+
     return (
       <DisbursementButtons
         variant={variant}
@@ -192,6 +200,7 @@ export const DisbursementDraftDetails = () => {
         }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
+        tooltip={tooltip}
       />
     );
   };

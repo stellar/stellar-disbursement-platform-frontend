@@ -127,7 +127,11 @@ export const DisbursementsNew = () => {
     event.preventDefault();
     if (draftDetails && csvFile) {
       dispatch(
-        submitDisbursementDraftAction({ details: draftDetails, file: csvFile }),
+        submitDisbursementDraftAction({
+          type: "new",
+          details: draftDetails,
+          file: csvFile,
+        }),
       );
     }
   };

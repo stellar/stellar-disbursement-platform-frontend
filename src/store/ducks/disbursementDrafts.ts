@@ -102,25 +102,29 @@ export const saveDisbursementDraftAction = createAsyncThunk<
 export const submitDisbursementDraftAction = createAsyncThunk<
   string,
   {
+    type: "new" | "draft";
     details: Disbursement;
     file: File;
   },
   { rejectValue: DisbursementDraftRejectMessage; state: RootState }
 >(
   "disbursementDrafts/submitDisbursementDraftAction",
-  async ({ details, file }, { rejectWithValue, getState, dispatch }) => {
+  async ({ type, details, file }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
     const { id: savedDraftId } = getState().disbursementDetails.details;
     const { newDraftId } = getState().disbursementDrafts;
-    let draftId;
+    let draftId = savedDraftId ?? newDraftId;
 
     try {
-      draftId =
-        savedDraftId ??
-        newDraftId ??
-        (await postDisbursement(token, details)).id;
-      await postDisbursementFile(token, draftId, file);
-      await patchDisbursementStatus(token, draftId, "STARTED");
+      if (type === "draft") {
+        await patchDisbursementStatus(token, draftId, "STARTED");
+      } else {
+        draftId = draftId ?? (await postDisbursement(token, details)).id;
+
+        await postDisbursementFile(token, draftId, file);
+        await patchDisbursementStatus(token, draftId, "STARTED");
+      }
+
       refreshSessionToken(dispatch);
 
       return draftId;
