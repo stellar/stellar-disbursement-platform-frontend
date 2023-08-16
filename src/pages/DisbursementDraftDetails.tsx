@@ -29,10 +29,18 @@ import { DisbursementDraft, DisbursementStep } from "types";
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
 
-  const { disbursements, disbursementDrafts, disbursementDetails } = useRedux(
+  const {
+    disbursements,
+    disbursementDrafts,
+    disbursementDetails,
+    organization,
+    profile,
+  } = useRedux(
     "disbursements",
     "disbursementDrafts",
     "disbursementDetails",
+    "organization",
+    "profile",
   );
 
   const [draftDetails, setDraftDetails] = useState<DisbursementDraft>();
@@ -154,7 +162,20 @@ export const DisbursementDraftDetails = () => {
     resetState();
   };
 
+  const hasUserWorkedOnThisDraft = () => {
+    return Boolean(
+      disbursementDetails.details.statusHistory.find(
+        (h) => h.userId === profile.data.id,
+      ),
+    );
+  };
+
   const renderButtons = (variant: DisbursementStep) => {
+    const canUserSubmit = organization.data.isApprovalRequired
+      ? // If approval is required, a different user must submit the draft
+        !hasUserWorkedOnThisDraft()
+      : true;
+
     return (
       <DisbursementButtons
         variant={variant}
@@ -166,7 +187,9 @@ export const DisbursementDraftDetails = () => {
         }}
         // TODO: enable when update draft endpoint is ready
         isDraftDisabled={true}
-        isSubmitDisabled={!(Boolean(draftDetails) && Boolean(csvFile))}
+        isSubmitDisabled={
+          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit)
+        }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
       />

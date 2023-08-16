@@ -58,6 +58,7 @@ export const Profile = () => {
   const [isApprovalRequired, setIsApprovalRequired] = useState(false);
 
   const [accountDetails, setAccountDetails] = useState<AccountProfile>({
+    id: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -208,6 +209,7 @@ export const Profile = () => {
     event.preventDefault();
     setIsEditAccount(false);
     setAccountDetails({
+      id: profile.data.id,
       firstName: profile.data.firstName,
       lastName: profile.data.lastName,
       email: profile.data.lastName,
@@ -557,6 +559,7 @@ export const Profile = () => {
                     onClick={() => {
                       setIsEditAccount(true);
                       setAccountDetails({
+                        id: profile.data.id,
                         firstName: profile.data.firstName,
                         lastName: profile.data.lastName,
                         email: profile.data.email,
