@@ -14,7 +14,7 @@ import {
   clearDisbursementDraftsErrorAction,
   resetDisbursementDraftsAction,
   saveDisbursementDraftAction,
-  submitDisbursementDraftAction,
+  submitDisbursementNewDraftAction,
 } from "store/ducks/disbursementDrafts";
 import { useRedux } from "hooks/useRedux";
 import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
@@ -127,8 +127,7 @@ export const DisbursementsNew = () => {
     event.preventDefault();
     if (draftDetails && csvFile) {
       dispatch(
-        submitDisbursementDraftAction({
-          type: "new",
+        submitDisbursementNewDraftAction({
           details: draftDetails,
           file: csvFile,
         }),

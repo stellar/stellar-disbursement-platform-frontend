@@ -11,10 +11,12 @@ import {
   setDisbursementDetailsAction,
 } from "store/ducks/disbursementDetails";
 import {
+  clearCsvUpdatedAction,
   clearDisbursementDraftsErrorAction,
   resetDisbursementDraftsAction,
+  saveNewCsvFileAction,
   setDraftIdAction,
-  submitDisbursementDraftAction,
+  submitDisbursementSavedDraftAction,
 } from "store/ducks/disbursementDrafts";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
@@ -45,6 +47,8 @@ export const DisbursementDraftDetails = () => {
 
   const [draftDetails, setDraftDetails] = useState<DisbursementDraft>();
   const [csvFile, setCsvFile] = useState<File>();
+  const [csvFileUpdated, setCsvFileUpdated] = useState(false);
+  const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("preview");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
@@ -122,17 +126,40 @@ export const DisbursementDraftDetails = () => {
     disbursementDrafts.status,
   ]);
 
+  useEffect(() => {
+    if (
+      disbursementDrafts.isCsvFileUpdated &&
+      disbursementDrafts.status === "SUCCESS"
+    ) {
+      setIsDraftInProgress(false);
+      setCsvFileUpdated(false);
+      setIsCsvUpdatedSuccess(true);
+
+      if (draftId) {
+        dispatch(getDisbursementDetailsAction(draftId));
+      }
+    }
+  }, [
+    disbursementDrafts.isCsvFileUpdated,
+    disbursementDrafts.status,
+    dispatch,
+    draftId,
+  ]);
+
   const resetState = () => {
     setCurrentStep("edit");
     setDraftDetails(undefined);
     setCsvFile(undefined);
+    setCsvFileUpdated(false);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
   };
 
   const handleSaveDraft = () => {
-    alert("TODO: save draft");
-    setIsDraftInProgress(true);
+    if (draftId && csvFile) {
+      dispatch(saveNewCsvFileAction({ savedDraftId: draftId, file: csvFile }));
+      setIsDraftInProgress(true);
+    }
   };
 
   const handleGoBackToDrafts = () => {
@@ -146,8 +173,8 @@ export const DisbursementDraftDetails = () => {
     event.preventDefault();
     if (draftDetails && csvFile) {
       dispatch(
-        submitDisbursementDraftAction({
-          type: "draft",
+        submitDisbursementSavedDraftAction({
+          savedDraftId: draftId,
           details: draftDetails.details,
           file: csvFile,
         }),
@@ -193,8 +220,7 @@ export const DisbursementDraftDetails = () => {
         clearDrafts={() => {
           dispatch(resetDisbursementDraftsAction());
         }}
-        // TODO: enable when update draft endpoint is ready
-        isDraftDisabled={true}
+        isDraftDisabled={!csvFileUpdated}
         isSubmitDisabled={
           !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit)
         }
@@ -261,24 +287,44 @@ export const DisbursementDraftDetails = () => {
     }
 
     return (
-      <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
-        <DisbursementDetails
-          variant="preview"
-          details={draftDetails?.details}
-        />
-        <DisbursementInstructions
-          variant={"preview"}
-          csvFile={csvFile}
-          onChange={(file) => {
-            if (apiError) {
-              dispatch(clearDisbursementDraftsErrorAction());
-            }
-            setCsvFile(file);
-          }}
-        />
+      <>
+        {isCsvUpdatedSuccess ? (
+          <Notification variant="success" title="CSV updated">
+            <div>TODO: CSV updated message</div>
 
-        {renderButtons("preview")}
-      </form>
+            <div className="Notification__buttons">
+              <Link
+                role="button"
+                onClick={() => {
+                  setIsCsvUpdatedSuccess(false);
+                }}
+              >
+                Dismiss
+              </Link>
+            </div>
+          </Notification>
+        ) : null}
+        <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
+          <DisbursementDetails
+            variant="preview"
+            details={draftDetails?.details}
+          />
+          <DisbursementInstructions
+            variant={"preview"}
+            csvFile={csvFile}
+            onChange={(file) => {
+              if (apiError) {
+                dispatch(clearDisbursementDraftsErrorAction());
+              }
+              setCsvFile(file);
+              setCsvFileUpdated(true);
+              dispatch(clearCsvUpdatedAction());
+            }}
+          />
+
+          {renderButtons("preview")}
+        </form>
+      </>
     );
   };
 

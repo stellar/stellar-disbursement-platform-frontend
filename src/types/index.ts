@@ -86,6 +86,7 @@ export type DisbursementDraftsInitialState = {
   errorString?: string;
   errorExtras?: AnyObject;
   actionType?: DisbursementDraftAction;
+  isCsvFileUpdated?: boolean;
 };
 
 export type DisbursementsInitialState = {
