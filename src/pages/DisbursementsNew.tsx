@@ -162,15 +162,21 @@ export const DisbursementsNew = () => {
         clearDrafts={() => {
           dispatch(resetDisbursementDraftsAction());
         }}
-        // TODO: update save draft action when endpoint is ready
         isDraftDisabled={
           !isDraftEnabled ||
           Boolean(disbursementDrafts.newDraftId && currentStep === "preview")
         }
-        isSubmitDisabled={!(draftDetails && csvFile)}
+        isSubmitDisabled={
+          organization.data.isApprovalRequired || !(draftDetails && csvFile)
+        }
         isReviewDisabled={!isReviewEnabled}
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
+        tooltip={
+          organization.data.isApprovalRequired
+            ? "Your organization requires disbursements to be approved by another user. Save as a draft and make sure another user reviews and submits."
+            : undefined
+        }
       />
     );
   };
