@@ -143,6 +143,7 @@ const initialState: DisbursementDetailsInitialState = {
     },
     status: "DRAFT",
     fileName: undefined,
+    statusHistory: [],
   },
   instructions: {
     csvName: undefined,

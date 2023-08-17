@@ -14,7 +14,7 @@ import {
   clearDisbursementDraftsErrorAction,
   resetDisbursementDraftsAction,
   saveDisbursementDraftAction,
-  submitDisbursementDraftAction,
+  submitDisbursementNewDraftAction,
 } from "store/ducks/disbursementDrafts";
 import { useRedux } from "hooks/useRedux";
 import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
@@ -127,7 +127,10 @@ export const DisbursementsNew = () => {
     event.preventDefault();
     if (draftDetails && csvFile) {
       dispatch(
-        submitDisbursementDraftAction({ details: draftDetails, file: csvFile }),
+        submitDisbursementNewDraftAction({
+          details: draftDetails,
+          file: csvFile,
+        }),
       );
     }
   };
@@ -159,15 +162,21 @@ export const DisbursementsNew = () => {
         clearDrafts={() => {
           dispatch(resetDisbursementDraftsAction());
         }}
-        // TODO: update save draft action when endpoint is ready
         isDraftDisabled={
           !isDraftEnabled ||
           Boolean(disbursementDrafts.newDraftId && currentStep === "preview")
         }
-        isSubmitDisabled={!(draftDetails && csvFile)}
+        isSubmitDisabled={
+          organization.data.isApprovalRequired || !(draftDetails && csvFile)
+        }
         isReviewDisabled={!isReviewEnabled}
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
+        tooltip={
+          organization.data.isApprovalRequired
+            ? "Your organization requires disbursements to be approved by another user. Save as a draft and make sure another user reviews and submits."
+            : undefined
+        }
       />
     );
   };

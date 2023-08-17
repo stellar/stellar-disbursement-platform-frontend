@@ -86,6 +86,7 @@ export type DisbursementDraftsInitialState = {
   errorString?: string;
   errorExtras?: AnyObject;
   actionType?: DisbursementDraftAction;
+  isCsvFileUpdated?: boolean;
 };
 
 export type DisbursementsInitialState = {
@@ -356,6 +357,11 @@ export type Disbursement = {
   };
   status: DisbursementStatus;
   fileName?: string;
+  statusHistory: {
+    status: DisbursementStatus;
+    timestamp: string;
+    userId: string | null;
+  }[];
 };
 
 export type DisbursementsSearchParams = CommonFilters &
@@ -530,6 +536,7 @@ export type HomeStatistics = {
 // Profile
 // =============================================================================
 export type AccountProfile = {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -819,6 +826,7 @@ export type ApiReceivers = {
 };
 
 export type ApiProfileInfo = {
+  id: string;
   first_name: string;
   last_name: string;
   email: string;
