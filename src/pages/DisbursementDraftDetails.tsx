@@ -296,7 +296,10 @@ export const DisbursementDraftDetails = () => {
       <>
         {isCsvUpdatedSuccess ? (
           <Notification variant="success" title="CSV updated">
-            <div>TODO: CSV updated message</div>
+            <div>
+              Your file was updated successfully. Make sure to confirm your
+              disbursement to start it.
+            </div>
 
             <div className="Notification__buttons">
               <Link
