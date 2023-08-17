@@ -123,7 +123,7 @@ export const DisbursementDraftDetails = () => {
 
     return () => {
       setIsResponseSuccess(false);
-      dispatch(resetDisbursementDraftsAction());
+      dispatch(clearCsvUpdatedAction());
     };
   }, [
     disbursementDrafts.actionType,
