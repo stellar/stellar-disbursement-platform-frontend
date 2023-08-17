@@ -47,7 +47,7 @@ export const DisbursementDraftDetails = () => {
 
   const [draftDetails, setDraftDetails] = useState<DisbursementDraft>();
   const [csvFile, setCsvFile] = useState<File>();
-  const [csvFileUpdated, setCsvFileUpdated] = useState(false);
+  const [isCsvFileUpdated, setIsCsvFileUpdated] = useState(false);
   const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("preview");
@@ -120,10 +120,16 @@ export const DisbursementDraftDetails = () => {
         setIsResponseSuccess(true);
       }
     }
+
+    return () => {
+      setIsResponseSuccess(false);
+      dispatch(resetDisbursementDraftsAction());
+    };
   }, [
     disbursementDrafts.actionType,
     disbursementDrafts.newDraftId,
     disbursementDrafts.status,
+    dispatch,
   ]);
 
   useEffect(() => {
@@ -132,7 +138,7 @@ export const DisbursementDraftDetails = () => {
       disbursementDrafts.status === "SUCCESS"
     ) {
       setIsDraftInProgress(false);
-      setCsvFileUpdated(false);
+      setIsCsvFileUpdated(false);
       setIsCsvUpdatedSuccess(true);
 
       if (draftId) {
@@ -150,7 +156,7 @@ export const DisbursementDraftDetails = () => {
     setCurrentStep("edit");
     setDraftDetails(undefined);
     setCsvFile(undefined);
-    setCsvFileUpdated(false);
+    setIsCsvFileUpdated(false);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
   };
@@ -201,7 +207,7 @@ export const DisbursementDraftDetails = () => {
   const renderButtons = (variant: DisbursementStep) => {
     const canUserSubmit = organization.data.isApprovalRequired
       ? // If approval is required, a different user must submit the draft
-        !hasUserWorkedOnThisDraft()
+        !isCsvFileUpdated && !hasUserWorkedOnThisDraft()
       : true;
 
     let tooltip;
@@ -220,7 +226,7 @@ export const DisbursementDraftDetails = () => {
         clearDrafts={() => {
           dispatch(resetDisbursementDraftsAction());
         }}
-        isDraftDisabled={!csvFileUpdated}
+        isDraftDisabled={!isCsvFileUpdated}
         isSubmitDisabled={
           !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit)
         }
@@ -317,7 +323,7 @@ export const DisbursementDraftDetails = () => {
                 dispatch(clearDisbursementDraftsErrorAction());
               }
               setCsvFile(file);
-              setCsvFileUpdated(true);
+              setIsCsvFileUpdated(true);
               dispatch(clearCsvUpdatedAction());
             }}
           />

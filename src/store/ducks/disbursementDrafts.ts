@@ -181,24 +181,25 @@ export const submitDisbursementSavedDraftAction = createAsyncThunk<
     { details, file, savedDraftId },
     { rejectWithValue, getState, dispatch },
   ) => {
-    // const { isApprovalRequired } = getState().organization.data;
+    const { isApprovalRequired } = getState().organization.data;
     const { token } = getState().userAccount;
     const { id } = getState().disbursementDetails.details;
     const { newDraftId } = getState().disbursementDrafts;
     let draftId;
 
-    // TODO: update this
-    alert("Not yet 0_0");
-    return;
-
     try {
       draftId =
         savedDraftId ??
+        // We might not need all of these ID checks, but I'll leave them here
+        // for now just in case
         id ??
         newDraftId ??
         (await postDisbursement(token, details)).id;
 
-      await postDisbursementFile(token, draftId, file);
+      if (!isApprovalRequired) {
+        await postDisbursementFile(token, draftId, file);
+      }
+
       await patchDisbursementStatus(token, draftId, "STARTED");
       refreshSessionToken(dispatch);
 
