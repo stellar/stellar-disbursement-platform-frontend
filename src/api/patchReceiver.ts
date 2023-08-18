@@ -16,7 +16,7 @@ export const patchReceiverInfo = async (
   });
 
   if (Object.keys(fieldsToSubmit).length === 0) {
-    throw Error("Update profile info requires at least one field to submit");
+    throw Error("Update receiver info requires at least one field to submit");
   }
 
   const response = await fetch(`${API_URL}/receivers/${receiverId}`, {
