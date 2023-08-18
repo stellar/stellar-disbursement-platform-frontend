@@ -88,7 +88,10 @@ export const ReceiverDetailsEdit = () => {
           externalId: emptyValueIfNotChanged(externalId, receiverDetails.orgId),
         }),
       );
-      dispatch(getReceiverDetailsAction(receiverId));
+    }
+
+    if (!receiverDetails.errorString) {
+      navigate(`${Routes.RECEIVERS}/${receiverId}`);
     }
   };
 
@@ -138,10 +141,6 @@ export const ReceiverDetailsEdit = () => {
           </Notification>
         )}
 
-        {receiverDetails.updateStatus === "SUCCESS" && (
-          <Notification variant="success" title="Receiver updated" />
-        )}
-
         <div className="CardStack">
           <Card>
             <div className="CardStack__card">
@@ -161,8 +160,8 @@ export const ReceiverDetailsEdit = () => {
                       onChange={handleDetailsChange}
                     />
                     <Input
-                      id="orgId"
-                      name="orgId"
+                      id="externalId"
+                      name="externalId"
                       label="External ID"
                       fieldSize="sm"
                       value={receiverEditFields.externalId}
