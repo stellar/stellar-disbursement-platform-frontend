@@ -31,6 +31,7 @@ export enum Routes {
   DISBURSEMENT_NEW = "/disbursements/new",
   DISBURSEMENT_DRAFTS = "/disbursements/drafts",
   RECEIVERS = "/receivers",
+  RECEIVERS_EDIT = "/receivers/edit",
   PAYMENTS = "/payments",
   WALLETS = "/wallets",
   ANALYTICS = "/analytics",

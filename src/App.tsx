@@ -22,6 +22,7 @@ import { DisbursementDraftDetails } from "pages/DisbursementDraftDetails";
 import { DisbursementsDrafts } from "pages/DisbursementsDrafts";
 import { Receivers } from "pages/Receivers";
 import { ReceiverDetails } from "pages/ReceiverDetails";
+import { ReceiverDetailsEdit } from "pages/ReceiverDetailsEdit";
 import { PaymentDetails } from "pages/PaymentDetails";
 import { Payments } from "pages/Payments";
 import { Wallets } from "pages/Wallets";
@@ -176,6 +177,16 @@ export const App = () => {
                 <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
                   <InnerPage>
                     <ReceiverDetails />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`${Routes.RECEIVERS_EDIT}/:id`}
+              element={
+                <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
+                  <InnerPage isNarrow>
+                    <ReceiverDetailsEdit />
                   </InnerPage>
                 </PrivateRoute>
               }
