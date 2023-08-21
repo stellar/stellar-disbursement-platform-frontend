@@ -204,7 +204,9 @@ export const ReceiverDetailsEdit = () => {
               variant="secondary"
               size="xs"
               type="reset"
-              icon={<Icon.DeleteForever style={{ color: "#E5484D" }} />}
+              icon={
+                <Icon.DeleteForever style={{ color: "var(--color-red-60)" }} />
+              }
               onClick={(e) => {
                 handleReceiverEditCancel(e);
               }}
