@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
   Card,
@@ -7,6 +7,7 @@ import {
   Notification,
   Profile,
   Select,
+  Button,
 } from "@stellar/design-system";
 
 import { AppDispatch } from "store";
@@ -47,6 +48,7 @@ export const ReceiverDetails = () => {
   const [selectedWallet, setSelectedWallet] = useState<ReceiverWallet>();
 
   const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { stats } = receiverDetails;
   const maxPages = receiverPayments.pagination?.pages || 1;
@@ -447,6 +449,17 @@ export const ReceiverDetails = () => {
                   </CopyWithIcon>
                 </Heading>
               </SectionHeader.Content>
+              <Button
+                variant="secondary"
+                size="xs"
+                type="reset"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(`${Routes.RECEIVERS_EDIT}/${receiverId}`);
+                }}
+              >
+                Edit receiver info
+              </Button>
             </SectionHeader.Row>
           </SectionHeader>
 
