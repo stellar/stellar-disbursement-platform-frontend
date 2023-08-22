@@ -14,6 +14,7 @@ import { SignIn } from "pages/SignIn";
 import { MFAuth } from "pages/MFAuth";
 import { ForgotPassword } from "pages/ForgotPassword";
 import { ResetPassword } from "pages/ResetPassword";
+import { SetNewPassword } from "pages/SetNewPassword";
 import { Home } from "pages/Home";
 import { Disbursements } from "pages/Disbursements";
 import { DisbursementDetails } from "pages/DisbursementDetails";
@@ -81,6 +82,15 @@ export const App = () => {
               element={
                 <InnerPage isCardLayout>
                   <ResetPassword />
+                </InnerPage>
+              }
+            />
+            {/* Reset password (authenticated user) */}
+            <Route
+              path={Routes.SET_NEW_PASSWORD}
+              element={
+                <InnerPage isCardLayout>
+                  <SetNewPassword />
                 </InnerPage>
               }
             />

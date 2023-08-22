@@ -27,6 +27,7 @@ export enum Routes {
   HOME = "/home",
   FORGOT_PASSWORD = "/forgot-password",
   RESET_PASSWORD = "/reset-password",
+  SET_NEW_PASSWORD = "/set-password",
   DISBURSEMENTS = "/disbursements",
   DISBURSEMENT_NEW = "/disbursements/new",
   DISBURSEMENT_DRAFTS = "/disbursements/drafts",

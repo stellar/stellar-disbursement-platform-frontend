@@ -286,7 +286,7 @@ export const Profile = () => {
   };
 
   const goToResetPassword = () => {
-    navigate(Routes.FORGOT_PASSWORD);
+    navigate(Routes.SET_NEW_PASSWORD);
   };
 
   const renderAccount = () => {
