@@ -6,23 +6,22 @@ import {
   Notification,
   Link,
 } from "@stellar/design-system";
-// import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { USE_SSO, LOCAL_STORAGE_SESSION_TOKEN } from "constants/settings";
+import { singleUserStore } from "helpers/singleSingOn";
 
-// import { AppDispatch } from "store";
-// import {
-//   resetForgotPasswordAction,
-//   resetPasswordAction,
-// } from "store/ducks/forgotPassword";
+import { AppDispatch, resetStoreAction } from "store";
+import { setNewPasswordAction } from "store/ducks/forgotPassword";
 import { useRedux } from "hooks/useRedux";
 
 export const SetNewPassword = () => {
-  // const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
   const { forgotPassword } = useRedux("forgotPassword");
 
-  const [password, setPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
@@ -32,22 +31,31 @@ export const SetNewPassword = () => {
 
   useEffect(() => {
     if (forgotPassword.status === "SUCCESS") {
-      setPassword("");
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
     }
   }, [forgotPassword.status]);
 
+  const handleSignOut = () => {
+    if (USE_SSO) {
+      // reset user store (from session storage)
+      singleUserStore().then();
+    }
+    dispatch(resetStoreAction());
+    localStorage.removeItem(LOCAL_STORAGE_SESSION_TOKEN);
+  };
+
   const goToSignIn = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    // dispatch(resetForgotPasswordAction());
+    handleSignOut();
     navigate("/");
   };
 
   const validatePassword = () => {
-    setErrorPassword(password ? "" : "Current password is required");
+    setErrorPassword(currentPassword ? "" : "Current password is required");
   };
 
   const validateNewPassword = () => {
@@ -86,16 +94,23 @@ export const SetNewPassword = () => {
   const allInputsValid = () => {
     if (errorPassword || errorNewPassword || errorPasswordMatch) {
       return false;
-    } else if (password && newPassword && confirmNewPassword) {
+    } else if (currentPassword && newPassword && confirmNewPassword) {
       return true;
     }
 
     return false;
   };
 
-  const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleResetCurrentPassword = (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
-    // dispatch(resetPasswordAction({ password, confirmationToken }));
+    dispatch(
+      setNewPasswordAction({
+        currentPassword,
+        newPassword,
+      }),
+    );
   };
 
   return (
@@ -111,10 +126,19 @@ export const SetNewPassword = () => {
         {forgotPassword.errorString && (
           <Notification variant="error" title="Reset password error">
             {forgotPassword.errorString}
+            {forgotPassword.errorExtras ? (
+              <ul className="ErrorExtras">
+                {Object.entries(forgotPassword.errorExtras).map(
+                  ([key, value]) => (
+                    <li key={key}>{`${key}: ${value}`}</li>
+                  ),
+                )}
+              </ul>
+            ) : null}
           </Notification>
         )}
 
-        <form onSubmit={handleResetPassword}>
+        <form onSubmit={handleResetCurrentPassword}>
           <div className="CardLayout__heading">
             <Heading size="sm" as="h1">
               Reset password
@@ -139,10 +163,10 @@ export const SetNewPassword = () => {
             label="Current password"
             onChange={(e) => {
               setErrorPassword("");
-              setPassword(e.target.value);
+              setCurrentPassword(e.target.value);
             }}
             onBlur={validatePassword}
-            value={password}
+            value={currentPassword}
             isPassword
             error={errorPassword}
           />
