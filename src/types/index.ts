@@ -155,7 +155,9 @@ export type ReceiverDetailsInitialState = {
     paymentsRemainingCount: number;
   };
   wallets: ReceiverWallet[];
+  verifications: ReceiverVerification[];
   status: ActionStatus | undefined;
+  updateStatus: ActionStatus | undefined;
   errorString?: string;
 };
 
@@ -480,6 +482,11 @@ export type ReceiverWallet = {
   assetCode: string;
 };
 
+export type ReceiverVerification = {
+  verificationField: string;
+  value: string;
+};
+
 export type ReceiverWalletBalance = {
   assetCode: string;
   assetIssuer: string;
@@ -514,6 +521,12 @@ export type ReceiverDetails = {
     paymentsRemainingCount: number;
   };
   wallets: ReceiverWallet[];
+  verifications: ReceiverVerification[];
+};
+
+export type ReceiverEditFields = {
+  email: string;
+  externalId: string;
 };
 
 // =============================================================================
@@ -802,6 +815,11 @@ export type ApiReceiverWallet = {
   }[];
 };
 
+export type ApiReceiverVerification = {
+  VerificationField: string;
+  HashedValue: string;
+};
+
 export type ApiReceiver = {
   created_at: string;
   id: string;
@@ -819,6 +837,7 @@ export type ApiReceiver = {
   }[];
   registered_wallets: string;
   wallets: ApiReceiverWallet[];
+  verifications: ApiReceiverVerification[];
 };
 
 export type ApiReceivers = {
