@@ -10,6 +10,8 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { USE_SSO, LOCAL_STORAGE_SESSION_TOKEN } from "constants/settings";
 import { singleUserStore } from "helpers/singleSingOn";
+import { validateNewPassword } from "helpers/validateNewPassword";
+import { validatePasswordMatch } from "helpers/validatePasswordMatch";
 
 import { AppDispatch, resetStoreAction } from "store";
 import { setNewPasswordAction } from "store/ducks/forgotPassword";
@@ -40,7 +42,7 @@ export const SetNewPassword = () => {
   const handleSignOut = () => {
     if (USE_SSO) {
       // reset user store (from session storage)
-      singleUserStore().then();
+      singleUserStore();
     }
     dispatch(resetStoreAction());
     localStorage.removeItem(LOCAL_STORAGE_SESSION_TOKEN);
@@ -56,39 +58,6 @@ export const SetNewPassword = () => {
 
   const validatePassword = () => {
     setErrorPassword(currentPassword ? "" : "Current password is required");
-  };
-
-  const validateNewPassword = () => {
-    const passwordStrength = new RegExp(
-      "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})",
-    );
-
-    let errorMsg = "";
-
-    if (!newPassword) {
-      errorMsg = "Password is required";
-    } else if (newPassword.length < 8) {
-      errorMsg = "Password must be at least 8 characters long";
-    } else if (!passwordStrength.test(newPassword)) {
-      errorMsg =
-        "Password must have at least one uppercase letter, lowercase letter, number, and symbol.";
-    }
-
-    setErrorNewPassword(errorMsg);
-
-    if (confirmNewPassword) {
-      validatePasswordMatch();
-    }
-  };
-
-  const validatePasswordMatch = () => {
-    if (confirmNewPassword) {
-      setErrorPasswordMatch(
-        newPassword === confirmNewPassword ? "" : "Passwords don't match",
-      );
-    } else {
-      setErrorPasswordMatch("Confirm password is required");
-    }
   };
 
   const allInputsValid = () => {
@@ -180,7 +149,15 @@ export const SetNewPassword = () => {
               setErrorNewPassword("");
               setNewPassword(e.target.value);
             }}
-            onBlur={validateNewPassword}
+            onBlur={() => {
+              setErrorNewPassword(validateNewPassword(newPassword));
+
+              if (confirmNewPassword) {
+                setErrorPasswordMatch(
+                  validatePasswordMatch(newPassword, confirmNewPassword),
+                );
+              }
+            }}
             value={newPassword}
             isPassword
             error={errorNewPassword}
@@ -195,7 +172,11 @@ export const SetNewPassword = () => {
               setErrorPasswordMatch("");
               setConfirmNewPassword(e.target.value);
             }}
-            onBlur={validatePasswordMatch}
+            onBlur={() => {
+              setErrorPasswordMatch(
+                validatePasswordMatch(newPassword, confirmNewPassword),
+              );
+            }}
             value={confirmNewPassword}
             isPassword
             error={errorPasswordMatch}

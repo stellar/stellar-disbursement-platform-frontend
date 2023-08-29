@@ -15,6 +15,8 @@ import {
   resetPasswordAction,
 } from "store/ducks/forgotPassword";
 import { useRedux } from "hooks/useRedux";
+import { validateNewPassword } from "helpers/validateNewPassword";
+import { validatePasswordMatch } from "helpers/validatePasswordMatch";
 
 export const ResetPassword = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -49,39 +51,6 @@ export const ResetPassword = () => {
     event.preventDefault();
     dispatch(resetForgotPasswordAction());
     navigate("/");
-  };
-
-  const validatePassword = () => {
-    const passwordStrength = new RegExp(
-      "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})",
-    );
-
-    let errorMsg = "";
-
-    if (!password) {
-      errorMsg = "Password is required";
-    } else if (password.length < 8) {
-      errorMsg = "Password must be at least 8 characters long";
-    } else if (!passwordStrength.test(password)) {
-      errorMsg =
-        "Password must have at least one uppercase letter, lowercase letter, number, and symbol.";
-    }
-
-    setErrorPassword(errorMsg);
-
-    if (confirmPassword) {
-      validatePasswordMatch();
-    }
-  };
-
-  const validatePasswordMatch = () => {
-    if (confirmPassword) {
-      setErrorPasswordMatch(
-        password === confirmPassword ? "" : "Passwords don't match",
-      );
-    } else {
-      setErrorPasswordMatch("Confirm password is required");
-    }
   };
 
   const validateConfirmationToken = () => {
@@ -158,7 +127,15 @@ export const ResetPassword = () => {
               setErrorPassword("");
               setPassword(e.target.value);
             }}
-            onBlur={validatePassword}
+            onBlur={() => {
+              setErrorPassword(validateNewPassword(password));
+
+              if (confirmPassword) {
+                setErrorPasswordMatch(
+                  validatePasswordMatch(password, confirmPassword),
+                );
+              }
+            }}
             value={password}
             isPassword
             error={errorPassword}
@@ -173,7 +150,11 @@ export const ResetPassword = () => {
               setErrorPasswordMatch("");
               setConfirmPassword(e.target.value);
             }}
-            onBlur={validatePasswordMatch}
+            onBlur={() => {
+              setErrorPasswordMatch(
+                validatePasswordMatch(password, confirmPassword),
+              );
+            }}
             value={confirmPassword}
             isPassword
             error={errorPasswordMatch}
