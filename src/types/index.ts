@@ -108,6 +108,7 @@ export type ForgotPasswordInitialState = {
   response?: string;
   status: ActionStatus | undefined;
   errorString?: string;
+  errorExtras?: AnyObject;
 };
 
 export type PaymentsInitialState = {
