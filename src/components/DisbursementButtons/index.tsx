@@ -17,6 +17,7 @@ interface DisbursementButtonsPros {
   isSubmitDisabled?: boolean;
   isDraftPending?: boolean;
   actionType?: DisbursementDraftAction;
+  tooltip?: string;
 }
 
 export const DisbursementButtons = ({
@@ -32,6 +33,7 @@ export const DisbursementButtons = ({
   isSubmitDisabled,
   isDraftPending,
   actionType,
+  tooltip,
 }: DisbursementButtonsPros) => {
   const navigate = useNavigate();
 
@@ -183,6 +185,7 @@ export const DisbursementButtons = ({
               type="submit"
               disabled={isSubmitDisabled || isSavePending}
               isLoading={isSubmitPending}
+              {...(tooltip ? { title: tooltip } : {})}
             >
               Confirm disbursement
             </Button>

@@ -99,7 +99,7 @@ export const saveDisbursementDraftAction = createAsyncThunk<
   },
 );
 
-export const submitDisbursementDraftAction = createAsyncThunk<
+export const submitDisbursementNewDraftAction = createAsyncThunk<
   string,
   {
     details: Disbursement;
@@ -107,15 +107,103 @@ export const submitDisbursementDraftAction = createAsyncThunk<
   },
   { rejectValue: DisbursementDraftRejectMessage; state: RootState }
 >(
-  "disbursementDrafts/submitDisbursementDraftAction",
+  "disbursementDrafts/submitDisbursementNewDraftAction",
   async ({ details, file }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
+    const { id } = getState().disbursementDetails.details;
+    const { newDraftId } = getState().disbursementDrafts;
+
+    let draftId = id ?? newDraftId;
+
+    try {
+      if (!draftId) {
+        const newDisbursement = await postDisbursement(token, details);
+        draftId = newDisbursement.id;
+      }
+
+      await postDisbursementFile(token, draftId, file);
+      await patchDisbursementStatus(token, draftId, "STARTED");
+      refreshSessionToken(dispatch);
+
+      return draftId;
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorString = handleApiErrorString(err);
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error submitting disbursement: ${errorString}`,
+        errorExtras: err?.extras,
+        // Need to save draft ID if it failed because of CSV upload
+        newDraftId: draftId,
+      });
+    }
+  },
+);
+
+export const saveNewCsvFileAction = createAsyncThunk<
+  boolean,
+  {
+    savedDraftId: string;
+    file: File;
+  },
+  { rejectValue: DisbursementDraftRejectMessage; state: RootState }
+>(
+  "disbursementDrafts/saveNewCsvFileAction",
+  async ({ savedDraftId, file }, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+    try {
+      await postDisbursementFile(token, savedDraftId, file);
+      refreshSessionToken(dispatch);
+
+      return true;
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorString = handleApiErrorString(err);
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error uploading new CSV file: ${errorString}`,
+        errorExtras: err?.extras,
+      });
+    }
+  },
+);
+
+export const submitDisbursementSavedDraftAction = createAsyncThunk<
+  string,
+  {
+    // savedDraftId is always there for saved drafts, comes from the URL
+    savedDraftId?: string;
+    details: Disbursement;
+    file: File;
+  },
+  { rejectValue: DisbursementDraftRejectMessage; state: RootState }
+>(
+  "disbursementDrafts/submitDisbursementSavedDraftAction",
+  async (
+    { details, file, savedDraftId },
+    { rejectWithValue, getState, dispatch },
+  ) => {
+    const { isApprovalRequired } = getState().organization.data;
+    const { token } = getState().userAccount;
+    const { id } = getState().disbursementDetails.details;
     const { newDraftId } = getState().disbursementDrafts;
     let draftId;
 
     try {
-      draftId = newDraftId ?? (await postDisbursement(token, details)).id;
-      await postDisbursementFile(token, draftId, file);
+      draftId =
+        savedDraftId ??
+        // We might not need all of these ID checks, but I'll leave them here
+        // for now just in case
+        id ??
+        newDraftId ??
+        (await postDisbursement(token, details)).id;
+
+      if (!isApprovalRequired) {
+        await postDisbursementFile(token, draftId, file);
+      }
+
       await patchDisbursementStatus(token, draftId, "STARTED");
       refreshSessionToken(dispatch);
 
@@ -143,6 +231,7 @@ const initialState: DisbursementDraftsInitialState = {
   errorString: undefined,
   errorExtras: undefined,
   actionType: undefined,
+  isCsvFileUpdated: undefined,
 };
 
 const disbursementDraftsSlice = createSlice({
@@ -158,6 +247,9 @@ const disbursementDraftsSlice = createSlice({
     },
     setDraftIdAction: (state, action: PayloadAction<string | undefined>) => {
       state.newDraftId = action.payload;
+    },
+    clearCsvUpdatedAction: (state) => {
+      state.isCsvFileUpdated = false;
     },
   },
   extraReducers: (builder) => {
@@ -201,28 +293,70 @@ const disbursementDraftsSlice = createSlice({
       state.errorExtras = action.payload?.errorExtras;
       state.newDraftId = action.payload?.newDraftId;
     });
-    // Submit disbursement
+    // Submit new disbursement
     builder.addCase(
-      submitDisbursementDraftAction.pending,
+      submitDisbursementNewDraftAction.pending,
       (state = initialState) => {
         state.status = "PENDING";
         state.actionType = "submit";
       },
     );
     builder.addCase(
-      submitDisbursementDraftAction.fulfilled,
+      submitDisbursementNewDraftAction.fulfilled,
       (state, action) => {
         state.newDraftId = action.payload;
         state.status = "SUCCESS";
         state.errorString = undefined;
       },
     );
-    builder.addCase(submitDisbursementDraftAction.rejected, (state, action) => {
+    builder.addCase(
+      submitDisbursementNewDraftAction.rejected,
+      (state, action) => {
+        state.status = "ERROR";
+        state.errorString = action.payload?.errorString;
+        state.errorExtras = action.payload?.errorExtras;
+        state.newDraftId = action.payload?.newDraftId;
+      },
+    );
+    // Submit new CSV file
+    builder.addCase(saveNewCsvFileAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+    });
+    builder.addCase(saveNewCsvFileAction.fulfilled, (state, action) => {
+      state.isCsvFileUpdated = action.payload;
+      state.status = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(saveNewCsvFileAction.rejected, (state, action) => {
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
       state.errorExtras = action.payload?.errorExtras;
-      state.newDraftId = action.payload?.newDraftId;
     });
+    // Submit saved disbursement
+    builder.addCase(
+      submitDisbursementSavedDraftAction.pending,
+      (state = initialState) => {
+        state.status = "PENDING";
+        state.actionType = "submit";
+      },
+    );
+    builder.addCase(
+      submitDisbursementSavedDraftAction.fulfilled,
+      (state, action) => {
+        state.newDraftId = action.payload;
+        state.status = "SUCCESS";
+        state.errorString = undefined;
+      },
+    );
+    builder.addCase(
+      submitDisbursementSavedDraftAction.rejected,
+      (state, action) => {
+        state.status = "ERROR";
+        state.errorString = action.payload?.errorString;
+        state.errorExtras = action.payload?.errorExtras;
+        state.newDraftId = action.payload?.newDraftId;
+      },
+    );
   },
 });
 
@@ -233,4 +367,5 @@ export const {
   resetDisbursementDraftsAction,
   clearDisbursementDraftsErrorAction,
   setDraftIdAction,
+  clearCsvUpdatedAction,
 } = disbursementDraftsSlice.actions;

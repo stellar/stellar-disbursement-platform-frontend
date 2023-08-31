@@ -3,7 +3,9 @@ import { RootState } from "store";
 import { ApiError, ForgotPasswordInitialState, RejectMessage } from "types";
 import { postForgotPassword } from "api/postForgotPassword";
 import { postResetPassword } from "api/postResetPassword";
+import { patchProfilePassword } from "api/patchProfilePassword";
 import { handleApiErrorString } from "api/handleApiErrorString";
+import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 
 export const sendResetPasswordLinkAction = createAsyncThunk<
   string,
@@ -45,10 +47,41 @@ export const resetPasswordAction = createAsyncThunk<
   },
 );
 
+export const setNewPasswordAction = createAsyncThunk<
+  string,
+  { currentPassword: string; newPassword: string },
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "forgotPassword/setNewPasswordAction",
+  async (
+    { currentPassword, newPassword },
+    { rejectWithValue, getState, dispatch },
+  ) => {
+    const { token } = getState().userAccount;
+    try {
+      const response = await patchProfilePassword(token, {
+        currentPassword,
+        newPassword,
+      });
+      return response.message;
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorString = handleApiErrorString(error as ApiError);
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error resetting password: ${errorString}`,
+        errorExtras: err?.extras,
+      });
+    }
+  },
+);
+
 const initialState: ForgotPasswordInitialState = {
   response: undefined,
   status: undefined,
   errorString: undefined,
+  errorExtras: undefined,
 };
 
 const forgotPasswordSlice = createSlice({
@@ -86,6 +119,22 @@ const forgotPasswordSlice = createSlice({
     builder.addCase(resetPasswordAction.rejected, (state, action) => {
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
+    });
+    //Set New Passsword
+    builder.addCase(setNewPasswordAction.pending, (state = initialState) => {
+      state.response = undefined;
+      state.status = "PENDING";
+      state.errorString = undefined;
+      state.errorExtras = undefined;
+    });
+    builder.addCase(setNewPasswordAction.fulfilled, (state, action) => {
+      state.response = action.payload;
+      state.status = "SUCCESS";
+    });
+    builder.addCase(setNewPasswordAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+      state.errorExtras = action.payload?.errorExtras;
     });
   },
 });

@@ -86,6 +86,7 @@ export type DisbursementDraftsInitialState = {
   errorString?: string;
   errorExtras?: AnyObject;
   actionType?: DisbursementDraftAction;
+  isCsvFileUpdated?: boolean;
 };
 
 export type DisbursementsInitialState = {
@@ -107,6 +108,7 @@ export type ForgotPasswordInitialState = {
   response?: string;
   status: ActionStatus | undefined;
   errorString?: string;
+  errorExtras?: AnyObject;
 };
 
 export type PaymentsInitialState = {
@@ -153,7 +155,9 @@ export type ReceiverDetailsInitialState = {
     paymentsRemainingCount: number;
   };
   wallets: ReceiverWallet[];
+  verifications: ReceiverVerification[];
   status: ActionStatus | undefined;
+  updateStatus: ActionStatus | undefined;
   errorString?: string;
 };
 
@@ -172,6 +176,7 @@ export type OrganizationInitialState = {
     distributionAccountPublicKey: string;
     timezoneUtcOffset: string;
     assetBalances?: StellarAccountInfo[];
+    isApprovalRequired: boolean | undefined;
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -355,6 +360,11 @@ export type Disbursement = {
   };
   status: DisbursementStatus;
   fileName?: string;
+  statusHistory: {
+    status: DisbursementStatus;
+    timestamp: string;
+    userId: string | null;
+  }[];
 };
 
 export type DisbursementsSearchParams = CommonFilters &
@@ -472,6 +482,11 @@ export type ReceiverWallet = {
   assetCode: string;
 };
 
+export type ReceiverVerification = {
+  verificationField: string;
+  value: string;
+};
+
 export type ReceiverWalletBalance = {
   assetCode: string;
   assetIssuer: string;
@@ -506,6 +521,12 @@ export type ReceiverDetails = {
     paymentsRemainingCount: number;
   };
   wallets: ReceiverWallet[];
+  verifications: ReceiverVerification[];
+};
+
+export type ReceiverEditFields = {
+  email: string;
+  externalId: string;
 };
 
 // =============================================================================
@@ -529,6 +550,7 @@ export type HomeStatistics = {
 // Profile
 // =============================================================================
 export type AccountProfile = {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -542,6 +564,7 @@ export type OrgUpdateInfo = {
   name?: string;
   timezone?: string;
   logo?: File;
+  isApprovalRequired?: boolean;
 };
 
 // =============================================================================
@@ -792,6 +815,11 @@ export type ApiReceiverWallet = {
   }[];
 };
 
+export type ApiReceiverVerification = {
+  VerificationField: string;
+  HashedValue: string;
+};
+
 export type ApiReceiver = {
   created_at: string;
   id: string;
@@ -809,6 +837,7 @@ export type ApiReceiver = {
   }[];
   registered_wallets: string;
   wallets: ApiReceiverWallet[];
+  verifications: ApiReceiverVerification[];
 };
 
 export type ApiReceivers = {
@@ -817,6 +846,7 @@ export type ApiReceivers = {
 };
 
 export type ApiProfileInfo = {
+  id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -829,6 +859,7 @@ export type ApiOrgInfo = {
   logo_url: string;
   distribution_account_public_key: string;
   timezone_utc_offset: string;
+  is_approval_required: boolean;
 };
 
 export type ApiStellarAccountBalance = {

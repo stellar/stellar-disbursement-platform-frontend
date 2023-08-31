@@ -10,6 +10,7 @@ import {
   Link,
   Select,
   Notification,
+  Checkbox,
 } from "@stellar/design-system";
 
 import { DropdownMenu } from "components/DropdownMenu";
@@ -50,13 +51,14 @@ export const Profile = () => {
     "owner",
     "financial_controller",
   ]);
-
   const [isEditAccount, setIsEditAccount] = useState(false);
   const [isEditOrganization, setIsEditOrganization] = useState(false);
   const [imageFile, setImageFile] = useState<File>();
   const [imageFileUrl, setImageFileUrl] = useState<string>();
+  const [isApprovalRequired, setIsApprovalRequired] = useState(false);
 
   const [accountDetails, setAccountDetails] = useState<AccountProfile>({
+    id: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -106,6 +108,12 @@ export const Profile = () => {
       dispatch(orgClearUpdateMessageAction());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (organization.data.isApprovalRequired != undefined) {
+      setIsApprovalRequired(organization.data.isApprovalRequired);
+    }
+  }, [organization.data.isApprovalRequired]);
 
   const ImageUploadInput = ({ isReadOnly }: { isReadOnly?: boolean }) => {
     const getInfoMessage = () => {
@@ -201,6 +209,7 @@ export const Profile = () => {
     event.preventDefault();
     setIsEditAccount(false);
     setAccountDetails({
+      id: profile.data.id,
       firstName: profile.data.firstName,
       lastName: profile.data.lastName,
       email: profile.data.lastName,
@@ -214,7 +223,7 @@ export const Profile = () => {
   ) => {
     event.preventDefault();
 
-    if (organizationDetails.name || imageFile) {
+    if (organizationDetails.name || imageFile || isApprovalRequired) {
       dispatch(
         updateOrgInfoAction({
           name: emptyValueIfNotChanged(
@@ -222,6 +231,7 @@ export const Profile = () => {
             organization.data.name,
           ),
           logo: imageFile,
+          isApprovalRequired,
         }),
       );
     }
@@ -237,13 +247,13 @@ export const Profile = () => {
       name: organization.data.name,
       logo: organization.data.logo,
     });
+    setIsApprovalRequired(Boolean(organization.data.isApprovalRequired));
     dispatch(orgClearErrorAction());
 
     if (imageFileUrl) {
       URL.revokeObjectURL(imageFileUrl);
     }
   };
-
   const handleAccountDetailsChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -276,7 +286,7 @@ export const Profile = () => {
   };
 
   const goToResetPassword = () => {
-    navigate(Routes.FORGOT_PASSWORD);
+    navigate(Routes.SET_NEW_PASSWORD);
   };
 
   const renderAccount = () => {
@@ -406,33 +416,50 @@ export const Profile = () => {
             }
           : {})}
       >
-        <div className="CardStack__body">
-          <div className="CardStack__grid">
-            {isEditOrganization ? (
-              <>
-                <Input
-                  id="name"
-                  name="name"
-                  label="Name"
-                  fieldSize="sm"
-                  value={organizationDetails.name}
-                  onChange={handleOrgDetailsChange}
-                />
-              </>
-            ) : (
-              <>
-                <div className="CardStack__infoItem">
-                  <label className="Label Label--sm">Name</label>
-                  <div className="CardStack__infoItem__value">
-                    {organization.data.name}
-                  </div>
-                </div>
-              </>
-            )}
-
-            <ImageUploadInput isReadOnly={!isEditOrganization} />
-          </div>
+        {isEditOrganization ? (
+          <>
+            <Input
+              id="name"
+              name="name"
+              label="Name"
+              fieldSize="sm"
+              value={organizationDetails.name}
+              onChange={handleOrgDetailsChange}
+            />
+          </>
+        ) : (
+          <>
+            <div className="CardStack__infoItem">
+              <label className="Label Label--sm">Name</label>
+              <div className="CardStack__infoItem__value">
+                {organization.data.name}
+              </div>
+            </div>
+          </>
+        )}
+        <div className="Label Label--sm">
+          <InfoTooltip
+            infoText="If the approver flow is enabled, the person who uploads the
+            disbursement will not be able to submit it. Another permissioned
+            user must approve the disbursement to start it."
+          >
+            <Checkbox
+              fieldSize="sm"
+              className="CardStack__infoItem__value"
+              id="is-approval-required"
+              label="Approval required"
+              disabled={
+                !isEditOrganization ||
+                !["owner", "financial_controller"].includes(
+                  profile.data.role || "",
+                )
+              }
+              checked={isApprovalRequired}
+              onChange={(e) => setIsApprovalRequired(e.target.checked)}
+            />
+          </InfoTooltip>
         </div>
+        <ImageUploadInput isReadOnly={!isEditOrganization} />
 
         {isEditOrganization ? (
           <div className="CardStack__buttons">
@@ -445,7 +472,8 @@ export const Profile = () => {
               type="submit"
               disabled={
                 organizationDetails.name === organization.data.name &&
-                !imageFile
+                !imageFile &&
+                isApprovalRequired === organization.data.isApprovalRequired
               }
               isLoading={profile.status === "PENDING"}
             >
@@ -531,6 +559,7 @@ export const Profile = () => {
                     onClick={() => {
                       setIsEditAccount(true);
                       setAccountDetails({
+                        id: profile.data.id,
                         firstName: profile.data.firstName,
                         lastName: profile.data.lastName,
                         email: profile.data.email,
@@ -564,6 +593,9 @@ export const Profile = () => {
                         name: organization.data.name,
                         logo: organization.data.logo,
                       });
+                      setIsApprovalRequired(
+                        Boolean(organization.data.isApprovalRequired),
+                      );
                     }}
                   >
                     Edit details

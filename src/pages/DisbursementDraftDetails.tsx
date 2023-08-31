@@ -11,10 +11,12 @@ import {
   setDisbursementDetailsAction,
 } from "store/ducks/disbursementDetails";
 import {
+  clearCsvUpdatedAction,
   clearDisbursementDraftsErrorAction,
   resetDisbursementDraftsAction,
+  saveNewCsvFileAction,
   setDraftIdAction,
-  submitDisbursementDraftAction,
+  submitDisbursementSavedDraftAction,
 } from "store/ducks/disbursementDrafts";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
@@ -29,14 +31,24 @@ import { DisbursementDraft, DisbursementStep } from "types";
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
 
-  const { disbursements, disbursementDrafts, disbursementDetails } = useRedux(
+  const {
+    disbursements,
+    disbursementDrafts,
+    disbursementDetails,
+    organization,
+    profile,
+  } = useRedux(
     "disbursements",
     "disbursementDrafts",
     "disbursementDetails",
+    "organization",
+    "profile",
   );
 
   const [draftDetails, setDraftDetails] = useState<DisbursementDraft>();
   const [csvFile, setCsvFile] = useState<File>();
+  const [isCsvFileUpdated, setIsCsvFileUpdated] = useState(false);
+  const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("preview");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
@@ -108,23 +120,52 @@ export const DisbursementDraftDetails = () => {
         setIsResponseSuccess(true);
       }
     }
+
+    return () => {
+      setIsResponseSuccess(false);
+      dispatch(clearCsvUpdatedAction());
+    };
   }, [
     disbursementDrafts.actionType,
     disbursementDrafts.newDraftId,
     disbursementDrafts.status,
+    dispatch,
+  ]);
+
+  useEffect(() => {
+    if (
+      disbursementDrafts.isCsvFileUpdated &&
+      disbursementDrafts.status === "SUCCESS"
+    ) {
+      setIsDraftInProgress(false);
+      setIsCsvFileUpdated(false);
+      setIsCsvUpdatedSuccess(true);
+
+      if (draftId) {
+        dispatch(getDisbursementDetailsAction(draftId));
+      }
+    }
+  }, [
+    disbursementDrafts.isCsvFileUpdated,
+    disbursementDrafts.status,
+    dispatch,
+    draftId,
   ]);
 
   const resetState = () => {
     setCurrentStep("edit");
     setDraftDetails(undefined);
     setCsvFile(undefined);
+    setIsCsvFileUpdated(false);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
   };
 
   const handleSaveDraft = () => {
-    alert("TODO: save draft");
-    setIsDraftInProgress(true);
+    if (draftId && csvFile) {
+      dispatch(saveNewCsvFileAction({ savedDraftId: draftId, file: csvFile }));
+      setIsDraftInProgress(true);
+    }
   };
 
   const handleGoBackToDrafts = () => {
@@ -138,7 +179,8 @@ export const DisbursementDraftDetails = () => {
     event.preventDefault();
     if (draftDetails && csvFile) {
       dispatch(
-        submitDisbursementDraftAction({
+        submitDisbursementSavedDraftAction({
+          savedDraftId: draftId,
           details: draftDetails.details,
           file: csvFile,
         }),
@@ -154,7 +196,27 @@ export const DisbursementDraftDetails = () => {
     resetState();
   };
 
+  const hasUserWorkedOnThisDraft = () => {
+    return Boolean(
+      disbursementDetails.details.statusHistory.find(
+        (h) => h.userId === profile.data.id,
+      ),
+    );
+  };
+
   const renderButtons = (variant: DisbursementStep) => {
+    const canUserSubmit = organization.data.isApprovalRequired
+      ? // If approval is required, a different user must submit the draft
+        !isCsvFileUpdated && !hasUserWorkedOnThisDraft()
+      : true;
+
+    let tooltip;
+
+    if (!canUserSubmit) {
+      tooltip =
+        "Your organization requires disbursements to be approved by another user. Save as a draft and make sure another user reviews and submits.";
+    }
+
     return (
       <DisbursementButtons
         variant={variant}
@@ -164,11 +226,13 @@ export const DisbursementDraftDetails = () => {
         clearDrafts={() => {
           dispatch(resetDisbursementDraftsAction());
         }}
-        // TODO: enable when update draft endpoint is ready
-        isDraftDisabled={true}
-        isSubmitDisabled={!(Boolean(draftDetails) && Boolean(csvFile))}
+        isDraftDisabled={!isCsvFileUpdated}
+        isSubmitDisabled={
+          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit)
+        }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
+        tooltip={tooltip}
       />
     );
   };
@@ -229,24 +293,47 @@ export const DisbursementDraftDetails = () => {
     }
 
     return (
-      <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
-        <DisbursementDetails
-          variant="preview"
-          details={draftDetails?.details}
-        />
-        <DisbursementInstructions
-          variant={"preview"}
-          csvFile={csvFile}
-          onChange={(file) => {
-            if (apiError) {
-              dispatch(clearDisbursementDraftsErrorAction());
-            }
-            setCsvFile(file);
-          }}
-        />
+      <>
+        {isCsvUpdatedSuccess ? (
+          <Notification variant="success" title="CSV updated">
+            <div>
+              Your file was updated successfully. Make sure to confirm your
+              disbursement to start it.
+            </div>
 
-        {renderButtons("preview")}
-      </form>
+            <div className="Notification__buttons">
+              <Link
+                role="button"
+                onClick={() => {
+                  setIsCsvUpdatedSuccess(false);
+                }}
+              >
+                Dismiss
+              </Link>
+            </div>
+          </Notification>
+        ) : null}
+        <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
+          <DisbursementDetails
+            variant="preview"
+            details={draftDetails?.details}
+          />
+          <DisbursementInstructions
+            variant={"preview"}
+            csvFile={csvFile}
+            onChange={(file) => {
+              if (apiError) {
+                dispatch(clearDisbursementDraftsErrorAction());
+              }
+              setCsvFile(file);
+              setIsCsvFileUpdated(true);
+              dispatch(clearCsvUpdatedAction());
+            }}
+          />
+
+          {renderButtons("preview")}
+        </form>
+      </>
     );
   };
 

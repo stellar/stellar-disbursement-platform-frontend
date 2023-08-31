@@ -71,6 +71,7 @@ export const updateProfileInfoAction = createAsyncThunk<
 
 const initialState: ProfileInitialState = {
   data: {
+    id: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -104,6 +105,7 @@ const profileSlice = createSlice({
     builder.addCase(getProfileInfoAction.fulfilled, (state, action) => {
       state.data = {
         ...state.data,
+        id: action.payload.id,
         firstName: action.payload.first_name,
         lastName: action.payload.last_name,
         email: action.payload.email,

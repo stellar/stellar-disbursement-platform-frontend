@@ -47,11 +47,19 @@ export const updateOrgInfoAction = createAsyncThunk<
   { rejectValue: RejectMessage; state: RootState }
 >(
   "organization/updateOrgInfoAction",
-  async ({ name, timezone, logo }, { rejectWithValue, getState, dispatch }) => {
+  async (
+    { name, timezone, logo, isApprovalRequired },
+    { rejectWithValue, getState, dispatch },
+  ) => {
     const { token } = getState().userAccount;
 
     try {
-      const orgInfo = await patchOrgInfo(token, { name, timezone, logo });
+      const orgInfo = await patchOrgInfo(token, {
+        name,
+        timezone,
+        logo,
+        isApprovalRequired,
+      });
       return orgInfo.message;
     } catch (error: unknown) {
       const err = error as ApiError;
@@ -70,21 +78,18 @@ export const getOrgLogoAction = createAsyncThunk<
   string,
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "organization/getOrgLogoAction",
-  async (_, { rejectWithValue, dispatch }) => {
-    try {
-      return await getOrgLogo();
-    } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
-      endSessionIfTokenInvalid(errorString, dispatch);
+>("organization/getOrgLogoAction", async (_, { rejectWithValue, dispatch }) => {
+  try {
+    return await getOrgLogo();
+  } catch (error: unknown) {
+    const errorString = handleApiErrorString(error as ApiError);
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error fetching organization logo: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error fetching organization logo: ${errorString}`,
+    });
+  }
+});
 
 export const getStellarAccountAction = createAsyncThunk<
   StellarAccountInfo,
@@ -119,6 +124,7 @@ const initialState: OrganizationInitialState = {
     distributionAccountPublicKey: "",
     timezoneUtcOffset: "",
     assetBalances: undefined,
+    isApprovalRequired: undefined,
   },
   updateMessage: undefined,
   status: undefined,
@@ -152,6 +158,7 @@ const organizationSlice = createSlice({
         distributionAccountPublicKey:
           action.payload.distribution_account_public_key,
         timezoneUtcOffset: action.payload.timezone_utc_offset,
+        isApprovalRequired: action.payload.is_approval_required,
       };
       state.status = "SUCCESS";
     });

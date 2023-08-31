@@ -51,6 +51,7 @@ const initDetails: Disbursement = {
   },
   createdAt: "",
   status: "DRAFT",
+  statusHistory: [],
 };
 
 export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
