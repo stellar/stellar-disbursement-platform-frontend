@@ -51,6 +51,7 @@ export const App = () => {
   useEffect(() => {
     // Git commit hash
     console.log("current commit hash: ", GitInfo.commitHash);
+    console.log("version: ", GitInfo.version);
   }, []);
 
   return (
