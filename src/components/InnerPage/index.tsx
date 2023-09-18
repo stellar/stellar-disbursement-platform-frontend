@@ -77,9 +77,15 @@ export const InnerPage = ({
       icon: <Icon.Payments />,
     },
     {
-      id: "nav-wallets",
-      label: "Wallets",
-      route: Routes.WALLETS,
+      id: "nav-wallet-providers",
+      label: "Wallet Providers",
+      route: Routes.WALLET_PROVIDERS,
+      icon: <Icon.AccountBalanceWallet />,
+    },
+    {
+      id: "nav-distribution-account",
+      label: "Distribution Account",
+      route: Routes.DISTRIBUTION_ACCOUNT,
       icon: <Icon.Wallet />,
     },
     {
