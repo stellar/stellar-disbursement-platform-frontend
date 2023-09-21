@@ -1,9 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { LOCAL_STORAGE_SESSION_TOKEN } from "constants/settings";
+import { SESSION_EXPIRED_EVENT } from "constants/settings";
 import { AppDispatch, resetStoreAction } from "store";
-import { setUserInfoAction, restoreUserSession } from "store/ducks/userAccount";
+import {
+  setUserInfoAction,
+  restoreUserSession,
+  sessionExpiredAction,
+} from "store/ducks/userAccount";
 import { parseJwt } from "helpers/parseJwt";
+import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 import { useRedux } from "hooks/useRedux";
 import { getProfileInfoAction } from "store/ducks/profile";
 import { getOrgInfoAction, getOrgLogoAction } from "store/ducks/organization";
@@ -42,20 +47,20 @@ export const UserSession = () => {
   useEffect(() => {
     if (userAccount.isTokenRefresh) {
       // Update refresh token, other info won't change
-      localStorage.setItem(LOCAL_STORAGE_SESSION_TOKEN, userAccount.token);
+      localStorageSessionToken.set(userAccount.token);
     } else {
       // Set user info on login or page refresh only once
       if (userAccount.token && !userAccount.email) {
         const parsedToken = parseJwt(userAccount.token);
         dispatch(setUserInfoAction(parsedToken.user));
-        localStorage.setItem(LOCAL_STORAGE_SESSION_TOKEN, userAccount.token);
+        localStorageSessionToken.set(userAccount.token);
       } else if (
         // Clear user info on logout
         !userAccount.token &&
         userAccount.status === "SUCCESS"
       ) {
         dispatch(resetStoreAction());
-        localStorage.removeItem(LOCAL_STORAGE_SESSION_TOKEN);
+        localStorageSessionToken.remove();
       }
     }
   }, [
@@ -70,17 +75,31 @@ export const UserSession = () => {
     // Clear local storage when session expired
     if (isSessionExpired) {
       dispatch(resetStoreAction());
-      localStorage.removeItem(LOCAL_STORAGE_SESSION_TOKEN);
+      localStorageSessionToken.remove();
       return;
     }
 
     // Start session from saved token
-    const sessionToken = localStorage.getItem(LOCAL_STORAGE_SESSION_TOKEN);
+    const sessionToken = localStorageSessionToken.get();
 
     if (sessionToken && !isSessionExpired) {
       dispatch(restoreUserSession(sessionToken));
     }
   }, [dispatch, isSessionExpired]);
+
+  // Custom trigger
+  useEffect(() => {
+    const onSessionExpired = () => {
+      dispatch(sessionExpiredAction());
+      localStorageSessionToken.remove();
+    };
+
+    document.addEventListener(SESSION_EXPIRED_EVENT, onSessionExpired);
+
+    return () => {
+      document.removeEventListener(SESSION_EXPIRED_EVENT, onSessionExpired);
+    };
+  }, [dispatch]);
 
   return null;
 };
