@@ -3,16 +3,16 @@ import { refreshToken } from "api/refreshToken";
 import { SESSION_EXPIRED_EVENT } from "constants/settings";
 import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 import { parseJwt } from "helpers/parseJwt";
-import { ApiError } from "types";
+import { normalizeApiError } from "helpers/normalizeApiError";
 
-type FetcherOptions = {
-  withoutAuth: boolean;
+type FetchApiOptions = {
+  withoutAuth?: boolean;
 };
 
 export const fetchApi = async (
   fetchUrl: string,
   fetchOptions?: RequestInit,
-  options?: FetcherOptions,
+  options?: FetchApiOptions,
 ) => {
   const config = { ...fetchOptions };
 
@@ -51,7 +51,7 @@ export const fetchApi = async (
   const response = await request.json();
 
   if (response.error) {
-    throw response as ApiError;
+    throw normalizeApiError(response.error);
   }
 
   return response;
