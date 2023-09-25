@@ -1,6 +1,6 @@
 {
-  "name": "stellar-relief-backoffice",
-  "version": "1.0.0",
+  "name": "stellar-disbursement-platform-frontend",
+  "version": "1.0.0-rc2",
   "license": "Apache-2.0",
   "engines": {
     "node": ">=18.x"
@@ -17,6 +17,7 @@
     "@stellar/tsconfig": "^1.0.2",
     "@svgr/webpack": "8.0.1",
     "@tanstack/react-query": "^4.29.25",
+    "@tanstack/react-query-devtools": "^4.35.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -36,6 +37,7 @@
     "buffer": "^6.0.3",
     "concurrently": "^8.2.0",
     "crypto-browserify": "^3.12.0",
+    "date-fns": "^2.30.0",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-react": "^1.1.7",
@@ -77,7 +79,7 @@
     "production": "yarn prod:build && yarn prod:serve",
     "prepare": "husky install",
     "pre-commit": "concurrently 'pretty-quick --staged' 'lint-staged' 'tsc --noEmit'",
-    "git-info": "rm -rf src/generated/ && mkdir src/generated/ && echo export default \"{\\\"commitHash\\\": \\\"$(git rev-parse --short HEAD)\\\"};\" > src/generated/gitInfo.ts"
+    "git-info": "rm -rf src/generated/ && mkdir src/generated/ && echo export default \"{\\\"commitHash\\\": \\\"$(git rev-parse --short HEAD)\\\", \\\"version\\\": \\\"$(git describe --tags --always)\\\"};\" > src/generated/gitInfo.ts"
   },
   "eslintConfig": {
     "extends": [

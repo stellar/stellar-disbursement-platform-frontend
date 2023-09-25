@@ -51,6 +51,12 @@ export const Wallets = () => {
             digital assets to the public key above.
           </div>
           <div className="Note Note--small">
+            It is strongly recommended that you only fund the distribution
+            account when you are ready to send disbursements. It is not meant to
+            be a long-term store of value, as any SDP user with permission to
+            send disbursements can trigger payments from this account.
+          </div>
+          <div className="Note Note--small">
             Make sure your account has a trustline to the asset before you send
             funds.
           </div>

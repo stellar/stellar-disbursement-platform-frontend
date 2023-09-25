@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
 import { getReceiverDetails } from "api/getReceiverDetails";
+import { patchReceiverInfo } from "api/patchReceiver";
 import { handleApiErrorString } from "api/handleApiErrorString";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
@@ -37,12 +38,43 @@ export const getReceiverDetailsAction = createAsyncThunk<
   },
 );
 
+export const updateReceiverDetailsAction = createAsyncThunk<
+  string,
+  { receiverId: string; email: string; externalId: string },
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "receiverDetails/updateReceiverDetailsAction",
+  async (
+    { receiverId, email, externalId },
+    { rejectWithValue, getState, dispatch },
+  ) => {
+    const { token } = getState().userAccount;
+
+    try {
+      const profileInfo = await patchReceiverInfo(token, receiverId, {
+        email,
+        externalId,
+      });
+      return profileInfo.message;
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorString = handleApiErrorString(err);
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error updating profile info: ${errorString}`,
+        errorExtras: err?.extras,
+      });
+    }
+  },
+);
+
 const initialState: ReceiverDetailsInitialState = {
   id: "",
   phoneNumber: "",
   email: "",
-  assetCode: "",
-  totalReceived: "",
+  assetCode: undefined,
+  totalReceived: undefined,
   orgId: "",
   stats: {
     paymentsTotalCount: 0,
@@ -64,7 +96,14 @@ const initialState: ReceiverDetailsInitialState = {
       assetCode: "",
     },
   ],
+  verifications: [
+    {
+      verificationField: "",
+      value: "",
+    },
+  ],
   status: undefined,
+  updateStatus: undefined,
   errorString: undefined,
 };
 
@@ -89,12 +128,29 @@ const receiverDetailsSlice = createSlice({
       state.totalReceived = action.payload.totalReceived;
       state.stats = action.payload.stats;
       state.wallets = action.payload.wallets;
+      state.verifications = action.payload.verifications;
+      state.email = action.payload.email;
       state.orgId = action.payload.orgId;
       state.status = "SUCCESS";
       state.errorString = undefined;
     });
     builder.addCase(getReceiverDetailsAction.rejected, (state, action) => {
       state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+    });
+    //updateReceiverDetailsAction
+    builder.addCase(
+      updateReceiverDetailsAction.pending,
+      (state = initialState) => {
+        state.updateStatus = "PENDING";
+      },
+    );
+    builder.addCase(updateReceiverDetailsAction.fulfilled, (state) => {
+      state.updateStatus = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(updateReceiverDetailsAction.rejected, (state, action) => {
+      state.updateStatus = "ERROR";
       state.errorString = action.payload?.errorString;
     });
   },
@@ -108,10 +164,11 @@ export const { resetReceiverDetailsAction } = receiverDetailsSlice.actions;
 const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
   id: receiver.id,
   phoneNumber: receiver.phone_number,
+  email: receiver.email,
   orgId: receiver.external_id,
   // TODO: how to handle multiple
-  assetCode: receiver.received_amounts[0].asset_code,
-  totalReceived: receiver.received_amounts[0].received_amount,
+  assetCode: receiver.received_amounts?.[0].asset_code,
+  totalReceived: receiver.received_amounts?.[0].received_amount,
   stats: {
     paymentsTotalCount: Number(receiver.total_payments),
     paymentsSuccessfulCount: Number(receiver.successful_payments),
@@ -131,5 +188,9 @@ const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
     totalAmountReceived: w.received_amounts[0].received_amount,
     // TODO: withdrawn amount
     withdrawnAmount: "",
+  })),
+  verifications: receiver.verifications.map((v) => ({
+    verificationField: v.VerificationField,
+    value: v.HashedValue,
   })),
 });

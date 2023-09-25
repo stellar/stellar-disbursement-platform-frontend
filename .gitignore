@@ -28,3 +28,6 @@ yarn-error.log*
 
 # env variables
 /public/settings/env-config.js
+
+# generated Git info
+/src/generated/gitInfo.ts

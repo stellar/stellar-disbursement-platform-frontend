@@ -20,14 +20,12 @@ import { MoreMenuButton } from "components/MoreMenuButton";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { SectionHeader } from "components/SectionHeader";
 
-import {
-  LOCAL_STORAGE_SESSION_TOKEN,
-  Routes,
-  USE_SSO,
-} from "constants/settings";
+import { Routes, USE_SSO } from "constants/settings";
 import { singleUserStore } from "helpers/singleSingOn";
 import { userRoleText } from "helpers/userRoleText";
+import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 import { useRedux } from "hooks/useRedux";
+import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
 import { AppDispatch, resetStoreAction } from "store";
 import {
   getOrgInfoAction,
@@ -43,7 +41,6 @@ import {
   updateProfileInfoAction,
 } from "store/ducks/profile";
 import { AccountProfile } from "types";
-import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
 
 export const Profile = () => {
   const { profile, organization } = useRedux("profile", "organization");
@@ -282,11 +279,11 @@ export const Profile = () => {
       singleUserStore().then();
     }
     dispatch(resetStoreAction());
-    localStorage.removeItem(LOCAL_STORAGE_SESSION_TOKEN);
+    localStorageSessionToken.remove();
   };
 
   const goToResetPassword = () => {
-    navigate(Routes.FORGOT_PASSWORD);
+    navigate(Routes.SET_NEW_PASSWORD);
   };
 
   const renderAccount = () => {

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GitInfo from "generated/gitInfo";
 
 import { store } from "store";
@@ -14,6 +15,7 @@ import { SignIn } from "pages/SignIn";
 import { MFAuth } from "pages/MFAuth";
 import { ForgotPassword } from "pages/ForgotPassword";
 import { ResetPassword } from "pages/ResetPassword";
+import { SetNewPassword } from "pages/SetNewPassword";
 import { Home } from "pages/Home";
 import { Disbursements } from "pages/Disbursements";
 import { DisbursementDetails } from "pages/DisbursementDetails";
@@ -22,6 +24,7 @@ import { DisbursementDraftDetails } from "pages/DisbursementDraftDetails";
 import { DisbursementsDrafts } from "pages/DisbursementsDrafts";
 import { Receivers } from "pages/Receivers";
 import { ReceiverDetails } from "pages/ReceiverDetails";
+import { ReceiverDetailsEdit } from "pages/ReceiverDetailsEdit";
 import { PaymentDetails } from "pages/PaymentDetails";
 import { Payments } from "pages/Payments";
 import { Wallets } from "pages/Wallets";
@@ -49,6 +52,7 @@ export const App = () => {
   useEffect(() => {
     // Git commit hash
     console.log("current commit hash: ", GitInfo.commitHash);
+    console.log("version: ", GitInfo.version);
   }, []);
 
   return (
@@ -81,6 +85,15 @@ export const App = () => {
               element={
                 <InnerPage isCardLayout>
                   <ResetPassword />
+                </InnerPage>
+              }
+            />
+            {/* Reset password (authenticated user) */}
+            <Route
+              path={Routes.SET_NEW_PASSWORD}
+              element={
+                <InnerPage isCardLayout>
+                  <SetNewPassword />
                 </InnerPage>
               }
             />
@@ -176,6 +189,16 @@ export const App = () => {
                 <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
                   <InnerPage>
                     <ReceiverDetails />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={`${Routes.RECEIVERS_EDIT}/:id`}
+              element={
+                <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
+                  <InnerPage isNarrow>
+                    <ReceiverDetailsEdit />
                   </InnerPage>
                 </PrivateRoute>
               }
@@ -283,6 +306,7 @@ export const App = () => {
             <Route path="/signin-oidc" element={<SigninOidc />} />
           </RouterRoutes>
         </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </Provider>
   );
