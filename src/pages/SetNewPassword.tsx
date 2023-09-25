@@ -8,10 +8,11 @@ import {
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { USE_SSO, LOCAL_STORAGE_SESSION_TOKEN } from "constants/settings";
+import { USE_SSO } from "constants/settings";
 import { singleUserStore } from "helpers/singleSingOn";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
+import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 
 import { AppDispatch, resetStoreAction } from "store";
 import { setNewPasswordAction } from "store/ducks/forgotPassword";
@@ -45,7 +46,7 @@ export const SetNewPassword = () => {
       singleUserStore();
     }
     dispatch(resetStoreAction());
-    localStorage.removeItem(LOCAL_STORAGE_SESSION_TOKEN);
+    localStorageSessionToken.remove();
   };
 
   const goToSignIn = (

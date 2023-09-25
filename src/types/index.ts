@@ -119,14 +119,6 @@ export type PaymentsInitialState = {
   searchParams?: PaymentsSearchParams;
 };
 
-export type PaymentDetailsInitialState = {
-  details: PaymentDetailsInfo;
-  statusHistory: PaymentDetailsStatusHistoryItem[];
-  receiver?: PaymentDetailsReceiver;
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export type StatisticsInitialState = {
   stats: HomeStatistics | undefined;
   status: ActionStatus | undefined;
@@ -223,7 +215,6 @@ export interface Store {
   disbursements: DisbursementsInitialState;
   forgotPassword: ForgotPasswordInitialState;
   organization: OrganizationInitialState;
-  paymentDetails: PaymentDetailsInitialState;
   payments: PaymentsInitialState;
   profile: ProfileInitialState;
   receiverDetails: ReceiverDetailsInitialState;
@@ -243,6 +234,11 @@ export type StoreKey = keyof Store;
 export type AnyObject = {
   [key: string]: any;
 };
+
+export interface AppError {
+  message: string;
+  extras?: AnyObject;
+}
 
 export type Pagination = {
   next?: string;
@@ -418,19 +414,6 @@ export type PaymentDetailsStatusHistoryItem = {
   status: PaymentStatus;
 };
 
-export type PaymentDetailsInfo = {
-  id: string;
-  createdAt: string;
-  disbursementName: string;
-  disbursementId: string;
-  receiverId?: string;
-  receiverWalletId?: string;
-  transactionId: string;
-  senderAddress: string;
-  totalAmount: string;
-  assetCode: string;
-};
-
 export type PaymentDetailsReceiver = {
   id: string;
   phoneNumber: string;
@@ -441,6 +424,20 @@ export type PaymentDetailsReceiver = {
   createdAt: string;
   amountsReceived?: AmountReceived[];
   status: ReceiverStatus | undefined;
+};
+
+export type PaymentDetails = {
+  id: string;
+  createdAt: string;
+  disbursementName: string;
+  disbursementId: string;
+  receiverId?: string;
+  receiverWalletId?: string;
+  transactionId?: string;
+  senderAddress?: string;
+  totalAmount: string;
+  assetCode: string;
+  statusHistory: PaymentDetailsStatusHistoryItem[];
 };
 
 // =============================================================================
@@ -702,8 +699,8 @@ export type ApiPaymentReceiverWallet = {
 export type ApiPayment = {
   id: string;
   amount: string;
-  stellar_transaction_id: string;
-  stellar_operation_id: string;
+  stellar_transaction_id?: string;
+  stellar_operation_id?: string;
   stellar_address?: string;
   status: PaymentStatus;
   status_history: ApiPaymentStatusHistory[];

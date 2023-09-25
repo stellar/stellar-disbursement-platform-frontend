@@ -1,6 +1,6 @@
 import { API_URL } from "constants/settings";
 
-export const authRefreshToken = async (token: string): Promise<string> => {
+export const refreshToken = async (token: string): Promise<string> => {
   const response = await fetch(`${API_URL}/refresh-token`, {
     method: "POST",
     headers: {

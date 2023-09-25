@@ -1,42 +1,34 @@
 import { useEffect } from "react";
 import { Banner, Icon, Link, Loader } from "@stellar/design-system";
-import { useQuery } from "@tanstack/react-query";
-import { patchPaymentsRetry } from "api/patchPaymentsRetry";
-import { useSessionToken } from "hooks/useSessionToken";
+import { useQueryClient } from "@tanstack/react-query";
+import { usePaymentsRetry } from "apiQueries/usePaymentsRetry";
 import { PaymentDetailsStatusHistoryItem } from "types";
 
 interface RetryFailedPaymentProps {
   paymentId: string;
   paymentStatus: PaymentDetailsStatusHistoryItem[];
-  onSuccess: () => void;
 }
 
 export const RetryFailedPayment = ({
   paymentId,
   paymentStatus,
-  onSuccess,
 }: RetryFailedPaymentProps) => {
-  const sessionToken = useSessionToken();
   const isFailed = paymentStatus.slice(-1)[0]?.status === "FAILED";
 
-  const retryPayment = async () => {
-    const response = await patchPaymentsRetry(sessionToken, [paymentId]);
-    return response.message;
-  };
-
-  const { isFetching, data, isError, error, refetch } = useQuery({
-    queryKey: ["RetryFailedPayment"],
-    queryFn: retryPayment,
-    enabled: false,
-  });
-
-  const isSuccess = Boolean(data);
+  const { isFetching, data, isError, isSuccess, error, refetch } =
+    usePaymentsRetry([paymentId]);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (isSuccess) {
-      onSuccess();
+    if (paymentId && isSuccess) {
+      // Trigger payment details refetch
+      queryClient.invalidateQueries({ queryKey: ["payments", paymentId] });
+      // Invalidate all payment retry queries to clear success/error state
+      queryClient.invalidateQueries({
+        queryKey: ["payments", "retry"],
+      });
     }
-  }, [isSuccess, onSuccess]);
+  }, [isSuccess, paymentId, queryClient]);
 
   if (!isFailed) {
     return null;
@@ -46,13 +38,13 @@ export const RetryFailedPayment = ({
     <div className="StatCards StatCards--paymentDetails">
       <div className="StatCards__card__item--fullWidth">
         {data ? (
-          <Banner variant="success">{data}</Banner>
+          <Banner variant="success">{data.message}</Banner>
         ) : (
           <Banner variant="error">
             <>
               <div className="Banner__message">
                 {isError
-                  ? (error as any).error
+                  ? `Payment retry failed: ${error.message}. Click Retry to submit again.`
                   : "Unfortunately your payment failed. Click Retry to submit again."}
               </div>
               <Link
