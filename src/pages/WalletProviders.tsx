@@ -32,8 +32,8 @@ export const WalletProviders = () => {
     }
   }, [wallets.status, dispatch]);
 
-  const myWallets = wallets.items.filter((e) => e.enabled);
-  const avalaibleWallets = wallets.items.filter((e) => !e.enabled);
+  const myWallets = wallets?.items.filter((e) => e.enabled);
+  const avalaibleWallets = wallets?.items.filter((e) => !e.enabled);
 
   const handleCloseModal = () => {
     setUpdateWalletModal({ visible: false, walletId: "", enabled: false });
@@ -181,7 +181,7 @@ export const WalletProviders = () => {
               <InfoTooltip infoText="">My Wallet Providers</InfoTooltip>
             </div>
 
-            {myWallets.map((item) =>
+            {myWallets?.map((item) =>
               renderWalletCard(
                 item.name,
                 item.id,
@@ -203,7 +203,7 @@ export const WalletProviders = () => {
               will have to add you in order for this to work.
             </div>
 
-            {avalaibleWallets.map((item) =>
+            {avalaibleWallets?.map((item) =>
               renderWalletCard(
                 item.name,
                 item.id,
