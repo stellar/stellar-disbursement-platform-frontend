@@ -187,7 +187,7 @@ const formatPaymentReceiver = (payload: {
     totalPaymentsCount: Number(receiver.total_payments),
     successfulPaymentsCount: Number(receiver.successful_payments),
     createdAt: paymentWallet?.created_at || "",
-    amountsReceived: receiver.received_amounts.map((a) => ({
+    amountsReceived: receiver.received_amounts?.map((a) => ({
       amount: a.received_amount,
       assetCode: a.asset_code,
       assetIssuer: a.asset_issuer,

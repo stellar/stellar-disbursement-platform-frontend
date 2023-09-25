@@ -3,8 +3,12 @@ import { DropdownMenu } from "components/DropdownMenu";
 import { AmountReceived } from "types";
 import "./styles.scss";
 
-export const MultipleAmounts = ({ amounts }: { amounts: AmountReceived[] }) => {
-  if (amounts.length === 0) {
+export const MultipleAmounts = ({
+  amounts,
+}: {
+  amounts?: AmountReceived[];
+}) => {
+  if (!amounts || amounts.length === 0) {
     return <>"-"</>;
   }
 
