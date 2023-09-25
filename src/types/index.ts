@@ -145,8 +145,8 @@ export type ReceiverDetailsInitialState = {
   id: string;
   phoneNumber: string;
   email?: string;
-  assetCode: string;
-  totalReceived: string;
+  assetCode?: string;
+  totalReceived?: string;
   orgId: string;
   stats: {
     paymentsTotalCount: number;
@@ -439,7 +439,7 @@ export type PaymentDetailsReceiver = {
   totalPaymentsCount: number;
   successfulPaymentsCount: number;
   createdAt: string;
-  amountsReceived: AmountReceived[];
+  amountsReceived?: AmountReceived[];
   status: ReceiverStatus | undefined;
 };
 
@@ -466,7 +466,7 @@ export type Receiver = {
   totalPaymentsCount: number;
   successfulPaymentsCounts: number;
   createdAt: string;
-  amountsReceived: AmountReceived[];
+  amountsReceived?: AmountReceived[];
 };
 
 export type ReceiverWallet = {
@@ -511,8 +511,8 @@ export type ReceiverDetails = {
   id: string;
   phoneNumber: string;
   email?: string;
-  assetCode: string;
-  totalReceived: string;
+  assetCode?: string;
+  totalReceived?: string;
   orgId: string;
   stats: {
     paymentsTotalCount: number;
@@ -830,7 +830,7 @@ export type ApiReceiver = {
   successful_payments: string | number;
   failed_payments: string | number;
   remaining_payments: string | number;
-  received_amounts: {
+  received_amounts?: {
     asset_code: string;
     asset_issuer: string;
     received_amount: string;

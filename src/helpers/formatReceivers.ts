@@ -9,7 +9,7 @@ export const formatReceivers = (receivers: ApiReceiver[]): Receiver[] => {
     totalPaymentsCount: Number(r.total_payments),
     successfulPaymentsCounts: Number(r.successful_payments),
     createdAt: r.created_at,
-    amountsReceived: r.received_amounts.map((a) => ({
+    amountsReceived: r.received_amounts?.map((a) => ({
       assetCode: a.asset_code,
       assetIssuer: a.asset_issuer,
       amount: a.received_amount,
