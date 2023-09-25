@@ -73,8 +73,8 @@ const initialState: ReceiverDetailsInitialState = {
   id: "",
   phoneNumber: "",
   email: "",
-  assetCode: "",
-  totalReceived: "",
+  assetCode: undefined,
+  totalReceived: undefined,
   orgId: "",
   stats: {
     paymentsTotalCount: 0,
@@ -167,8 +167,8 @@ const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
   email: receiver.email,
   orgId: receiver.external_id,
   // TODO: how to handle multiple
-  assetCode: receiver.received_amounts[0].asset_code,
-  totalReceived: receiver.received_amounts[0].received_amount,
+  assetCode: receiver.received_amounts?.[0].asset_code,
+  totalReceived: receiver.received_amounts?.[0].received_amount,
   stats: {
     paymentsTotalCount: Number(receiver.total_payments),
     paymentsSuccessfulCount: Number(receiver.successful_payments),
