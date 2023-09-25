@@ -9,9 +9,6 @@ export const usePaymentsRetry = (paymentIds: string[]) => {
     queryFn: async () => {
       return await fetchApi(`${API_URL}/payments/retry`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           payment_ids: paymentIds,
         }),

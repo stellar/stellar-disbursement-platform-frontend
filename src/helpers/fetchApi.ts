@@ -4,6 +4,7 @@ import { SESSION_EXPIRED_EVENT } from "constants/settings";
 import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 import { parseJwt } from "helpers/parseJwt";
 import { normalizeApiError } from "helpers/normalizeApiError";
+import { AnyObject } from "types";
 
 type FetchApiOptions = {
   withoutAuth?: boolean;
@@ -38,6 +39,8 @@ export const fetchApi = async (
     config.headers = {
       ...config.headers,
       Authorization: `Bearer ${token}`,
+      "Content-Type":
+        (config?.headers as AnyObject)?.["Content-Type"] ?? "application/json",
     };
   }
 

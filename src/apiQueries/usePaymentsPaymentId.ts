@@ -7,12 +7,7 @@ export const usePaymentsPaymentId = (paymentId: string | undefined) => {
   const query = useQuery<ApiPayment, AppError>({
     queryKey: ["payments", paymentId],
     queryFn: async () => {
-      return await fetchApi(`${API_URL}/payments/${paymentId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      return await fetchApi(`${API_URL}/payments/${paymentId}`);
     },
     enabled: !!paymentId,
   });
