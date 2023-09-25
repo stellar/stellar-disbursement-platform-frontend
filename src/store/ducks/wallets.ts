@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
 import { getWallets } from "api/getWallets";
+import { patchWallet } from "api/patchWallet";
 import { handleApiErrorString } from "api/handleApiErrorString";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { ApiError, ApiWallet, RejectMessage, WalletsInitialState } from "types";
@@ -23,6 +24,32 @@ export const getWalletsAction = createAsyncThunk<
 
       return rejectWithValue({
         errorString: `Error fetching wallets: ${errorString}`,
+      });
+    }
+  },
+);
+
+export const updateWalletAction = createAsyncThunk<
+  string,
+  { walletId: string; enabled: boolean },
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "organization/updateWalletAction",
+  async ({ walletId, enabled }, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+
+    try {
+      const wallet = await patchWallet(token, walletId, enabled);
+      console.log(wallet);
+      return wallet.message;
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorString = handleApiErrorString(err);
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error updating wallet: ${errorString}`,
+        errorExtras: err?.extras,
       });
     }
   },

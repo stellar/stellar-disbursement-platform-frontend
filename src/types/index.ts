@@ -596,6 +596,8 @@ export type ApiWallet = {
   name: string;
   homepage: string;
   deep_link_schema: string;
+  enabled: boolean;
+  assets: ApiAsset[];
   created_at: string;
   updated_at: string;
 };
