@@ -110,7 +110,7 @@ export const WalletProviders = () => {
                     Supported assets
                   </label>
                   <div className="StatCards__card__item__value">
-                    {assets.join(", ")}
+                    {assets?.join(", ")}
                   </div>
                 </div>
               </div>
