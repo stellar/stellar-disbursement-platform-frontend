@@ -39,8 +39,8 @@ export const WalletProviders = () => {
     setUpdateWalletModal({ visible: false, walletId: "", enabled: false });
   };
 
-  const handleUpdateWallet = (walletId: string, enabled: boolean) => {
-    dispatch(updateWalletAction({ walletId, enabled }));
+  const handleUpdateWallet = async (walletId: string, enabled: boolean) => {
+    await dispatch(updateWalletAction({ walletId, enabled }));
     window.location.reload();
   };
 
