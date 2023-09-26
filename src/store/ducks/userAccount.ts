@@ -3,7 +3,7 @@ import { RootState } from "store";
 import { singleSignOnAction } from "store/ducks/singleSignOnUserAccount";
 import { authLogin } from "api/authLogin";
 import { mfAuth } from "api/mfAuth";
-import { authRefreshToken } from "api/authRefreshToken";
+import { refreshToken } from "api/refreshToken";
 import { handleApiErrorString } from "api/handleApiErrorString";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import {
@@ -53,7 +53,7 @@ export const refreshTokenAction = createAsyncThunk<
     const { token } = getState().userAccount;
 
     try {
-      const newToken = await authRefreshToken(token);
+      const newToken = await refreshToken(token);
       return newToken;
     } catch (error: unknown) {
       const errorString = handleApiErrorString(error as ApiError);

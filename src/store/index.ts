@@ -16,7 +16,6 @@ import { reducer as disbursementDrafts } from "store/ducks/disbursementDrafts";
 import { reducer as disbursements } from "store/ducks/disbursements";
 import { reducer as forgotPassword } from "store/ducks/forgotPassword";
 import { reducer as organization } from "store/ducks/organization";
-import { reducer as paymentDetails } from "store/ducks/paymentDetails";
 import { reducer as payments } from "store/ducks/payments";
 import { reducer as profile } from "store/ducks/profile";
 import { reducer as receiverDetails } from "store/ducks/receiverDetails";
@@ -49,7 +48,6 @@ const reducers = combineReducers({
   disbursements,
   forgotPassword,
   organization,
-  paymentDetails,
   payments,
   profile,
   receiverDetails,

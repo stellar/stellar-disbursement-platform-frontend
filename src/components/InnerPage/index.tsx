@@ -4,15 +4,12 @@ import { NavLink } from "react-router-dom";
 import { Icon } from "@stellar/design-system";
 
 import { PageHeader } from "components/PageHeader";
-import {
-  LOCAL_STORAGE_SESSION_TOKEN,
-  Routes,
-  USE_SSO,
-} from "constants/settings";
+import { Routes, USE_SSO } from "constants/settings";
 import { AppDispatch, resetStoreAction } from "store";
 import { useRedux } from "hooks/useRedux";
 import { singleUserStore } from "helpers/singleSingOn";
 import { getAppVersion } from "helpers/getAppVersion";
+import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 
 import "./styles.scss";
 
@@ -41,7 +38,7 @@ export const InnerPage = ({
       singleUserStore().then();
     }
     dispatch(resetStoreAction());
-    localStorage.removeItem(LOCAL_STORAGE_SESSION_TOKEN);
+    localStorageSessionToken.remove();
   };
 
   type NavItem = {
