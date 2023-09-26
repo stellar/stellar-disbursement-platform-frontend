@@ -187,7 +187,7 @@ export const WalletProviders = () => {
                 item.id,
                 item.homepage,
                 item.enabled,
-                item.assets.map((e) => e.code),
+                item.assets?.map((e) => e.code),
               ),
             )}
           </div>
@@ -209,7 +209,7 @@ export const WalletProviders = () => {
                 item.id,
                 item.homepage,
                 item.enabled,
-                item.assets.map((e) => e.code),
+                item.assets?.map((e) => e.code),
               ),
             )}
           </div>
