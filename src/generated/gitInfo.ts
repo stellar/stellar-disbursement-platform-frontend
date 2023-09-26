@@ -1,1 +1,1 @@
-export default { commitHash: "9ba7e2d", version: "1.0.0-rc2-3-g9ba7e2d" };
+export default { commitHash: "4fcd341", version: "1.0.0-rc2-10-g4fcd341" };
