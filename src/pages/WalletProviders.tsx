@@ -61,57 +61,43 @@ export const WalletProviders = () => {
 
     return (
       <>
-        <Card>
-          <div className="StatCards__card--split">
-            <div>
-              <div className="StatCards__card__column">
-                <div className="StatCards__card__item StatCards__card__item--inline">
-                  <div>
-                    <div className="StatCards__card__title">
-                      <div
-                        className="StatCards__card__item--inline"
-                        style={{ gap: 0 }}
-                      >
-                        <Title size="lg">{walletName}</Title>
+        <Card noPadding>
+          <div className="WalletCard">
+            <div className="WalletCard__title">
+              <div className="WalletCard__item">
+                <div>
+                  <div className="WalletCard__item">
+                    <Title size="lg">{walletName}</Title>
 
-                        <Icon.ExternalLink
-                          style={{
-                            color: "#908E96",
-                            width: "10%",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => window.open(link, "_blank")}
-                        />
-                      </div>
-                    </div>
+                    <Icon.ExternalLink
+                      className="ExternalLinkIcon"
+                      onClick={() => window.open(link, "_blank")}
+                    />
                   </div>
-
-                  <Toggle
-                    id={walletId}
-                    checked={enabled}
-                    onChange={() => {
-                      setUpdateWalletModal({
-                        visible: true,
-                        walletId: walletId,
-                        enabled: enabled,
-                      });
-                    }}
-                  />
                 </div>
+
+                <Toggle
+                  id={walletId}
+                  checked={enabled}
+                  onChange={() => {
+                    setUpdateWalletModal({
+                      visible: true,
+                      walletId: walletId,
+                      enabled: enabled,
+                    });
+                  }}
+                />
               </div>
             </div>
 
-            <div>
-              <div className="StatCards__card__walletCounts">
-                <br />
-                <div className="StatCards__card--flexCols">
-                  <label className="StatCards__card__item__label">
-                    <Icon.Assets style={{ height: "60%" }} />
-                    Supported assets
-                  </label>
-                  <div className="StatCards__card__item__value">
-                    {assets?.join(", ")}
-                  </div>
+            <div className="WalletCard__walletData">
+              <div className="WalletCard--flexCols">
+                <label className="WalletCard__item__label">
+                  <Icon.Assets classname="WalletProvidersIcon" />
+                  Supported assets
+                </label>
+                <div className="WalletCard__item__value">
+                  {assets?.join(", ")}
                 </div>
               </div>
             </div>
