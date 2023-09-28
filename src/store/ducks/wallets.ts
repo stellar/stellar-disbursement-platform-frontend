@@ -40,7 +40,6 @@ export const updateWalletAction = createAsyncThunk<
 
     try {
       const wallet = await patchWallet(token, walletId, enabled);
-      console.log(wallet);
       return wallet.message;
     } catch (error: unknown) {
       const err = error as ApiError;

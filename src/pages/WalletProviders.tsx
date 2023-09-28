@@ -68,11 +68,14 @@ export const WalletProviders = () => {
                 <div>
                   <div className="WalletCard__item">
                     <Title size="lg">{walletName}</Title>
-
-                    <Icon.ExternalLink
-                      className="ExternalLinkIcon"
-                      onClick={() => window.open(link, "_blank")}
-                    />
+                    <a
+                      className=""
+                      href={link}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      <Icon.ExternalLink className="ExternalLinkIcon" />
+                    </a>
                   </div>
                 </div>
 
@@ -93,8 +96,7 @@ export const WalletProviders = () => {
             <div className="WalletCard__walletData">
               <div className="WalletCard--flexCols">
                 <label className="WalletCard__item__label">
-                  <Icon.Assets classname="WalletProvidersIcon" />
-                  Supported assets
+                  <Icon.Assets /> Supported assets
                 </label>
                 <div className="WalletCard__item__value">
                   {assets?.join(", ")}
@@ -103,47 +105,6 @@ export const WalletProviders = () => {
             </div>
           </div>
         </Card>
-
-        {/* Enable/Disable wallet modal */}
-        <Modal visible={updateWalletModal.visible} onClose={handleCloseModal}>
-          <Modal.Heading>
-            Confirm turning {updateWalletModal.enabled ? "off" : "on"} wallet
-            provider
-          </Modal.Heading>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              handleUpdateWallet(
-                updateWalletModal.walletId,
-                !updateWalletModal.enabled,
-              );
-            }}
-            onReset={handleCloseModal}
-          >
-            <Modal.Body>
-              <div className="Note">
-                Make sure the wallet provider knows you have added them as they
-                will have to add you in order for this to work.
-              </div>
-              <Notification
-                variant="warning"
-                title="This will allow ANY disbursement to this provider"
-              ></Notification>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button size="sm" variant="secondary" type="reset">
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                variant={updateWalletModal.enabled ? "destructive" : "primary"}
-                type="submit"
-              >
-                Turn {updateWalletModal.enabled ? "off" : "on"}
-              </Button>
-            </Modal.Footer>
-          </form>
-        </Modal>
       </>
     );
   };
@@ -201,6 +162,47 @@ export const WalletProviders = () => {
           </div>
         </Card>
       </div>
+
+      {/* Enable/Disable wallet modal */}
+      <Modal visible={updateWalletModal.visible} onClose={handleCloseModal}>
+        <Modal.Heading>
+          Confirm turning {updateWalletModal.enabled ? "off" : "on"} wallet
+          provider
+        </Modal.Heading>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleUpdateWallet(
+              updateWalletModal.walletId,
+              !updateWalletModal.enabled,
+            );
+          }}
+          onReset={handleCloseModal}
+        >
+          <Modal.Body>
+            <div className="Note">
+              Make sure the wallet provider knows you have added them as they
+              will have to add you in order for this to work.
+            </div>
+            <Notification
+              variant="warning"
+              title="This will allow ANY disbursement to this provider"
+            ></Notification>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button size="sm" variant="secondary" type="reset">
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              variant={updateWalletModal.enabled ? "destructive" : "primary"}
+              type="submit"
+            >
+              Turn {updateWalletModal.enabled ? "off" : "on"}
+            </Button>
+          </Modal.Footer>
+        </form>
+      </Modal>
     </>
   );
 };
