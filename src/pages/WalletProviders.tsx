@@ -1,9 +1,6 @@
 import {
   Card,
   Heading,
-  Icon,
-  Toggle,
-  Title,
   Notification,
   Modal,
   Button,
@@ -12,17 +9,17 @@ import { useDispatch } from "react-redux";
 import { InfoTooltip } from "components/InfoTooltip";
 import { SectionHeader } from "components/SectionHeader";
 import { useRedux } from "hooks/useRedux";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { AppDispatch } from "store";
-import { getWalletsAction, updateWalletAction } from "store/ducks/wallets";
+import {
+  getWalletsAction,
+  actions,
+  updateWalletAction,
+} from "store/ducks/wallets";
+import { WalletCard } from "components/WalletCard";
+import { ApiWallet } from "types";
 
 export const WalletProviders = () => {
-  const [updateWalletModal, setUpdateWalletModal] = useState({
-    visible: false,
-    walletId: "",
-    enabled: false,
-  });
-
   const { wallets } = useRedux("wallets");
   const dispatch: AppDispatch = useDispatch();
 
@@ -36,7 +33,7 @@ export const WalletProviders = () => {
   const avalaibleWallets = wallets?.items.filter((e) => !e.enabled);
 
   const handleCloseModal = () => {
-    setUpdateWalletModal({ visible: false, walletId: "", enabled: false });
+    dispatch(actions.resetUpdateWalletModal());
   };
 
   const handleUpdateWallet = async (walletId: string, enabled: boolean) => {
@@ -44,13 +41,7 @@ export const WalletProviders = () => {
     window.location.reload();
   };
 
-  const renderWalletCard = (
-    walletName: string,
-    walletId: string,
-    link: string,
-    enabled: boolean,
-    assets: string[],
-  ) => {
+  const renderWalletCard = (walletsArray: ApiWallet[]) => {
     if (wallets.errorString) {
       return (
         <Notification variant="error" title="Error">
@@ -59,54 +50,16 @@ export const WalletProviders = () => {
       );
     }
 
-    return (
-      <>
-        <Card noPadding>
-          <div className="WalletCard">
-            <div className="WalletCard__title">
-              <div className="WalletCard__item">
-                <div>
-                  <div className="WalletCard__item">
-                    <Title size="lg">{walletName}</Title>
-                    <a
-                      className=""
-                      href={link}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      <Icon.ExternalLink className="ExternalLinkIcon" />
-                    </a>
-                  </div>
-                </div>
-
-                <Toggle
-                  id={walletId}
-                  checked={enabled}
-                  onChange={() => {
-                    setUpdateWalletModal({
-                      visible: true,
-                      walletId: walletId,
-                      enabled: enabled,
-                    });
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="WalletCard__walletData">
-              <div className="WalletCard--flexCols">
-                <label className="WalletCard__item__label">
-                  <Icon.Assets /> Supported assets
-                </label>
-                <div className="WalletCard__item__value">
-                  {assets?.join(", ")}
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </>
-    );
+    return walletsArray?.map((item) => (
+      <WalletCard
+        key={item.id}
+        walletName={item.name}
+        walletId={item.id}
+        homepageUrl={item.homepage}
+        enabled={item.enabled}
+        assets={item.assets?.map((asset) => asset.code)}
+      />
+    ));
   };
 
   return (
@@ -130,15 +83,7 @@ export const WalletProviders = () => {
               </InfoTooltip>
             </div>
 
-            {myWallets?.map((item) =>
-              renderWalletCard(
-                item.name,
-                item.id,
-                item.homepage,
-                item.enabled,
-                item.assets?.map((e) => e.code),
-              ),
-            )}
+            {renderWalletCard(myWallets)}
           </div>
         </Card>
 
@@ -155,31 +100,23 @@ export const WalletProviders = () => {
               will succeed.
             </div>
 
-            {avalaibleWallets?.map((item) =>
-              renderWalletCard(
-                item.name,
-                item.id,
-                item.homepage,
-                item.enabled,
-                item.assets?.map((e) => e.code),
-              ),
-            )}
+            {renderWalletCard(avalaibleWallets)}
           </div>
         </Card>
       </div>
 
       {/* Enable/Disable wallet modal */}
-      <Modal visible={updateWalletModal.visible} onClose={handleCloseModal}>
+      <Modal visible={wallets.modalVisibility} onClose={handleCloseModal}>
         <Modal.Heading>
-          Confirm turning {updateWalletModal.enabled ? "off" : "on"} wallet
+          Confirm turning {wallets.modalWalletEnabled ? "off" : "on"} wallet
           provider
         </Modal.Heading>
         <form
           onSubmit={(event) => {
             event.preventDefault();
             handleUpdateWallet(
-              updateWalletModal.walletId,
-              !updateWalletModal.enabled,
+              wallets.modalWalletId,
+              !wallets.modalWalletEnabled,
             );
           }}
           onReset={handleCloseModal}
@@ -200,10 +137,10 @@ export const WalletProviders = () => {
             </Button>
             <Button
               size="sm"
-              variant={updateWalletModal.enabled ? "destructive" : "primary"}
+              variant={wallets.modalWalletEnabled ? "destructive" : "primary"}
               type="submit"
             >
-              Turn {updateWalletModal.enabled ? "off" : "on"}
+              Turn {wallets.modalWalletEnabled ? "off" : "on"}
             </Button>
           </Modal.Footer>
         </form>
