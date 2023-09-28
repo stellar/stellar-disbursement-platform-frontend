@@ -125,7 +125,9 @@ export const WalletProviders = () => {
         <Card>
           <div className="CardStack__card">
             <div className="CardStack__title">
-              <InfoTooltip infoText="">My Wallet Providers</InfoTooltip>
+              <InfoTooltip infoText="The wallet providers allowed by your organization for receiving payments.">
+                My Wallet Providers
+              </InfoTooltip>
             </div>
 
             {myWallets?.map((item) =>
@@ -143,11 +145,14 @@ export const WalletProviders = () => {
         <Card>
           <div className="CardStack__card">
             <div className="CardStack__title">
-              <InfoTooltip infoText="">Available Wallet Providers</InfoTooltip>
+              <InfoTooltip infoText="All available wallet providers that can receive disbursements. You must add these to your wallet providers in order to send payments into them.">
+                Available Wallet Providers
+              </InfoTooltip>
             </div>
             <div className="Note">
-              Make sure the wallet provider knows you have added them as they
-              will have to add you in order for this to work.
+              Make sure you agree with the wallet provider before adding them.
+              They will also need to enable your organization before payments
+              will succeed.
             </div>
 
             {avalaibleWallets?.map((item) =>
