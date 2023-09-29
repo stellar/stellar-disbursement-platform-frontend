@@ -9,7 +9,7 @@ export const MultipleAmounts = ({
   amounts?: AmountReceived[];
 }) => {
   if (!amounts || amounts.length === 0) {
-    return <>"-"</>;
+    return <>{"-"}</>;
   }
 
   if (amounts.length === 1) {
