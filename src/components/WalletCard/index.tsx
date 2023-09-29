@@ -3,7 +3,6 @@ import { Card, Icon, Toggle, Title } from "@stellar/design-system";
 import { AppDispatch } from "store";
 import { useDispatch } from "react-redux";
 import { actions } from "store/ducks/wallets";
-
 import "./styles.scss";
 
 interface WalletCardProps {
