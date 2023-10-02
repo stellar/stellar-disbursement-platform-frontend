@@ -76,6 +76,9 @@ export type WalletsInitialState = {
   items: ApiWallet[];
   status: ActionStatus | undefined;
   errorString?: string;
+  modalVisibility: boolean;
+  modalWalletId: string;
+  modalWalletEnabled: boolean;
 };
 
 export type DisbursementDraftsInitialState = {
@@ -593,6 +596,8 @@ export type ApiWallet = {
   name: string;
   homepage: string;
   deep_link_schema: string;
+  enabled: boolean;
+  assets: ApiAsset[];
   created_at: string;
   updated_at: string;
 };
