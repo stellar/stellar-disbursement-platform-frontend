@@ -1,0 +1,67 @@
+@use "./styles-utils.scss" as *;
+
+.WalletCard {
+  display: flex;
+  flex-direction: column;
+  padding: pxToRem(24px);
+  height: 100%;
+
+  &__title {
+    margin-top: pxToRem(-16px);
+  }
+
+  &__ExternalLink {
+    display: flex;
+    line-height: pxToRem(26px);
+    align-items: center;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: pxToRem(8px) 0;
+    gap: pxToRem(5px);
+
+    &__label {
+      font-size: pxToRem(14px);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-gray-60);
+      display: flex;
+      align-items: center;
+      gap: pxToRem(5px);
+
+      svg {
+        height: pxToRem(20px);
+        width: pxToRem(20px);
+      }
+    }
+
+    &__value {
+      font-size: pxToRem(14px);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-gray-80);
+      display: flex;
+      justify-content: end;
+      align-items: center;
+    }
+  }
+
+  &__walletData {
+    border-top: 1px solid var(--color-gray-30);
+    padding-top: pxToRem(4px);
+  }
+
+  &--flexCols {
+    display: flex;
+    justify-content: space-between;
+    padding: pxToRem(12px) 0 0;
+  }
+}
+
+.ExternalLinkIcon {
+  color: var(--color-gray-60);
+  width: pxToRem(14px);
+  height: pxToRem(14px);
+  cursor: pointer;
+}
