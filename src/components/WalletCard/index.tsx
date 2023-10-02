@@ -29,7 +29,12 @@ export const WalletCard: React.FC<WalletCardProps> = ({
             <div>
               <div className="WalletCard__item">
                 <Title size="lg">{walletName}</Title>
-                <a href={homepageUrl} target="_blank" rel="noreferrer noopener">
+                <a
+                  className="WalletCard__ExternalLink"
+                  href={homepageUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
                   <Icon.ExternalLink className="ExternalLinkIcon" />
                 </a>
               </div>

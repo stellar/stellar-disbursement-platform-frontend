@@ -10,6 +10,12 @@
     margin-top: pxToRem(-16px);
   }
 
+  &__ExternalLink {
+    display: flex;
+    line-height: pxToRem(26px);
+    align-items: center;
+  }
+
   &__item {
     display: flex;
     align-items: center;
@@ -18,14 +24,21 @@
     gap: pxToRem(5px);
 
     &__label {
+      font-size: pxToRem(14px);
       font-weight: var(--font-weight-medium);
       color: var(--color-gray-60);
       display: flex;
       align-items: center;
       gap: pxToRem(5px);
+
+      svg {
+        height: pxToRem(20px);
+        width: pxToRem(20px);
+      }
     }
 
     &__value {
+      font-size: pxToRem(14px);
       font-weight: var(--font-weight-medium);
       color: var(--color-gray-80);
       display: flex;
@@ -50,5 +63,5 @@
   color: var(--color-gray-60);
   width: pxToRem(14px);
   height: pxToRem(14px);
-  cursor: "pointer";
+  cursor: pointer;
 }
