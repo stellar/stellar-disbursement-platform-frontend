@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
 import { getReceiverDetails } from "api/getReceiverDetails";
 import { patchReceiverInfo } from "api/patchReceiver";
+import { retryInvitationSMS } from "api/retryInvitationSMS";
 import { handleApiErrorString } from "api/handleApiErrorString";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
@@ -69,6 +70,31 @@ export const updateReceiverDetailsAction = createAsyncThunk<
   },
 );
 
+export const retryInvitationSMSAction = createAsyncThunk<
+  string,
+  { receiverWalletId: string },
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "receiverDetails/retryInvitationSMSAction",
+  async ({ receiverWalletId }, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+
+    try {
+      const response = await retryInvitationSMS(token, receiverWalletId);
+      return response.message;
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorString = handleApiErrorString(err);
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error updating profile info: ${errorString}`,
+        errorExtras: err?.extras,
+      });
+    }
+  },
+);
+
 const initialState: ReceiverDetailsInitialState = {
   id: "",
   phoneNumber: "",
@@ -104,6 +130,7 @@ const initialState: ReceiverDetailsInitialState = {
   ],
   status: undefined,
   updateStatus: undefined,
+  retryInvitationStatus: undefined,
   errorString: undefined,
 };
 
@@ -112,6 +139,9 @@ const receiverDetailsSlice = createSlice({
   initialState,
   reducers: {
     resetReceiverDetailsAction: () => initialState,
+    resetRetryStatusAction: (state) => {
+      state.retryInvitationStatus = undefined;
+    },
   },
   extraReducers: (builder) => {
     // Get receiver details
@@ -153,13 +183,29 @@ const receiverDetailsSlice = createSlice({
       state.updateStatus = "ERROR";
       state.errorString = action.payload?.errorString;
     });
+    //retryInvitationSMSAction
+    builder.addCase(
+      retryInvitationSMSAction.pending,
+      (state = initialState) => {
+        state.retryInvitationStatus = "PENDING";
+      },
+    );
+    builder.addCase(retryInvitationSMSAction.fulfilled, (state) => {
+      state.retryInvitationStatus = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(retryInvitationSMSAction.rejected, (state, action) => {
+      state.retryInvitationStatus = "ERROR";
+      state.errorString = action.payload?.errorString;
+    });
   },
 });
 
 export const receiverDetailsSelector = (state: RootState) =>
   state.receiverDetails;
 export const { reducer } = receiverDetailsSlice;
-export const { resetReceiverDetailsAction } = receiverDetailsSlice.actions;
+export const { resetReceiverDetailsAction, resetRetryStatusAction } =
+  receiverDetailsSlice.actions;
 
 const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
   id: receiver.id,
