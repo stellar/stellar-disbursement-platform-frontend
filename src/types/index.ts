@@ -153,6 +153,7 @@ export type ReceiverDetailsInitialState = {
   verifications: ReceiverVerification[];
   status: ActionStatus | undefined;
   updateStatus: ActionStatus | undefined;
+  retryInvitationStatus: ActionStatus | undefined;
   errorString?: string;
 };
 
