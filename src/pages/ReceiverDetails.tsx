@@ -32,13 +32,13 @@ import { PaymentsTable } from "components/PaymentsTable";
 import { Pagination } from "components/Pagination";
 import { ReceiverWalletBalance } from "components/ReceiverWalletBalance";
 import { ReceiverWalletHistory } from "components/ReceiverWalletHistory";
+import { NotificationWithButtons } from "components/NotificationWithButtons";
 
 import { number, percent } from "helpers/formatIntlNumber";
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { shortenAccountKey } from "helpers/shortenAccountKey";
 import { ReceiverWallet } from "types";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
 
 export const ReceiverDetails = () => {
   const { id: receiverId } = useParams();

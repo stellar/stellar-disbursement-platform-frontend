@@ -88,7 +88,7 @@ export const retryInvitationSMSAction = createAsyncThunk<
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
-        errorString: `Error updating profile info: ${errorString}`,
+        errorString: `Error retrying invitation: ${errorString}`,
         errorExtras: err?.extras,
       });
     }
