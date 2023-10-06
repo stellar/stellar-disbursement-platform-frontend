@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Card,
+  Loader,
   Notification,
   RadioButton,
   Textarea,
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { useUpdateSmsTemplate } from "apiQueries/useUpdateOrgSmsTemplate";
@@ -38,16 +38,8 @@ export const ReceiverInviteMessage = () => {
   const customMessage =
     organization.data.smsRegistrationMessageTemplate ?? PLACEHOLDER_MESSAGE;
 
-  const { isFetching, data, isError, isSuccess, error, refetch } =
-    useUpdateSmsTemplate(customMessageInput);
-  const queryClient = useQueryClient();
-
-  const resetQuery = useCallback(() => {
-    queryClient.resetQueries({
-      queryKey: ["organization", "smsRegistrationMessageTemplate"],
-      exact: true,
-    });
-  }, [queryClient]);
+  const { isLoading, data, isError, isSuccess, error, mutateAsync, reset } =
+    useUpdateSmsTemplate();
 
   // Pre-select option when page loads
   useEffect(() => {
@@ -66,10 +58,10 @@ export const ReceiverInviteMessage = () => {
   useEffect(() => {
     return () => {
       if (isError || isSuccess) {
-        resetQuery();
+        reset();
       }
     };
-  }, [isError, isSuccess, resetQuery]);
+  }, [isError, isSuccess, reset]);
 
   // On success, re-fetch org info and close edit form
   useEffect(() => {
@@ -80,31 +72,35 @@ export const ReceiverInviteMessage = () => {
   }, [dispatch, isSuccess]);
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedOption(
-      event.target.value === radioValue.CUSTOM
-        ? radioValue.CUSTOM
-        : radioValue.STANDARD,
-    );
-    setIsEditMessage(false);
-    setCustomMessageInput("");
-
-    if (error) {
-      resetQuery();
+    if (isLoading) {
+      return;
     }
+
+    if (isError || isSuccess) {
+      reset();
+    }
+
+    // Adding little delay to make sure reset is done
+    const t = setTimeout(() => {
+      if (event.target.value === radioValue.STANDARD) {
+        if (organization.data.smsRegistrationMessageTemplate) {
+          mutateAsync("");
+        }
+
+        setIsEditMessage(false);
+        setCustomMessageInput("");
+        setSelectedOption(radioValue.STANDARD);
+      } else {
+        setSelectedOption(radioValue.CUSTOM);
+      }
+
+      clearTimeout(t);
+    }, 100);
   };
 
   const handleSubmitMessage = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (isError || isSuccess) {
-      resetQuery();
-    }
-
-    refetch();
-  };
-
-  const handleResetMessage = () => {
-    refetch();
+    mutateAsync(customMessageInput);
   };
 
   const renderCustomMessage = () => {
@@ -115,7 +111,7 @@ export const ReceiverInviteMessage = () => {
           onReset={() => {
             setIsEditMessage(false);
             setCustomMessageInput("");
-            resetQuery();
+            reset();
           }}
           className="ReceiverInviteMessage__form"
         >
@@ -124,15 +120,21 @@ export const ReceiverInviteMessage = () => {
             id="textarea-custom-input"
             rows={5}
             value={customMessageInput}
-            onChange={(event) => setCustomMessageInput(event.target.value)}
-            disabled={isFetching}
+            onChange={(event) => {
+              if (isError || isSuccess) {
+                reset();
+              }
+
+              setCustomMessageInput(event.target.value);
+            }}
+            disabled={isLoading}
           ></Textarea>
           <div className="ReceiverInviteMessage__form__buttons">
             <Button
               variant="secondary"
               size="xs"
               type="reset"
-              isLoading={isFetching}
+              isLoading={isLoading}
             >
               Cancel
             </Button>
@@ -140,7 +142,7 @@ export const ReceiverInviteMessage = () => {
               variant="primary"
               size="xs"
               type="submit"
-              isLoading={isFetching}
+              isLoading={isLoading}
               disabled={customMessageInput === customMessage}
             >
               Confirm
@@ -191,7 +193,7 @@ export const ReceiverInviteMessage = () => {
             {
               label: "Dismiss",
               onClick: () => {
-                resetQuery();
+                reset();
               },
             },
           ]}
@@ -218,11 +220,19 @@ export const ReceiverInviteMessage = () => {
             <RadioButton
               id="msg-std"
               name="receiver-message"
-              label="Standard message"
+              label={
+                <>
+                  {"Standard message"}{" "}
+                  {selectedOption === radioValue.STANDARD && isLoading ? (
+                    <Loader size="1.25rem" />
+                  ) : null}
+                </>
+              }
               fieldSize="xs"
               value={radioValue.STANDARD}
               onChange={handleOptionChange}
               checked={selectedOption === radioValue.STANDARD}
+              disabled={isLoading}
             />
             <RadioButton
               id="msg-cst"
@@ -232,6 +242,7 @@ export const ReceiverInviteMessage = () => {
               value={radioValue.CUSTOM}
               onChange={handleOptionChange}
               checked={selectedOption === radioValue.CUSTOM}
+              disabled={isLoading}
             />
           </div>
 
@@ -246,19 +257,6 @@ export const ReceiverInviteMessage = () => {
                 rows={5}
                 value={DEFAULT_MESSAGE}
               ></Textarea>
-
-              {organization.data.smsRegistrationMessageTemplate ? (
-                <div className="ReceiverInviteMessage__form__buttons">
-                  <Button
-                    variant="primary"
-                    size="xs"
-                    onClick={handleResetMessage}
-                    isLoading={isFetching}
-                  >
-                    Reset message
-                  </Button>
-                </div>
-              ) : null}
             </div>
           )}
         </div>

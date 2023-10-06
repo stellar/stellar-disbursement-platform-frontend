@@ -1,12 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { API_URL } from "constants/settings";
 import { fetchApi } from "helpers/fetchApi";
 import { AppError } from "types";
 
-export const useUpdateSmsTemplate = (template: string) => {
-  const query = useQuery<{ message: string }, AppError>({
-    queryKey: ["organization", "smsRegistrationMessageTemplate"],
-    queryFn: async () => {
+export const useUpdateSmsTemplate = () => {
+  const mutation = useMutation({
+    mutationFn: (template: string) => {
       const formData = new FormData();
 
       formData.append(
@@ -14,7 +13,7 @@ export const useUpdateSmsTemplate = (template: string) => {
         `{"sms_registration_message_template": "${template}"}`,
       );
 
-      return await fetchApi(
+      return fetchApi(
         `${API_URL}/organization`,
         {
           method: "PATCH",
@@ -23,9 +22,12 @@ export const useUpdateSmsTemplate = (template: string) => {
         { omitContentType: true },
       );
     },
-    // Don't fire the query on mount
-    enabled: false,
+    cacheTime: 0,
   });
 
-  return query;
+  return {
+    ...mutation,
+    error: mutation.error as AppError,
+    data: mutation.data as { message: string },
+  };
 };
