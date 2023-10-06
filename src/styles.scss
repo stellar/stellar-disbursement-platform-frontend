@@ -369,6 +369,12 @@ body {
     margin-bottom: pxToRem(12px);
   }
 
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &__dropdown {
     display: flex;
     align-items: center;
