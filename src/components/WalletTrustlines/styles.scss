@@ -3,7 +3,6 @@
 .WalletTrustlines {
   &__asset {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     gap: pxToRem(16px);
     border: 1px solid var(--color-gray-30);
@@ -13,8 +12,8 @@
 
     &__info {
       display: flex;
+      flex-direction: column;
       gap: pxToRem(8px);
-      align-items: center;
       font-size: pxToRem(14px);
       line-height: pxToRem(22px);
       font-weight: var(--font-weight-regular);
@@ -22,6 +21,7 @@
 
       span {
         color: var(--color-gray-60);
+        font-size: pxToRem(12px);
       }
     }
   }
