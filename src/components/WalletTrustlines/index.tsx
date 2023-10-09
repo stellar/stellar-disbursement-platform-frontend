@@ -238,7 +238,7 @@ export const WalletTrustlines = ({
               key={`${a.code}-${a.issuer}`}
             >
               <div className="WalletTrustlines__asset__info">
-                <div>{ASSET_NAME?.[a.code] || ""}</div>
+                {ASSET_NAME?.[a.code] && <div>{ASSET_NAME?.[a.code]}</div>}
                 <span>
                   {a.code}:{a.issuer}
                 </span>
