@@ -173,6 +173,7 @@ export type OrganizationInitialState = {
     timezoneUtcOffset: string;
     assetBalances?: StellarAccountInfo[];
     isApprovalRequired: boolean | undefined;
+    smsRegistrationMessageTemplate?: string;
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -566,6 +567,7 @@ export type OrgUpdateInfo = {
   timezone?: string;
   logo?: File;
   isApprovalRequired?: boolean;
+  smsRegistrationMessageTemplate?: string;
 };
 
 // =============================================================================
@@ -863,6 +865,7 @@ export type ApiOrgInfo = {
   distribution_account_public_key: string;
   timezone_utc_offset: string;
   is_approval_required: boolean;
+  sms_registration_message_template?: string;
 };
 
 export type ApiStellarAccountBalance = {

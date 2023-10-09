@@ -8,6 +8,7 @@ import { AnyObject } from "types";
 
 type FetchApiOptions = {
   withoutAuth?: boolean;
+  omitContentType?: boolean;
 };
 
 export const fetchApi = async (
@@ -39,8 +40,13 @@ export const fetchApi = async (
     config.headers = {
       ...config.headers,
       Authorization: `Bearer ${token}`,
-      "Content-Type":
-        (config?.headers as AnyObject)?.["Content-Type"] ?? "application/json",
+      ...(!options?.omitContentType
+        ? {
+            "Content-Type":
+              (config?.headers as AnyObject)?.["Content-Type"] ??
+              "application/json",
+          }
+        : {}),
     };
   }
 
