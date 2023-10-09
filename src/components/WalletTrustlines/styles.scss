@@ -3,7 +3,6 @@
 .WalletTrustlines {
   &__asset {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     gap: pxToRem(16px);
     border: 1px solid var(--color-gray-30);
