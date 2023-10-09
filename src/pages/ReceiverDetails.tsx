@@ -11,7 +11,11 @@ import {
 } from "@stellar/design-system";
 
 import { AppDispatch } from "store";
-import { getReceiverDetailsAction } from "store/ducks/receiverDetails";
+import {
+  getReceiverDetailsAction,
+  resetRetryStatusAction,
+  retryInvitationSMSAction,
+} from "store/ducks/receiverDetails";
 import {
   getReceiverPaymentsAction,
   getReceiverPaymentsWithParamsAction,
@@ -28,6 +32,7 @@ import { PaymentsTable } from "components/PaymentsTable";
 import { Pagination } from "components/Pagination";
 import { ReceiverWalletBalance } from "components/ReceiverWalletBalance";
 import { ReceiverWalletHistory } from "components/ReceiverWalletHistory";
+import { NotificationWithButtons } from "components/NotificationWithButtons";
 
 import { number, percent } from "helpers/formatIntlNumber";
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
@@ -123,6 +128,10 @@ export const ReceiverDetails = () => {
 
     setCurrentPage(newPage);
     handlePageChange(newPage);
+  };
+
+  const handleRetryInvitation = (receiverWalletId: string) => {
+    dispatch(retryInvitationSMSAction({ receiverWalletId }));
   };
 
   const setCardTemplateRows = (rows: number) => {
@@ -256,28 +265,76 @@ export const ReceiverDetails = () => {
   const renderWallets = () => {
     return (
       <div className="ReceiverDetails__wallets">
-        <div className="ReceiverDetails__wallets__dropdown">
-          <Select
-            fieldSize="sm"
-            id="receiver-wallets"
-            value={selectedWallet?.id}
-            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-              setSelectedWallet(
-                receiverDetails.wallets.find(
-                  (w) => w.id === event.currentTarget.value,
-                ),
-              )
-            }
+        {receiverDetails.retryInvitationStatus === "SUCCESS" && (
+          <NotificationWithButtons
+            variant="success"
+            title="SMS invitation sent successfully!"
+            buttons={[
+              {
+                label: "Dismiss",
+                onClick: () => {
+                  dispatch(resetRetryStatusAction());
+                },
+              },
+            ]}
           >
-            {receiverDetails.wallets.map((w) => (
-              <option key={w.id} value={w.id}>
-                {renderWalletOptionText(w)}
-              </option>
-            ))}
-          </Select>
+            {" "}
+          </NotificationWithButtons>
+        )}
+        {receiverDetails.retryInvitationStatus === "ERROR" && (
+          <NotificationWithButtons
+            variant="error"
+            title="Error"
+            buttons={[
+              {
+                label: "Dismiss",
+                onClick: () => {
+                  dispatch(resetRetryStatusAction());
+                },
+              },
+            ]}
+          >
+            {receiverDetails.errorString}
+          </NotificationWithButtons>
+        )}
+        <div className="ReceiverDetails__wallets__row">
+          <div className="ReceiverDetails__wallets__dropdown">
+            <Select
+              fieldSize="sm"
+              id="receiver-wallets"
+              value={selectedWallet?.id}
+              onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                setSelectedWallet(
+                  receiverDetails.wallets.find(
+                    (w) => w.id === event.currentTarget.value,
+                  ),
+                )
+              }
+            >
+              {receiverDetails.wallets.map((w) => (
+                <option key={w.id} value={w.id}>
+                  {renderWalletOptionText(w)}
+                </option>
+              ))}
+            </Select>
 
-          <div className="ReceiverDetails__wallets__subtitle">
-            {renderTitle(receiverDetails.wallets.length, "wallet", "wallets")}
+            <div className="ReceiverDetails__wallets__subtitle">
+              {renderTitle(receiverDetails.wallets.length, "wallet", "wallets")}
+            </div>
+          </div>
+
+          <div>
+            <Button
+              variant="secondary"
+              size="xs"
+              type="reset"
+              onClick={(e) => {
+                e.preventDefault();
+                handleRetryInvitation(selectedWallet?.id || "");
+              }}
+            >
+              Retry Invitation SMS
+            </Button>
           </div>
         </div>
 
@@ -422,7 +479,10 @@ export const ReceiverDetails = () => {
   };
 
   const renderContent = () => {
-    if (receiverDetails.errorString) {
+    if (
+      receiverDetails.errorString &&
+      receiverDetails.retryInvitationStatus !== "ERROR"
+    ) {
       return (
         <Notification variant="error" title="Error">
           {receiverDetails.errorString}

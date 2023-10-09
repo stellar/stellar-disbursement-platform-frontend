@@ -35,9 +35,14 @@ export const formatDisbursement = (
     name: disbursement.wallet.name,
   },
   fileName: disbursement.file_name,
-  statusHistory: disbursement.status_history.map((h) => ({
-    status: h.status,
-    timestamp: h.timestamp,
-    userId: h.user_id,
-  })),
+  statusHistory: disbursement.status_history
+    .sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    )
+    .map((h) => ({
+      status: h.status,
+      timestamp: h.timestamp,
+      userId: h.user_id,
+    })),
 });

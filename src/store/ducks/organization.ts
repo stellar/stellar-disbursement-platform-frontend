@@ -159,6 +159,8 @@ const organizationSlice = createSlice({
           action.payload.distribution_account_public_key,
         timezoneUtcOffset: action.payload.timezone_utc_offset,
         isApprovalRequired: action.payload.is_approval_required,
+        smsRegistrationMessageTemplate:
+          action.payload.sms_registration_message_template,
       };
       state.status = "SUCCESS";
     });
