@@ -13,6 +13,7 @@
 
     &__info {
       display: flex;
+      flex-direction: column;
       gap: pxToRem(8px);
       align-items: center;
       font-size: pxToRem(14px);
@@ -22,6 +23,7 @@
 
       span {
         color: var(--color-gray-60);
+        font-size: pxToRem(12px);
       }
     }
   }
