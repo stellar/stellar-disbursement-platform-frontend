@@ -128,30 +128,6 @@ export const DisbursementDetails = () => {
     );
   };
 
-  const handlePageChange = (currentPage: number) => {
-    dispatch(getDisbursementReceiversAction({ page: currentPage.toString() }));
-  };
-
-  const handleNextPage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const newPage = currentPage + 1;
-
-    setCurrentPage(newPage);
-    handlePageChange(newPage);
-  };
-
-  const handlePrevPage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const newPage = currentPage - 1;
-
-    setCurrentPage(newPage);
-    handlePageChange(newPage);
-  };
-
   const goToReceiver = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     receiverId: string,
@@ -511,13 +487,12 @@ export const DisbursementDetails = () => {
               <Pagination
                 currentPage={Number(currentPage)}
                 maxPages={Number(maxPages)}
-                onChange={(event) => {
-                  event.preventDefault();
-                  setCurrentPage(Number(event.target.value));
+                onSetPage={(page) => {
+                  setCurrentPage(page);
+                  dispatch(
+                    getDisbursementReceiversAction({ page: page.toString() }),
+                  );
                 }}
-                onBlur={handlePageChange}
-                onNext={handleNextPage}
-                onPrevious={handlePrevPage}
                 isLoading={disbursementDetails.status === "PENDING"}
               />
             </SectionHeader.Content>

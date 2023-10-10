@@ -99,37 +99,6 @@ export const ReceiverDetails = () => {
     }
   };
 
-  const handlePageChange = (currentPage: number) => {
-    if (receiverId) {
-      dispatch(
-        getReceiverPaymentsWithParamsAction({
-          receiver_id: receiverId,
-          page: currentPage.toString(),
-        }),
-      );
-    }
-  };
-
-  const handleNextPage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const newPage = currentPage + 1;
-
-    setCurrentPage(newPage);
-    handlePageChange(newPage);
-  };
-
-  const handlePrevPage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const newPage = currentPage - 1;
-
-    setCurrentPage(newPage);
-    handlePageChange(newPage);
-  };
-
   const handleRetryInvitation = (receiverWalletId: string) => {
     dispatch(retryInvitationSMSAction({ receiverWalletId }));
   };
@@ -570,13 +539,18 @@ export const ReceiverDetails = () => {
                 <Pagination
                   currentPage={Number(currentPage)}
                   maxPages={Number(maxPages)}
-                  onChange={(event) => {
-                    event.preventDefault();
-                    setCurrentPage(Number(event.target.value));
+                  onSetPage={(page) => {
+                    setCurrentPage(page);
+
+                    if (receiverId) {
+                      dispatch(
+                        getReceiverPaymentsWithParamsAction({
+                          receiver_id: receiverId,
+                          page: page.toString(),
+                        }),
+                      );
+                    }
                   }}
-                  onBlur={handlePageChange}
-                  onNext={handleNextPage}
-                  onPrevious={handlePrevPage}
                   isLoading={receiverPayments.status === "PENDING"}
                 />
               </SectionHeader.Content>
@@ -587,7 +561,7 @@ export const ReceiverDetails = () => {
             paymentItems={receiverPayments.items}
             apiError={receiverPayments.errorString}
             isFiltersSelected={undefined}
-            status={receiverPayments.status}
+            isLoading={receiverPayments.status === "PENDING"}
           />
         </div>
       </>
