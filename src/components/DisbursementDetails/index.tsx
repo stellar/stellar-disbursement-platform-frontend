@@ -85,17 +85,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     if (!wallets.status) {
       dispatch(getWalletsAction());
     }
-
-    if (!assets.status) {
-      dispatch(getAssetsByWalletAction({ wallet_id: details.wallet.id }));
-    }
-  }, [
-    dispatch,
-    assets.status,
-    countries.status,
-    wallets.status,
-    details.wallet.id,
-  ]);
+  }, [dispatch, countries.status, wallets.status, details.wallet.id]);
 
   const apiErrors = [
     countries.errorString,
@@ -169,7 +159,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             name: wallet?.name || "",
           },
         });
-        dispatch(getAssetsByWalletAction({ wallet_id: details.wallet.id }));
+        dispatch(getAssetsByWalletAction({ walletId: details.wallet.id }));
 
         break;
       case FieldId.ASSET_CODE:

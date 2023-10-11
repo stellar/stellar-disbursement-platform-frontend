@@ -32,15 +32,15 @@ export const getAssetsAction = createAsyncThunk<
 
 export const getAssetsByWalletAction = createAsyncThunk<
   ApiAsset[],
-  { wallet_id: string },
+  { walletId: string },
   { rejectValue: RejectMessage; state: RootState }
 >(
   "assets/getAssetsByWalletAction",
-  async ({ wallet_id }, { rejectWithValue, getState, dispatch }) => {
+  async ({ walletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
 
     try {
-      const assets = await getAssetsByWallet(token, wallet_id);
+      const assets = await getAssetsByWallet(token, walletId);
       // Don't show soft-deleted assets
       return assets.filter((a) => !a.deleted_at);
     } catch (error: unknown) {
