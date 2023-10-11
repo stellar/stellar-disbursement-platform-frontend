@@ -33,8 +33,9 @@ export const fetchApi = async (
 
     if (minRemaining <= 0) {
       sessionExpired();
-    } else if (minRemaining < 5) {
+    } else if (minRemaining < 1) {
       token = await refreshToken(token);
+      localStorageSessionToken.set(token);
     }
 
     config.headers = {

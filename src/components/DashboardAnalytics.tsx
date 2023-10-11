@@ -1,24 +1,21 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { Card, Notification } from "@stellar/design-system";
 import { InfoTooltip } from "components/InfoTooltip";
 import { AssetAmount } from "components/AssetAmount";
 
+import { useStatistics } from "apiQueries/useStatistics";
 import { percent } from "helpers/formatIntlNumber";
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { useRedux } from "hooks/useRedux";
-import {
-  clearStatisticsAction,
-  getStatisticsAction,
-} from "store/ducks/statistics";
-import { AppDispatch } from "store";
 
 export const DashboardAnalytics = () => {
-  const { statistics, userAccount } = useRedux("statistics", "userAccount");
-  const { stats } = statistics;
-  const dispatch: AppDispatch = useDispatch();
+  const { userAccount } = useRedux("userAccount");
 
-  const apiErrorStats = statistics.status === "ERROR" && statistics.errorString;
+  const {
+    data: stats,
+    error,
+    isLoading,
+    isFetching,
+  } = useStatistics(userAccount.isAuthenticated);
 
   const calculateRate = () => {
     if (stats?.paymentsSuccessfulCounts && stats?.paymentsTotalCount) {
@@ -28,21 +25,19 @@ export const DashboardAnalytics = () => {
     return 0;
   };
 
-  useEffect(() => {
-    if (userAccount.isAuthenticated) {
-      dispatch(getStatisticsAction());
-    }
-
-    return () => {
-      dispatch(clearStatisticsAction());
-    };
-  }, [dispatch, userAccount.isAuthenticated]);
-
-  if (apiErrorStats) {
+  if (error) {
     return (
       <Notification variant="error" title="Error">
-        {apiErrorStats}
+        {error.message}
       </Notification>
+    );
+  }
+
+  if (isLoading || isFetching) {
+    return (
+      <div className="StatCards StatCards--home">
+        <div className="Note">Loading…</div>
+      </div>
     );
   }
 
@@ -122,7 +117,10 @@ export const DashboardAnalytics = () => {
               {stats?.assets.map((a) => (
                 <div className="StatCards__card--flexCols" key={a.assetCode}>
                   <div>
-                    <AssetAmount amount={a.success || "0"} assetCode={a.assetCode} />
+                    <AssetAmount
+                      amount={a.success || "0"}
+                      assetCode={a.assetCode}
+                    />
                   </div>
                   <div>
                     <AssetAmount amount={a.average} assetCode={a.assetCode} />

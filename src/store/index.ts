@@ -20,7 +20,6 @@ import { reducer as profile } from "store/ducks/profile";
 import { reducer as receiverDetails } from "store/ducks/receiverDetails";
 import { reducer as receiverPayments } from "store/ducks/receiverPayments";
 import { reducer as receivers } from "store/ducks/receivers";
-import { reducer as statistics } from "store/ducks/statistics";
 import { reducer as userAccount } from "store/ducks/userAccount";
 import { reducer as users } from "store/ducks/users";
 import { reducer as wallets } from "store/ducks/wallets";
@@ -51,7 +50,6 @@ const reducers = combineReducers({
   receiverDetails,
   receiverPayments,
   receivers,
-  statistics,
   userAccount,
   users,
   wallets,

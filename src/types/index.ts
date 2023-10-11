@@ -114,12 +114,6 @@ export type ForgotPasswordInitialState = {
   errorExtras?: AnyObject;
 };
 
-export type StatisticsInitialState = {
-  stats: HomeStatistics | undefined;
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export type ReceiversInitialState = {
   items: Receiver[];
   status: ActionStatus | undefined;
@@ -216,7 +210,6 @@ export interface Store {
   receiverDetails: ReceiverDetailsInitialState;
   receiverPayments: ReceiverPaymentsInitialState;
   receivers: ReceiversInitialState;
-  statistics: StatisticsInitialState;
   userAccount: UserAccountInitialState;
   users: UsersInitialState;
   wallets: WalletsInitialState;
