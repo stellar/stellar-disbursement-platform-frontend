@@ -114,14 +114,6 @@ export type ForgotPasswordInitialState = {
   errorExtras?: AnyObject;
 };
 
-export type PaymentsInitialState = {
-  items: ApiPayment[];
-  status: ActionStatus | undefined;
-  pagination?: Pagination;
-  errorString?: string;
-  searchParams?: PaymentsSearchParams;
-};
-
 export type StatisticsInitialState = {
   stats: HomeStatistics | undefined;
   status: ActionStatus | undefined;
@@ -220,7 +212,6 @@ export interface Store {
   disbursements: DisbursementsInitialState;
   forgotPassword: ForgotPasswordInitialState;
   organization: OrganizationInitialState;
-  payments: PaymentsInitialState;
   profile: ProfileInitialState;
   receiverDetails: ReceiverDetailsInitialState;
   receiverPayments: ReceiverPaymentsInitialState;

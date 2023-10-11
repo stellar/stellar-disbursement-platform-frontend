@@ -6,20 +6,20 @@ import { AssetAmount } from "components/AssetAmount";
 import { PaymentStatus } from "components/PaymentStatus";
 import { Table } from "components/Table";
 import { formatDateTime } from "helpers/formatIntlDateTime";
-import { ApiPayment, ActionStatus } from "types";
+import { ApiPayment } from "types";
 
 interface PaymentsTableProps {
   paymentItems: ApiPayment[];
   apiError: string | boolean | undefined;
   isFiltersSelected: boolean | undefined;
-  status: ActionStatus | undefined;
+  isLoading: boolean;
 }
 
 export const PaymentsTable = ({
   paymentItems,
   apiError,
   isFiltersSelected,
-  status,
+  isLoading,
 }: PaymentsTableProps) => {
   const navigate = useNavigate();
 
@@ -48,7 +48,7 @@ export const PaymentsTable = ({
   }
 
   if (paymentItems?.length === 0) {
-    if (status === "PENDING") {
+    if (isLoading) {
       return <div className="Note">Loading…</div>;
     }
 
@@ -66,7 +66,7 @@ export const PaymentsTable = ({
   return (
     <div className="FiltersWithSearch">
       <Card noPadding>
-        <Table>
+        <Table isLoading={isLoading}>
           <Table.Header>
             {/* TODO: put back once ready */}
             {/* <Table.HeaderCell>
