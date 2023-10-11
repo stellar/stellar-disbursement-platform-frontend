@@ -1,4 +1,4 @@
-import { Icon } from "@stellar/design-system";
+import { Icon, Loader } from "@stellar/design-system";
 import { SortDirection } from "types";
 import "./styles.scss";
 
@@ -140,16 +140,24 @@ interface TableComponent {
 
 interface TableProps extends React.HtmlHTMLAttributes<HTMLTableElement> {
   children: JSX.Element[];
+  isLoading?: boolean;
 }
 
 export const Table: React.FC<TableProps> & TableComponent = ({
   children,
+  isLoading,
 }: TableProps) => {
   return (
-    <div className="Table-v2__container">
+    <div
+      className={[
+        "Table-v2__container",
+        isLoading ? "Table-v2__container--loading" : "",
+      ].join(" ")}
+    >
       <div className="Table-v2__wrapper">
         <table className="Table-v2">{children}</table>
       </div>
+      {isLoading ? <Loader /> : null}
     </div>
   );
 };

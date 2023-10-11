@@ -140,30 +140,6 @@ export const Receivers = () => {
     );
   };
 
-  const handlePageChange = (currentPage: number) => {
-    dispatch(getReceiversWithParamsAction({ page: currentPage.toString() }));
-  };
-
-  const handleNextPage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const newPage = currentPage + 1;
-
-    setCurrentPage(newPage);
-    handlePageChange(newPage);
-  };
-
-  const handlePrevPage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const newPage = currentPage - 1;
-
-    setCurrentPage(newPage);
-    handlePageChange(newPage);
-  };
-
   const handleReceiverClicked = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     receiverId: string,
@@ -273,13 +249,12 @@ export const Receivers = () => {
             <Pagination
               currentPage={Number(currentPage)}
               maxPages={Number(maxPages)}
-              onChange={(event) => {
-                event.preventDefault();
-                setCurrentPage(Number(event.target.value));
+              onSetPage={(page) => {
+                setCurrentPage(page);
+                dispatch(
+                  getReceiversWithParamsAction({ page: page.toString() }),
+                );
               }}
-              onBlur={handlePageChange}
-              onNext={handleNextPage}
-              onPrevious={handlePrevPage}
               isLoading={receivers.status === "PENDING"}
             />
           </SectionHeader.Content>
