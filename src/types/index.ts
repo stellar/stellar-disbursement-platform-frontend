@@ -120,14 +120,6 @@ export type StatisticsInitialState = {
   errorString?: string;
 };
 
-export type ReceiversInitialState = {
-  items: Receiver[];
-  status: ActionStatus | undefined;
-  pagination?: Pagination;
-  errorString?: string;
-  searchParams?: ReceiversSearchParams;
-};
-
 export type ReceiverDetailsInitialState = {
   id: string;
   phoneNumber: string;
@@ -215,7 +207,6 @@ export interface Store {
   profile: ProfileInitialState;
   receiverDetails: ReceiverDetailsInitialState;
   receiverPayments: ReceiverPaymentsInitialState;
-  receivers: ReceiversInitialState;
   statistics: StatisticsInitialState;
   userAccount: UserAccountInitialState;
   users: UsersInitialState;

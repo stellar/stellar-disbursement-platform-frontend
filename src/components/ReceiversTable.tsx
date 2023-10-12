@@ -3,13 +3,7 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 import { useSort } from "hooks/useSort";
 import { MultipleAmounts } from "components/MultipleAmounts";
 import { Table } from "components/Table";
-import {
-  ActionStatus,
-  Receiver,
-  ReceiversSearchParams,
-  SortByReceivers,
-  SortDirection,
-} from "types";
+import { Receiver, SortByReceivers, SortDirection } from "types";
 
 interface ReceiversTableProps {
   receiversItems: Receiver[];
@@ -17,20 +11,20 @@ interface ReceiversTableProps {
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     id: string,
   ) => void;
-  searchParams: ReceiversSearchParams | undefined;
+  searchQuery: string | undefined;
   apiError: string | boolean | undefined;
   isFiltersSelected: boolean | undefined;
-  status: ActionStatus | undefined;
+  isLoading?: boolean;
   onSort?: (sort?: SortByReceivers, direction?: SortDirection) => void;
 }
 
 export const ReceiversTable: React.FC<ReceiversTableProps> = ({
   receiversItems,
   onReceiverClicked,
-  searchParams,
+  searchQuery,
   apiError,
   isFiltersSelected,
-  status,
+  isLoading,
   onSort,
 }: ReceiversTableProps) => {
   const { sortBy, sortDir, handleSort } = useSort(onSort);
@@ -44,22 +38,22 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
   }
 
   if (receiversItems?.length === 0) {
-    if (status === "PENDING") {
+    if (isLoading) {
       return <div className="Note">Loading…</div>;
     }
 
-    if (searchParams?.q) {
+    if (searchQuery) {
       if (isFiltersSelected) {
         return (
           <div className="Note">
-            {`There are no receivers matching "${searchParams.q}" with selected filters`}
+            {`There are no receivers matching "${searchQuery}" with selected filters`}
           </div>
         );
       }
 
       return (
         <div className="Note">
-          {`There are no receivers matching "${searchParams.q}"`}
+          {`There are no receivers matching "${searchQuery}"`}
         </div>
       );
     }
@@ -78,7 +72,7 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
   return (
     <div className="FiltersWithSearch">
       <Card noPadding>
-        <Table>
+        <Table isLoading={isLoading}>
           <Table.Header>
             {/* TODO: put back once ready */}
             {/* <Table.HeaderCell width="1rem">
