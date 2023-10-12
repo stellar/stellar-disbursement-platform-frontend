@@ -12,7 +12,6 @@ import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { Routes, STELLAR_EXPERT_URL } from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { shortenString } from "helpers/shortenString";
-import { formatPaymentReceiver } from "helpers/formatPaymentReceiver";
 import { formatPaymentDetails } from "helpers/formatPaymentDetails";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
@@ -23,6 +22,7 @@ import { ReceiverStatus } from "components/ReceiverStatus";
 import { AssetAmount } from "components/AssetAmount";
 import { MultipleAmounts } from "components/MultipleAmounts";
 import { RetryFailedPayment } from "components/RetryFailedPayment";
+import { PaymentDetailsReceiver } from "types";
 
 // TODO: handle loading/fetching state (create component that handles it
 // everywhere)
@@ -33,14 +33,13 @@ export const PaymentDetails = () => {
   const { data: payment, error: paymentError } =
     usePaymentsPaymentId(paymentId);
 
-  const { data: receiver } = useReceiversReceiverId(
-    payment?.receiver_wallet?.receiver?.id,
-  );
-
   const formattedPayment = payment ? formatPaymentDetails(payment) : null;
-  const formattedReceiver = receiver
-    ? formatPaymentReceiver(receiver, formattedPayment?.receiverWalletId)
-    : null;
+
+  const { data: receiver } = useReceiversReceiverId<PaymentDetailsReceiver>({
+    receiverId: payment?.receiver_wallet?.receiver?.id,
+    dataFormat: "paymentReceiver",
+    receiverWalletId: formattedPayment?.receiverWalletId,
+  });
 
   const navigate = useNavigate();
 
@@ -250,24 +249,24 @@ export const PaymentDetails = () => {
                 </Table.BodyCell> */}
                     <Table.BodyCell
                       width="7.5rem"
-                      title={formattedReceiver?.phoneNumber}
+                      title={receiver?.phoneNumber}
                     >
-                      {formattedReceiver?.phoneNumber ? (
+                      {receiver?.phoneNumber ? (
                         <Link
                           onClick={(event) =>
-                            goToReceiverDetails(event, formattedReceiver.id)
+                            goToReceiverDetails(event, receiver.id)
                           }
                         >
-                          {formattedReceiver.phoneNumber}
+                          {receiver.phoneNumber}
                         </Link>
                       ) : (
                         "-"
                       )}
                     </Table.BodyCell>
                     <Table.BodyCell width="7.5rem" allowOverflow>
-                      {formattedReceiver?.walletAddress ? (
+                      {receiver?.walletAddress ? (
                         <Profile
-                          publicAddress={formattedReceiver.walletAddress}
+                          publicAddress={receiver.walletAddress}
                           size="sm"
                           isCopy
                           isShort
@@ -278,29 +277,29 @@ export const PaymentDetails = () => {
                       )}
                     </Table.BodyCell>
                     <Table.BodyCell width="6rem">
-                      {formattedReceiver?.provider || "-"}
+                      {receiver?.provider || "-"}
                     </Table.BodyCell>
                     <Table.BodyCell width="5.5rem" textAlign="right">
-                      {formattedReceiver?.totalPaymentsCount || "-"}
+                      {receiver?.totalPaymentsCount || "-"}
                     </Table.BodyCell>
                     <Table.BodyCell width="5.5rem" textAlign="right">
-                      {formattedReceiver?.successfulPaymentsCount || "-"}
+                      {receiver?.successfulPaymentsCount || "-"}
                     </Table.BodyCell>
                     <Table.BodyCell width="9.375rem">
                       <span className="Table-v2__cell--secondary">
-                        {formattedReceiver?.createdAt
-                          ? formatDateTime(formattedReceiver.createdAt)
+                        {receiver?.createdAt
+                          ? formatDateTime(receiver.createdAt)
                           : "-"}
                       </span>
                     </Table.BodyCell>
                     <Table.BodyCell textAlign="right">
                       <MultipleAmounts
-                        amounts={formattedReceiver?.amountsReceived || []}
+                        amounts={receiver?.amountsReceived || []}
                       />
                     </Table.BodyCell>
                     <Table.BodyCell textAlign="right">
-                      {formattedReceiver?.status ? (
-                        <ReceiverStatus status={formattedReceiver.status} />
+                      {receiver?.status ? (
+                        <ReceiverStatus status={receiver.status} />
                       ) : (
                         "-"
                       )}
