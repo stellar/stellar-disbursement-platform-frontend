@@ -1,9 +1,12 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/settings";
-import { ApiStatistics } from "types";
+import { ApiAsset } from "types";
 
-export const getStatistics = async (token: string): Promise<ApiStatistics> => {
-  const response = await fetch(`${API_URL}/statistics`, {
+export const getAssetsByWallet = async (
+  token: string,
+  walletId: string,
+): Promise<ApiAsset[]> => {
+  const response = await fetch(`${API_URL}/assets?wallet=${walletId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

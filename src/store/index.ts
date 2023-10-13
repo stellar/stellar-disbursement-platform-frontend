@@ -16,12 +16,9 @@ import { reducer as disbursementDrafts } from "store/ducks/disbursementDrafts";
 import { reducer as disbursements } from "store/ducks/disbursements";
 import { reducer as forgotPassword } from "store/ducks/forgotPassword";
 import { reducer as organization } from "store/ducks/organization";
-import { reducer as payments } from "store/ducks/payments";
 import { reducer as profile } from "store/ducks/profile";
 import { reducer as receiverDetails } from "store/ducks/receiverDetails";
 import { reducer as receiverPayments } from "store/ducks/receiverPayments";
-import { reducer as receivers } from "store/ducks/receivers";
-import { reducer as statistics } from "store/ducks/statistics";
 import { reducer as userAccount } from "store/ducks/userAccount";
 import { reducer as users } from "store/ducks/users";
 import { reducer as wallets } from "store/ducks/wallets";
@@ -48,12 +45,9 @@ const reducers = combineReducers({
   disbursements,
   forgotPassword,
   organization,
-  payments,
   profile,
   receiverDetails,
   receiverPayments,
-  receivers,
-  statistics,
   userAccount,
   users,
   wallets,

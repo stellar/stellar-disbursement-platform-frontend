@@ -475,6 +475,10 @@ body {
     align-items: center;
     justify-content: flex-end;
     gap: pxToRem(8px);
+
+    &--spaceBetween {
+      justify-content: space-between;
+    }
   }
 
   &__dropdownMenu {
