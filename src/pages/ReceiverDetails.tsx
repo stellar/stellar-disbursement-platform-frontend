@@ -52,6 +52,7 @@ export const ReceiverDetails = () => {
   const {
     isSuccess: isSmsRetrySuccess,
     isFetching: isSmsRetryFetching,
+    isError: isSmsRetryError,
     error: smsRetryError,
     refetch: retrySmsInvite,
   } = useReceiverWalletInviteSmsRetry(selectedWallet?.id);
@@ -65,6 +66,12 @@ export const ReceiverDetails = () => {
 
   const stats = receiverDetails?.stats;
   const defaultWalletId = receiverDetails?.wallets?.[0]?.id;
+
+  const resetSmsRetry = () => {
+    queryClient.resetQueries({
+      queryKey: ["receivers", "wallets", "sms", "retry"],
+    });
+  };
 
   useEffect(() => {
     if (isReceiverDetailsSuccess) {
@@ -82,18 +89,22 @@ export const ReceiverDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedWalletId]);
 
+  useEffect(() => {
+    return () => {
+      if (isSmsRetrySuccess || isSmsRetryError) {
+        resetSmsRetry();
+      }
+    };
+    // Don't need to include queryClient.resetQueries
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSmsRetryError, isSmsRetrySuccess]);
+
   const calculateRate = () => {
     if (stats?.paymentsSuccessfulCount && stats?.paymentsTotalCount) {
       return Number(stats.paymentsSuccessfulCount / stats.paymentsTotalCount);
     }
 
     return 0;
-  };
-
-  const resetSmsRetry = () => {
-    queryClient.resetQueries({
-      queryKey: ["receivers", "wallets", "sms", "retry"],
-    });
   };
 
   const setCardTemplateRows = (rows: number) => {
