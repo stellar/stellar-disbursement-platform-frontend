@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Card,
   Heading,
@@ -10,65 +10,94 @@ import {
   Button,
 } from "@stellar/design-system";
 
-import { AppDispatch } from "store";
-import {
-  getReceiverDetailsAction,
-  resetRetryStatusAction,
-  retryInvitationSMSAction,
-} from "store/ducks/receiverDetails";
-import {
-  getReceiverPaymentsAction,
-  getReceiverPaymentsWithParamsAction,
-} from "store/ducks/receiverPayments";
-import { useRedux } from "hooks/useRedux";
-import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
+import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
 import { SectionHeader } from "components/SectionHeader";
 import { CopyWithIcon } from "components/CopyWithIcon";
 import { AssetAmount } from "components/AssetAmount";
 import { InfoTooltip } from "components/InfoTooltip";
-import { PaymentsTable } from "components/PaymentsTable";
-import { Pagination } from "components/Pagination";
 import { ReceiverWalletBalance } from "components/ReceiverWalletBalance";
 import { ReceiverWalletHistory } from "components/ReceiverWalletHistory";
+import { LoadingContent } from "components/LoadingContent";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { ReceiverPayments } from "components/ReceiverPayments";
 
-import { number, percent } from "helpers/formatIntlNumber";
+import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
+import { useReceiverWalletInviteSmsRetry } from "apiQueries/useReceiverWalletInviteSmsRetry";
+
+import { percent } from "helpers/formatIntlNumber";
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { shortenAccountKey } from "helpers/shortenAccountKey";
-import { ReceiverWallet } from "types";
+import { renderTextWithCount } from "helpers/renderTextWithCount";
+
+import { ReceiverWallet, ReceiverDetails as ReceiverDetailsType } from "types";
 
 export const ReceiverDetails = () => {
   const { id: receiverId } = useParams();
 
-  const { receiverDetails, receiverPayments } = useRedux(
-    "receiverDetails",
-    "receiverPayments",
-  );
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(20);
   const [selectedWallet, setSelectedWallet] = useState<ReceiverWallet>();
 
-  const dispatch: AppDispatch = useDispatch();
+  const {
+    data: receiverDetails,
+    isSuccess: isReceiverDetailsSuccess,
+    isLoading: isReceiverDetailsLoading,
+    error: receiverDetailsError,
+  } = useReceiversReceiverId<ReceiverDetailsType>({
+    receiverId,
+    dataFormat: "receiver",
+  });
+
+  const {
+    isSuccess: isSmsRetrySuccess,
+    isFetching: isSmsRetryFetching,
+    isError: isSmsRetryError,
+    error: smsRetryError,
+    refetch: retrySmsInvite,
+  } = useReceiverWalletInviteSmsRetry(selectedWallet?.id);
+
+  const [selectedWalletId, setSelectedWalletId] = useState<string | undefined>(
+    receiverDetails?.wallets?.[0]?.id,
+  );
+
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { stats } = receiverDetails;
-  const maxPages = receiverPayments.pagination?.pages || 1;
-  const defaultWallet = receiverDetails.wallets?.[0];
+  const stats = receiverDetails?.stats;
+  const defaultWalletId = receiverDetails?.wallets?.[0]?.id;
+
+  const resetSmsRetry = () => {
+    queryClient.resetQueries({
+      queryKey: ["receivers", "wallets", "sms", "retry"],
+    });
+  };
 
   useEffect(() => {
-    if (receiverId) {
-      dispatch(getReceiverDetailsAction(receiverId));
-      dispatch(getReceiverPaymentsAction(receiverId));
+    if (isReceiverDetailsSuccess) {
+      setSelectedWalletId(defaultWalletId);
     }
-  }, [receiverId, dispatch]);
+  }, [defaultWalletId, isReceiverDetailsSuccess]);
 
   useEffect(() => {
-    setSelectedWallet(defaultWallet);
-  }, [defaultWallet]);
+    if (selectedWalletId) {
+      setSelectedWallet(
+        receiverDetails?.wallets.find((w) => w.id === selectedWalletId),
+      );
+    }
+    // We don't want to track receiverDetails here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedWalletId]);
+
+  useEffect(() => {
+    return () => {
+      if (isSmsRetrySuccess || isSmsRetryError) {
+        resetSmsRetry();
+      }
+    };
+    // Don't need to include queryClient.resetQueries
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSmsRetryError, isSmsRetrySuccess]);
 
   const calculateRate = () => {
     if (stats?.paymentsSuccessfulCount && stats?.paymentsTotalCount) {
@@ -78,31 +107,6 @@ export const ReceiverDetails = () => {
     return 0;
   };
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    event.preventDefault();
-
-    const pageLimit = Number(event.target.value);
-    setPageLimit(pageLimit);
-    setCurrentPage(1);
-
-    if (receiverId) {
-      // Need to make sure we'll be loading page 1
-      dispatch(
-        getReceiverPaymentsWithParamsAction({
-          receiver_id: receiverId,
-          page_limit: pageLimit.toString(),
-          page: "1",
-        }),
-      );
-    }
-  };
-
-  const handleRetryInvitation = (receiverWalletId: string) => {
-    dispatch(retryInvitationSMSAction({ receiverWalletId }));
-  };
-
   const setCardTemplateRows = (rows: number) => {
     return {
       "--StatCard-template-rows": rows,
@@ -110,6 +114,10 @@ export const ReceiverDetails = () => {
   };
 
   const renderInfoCards = () => {
+    if (!receiverDetails) {
+      return null;
+    }
+
     return (
       <div className="StatCards StatCards--disbursementDetails">
         <Card>
@@ -209,20 +217,6 @@ export const ReceiverDetails = () => {
     );
   };
 
-  const renderTitle = (
-    itemCount: number,
-    singularText: string,
-    pluralText: string,
-  ) => {
-    if (itemCount === 1) {
-      return `1 ${singularText}`;
-    } else if (itemCount > 1) {
-      return `${number.format(itemCount)} ${pluralText}`;
-    }
-
-    return pluralText;
-  };
-
   const renderWalletOptionText = (wallet: ReceiverWallet) => {
     return `${wallet.provider} (${
       wallet.stellarAddress
@@ -232,9 +226,13 @@ export const ReceiverDetails = () => {
   };
 
   const renderWallets = () => {
+    if (!receiverDetails) {
+      return null;
+    }
+
     return (
       <div className="ReceiverDetails__wallets">
-        {receiverDetails.retryInvitationStatus === "SUCCESS" && (
+        {isSmsRetrySuccess && (
           <NotificationWithButtons
             variant="success"
             title="SMS invitation sent successfully!"
@@ -242,7 +240,7 @@ export const ReceiverDetails = () => {
               {
                 label: "Dismiss",
                 onClick: () => {
-                  dispatch(resetRetryStatusAction());
+                  resetSmsRetry();
                 },
               },
             ]}
@@ -250,7 +248,7 @@ export const ReceiverDetails = () => {
             {" "}
           </NotificationWithButtons>
         )}
-        {receiverDetails.retryInvitationStatus === "ERROR" && (
+        {smsRetryError && (
           <NotificationWithButtons
             variant="error"
             title="Error"
@@ -258,12 +256,12 @@ export const ReceiverDetails = () => {
               {
                 label: "Dismiss",
                 onClick: () => {
-                  dispatch(resetRetryStatusAction());
+                  resetSmsRetry();
                 },
               },
             ]}
           >
-            {receiverDetails.errorString}
+            {smsRetryError.message}
           </NotificationWithButtons>
         )}
         <div className="ReceiverDetails__wallets__row">
@@ -271,13 +269,9 @@ export const ReceiverDetails = () => {
             <Select
               fieldSize="sm"
               id="receiver-wallets"
-              value={selectedWallet?.id}
+              value={selectedWalletId}
               onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-                setSelectedWallet(
-                  receiverDetails.wallets.find(
-                    (w) => w.id === event.currentTarget.value,
-                  ),
-                )
+                setSelectedWalletId(event.currentTarget.value)
               }
             >
               {receiverDetails.wallets.map((w) => (
@@ -288,7 +282,11 @@ export const ReceiverDetails = () => {
             </Select>
 
             <div className="ReceiverDetails__wallets__subtitle">
-              {renderTitle(receiverDetails.wallets.length, "wallet", "wallets")}
+              {renderTextWithCount(
+                receiverDetails.wallets.length,
+                "wallet",
+                "wallets",
+              )}
             </div>
           </div>
 
@@ -296,13 +294,17 @@ export const ReceiverDetails = () => {
             <Button
               variant="secondary"
               size="xs"
-              type="reset"
               onClick={(e) => {
                 e.preventDefault();
-                handleRetryInvitation(selectedWallet?.id || "");
+                retrySmsInvite();
               }}
+              isLoading={isSmsRetryFetching}
+              disabled={Boolean(selectedWallet?.stellarAddress)}
+              {...(selectedWallet?.stellarAddress
+                ? { title: "This wallet has already been registered" }
+                : {})}
             >
-              Retry Invitation SMS
+              Retry invitation SMS
             </Button>
           </div>
         </div>
@@ -448,13 +450,14 @@ export const ReceiverDetails = () => {
   };
 
   const renderContent = () => {
-    if (
-      receiverDetails.errorString &&
-      receiverDetails.retryInvitationStatus !== "ERROR"
-    ) {
+    if (isReceiverDetailsLoading) {
+      return <LoadingContent />;
+    }
+
+    if (receiverDetailsError || !receiverDetails) {
       return (
         <Notification variant="error" title="Error">
-          {receiverDetails.errorString}
+          <div>{receiverDetailsError?.message || GENERIC_ERROR_MESSAGE}</div>
         </Notification>
       );
     }
@@ -509,61 +512,7 @@ export const ReceiverDetails = () => {
           {renderWallets()}
         </div>
 
-        <div className="DetailsSection">
-          <SectionHeader>
-            <SectionHeader.Row>
-              <SectionHeader.Content>
-                <Heading as="h3" size="sm">
-                  {renderTitle(
-                    receiverPayments.pagination?.total || 0,
-                    "Payment",
-                    "Payments",
-                  )}
-                </Heading>
-              </SectionHeader.Content>
-
-              <SectionHeader.Content align="right">
-                <div className="FiltersWithSearch__pageLimit">
-                  <Select
-                    id="receiver-payments-page-limit"
-                    fieldSize="sm"
-                    value={pageLimit}
-                    onChange={handlePageLimitChange}
-                  >
-                    {PAGE_LIMIT_OPTIONS.map((p) => (
-                      <option key={p} value={p}>{`Show ${p} results`}</option>
-                    ))}
-                  </Select>
-                </div>
-
-                <Pagination
-                  currentPage={Number(currentPage)}
-                  maxPages={Number(maxPages)}
-                  onSetPage={(page) => {
-                    setCurrentPage(page);
-
-                    if (receiverId) {
-                      dispatch(
-                        getReceiverPaymentsWithParamsAction({
-                          receiver_id: receiverId,
-                          page: page.toString(),
-                        }),
-                      );
-                    }
-                  }}
-                  isLoading={receiverPayments.status === "PENDING"}
-                />
-              </SectionHeader.Content>
-            </SectionHeader.Row>
-          </SectionHeader>
-
-          <PaymentsTable
-            paymentItems={receiverPayments.items}
-            apiError={receiverPayments.errorString}
-            isFiltersSelected={undefined}
-            isLoading={receiverPayments.status === "PENDING"}
-          />
-        </div>
+        <ReceiverPayments receiverId={receiverId} />
       </>
     );
   };

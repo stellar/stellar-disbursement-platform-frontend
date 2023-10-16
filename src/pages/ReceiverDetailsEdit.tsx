@@ -184,8 +184,9 @@ export const ReceiverDetailsEdit = () => {
             <Card>
               <div className="CardStack__card">
                 <div className="CardStack__title">
-                  {/* TODO: info text */}
-                  <InfoTooltip infoText="">Receiver info</InfoTooltip>
+                  <InfoTooltip infoText="Information unique to this individual, such as their email address, the ID you use to track them, and verification information">
+                    Receiver info
+                  </InfoTooltip>
                 </div>
 
                 <div className="CardStack__body">
