@@ -40,8 +40,8 @@ export const SettingsEnableSmsRetry = () => {
   }, [dispatch, isSuccess]);
 
   const handleToggleChange = () => {
-    // Default interval is 3 days
-    mutateAsync(organization.data.smsResendInterval === 0 ? 3 : 0);
+    // Default interval is 2 days
+    mutateAsync(organization.data.smsResendInterval === 0 ? 2 : 0);
   };
 
   const handleSmsRetrySubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -73,7 +73,12 @@ export const SettingsEnableSmsRetry = () => {
               />
             </div>
           </div>
-          <div className="Note">TODO: sms retry info text</div>
+          <div className="Note">
+            Select this option to automatically re-send the SMS invitation to
+            unregistered receivers after a certain time period. They will
+            receive the same message again. The message will only go to
+            receivers who have not registered their wallet.
+          </div>
         </div>
 
         {organization.data.smsResendInterval ? (
