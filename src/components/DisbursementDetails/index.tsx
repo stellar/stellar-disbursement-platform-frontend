@@ -260,11 +260,13 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           disabled={wallets.status === "PENDING"}
         >
           {renderDropdownDefault(wallets.status === "PENDING")}
-          {wallets.items.map((wallet: ApiWallet) => (
-            <option key={wallet.id} value={wallet.id}>
-              {wallet.name}
-            </option>
-          ))}
+          {wallets.items
+            .filter((wallet) => wallet.enabled)
+            .map((wallet: ApiWallet) => (
+              <option key={wallet.id} value={wallet.id}>
+                {wallet.name}
+              </option>
+            ))}
         </Select>
 
         <Select
