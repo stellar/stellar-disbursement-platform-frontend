@@ -8,6 +8,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [1.0.0](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0-rc2...1.0.0)
+
+### Added
+
+- Add a new screen to manage Wallet Providers.
+  [#14](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/14)
+- Add re-send SMS invitation functionality.
+  [#18](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/18)
+- Customize receiver wallet invite SMS message.
+  [#17](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/17)
+- Display asset issuer for Trustlines in the Distribution account screen
+  [#20](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/20)
+
+### Changed
+
+- Change payment status history sort order to descending order.
+  [#15](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/15)
+- Filter assets based on wallet selection in New Disbursement screen.
+  [#24](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/24)
+- Only show enabled wallets in the New Disbursement screen.
+  [#29](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/29)
+
+### Security
+
+- Add warning message about Distribution account funds
+  [#11](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/11)
+
 ## [1.0.0.rc2](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0-rc1...1.0.0-rc2)
 
 ### Added
