@@ -117,7 +117,7 @@ export const SetNewPassword = () => {
             <div className="Note">
               New password must be:
               <ul>
-                <li>at least 8 characters long,</li>
+                <li>at least 12 characters long,</li>
                 <li>
                   a combination of uppercase letters, lowercase letters,
                   numbers, and symbols.
