@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GitInfo from "generated/gitInfo";
 
 import { store } from "store";
@@ -26,7 +27,8 @@ import { ReceiverDetails } from "pages/ReceiverDetails";
 import { ReceiverDetailsEdit } from "pages/ReceiverDetailsEdit";
 import { PaymentDetails } from "pages/PaymentDetails";
 import { Payments } from "pages/Payments";
-import { Wallets } from "pages/Wallets";
+import { DistributionAccount } from "pages/DistributionAccount";
+import { WalletProviders } from "pages/WalletProviders";
 import { Analytics } from "pages/Analytics";
 import { Profile } from "pages/Profile";
 import { Settings } from "pages/Settings";
@@ -225,13 +227,24 @@ export const App = () => {
                 </PrivateRoute>
               }
             />
-            {/* Wallets */}
+            {/* Distribution Account */}
             <Route
-              path={Routes.WALLETS}
+              path={Routes.DISTRIBUTION_ACCOUNT}
               element={
                 <PrivateRoute>
                   <InnerPage isNarrow>
-                    <Wallets />
+                    <DistributionAccount />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            {/* Wallet Providers */}
+            <Route
+              path={Routes.WALLET_PROVIDERS}
+              element={
+                <PrivateRoute>
+                  <InnerPage isNarrow>
+                    <WalletProviders />
                   </InnerPage>
                 </PrivateRoute>
               }
@@ -305,6 +318,7 @@ export const App = () => {
             <Route path="/signin-oidc" element={<SigninOidc />} />
           </RouterRoutes>
         </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </Provider>
   );

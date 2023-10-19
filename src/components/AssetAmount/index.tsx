@@ -6,7 +6,7 @@ import "./styles.scss";
 
 interface AssetAmountProps {
   amount?: string;
-  assetCode: string;
+  assetCode?: string;
   fallback?: string;
   showIcon?: boolean;
 }
@@ -41,7 +41,9 @@ export const AssetAmount: React.FC<AssetAmountProps> = ({
   return (
     <span className="AssetAmount">
       {decimal.format(Number(amount))}
-      <span className="AssetAmount__code">{assetCode}</span>
+      {assetCode ? (
+        <span className="AssetAmount__code">{assetCode}</span>
+      ) : null}
       {showIcon ? (
         <span className="AssetAmount__icon">
           {foundAsset ? (

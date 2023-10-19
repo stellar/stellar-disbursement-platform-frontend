@@ -16,7 +16,7 @@ import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
 import { AppDispatch } from "store";
 import { getStellarAccountAction } from "store/ducks/organization";
 
-export const Wallets = () => {
+export const DistributionAccount = () => {
   const { organization } = useRedux("organization");
   const { assetBalances, distributionAccountPublicKey } = organization.data;
 
@@ -51,8 +51,10 @@ export const Wallets = () => {
             digital assets to the public key above.
           </div>
           <div className="Note Note--small">
-            Make sure your account has a trustline to the asset before you send
-            funds.
+            It is strongly recommended that you only fund the distribution
+            account when you are ready to send disbursements. It is not meant to
+            be a long-term store of value, as any SDP user with permission to
+            send disbursements can trigger payments from this account.
           </div>
         </div>
 
@@ -77,7 +79,7 @@ export const Wallets = () => {
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              Wallets
+              Distribution Account
             </Heading>
           </SectionHeader.Content>
         </SectionHeader.Row>

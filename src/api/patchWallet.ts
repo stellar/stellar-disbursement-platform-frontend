@@ -1,17 +1,20 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/settings";
-import { ApiPayment } from "types";
 
-export const getPaymentDetails = async (
+export const patchWallet = async (
   token: string,
-  paymentId: string,
-): Promise<ApiPayment> => {
-  const response = await fetch(`${API_URL}/payments/${paymentId}`, {
-    method: "GET",
+  walletId: string,
+  enabled: boolean,
+): Promise<{ message: string }> => {
+  const response = await fetch(`${API_URL}/wallets/${walletId}`, {
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({
+      enabled,
+    }),
   });
 
   return handleApiResponse(response);

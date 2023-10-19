@@ -76,6 +76,9 @@ export type WalletsInitialState = {
   items: ApiWallet[];
   status: ActionStatus | undefined;
   errorString?: string;
+  modalVisibility: boolean;
+  modalWalletId: string;
+  modalWalletEnabled: boolean;
 };
 
 export type DisbursementDraftsInitialState = {
@@ -111,42 +114,12 @@ export type ForgotPasswordInitialState = {
   errorExtras?: AnyObject;
 };
 
-export type PaymentsInitialState = {
-  items: ApiPayment[];
-  status: ActionStatus | undefined;
-  pagination?: Pagination;
-  errorString?: string;
-  searchParams?: PaymentsSearchParams;
-};
-
-export type PaymentDetailsInitialState = {
-  details: PaymentDetailsInfo;
-  statusHistory: PaymentDetailsStatusHistoryItem[];
-  receiver?: PaymentDetailsReceiver;
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
-export type StatisticsInitialState = {
-  stats: HomeStatistics | undefined;
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
-export type ReceiversInitialState = {
-  items: Receiver[];
-  status: ActionStatus | undefined;
-  pagination?: Pagination;
-  errorString?: string;
-  searchParams?: ReceiversSearchParams;
-};
-
 export type ReceiverDetailsInitialState = {
   id: string;
   phoneNumber: string;
   email?: string;
-  assetCode: string;
-  totalReceived: string;
+  assetCode?: string;
+  totalReceived?: string;
   orgId: string;
   stats: {
     paymentsTotalCount: number;
@@ -158,6 +131,7 @@ export type ReceiverDetailsInitialState = {
   verifications: ReceiverVerification[];
   status: ActionStatus | undefined;
   updateStatus: ActionStatus | undefined;
+  retryInvitationStatus: ActionStatus | undefined;
   errorString?: string;
 };
 
@@ -177,6 +151,8 @@ export type OrganizationInitialState = {
     timezoneUtcOffset: string;
     assetBalances?: StellarAccountInfo[];
     isApprovalRequired: boolean | undefined;
+    smsResendInterval: number;
+    smsRegistrationMessageTemplate?: string;
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -223,13 +199,9 @@ export interface Store {
   disbursements: DisbursementsInitialState;
   forgotPassword: ForgotPasswordInitialState;
   organization: OrganizationInitialState;
-  paymentDetails: PaymentDetailsInitialState;
-  payments: PaymentsInitialState;
   profile: ProfileInitialState;
   receiverDetails: ReceiverDetailsInitialState;
   receiverPayments: ReceiverPaymentsInitialState;
-  receivers: ReceiversInitialState;
-  statistics: StatisticsInitialState;
   userAccount: UserAccountInitialState;
   users: UsersInitialState;
   wallets: WalletsInitialState;
@@ -243,6 +215,11 @@ export type StoreKey = keyof Store;
 export type AnyObject = {
   [key: string]: any;
 };
+
+export interface AppError {
+  message: string;
+  extras?: AnyObject;
+}
 
 export type Pagination = {
   next?: string;
@@ -418,19 +395,6 @@ export type PaymentDetailsStatusHistoryItem = {
   status: PaymentStatus;
 };
 
-export type PaymentDetailsInfo = {
-  id: string;
-  createdAt: string;
-  disbursementName: string;
-  disbursementId: string;
-  receiverId?: string;
-  receiverWalletId?: string;
-  transactionId: string;
-  senderAddress: string;
-  totalAmount: string;
-  assetCode: string;
-};
-
 export type PaymentDetailsReceiver = {
   id: string;
   phoneNumber: string;
@@ -439,8 +403,22 @@ export type PaymentDetailsReceiver = {
   totalPaymentsCount: number;
   successfulPaymentsCount: number;
   createdAt: string;
-  amountsReceived: AmountReceived[];
+  amountsReceived?: AmountReceived[];
   status: ReceiverStatus | undefined;
+};
+
+export type PaymentDetails = {
+  id: string;
+  createdAt: string;
+  disbursementName: string;
+  disbursementId: string;
+  receiverId?: string;
+  receiverWalletId?: string;
+  transactionId?: string;
+  senderAddress?: string;
+  totalAmount: string;
+  assetCode: string;
+  statusHistory: PaymentDetailsStatusHistoryItem[];
 };
 
 // =============================================================================
@@ -466,7 +444,7 @@ export type Receiver = {
   totalPaymentsCount: number;
   successfulPaymentsCounts: number;
   createdAt: string;
-  amountsReceived: AmountReceived[];
+  amountsReceived?: AmountReceived[];
 };
 
 export type ReceiverWallet = {
@@ -511,8 +489,8 @@ export type ReceiverDetails = {
   id: string;
   phoneNumber: string;
   email?: string;
-  assetCode: string;
-  totalReceived: string;
+  assetCode?: string;
+  totalReceived?: string;
   orgId: string;
   stats: {
     paymentsTotalCount: number;
@@ -565,6 +543,7 @@ export type OrgUpdateInfo = {
   timezone?: string;
   logo?: File;
   isApprovalRequired?: boolean;
+  smsRegistrationMessageTemplate?: string;
 };
 
 // =============================================================================
@@ -596,6 +575,8 @@ export type ApiWallet = {
   name: string;
   homepage: string;
   deep_link_schema: string;
+  enabled: boolean;
+  assets: ApiAsset[];
   created_at: string;
   updated_at: string;
 };
@@ -702,8 +683,8 @@ export type ApiPaymentReceiverWallet = {
 export type ApiPayment = {
   id: string;
   amount: string;
-  stellar_transaction_id: string;
-  stellar_operation_id: string;
+  stellar_transaction_id?: string;
+  stellar_operation_id?: string;
   stellar_address?: string;
   status: PaymentStatus;
   status_history: ApiPaymentStatusHistory[];
@@ -830,7 +811,7 @@ export type ApiReceiver = {
   successful_payments: string | number;
   failed_payments: string | number;
   remaining_payments: string | number;
-  received_amounts: {
+  received_amounts?: {
     asset_code: string;
     asset_issuer: string;
     received_amount: string;
@@ -860,6 +841,8 @@ export type ApiOrgInfo = {
   distribution_account_public_key: string;
   timezone_utc_offset: string;
   is_approval_required: boolean;
+  sms_resend_interval: string;
+  sms_registration_message_template?: string;
 };
 
 export type ApiStellarAccountBalance = {

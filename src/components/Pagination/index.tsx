@@ -1,26 +1,27 @@
+import { useState } from "react";
 import { Button, Icon, Input } from "@stellar/design-system";
 import "./styles.scss";
 
 interface PaginationProps {
   currentPage: number;
   maxPages: number;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (currentPage: number) => void;
-  onPrevious: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  onNext: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onSetPage: (page: number) => void;
   isLoading: boolean;
 }
 
 export const Pagination = ({
   currentPage,
   maxPages,
-  onChange,
-  onBlur,
-  onPrevious,
-  onNext,
+  onSetPage,
   isLoading,
 }: PaginationProps) => {
-  const isError = currentPage > maxPages;
+  const [page, setPage] = useState<number | undefined>();
+  const isError = (page || 0) > maxPages;
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    setPage(Number(event.target.value));
+  };
 
   const handleBlur = (
     event:
@@ -29,9 +30,19 @@ export const Pagination = ({
   ) => {
     event.preventDefault();
 
-    if (!isError) {
-      onBlur(currentPage);
+    if (!isError && page) {
+      onSetPage(page);
+      setPage(undefined);
     }
+  };
+
+  const handlePageChange = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    direction: "prev" | "next",
+  ) => {
+    event.preventDefault();
+    const newPage = direction === "prev" ? currentPage - 1 : currentPage + 1;
+    onSetPage(newPage);
   };
 
   return (
@@ -41,8 +52,8 @@ export const Pagination = ({
         <Input
           id="current-page"
           fieldSize="sm"
-          value={currentPage}
-          onChange={onChange}
+          value={page || currentPage}
+          onChange={handleChange}
           onBlur={handleBlur}
           disabled={maxPages === 1 || isLoading}
           isError={isError}
@@ -54,14 +65,14 @@ export const Pagination = ({
           size="sm"
           variant="secondary"
           icon={<Icon.ChevronLeft />}
-          onClick={onPrevious}
+          onClick={(event) => handlePageChange(event, "prev")}
           disabled={isError || isLoading || currentPage === 1}
         />
         <Button
           size="sm"
           variant="secondary"
           icon={<Icon.ChevronRight />}
-          onClick={onNext}
+          onClick={(event) => handlePageChange(event, "next")}
           disabled={isError || isLoading || currentPage === maxPages}
         />
       </div>

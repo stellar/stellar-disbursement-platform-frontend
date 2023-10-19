@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import {
   Card,
   Heading,
@@ -10,103 +9,126 @@ import {
   Notification,
 } from "@stellar/design-system";
 
-import { AppDispatch } from "store";
-import {
-  getReceiverDetailsAction,
-  updateReceiverDetailsAction,
-} from "store/ducks/receiverDetails";
-import { Routes } from "constants/settings";
-import { useRedux } from "hooks/useRedux";
+import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
+import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
 import { SectionHeader } from "components/SectionHeader";
 import { CopyWithIcon } from "components/CopyWithIcon";
 import { InfoTooltip } from "components/InfoTooltip";
-import { ReceiverEditFields } from "types";
+import { LoadingContent } from "components/LoadingContent";
+
+import { ReceiverDetails, ReceiverEditFields } from "types";
+import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();
 
-  const { receiverDetails } = useRedux("receiverDetails");
-  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [pin, setPin] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [nationalId, setNationalId] = useState("");
   const [receiverEditFields, setReceiverEditFields] =
     useState<ReceiverEditFields>({
       email: "",
       externalId: "",
     });
 
+  const {
+    data: receiverDetails,
+    isSuccess: isReceiverDetailsSuccess,
+    isLoading: isReceiverDetailsLoading,
+    error: receiverDetailsError,
+    refetch,
+  } = useReceiversReceiverId<ReceiverDetails>({
+    receiverId,
+    dataFormat: "receiver",
+  });
+
+  const {
+    isSuccess: isUpdateSuccess,
+    isLoading: isUpdateLoading,
+    error: updateError,
+    mutateAsync,
+    reset,
+  } = useUpdateReceiverDetails(receiverId);
+
   useEffect(() => {
-    if (receiverId) {
-      dispatch(getReceiverDetailsAction(receiverId));
+    if (isReceiverDetailsSuccess) {
+      setReceiverEditFields({
+        email: receiverDetails?.email || "",
+        externalId: receiverDetails?.orgId || "",
+      });
     }
-  }, [receiverId, dispatch]);
+  }, [
+    isReceiverDetailsSuccess,
+    receiverDetails?.email,
+    receiverDetails?.orgId,
+  ]);
 
   useEffect(() => {
-    setReceiverEditFields({
-      email: receiverDetails.email || "",
-      externalId: receiverDetails.orgId,
-    });
-  }, [receiverDetails.email, receiverDetails.orgId]);
+    if (isUpdateSuccess && receiverId) {
+      reset();
+      refetch();
+      navigate(`${Routes.RECEIVERS}/${receiverId}`);
+    }
+  }, [isUpdateSuccess, receiverId, navigate, reset, refetch]);
 
   useEffect(() => {
-    receiverDetails.verifications.forEach((v) => {
-      switch (v.verificationField) {
-        case "DATE_OF_BIRTH":
-          setDateOfBirth(v.value);
-          break;
-        case "PIN":
-          setPin(v.value);
-          break;
-        case "NATIONAL_ID_NUMBER":
-          setNationalId(v.value);
-          break;
+    return () => {
+      if (updateError) {
+        reset();
       }
-    });
-  }, [receiverDetails.verifications]);
+    };
+  }, [updateError, reset]);
+
+  const getReadyOnlyValue = (
+    field: "DATE_OF_BIRTH" | "PIN" | "NATIONAL_ID_NUMBER",
+  ) => {
+    return (
+      receiverDetails?.verifications.find((v) => v.verificationField === field)
+        ?.value || ""
+    );
+  };
 
   const emptyValueIfNotChanged = (newValue: string, oldValue: string) => {
     return newValue === oldValue ? "" : newValue;
   };
 
-  const handleReceiverEditSubmit = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  const handleReceiverEditSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
 
     const { email, externalId } = receiverEditFields;
 
-    if ((email || externalId) && receiverId) {
-      dispatch(
-        updateReceiverDetailsAction({
-          receiverId,
-          email: emptyValueIfNotChanged(email, receiverDetails.email || ""),
-          externalId: emptyValueIfNotChanged(externalId, receiverDetails.orgId),
-        }),
-      );
-    }
-
-    if (!receiverDetails.errorString) {
-      navigate(`${Routes.RECEIVERS}/${receiverId}`);
+    if (receiverId) {
+      try {
+        await mutateAsync({
+          email: emptyValueIfNotChanged(email, receiverDetails?.email || ""),
+          externalId: emptyValueIfNotChanged(
+            externalId,
+            receiverDetails?.orgId || "",
+          ),
+        });
+      } catch (e) {
+        // do nothing
+      }
     }
   };
 
-  const handleReceiverEditCancel = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleReceiverEditCancel = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setReceiverEditFields({
-      email: receiverDetails.email || "",
-      externalId: receiverDetails.orgId,
+      email: receiverDetails?.email || "",
+      externalId: receiverDetails?.orgId || "",
     });
     navigate(`${Routes.RECEIVERS}/${receiverId}`);
   };
 
   const handleDetailsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (updateError) {
+      reset();
+    }
+
     setReceiverEditFields({
       ...receiverEditFields,
       [event.target.name]: event.target.value,
@@ -114,8 +136,20 @@ export const ReceiverDetailsEdit = () => {
   };
 
   const renderInfoEditContent = () => {
+    if (isReceiverDetailsLoading) {
+      return <LoadingContent />;
+    }
+
+    if (receiverDetailsError || !receiverDetails) {
+      return (
+        <Notification variant="error" title="Error">
+          <div>{receiverDetailsError?.message || GENERIC_ERROR_MESSAGE}</div>
+        </Notification>
+      );
+    }
+
     const isSubmitDisabled =
-      receiverEditFields.email === receiverDetails.email &&
+      receiverEditFields.email === receiverDetails?.email &&
       receiverEditFields.externalId === receiverDetails.orgId;
 
     return (
@@ -135,20 +169,26 @@ export const ReceiverDetailsEdit = () => {
           </SectionHeader.Row>
         </SectionHeader>
 
-        {receiverDetails.errorString && (
-          <Notification variant="error" title="Error">
-            <div>{receiverDetails.errorString}</div>
-          </Notification>
-        )}
-
         <div className="CardStack">
-          <Card>
-            <div className="CardStack__card">
-              <div className="CardStack__title">
-                <InfoTooltip infoText="">Receiver info</InfoTooltip>
-              </div>
+          {updateError ? (
+            <Notification variant="error" title="Error">
+              <div>{updateError?.message}</div>
+            </Notification>
+          ) : null}
 
-              <form className="CardStack__card">
+          <form
+            className="CardStack__card"
+            onSubmit={handleReceiverEditSubmit}
+            onReset={handleReceiverEditCancel}
+          >
+            <Card>
+              <div className="CardStack__card">
+                <div className="CardStack__title">
+                  <InfoTooltip infoText="Information unique to this individual, such as their email address, the ID you use to track them, and verification information">
+                    Receiver info
+                  </InfoTooltip>
+                </div>
+
                 <div className="CardStack__body">
                   <div className="CardStack__grid">
                     <Input
@@ -172,7 +212,7 @@ export const ReceiverDetailsEdit = () => {
                       name="personalPIN"
                       label="Personal PIN"
                       fieldSize="sm"
-                      value={pin}
+                      value={getReadyOnlyValue("PIN")}
                       disabled
                     />
                     <Input
@@ -180,7 +220,7 @@ export const ReceiverDetailsEdit = () => {
                       name="nationalIDNumber"
                       label="National ID Number"
                       fieldSize="sm"
-                      value={nationalId}
+                      value={getReadyOnlyValue("NATIONAL_ID_NUMBER")}
                       disabled
                     />
                     <Input
@@ -188,44 +228,34 @@ export const ReceiverDetailsEdit = () => {
                       name="dateOfBirth"
                       label="Date of Birth"
                       fieldSize="sm"
-                      value={dateOfBirth}
+                      value={getReadyOnlyValue("DATE_OF_BIRTH")}
                       disabled
                     />
                   </div>
                 </div>
-              </form>
+              </div>
+            </Card>
+            <div className="CardStack__buttons CardStack__buttons--spaceBetween">
+              <Button
+                variant="error"
+                size="xs"
+                type="reset"
+                icon={<Icon.DeleteForever />}
+                isLoading={isUpdateLoading}
+              >
+                Discard changes
+              </Button>
+              <Button
+                variant="primary"
+                size="xs"
+                type="submit"
+                isLoading={isUpdateLoading}
+                disabled={isSubmitDisabled}
+              >
+                Save receiver info
+              </Button>
             </div>
-          </Card>
-          <div
-            className="CardStack__buttons"
-            style={{ justifyContent: "space-between" }}
-          >
-            <Button
-              variant="secondary"
-              size="xs"
-              type="reset"
-              icon={
-                <Icon.DeleteForever style={{ color: "var(--color-red-60)" }} />
-              }
-              onClick={(e) => {
-                handleReceiverEditCancel(e);
-              }}
-            >
-              Discard changes
-            </Button>
-            <Button
-              variant="tertiary"
-              size="xs"
-              type="submit"
-              isLoading={receiverDetails.updateStatus === "PENDING"}
-              disabled={isSubmitDisabled}
-              onClick={(e) => {
-                handleReceiverEditSubmit(e);
-              }}
-            >
-              Save receiver info
-            </Button>
-          </div>
+          </form>
         </div>
       </>
     );

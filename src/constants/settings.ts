@@ -17,6 +17,7 @@ export const OIDC_USERNAME_MAPPING = window._env_.OIDC_USERNAME_MAPPING;
 
 export const GENERIC_ERROR_MESSAGE = "Something went wrong, please try again";
 export const SESSION_EXPIRED = "SESSION EXPIRED";
+export const SESSION_EXPIRED_EVENT = "sdp_session_expired_event";
 export const LOCAL_STORAGE_SESSION_TOKEN = "sdp_session";
 export const LOCAL_STORAGE_DEVICE_ID = "sdp_deviceID";
 export const UI_STATUS_DISBURSEMENT = "STARTED,PAUSED,COMPLETED";
@@ -34,7 +35,8 @@ export enum Routes {
   RECEIVERS = "/receivers",
   RECEIVERS_EDIT = "/receivers/edit",
   PAYMENTS = "/payments",
-  WALLETS = "/wallets",
+  DISTRIBUTION_ACCOUNT = "/distribution-account",
+  WALLET_PROVIDERS = "/wallet-providers",
   ANALYTICS = "/analytics",
   PROFILE = "/profile",
   SETTINGS = "/settings",

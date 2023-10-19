@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 
 import { AppDispatch } from "store";
 import { getCountriesAction } from "store/ducks/countries";
-import { getAssetsAction } from "store/ducks/assets";
+import { getAssetsByWalletAction } from "store/ducks/assets";
 import { getWalletsAction } from "store/ducks/wallets";
 
 import { InfoTooltip } from "components/InfoTooltip";
@@ -82,19 +82,15 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       dispatch(getCountriesAction());
     }
 
-    if (!assets.status) {
-      dispatch(getAssetsAction());
-    }
-
     if (!wallets.status) {
       dispatch(getWalletsAction());
     }
-  }, [assets.status, countries.status, wallets.status, dispatch]);
+  }, [dispatch, countries.status, wallets.status]);
 
   const apiErrors = [
-    assets.errorString,
     countries.errorString,
     wallets.errorString,
+    assets.errorString,
   ];
 
   const sanitizedApiErrors = apiErrors.filter((e) => Boolean(e));
@@ -106,10 +102,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       missingFields.push(FieldId.NAME);
     } else if (!inputs.country.code) {
       missingFields.push(FieldId.COUNTRY_CODE);
-    } else if (!inputs.asset.code) {
-      missingFields.push(FieldId.ASSET_CODE);
     } else if (!inputs.wallet.id) {
       missingFields.push(FieldId.WALLET_ID);
+    } else if (!inputs.asset.code) {
+      missingFields.push(FieldId.ASSET_CODE);
     }
 
     const isValid = missingFields.length === 0;
@@ -153,18 +149,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
         });
 
         break;
-      case FieldId.ASSET_CODE:
-        // eslint-disable-next-line no-case-declarations
-        const asset = assets.items.find((a: ApiAsset) => a.id === value);
-
-        updateState({
-          asset: {
-            id: asset?.id || "",
-            code: asset?.code || "",
-          },
-        });
-
-        break;
       case FieldId.WALLET_ID:
         // eslint-disable-next-line no-case-declarations
         const wallet = wallets.items.find((w: ApiWallet) => w.id === value);
@@ -173,6 +157,19 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           wallet: {
             id: wallet?.id || "",
             name: wallet?.name || "",
+          },
+        });
+        dispatch(getAssetsByWalletAction({ walletId: wallet?.id || "" }));
+
+        break;
+      case FieldId.ASSET_CODE:
+        // eslint-disable-next-line no-case-declarations
+        const asset = assets.items.find((a: ApiAsset) => a.id === value);
+
+        updateState({
+          asset: {
+            id: asset?.id || "",
+            code: asset?.code || "",
           },
         });
 
@@ -203,16 +200,16 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           </div>
 
           <div>
-            <label className="Label Label--sm">Asset</label>
+            <label className="Label Label--sm">Wallet provider</label>
             <div className="DisbursementDetailsFields__value">
-              {details.asset.code}
+              {details.wallet.name}
             </div>
           </div>
 
           <div>
-            <label className="Label Label--sm">Wallet provider</label>
+            <label className="Label Label--sm">Asset</label>
             <div className="DisbursementDetailsFields__value">
-              {details.wallet.name}
+              {details.asset.code}
             </div>
           </div>
 
@@ -255,22 +252,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
         </Select>
 
         <Select
-          id={FieldId.ASSET_CODE}
-          label="Asset"
-          fieldSize="sm"
-          onChange={updateDraftDetails}
-          value={details.asset.id}
-          disabled={assets.status === "PENDING"}
-        >
-          {renderDropdownDefault(assets.status === "PENDING")}
-          {assets.items.map((asset: ApiAsset) => (
-            <option key={asset.id} value={asset.id}>
-              {asset.code}
-            </option>
-          ))}
-        </Select>
-
-        <Select
           id={FieldId.WALLET_ID}
           label="Wallet provider"
           fieldSize="sm"
@@ -279,9 +260,27 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           disabled={wallets.status === "PENDING"}
         >
           {renderDropdownDefault(wallets.status === "PENDING")}
-          {wallets.items.map((wallet: ApiWallet) => (
-            <option key={wallet.id} value={wallet.id}>
-              {wallet.name}
+          {wallets.items
+            .filter((wallet) => wallet.enabled)
+            .map((wallet: ApiWallet) => (
+              <option key={wallet.id} value={wallet.id}>
+                {wallet.name}
+              </option>
+            ))}
+        </Select>
+
+        <Select
+          id={FieldId.ASSET_CODE}
+          label="Asset"
+          fieldSize="sm"
+          onChange={updateDraftDetails}
+          value={details.asset.id}
+          disabled={assets.status === "PENDING" || !details.wallet.id}
+        >
+          {renderDropdownDefault(assets.status === "PENDING")}
+          {assets.items.map((asset: ApiAsset) => (
+            <option key={asset.id} value={asset.id}>
+              {asset.code}
             </option>
           ))}
         </Select>

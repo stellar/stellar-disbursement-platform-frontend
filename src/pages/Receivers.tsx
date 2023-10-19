@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
 
@@ -9,19 +8,17 @@ import { SectionHeader } from "components/SectionHeader";
 import { Pagination } from "components/Pagination";
 import { ReceiversTable } from "components/ReceiversTable";
 
+import { useReceivers } from "apiQueries/useReceivers";
 import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
 import { number } from "helpers/formatIntlNumber";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
 import {
-  getReceiversAction,
-  getReceiversWithParamsAction,
-} from "store/ducks/receivers";
-import { CommonFilters, SortByReceivers, SortDirection } from "types";
+  CommonFilters,
+  SortByReceivers,
+  SortDirection,
+  SortParams,
+} from "types";
 
 export const Receivers = () => {
-  const { receivers } = useRedux("receivers");
-
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
 
@@ -32,33 +29,36 @@ export const Receivers = () => {
   };
 
   const [filters, setFilters] = useState<CommonFilters>(initFilters);
+  // Using extra param to trigger API call when we want, not on every filter
+  // state change
+  const [queryFilters, setQueryFilters] = useState<CommonFilters & SortParams>(
+    {},
+  );
+  const [searchQuery, setSearchQuery] = useState<{ q: string } | undefined>();
+
+  const {
+    data: receivers,
+    error,
+    isLoading,
+    isFetching,
+  } = useReceivers({
+    page: currentPage.toString(),
+    page_limit: pageLimit.toString(),
+    ...queryFilters,
+    ...searchQuery,
+  });
 
   const isFiltersSelected =
     Object.values(filters).filter((v) => Boolean(v)).length > 0;
 
-  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    dispatch(getReceiversAction());
-  }, [dispatch]);
-
-  const apiError = receivers.status === "ERROR" && receivers.errorString;
-  const maxPages = receivers.pagination?.pages || 1;
-  const isSearchInProgress = Boolean(
-    receivers.searchParams?.q && receivers.status === "PENDING",
-  );
+  const maxPages = receivers?.pagination?.pages || 1;
+  const isSearchInProgress = Boolean(searchQuery && (isLoading || isFetching));
 
   const handleSearchChange = (searchText?: string) => {
-    dispatch(
-      getReceiversWithParamsAction({
-        page: "1",
-        ...filters,
-        q: searchText,
-      }),
-    );
-
     setCurrentPage(1);
+    setSearchQuery(searchText ? { q: searchText } : undefined);
   };
 
   const handleFilterChange = (
@@ -71,48 +71,21 @@ export const Receivers = () => {
   };
 
   const handleFilterSubmit = () => {
-    dispatch(
-      getReceiversWithParamsAction({
-        page: "1",
-        ...filters,
-      }),
-    );
-
     setCurrentPage(1);
+    setQueryFilters(filters);
   };
 
   const handleFilterReset = () => {
-    dispatch(
-      getReceiversWithParamsAction({
-        page: "1",
-        ...initFilters,
-      }),
-    );
-
-    setFilters(initFilters);
     setCurrentPage(1);
+    setFilters(initFilters);
+    setQueryFilters(initFilters);
   };
 
   const handleSort = (sort?: SortByReceivers, direction?: SortDirection) => {
-    if (!sort || !direction || direction === "default") {
-      dispatch(
-        getReceiversWithParamsAction({
-          page: "1",
-          sort: undefined,
-          direction: undefined,
-        }),
-      );
-    } else {
-      dispatch(
-        getReceiversWithParamsAction({
-          page: "1",
-          sort,
-          direction,
-        }),
-      );
-    }
+    const isDefaultSort = !sort || !direction || direction === "default";
 
     setCurrentPage(1);
+    setQueryFilters(isDefaultSort ? filters : { ...filters, sort, direction });
   };
 
   const handleExport = (
@@ -128,40 +101,8 @@ export const Receivers = () => {
     event.preventDefault();
 
     const pageLimit = Number(event.target.value);
-    setPageLimit(pageLimit);
     setCurrentPage(1);
-
-    // Need to make sure we'll be loading page 1
-    dispatch(
-      getReceiversWithParamsAction({
-        page_limit: pageLimit.toString(),
-        page: "1",
-      }),
-    );
-  };
-
-  const handlePageChange = (currentPage: number) => {
-    dispatch(getReceiversWithParamsAction({ page: currentPage.toString() }));
-  };
-
-  const handleNextPage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const newPage = currentPage + 1;
-
-    setCurrentPage(newPage);
-    handlePageChange(newPage);
-  };
-
-  const handlePrevPage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    const newPage = currentPage - 1;
-
-    setCurrentPage(newPage);
-    handlePageChange(newPage);
+    setPageLimit(pageLimit);
   };
 
   const handleReceiverClicked = (
@@ -178,7 +119,7 @@ export const Receivers = () => {
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              {receivers.pagination?.total && receivers.pagination.total > 0
+              {receivers?.pagination?.total && receivers.pagination.total > 0
                 ? `${number.format(receivers.pagination.total)} `
                 : ""}
               Receivers
@@ -273,26 +214,22 @@ export const Receivers = () => {
             <Pagination
               currentPage={Number(currentPage)}
               maxPages={Number(maxPages)}
-              onChange={(event) => {
-                event.preventDefault();
-                setCurrentPage(Number(event.target.value));
+              onSetPage={(page) => {
+                setCurrentPage(page);
               }}
-              onBlur={handlePageChange}
-              onNext={handleNextPage}
-              onPrevious={handlePrevPage}
-              isLoading={receivers.status === "PENDING"}
+              isLoading={isLoading || isFetching}
             />
           </SectionHeader.Content>
         </SectionHeader.Row>
       </SectionHeader>
 
       <ReceiversTable
-        receiversItems={receivers.items}
+        receiversItems={receivers?.data || []}
         onReceiverClicked={handleReceiverClicked}
-        searchParams={receivers.searchParams}
-        apiError={apiError}
+        searchQuery={searchQuery?.q}
+        apiError={error?.message}
         isFiltersSelected={isFiltersSelected}
-        status={receivers.status}
+        isLoading={isLoading || isFetching}
         onSort={handleSort}
       />
     </>

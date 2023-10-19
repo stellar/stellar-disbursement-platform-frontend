@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { Button, Icon, Logo, ThemeSwitch } from "@stellar/design-system";
+import { Button, Icon, ThemeSwitch } from "@stellar/design-system";
 import { PROJECT_NAME, Routes } from "constants/settings";
 import { DropdownMenu } from "components/DropdownMenu";
 import { formatDateTimeWithGmt } from "helpers/formatIntlDateTime";
@@ -22,7 +22,7 @@ export const PageHeader = ({
     <div className={`PageHeader ${username ? "PageHeader--internal" : ""}`}>
       <div className="PageHeader__inset">
         <div className="PageHeader__logo">
-          {username ? (
+          {username && (
             <div className="CompanyBrand">
               <div
                 className="CompanyBrand__logo"
@@ -32,8 +32,6 @@ export const PageHeader = ({
                 {companyName || "Company Name"}
               </div>
             </div>
-          ) : (
-            <Logo.Stellar />
           )}
         </div>
       </div>
