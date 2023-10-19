@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   [#17](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/17)
 - Display asset issuer for Trustlines in the Distribution account screen
   [#20](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/20)
+- Settings: configure SMS retry interval
+  [#28](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/28)
 
 ### Changed
 
