@@ -81,8 +81,16 @@ export const ResetPassword = () => {
 
         {forgotPassword.errorString && (
           <Notification variant="error" title="Reset password error">
-            {forgotPassword.errorString}. Check your email for the correct
-            token.
+            {forgotPassword.errorString}
+            {forgotPassword.errorExtras ? (
+              <ul className="ErrorExtras">
+                {Object.entries(forgotPassword.errorExtras).map(
+                  ([key, value]) => (
+                    <li key={key}>{`${key}: ${value}`}</li>
+                  ),
+                )}
+              </ul>
+            ) : null}
           </Notification>
         )}
 
@@ -95,7 +103,7 @@ export const ResetPassword = () => {
             <div className="Note">
               New password must be:
               <ul>
-                <li>at least 8 characters long,</li>
+                <li>at least 12 characters long,</li>
                 <li>
                   a combination of uppercase letters, lowercase letters,
                   numbers, and symbols.
