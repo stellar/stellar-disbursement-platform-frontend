@@ -5,6 +5,7 @@ import { SectionHeader } from "components/SectionHeader";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { SettingsTeamMembers } from "components/SettingsTeamMembers";
 import { ReceiverInviteMessage } from "components/ReceiverInviteMessage";
+import { SettingsEnableSmsRetry } from "components/SettingsEnableSmsRetry";
 
 import { AppDispatch } from "store";
 import { resetNewUserAction, resetUpdatedUserAction } from "store/ducks/users";
@@ -61,6 +62,13 @@ export const Settings = () => {
       </SectionHeader>
 
       <div className="CardStack">
+        {/* Enable SMS retry */}
+        <SettingsEnableSmsRetry />
+
+        {/* Customize receiver wallet invite */}
+        <ReceiverInviteMessage />
+
+        {/* Team members */}
         {users.updatedUser.status === "SUCCESS" ? (
           <NotificationWithButtons
             variant="success"
@@ -104,8 +112,6 @@ export const Settings = () => {
             {users.updatedUser.errorString || users.newUser.errorString}
           </Notification>
         ) : null}
-
-        <ReceiverInviteMessage />
 
         {users.errorString ? (
           <Notification variant="error" title="Error">
