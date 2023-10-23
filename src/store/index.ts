@@ -17,7 +17,6 @@ import { reducer as disbursements } from "store/ducks/disbursements";
 import { reducer as forgotPassword } from "store/ducks/forgotPassword";
 import { reducer as organization } from "store/ducks/organization";
 import { reducer as profile } from "store/ducks/profile";
-import { reducer as receiverPayments } from "store/ducks/receiverPayments";
 import { reducer as userAccount } from "store/ducks/userAccount";
 import { reducer as users } from "store/ducks/users";
 import { reducer as wallets } from "store/ducks/wallets";
@@ -45,7 +44,6 @@ const reducers = combineReducers({
   forgotPassword,
   organization,
   profile,
-  receiverPayments,
   userAccount,
   users,
   wallets,

@@ -135,14 +135,6 @@ export type ReceiverDetailsInitialState = {
   errorString?: string;
 };
 
-export type ReceiverPaymentsInitialState = {
-  items: ApiPayment[];
-  status: ActionStatus | undefined;
-  pagination?: Pagination;
-  errorString?: string;
-  searchParams?: PaymentsSearchParams;
-};
-
 export type OrganizationInitialState = {
   data: {
     name: string;
@@ -201,7 +193,6 @@ export interface Store {
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
   receiverDetails: ReceiverDetailsInitialState;
-  receiverPayments: ReceiverPaymentsInitialState;
   userAccount: UserAccountInitialState;
   users: UsersInitialState;
   wallets: WalletsInitialState;
