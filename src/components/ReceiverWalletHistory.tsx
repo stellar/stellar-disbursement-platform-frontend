@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Card, Link, Profile, Notification } from "@stellar/design-system";
 import { useQuery } from "@tanstack/react-query";
 
@@ -60,14 +59,10 @@ export const ReceiverWalletHistory = ({
     return payments;
   };
 
-  const { isLoading, isError, data, error, refetch } = useQuery({
-    queryKey: ["ReceiverWalletHistory"],
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ["stellar", "accounts", stellarAddress],
     queryFn: getPayments,
   });
-
-  useEffect(() => {
-    refetch();
-  }, [stellarAddress, refetch]);
 
   if (isLoading) {
     return <div className="Note">Loading…</div>;
