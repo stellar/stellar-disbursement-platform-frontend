@@ -16,7 +16,7 @@ export const ReceiverWalletBalance = ({
   const balances =
     data?.balances.filter((b) => b.asset_issuer && b.asset_code) || [];
 
-  if (isLoading || isFetching) {
+  if (stellarAddress && (isLoading || isFetching)) {
     return <Loader />;
   }
 
