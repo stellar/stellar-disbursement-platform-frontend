@@ -1,0 +1,29 @@
+import { useQuery } from "@tanstack/react-query";
+import { HORIZON_URL } from "constants/settings";
+import { fetchStellarApi } from "helpers/fetchStellarApi";
+import { shortenAccountKey } from "helpers/shortenAccountKey";
+import { ApiStellarAccount, AppError } from "types";
+
+export const useStellarAccountInfo = (stellarAddress: string | undefined) => {
+  const query = useQuery<ApiStellarAccount, AppError>({
+    queryKey: ["stellar", "accounts", stellarAddress],
+    queryFn: async () => {
+      if (!stellarAddress) {
+        return {};
+      }
+
+      return await fetchStellarApi(
+        `${HORIZON_URL}/accounts/${stellarAddress}`,
+        undefined,
+        {
+          notFoundMessage: `${shortenAccountKey(
+            stellarAddress,
+          )} address was not found.`,
+        },
+      );
+    },
+    enabled: Boolean(stellarAddress),
+  });
+
+  return query;
+};

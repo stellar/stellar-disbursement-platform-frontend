@@ -1,82 +1,29 @@
-import { useEffect } from "react";
 import { Card, Link, Profile, Notification } from "@stellar/design-system";
-import { useQuery } from "@tanstack/react-query";
-
-import { getStellarAccountPayments } from "api/getStellarAccountPayments";
-import { getStellarTransaction } from "api/getStellarTransaction";
 import { STELLAR_EXPERT_URL } from "constants/settings";
+import { useStellarAccountPayments } from "apiQueries/useStellarAccountPayments";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 
 import { Table } from "components/Table";
 import { AssetAmount } from "components/AssetAmount";
 
-import { ApiStellarOperationRecord, ReceiverWalletPayment } from "types";
-
 interface ReceiverWalletHistoryProps {
   stellarAddress: string | undefined;
 }
 
-const formatWalletPayment = async (
-  payment: ApiStellarOperationRecord,
-  walletAddress: string,
-): Promise<ReceiverWalletPayment> => {
-  const isSend = payment.from === walletAddress;
-
-  // Getting transaction details to get the memo
-  const transaction = await getStellarTransaction(payment.transaction_hash);
-
-  return {
-    id: payment.id.toString(),
-    amount: payment.amount,
-    paymentAddress: isSend ? payment.to : payment.from,
-    createdAt: payment.created_at,
-    assetCode: payment.asset_code,
-    assetIssuer: payment.asset_issuer,
-    operationKind: isSend ? "send" : "receive",
-    transactionHash: payment.transaction_hash,
-    memo: transaction.memo || "",
-  };
-};
-
 export const ReceiverWalletHistory = ({
   stellarAddress,
 }: ReceiverWalletHistoryProps) => {
-  const getPayments = async () => {
-    if (!stellarAddress) {
-      return [];
-    }
+  const { isLoading, isFetching, data, error } =
+    useStellarAccountPayments(stellarAddress);
 
-    // We don't want to show XLM (native) payments
-    const response = (await getStellarAccountPayments(stellarAddress)).filter(
-      (r) => r.asset_issuer && r.asset_code,
-    );
-    const payments = [];
-
-    for await (const record of response) {
-      const payment = await formatWalletPayment(record, stellarAddress);
-      payments.push(payment);
-    }
-
-    return payments;
-  };
-
-  const { isLoading, isError, data, error, refetch } = useQuery({
-    queryKey: ["ReceiverWalletHistory"],
-    queryFn: getPayments,
-  });
-
-  useEffect(() => {
-    refetch();
-  }, [stellarAddress, refetch]);
-
-  if (isLoading) {
+  if (stellarAddress && (isLoading || isFetching)) {
     return <div className="Note">Loading…</div>;
   }
 
-  if (isError) {
+  if (error) {
     return (
       <Notification variant="error" title="Error">
-        {error as string}
+        {error.message}
       </Notification>
     );
   }
