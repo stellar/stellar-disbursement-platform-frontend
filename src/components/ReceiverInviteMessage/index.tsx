@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -221,12 +221,12 @@ export const ReceiverInviteMessage = () => {
               id="msg-std"
               name="receiver-message"
               label={
-                <>
+                <Fragment key="msg-std-label">
                   {"Standard message"}{" "}
                   {selectedOption === radioValue.STANDARD && isLoading ? (
                     <Loader size="1.25rem" />
                   ) : null}
-                </>
+                </Fragment>
               }
               fieldSize="xs"
               value={radioValue.STANDARD}
