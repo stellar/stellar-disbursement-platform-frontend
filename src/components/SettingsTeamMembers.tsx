@@ -144,6 +144,7 @@ export const SettingsTeamMembers = () => {
           setIsRoleModalVisible(true);
           setNewRole(r);
           resetRole();
+          resetStatus();
         }}
       >
         {`Change role to ${userRoleText(r)}`}
@@ -218,6 +219,7 @@ export const SettingsTeamMembers = () => {
                       <>{renderRoleItems(u)}</>
                       <DropdownMenu.Item
                         onClick={() => {
+                          resetRole();
                           resetStatus();
                           setSelectedUser(u);
                           setIsStatusModalVisible(true);
