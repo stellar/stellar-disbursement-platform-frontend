@@ -130,29 +130,6 @@ export type ProfileInitialState = {
   errorExtras?: AnyObject;
 };
 
-export type UsersInitialState = {
-  items: ApiUser[];
-  updatedUser: {
-    id: string;
-    role: UserRole | null;
-    is_active: boolean;
-    actionType: "status" | "role" | undefined;
-    status: ActionStatus | undefined;
-    errorString?: string;
-  };
-  newUser: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    role: UserRole | null;
-    email: string;
-    status: ActionStatus | undefined;
-    errorString?: string;
-  };
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export interface Store {
   assets: AssetsInitialState;
   countries: CountriesInitialState;
@@ -163,7 +140,6 @@ export interface Store {
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
   userAccount: UserAccountInitialState;
-  users: UsersInitialState;
 }
 
 export type StoreKey = keyof Store;

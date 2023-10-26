@@ -1,62 +1,127 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Button, Card, Icon, Modal } from "@stellar/design-system";
+import {
+  Button,
+  Card,
+  Icon,
+  Modal,
+  Notification,
+} from "@stellar/design-system";
 
 import { InfoTooltip } from "components/InfoTooltip";
 import { DropdownMenu } from "components/DropdownMenu";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { Table } from "components/Table";
 import { NewUserModal } from "components/NewUserModal";
+import { LoadingContent } from "components/LoadingContent";
+import { NotificationWithButtons } from "components/NotificationWithButtons";
 
-import { AppDispatch } from "store";
-import {
-  changeUserRoleAction,
-  changeUserStatusAction,
-  createNewUserAction,
-  getUsersAction,
-  resetNewUserAction,
-} from "store/ducks/users";
 import { USER_ROLES_ARRAY } from "constants/settings";
-import { useRedux } from "hooks/useRedux";
 import { userRoleText } from "helpers/userRoleText";
+
+import { useUsers } from "apiQueries/useUsers";
+import { useUpdateUserRole } from "apiQueries/useUpdateUserRole";
+import { useUpdateUserStatus } from "apiQueries/useUpdateUserStatus";
+import { useCreateNewUser } from "apiQueries/useCreateNewUser";
+
 import { ApiUser, NewUser, UserRole } from "types";
 
-interface SettingsTeamMembersProps {
-  getUserNameText: (firstName?: string, lastName?: string) => void;
-}
-
-export const SettingsTeamMembers = ({
-  getUserNameText,
-}: SettingsTeamMembersProps) => {
-  const { users } = useRedux("users");
-
+export const SettingsTeamMembers = () => {
   const [selectedUser, setSelectedUser] = useState<ApiUser | null>(null);
   const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
   const [isRoleModalVisible, setIsRoleModalVisible] = useState(false);
   const [isNewUserModalVisible, setIsNewUserModalVisible] = useState(false);
   const [newRole, setNewRole] = useState<UserRole | null>(null);
+  const [updatedUser, setUpdatedUser] = useState<{
+    id: string;
+    role?: UserRole | null;
+    isActive?: boolean;
+  } | null>(null);
 
-  const dispatch: AppDispatch = useDispatch();
+  const {
+    data: usersData,
+    error: usersError,
+    isLoading: isUsersLoading,
+    isFetching: isUsersFetching,
+    refetch: getUsers,
+  } = useUsers();
+
+  const {
+    error: roleError,
+    isLoading: isRoleLoading,
+    isSuccess: isRoleSuccess,
+    isError: isRoleError,
+    mutateAsync: updateRole,
+    reset: resetRole,
+  } = useUpdateUserRole();
+
+  const {
+    error: statusError,
+    isLoading: isStatusLoading,
+    isSuccess: isStatusSuccess,
+    isError: isStatusError,
+    mutateAsync: updateStatus,
+    reset: resetStatus,
+  } = useUpdateUserStatus();
+
+  const {
+    data: newUser,
+    error: newUserError,
+    isLoading: isNewUserLoading,
+    isSuccess: isNewUserSuccess,
+    isError: isNewUserError,
+    mutateAsync: createNewUser,
+    reset: resetNewUser,
+  } = useCreateNewUser();
 
   useEffect(() => {
-    if (!users.status) {
-      dispatch(getUsersAction());
-    }
-  }, [dispatch, users.status]);
-
-  useEffect(() => {
-    if (users.updatedUser.actionType) {
-      dispatch(getUsersAction());
+    if (isRoleSuccess || isStatusSuccess) {
+      getUsers();
       hideModal();
     }
-  }, [dispatch, users.updatedUser.actionType]);
 
-  useEffect(() => {
-    if (users.newUser.id) {
-      dispatch(getUsersAction());
+    if (isRoleError || isStatusError) {
       hideModal();
     }
-  }, [dispatch, users.newUser.id]);
+
+    return () => {
+      if (isRoleSuccess || isRoleError) {
+        resetRole();
+      }
+
+      if (isStatusSuccess || isStatusError) {
+        resetStatus();
+      }
+    };
+  }, [
+    getUsers,
+    isRoleError,
+    isRoleSuccess,
+    isStatusError,
+    isStatusSuccess,
+    resetRole,
+    resetStatus,
+  ]);
+
+  useEffect(() => {
+    if (isNewUserSuccess) {
+      getUsers();
+      hideModal();
+    }
+
+    return () => {
+      if (isNewUserSuccess) {
+        resetNewUser();
+      }
+    };
+  }, [getUsers, isNewUserSuccess, resetNewUser]);
+
+  const getUserNameText = (firstName?: string, lastName?: string) => {
+    if (firstName || lastName) {
+      return `${firstName} ${lastName}`;
+    }
+
+    return "this user";
+  };
 
   const hideModal = () => {
     setIsStatusModalVisible(false);
@@ -64,18 +129,6 @@ export const SettingsTeamMembers = ({
     setIsNewUserModalVisible(false);
     setSelectedUser(null);
     setNewRole(null);
-  };
-
-  const handleStatusChange = (userId: string, isActive: boolean) => {
-    dispatch(changeUserStatusAction({ userId, isActive }));
-  };
-
-  const handleRoleChange = (userId: string, userRole: UserRole) => {
-    dispatch(changeUserRoleAction({ userId, role: userRole }));
-  };
-
-  const handleSubmitNewUser = (newUser: NewUser) => {
-    dispatch(createNewUserAction(newUser));
   };
 
   const renderRoleItems = (user: ApiUser) => {
@@ -90,6 +143,8 @@ export const SettingsTeamMembers = ({
           setSelectedUser(user);
           setIsRoleModalVisible(true);
           setNewRole(r);
+          resetRole();
+          resetStatus();
         }}
       >
         {`Change role to ${userRoleText(r)}`}
@@ -97,12 +152,40 @@ export const SettingsTeamMembers = ({
     ));
   };
 
+  const renderUpdateUserSuccessMessage = () => {
+    const user = usersData?.find((u) => u.id === updatedUser?.id);
+
+    if (isStatusSuccess) {
+      return `Account of ${getUserNameText(
+        user?.first_name,
+        user?.last_name,
+      )} was updated successfully. New status is ${
+        updatedUser?.isActive ? "active" : "inactive"
+      }.`;
+    }
+
+    if (isRoleSuccess) {
+      return `Account of ${getUserNameText(
+        user?.first_name,
+        user?.last_name,
+      )} was updated successfully. New role is ${userRoleText(
+        updatedUser?.role,
+      )}.`;
+    }
+
+    return "Account was updated successfully.";
+  };
+
   const renderUsersContent = () => {
-    if (users.errorString) {
+    if (isUsersLoading || isUsersFetching) {
+      return <LoadingContent />;
+    }
+
+    if (!usersData || usersError) {
       return null;
     }
 
-    if (users.items.length === 0) {
+    if (usersData?.length === 0) {
       return <div className="Note">There are no team members</div>;
     }
 
@@ -117,7 +200,7 @@ export const SettingsTeamMembers = ({
           </Table.Header>
 
           <Table.Body>
-            {users.items.map((u) => (
+            {usersData.map((u) => (
               <Table.BodyRow key={u.id}>
                 <Table.BodyCell width="12rem">
                   {u.first_name || u.last_name
@@ -136,6 +219,8 @@ export const SettingsTeamMembers = ({
                       <>{renderRoleItems(u)}</>
                       <DropdownMenu.Item
                         onClick={() => {
+                          resetRole();
+                          resetStatus();
                           setSelectedUser(u);
                           setIsStatusModalVisible(true);
                         }}
@@ -168,12 +253,67 @@ export const SettingsTeamMembers = ({
               className="CardStack__dropdownMenu"
               onClick={() => {
                 setIsNewUserModalVisible(true);
-                dispatch(resetNewUserAction());
+
+                if (isNewUserSuccess) {
+                  resetNewUser();
+                }
               }}
             >
               <Icon.PersonAdd />
             </div>
           </div>
+
+          {usersError || roleError || statusError ? (
+            <Notification variant="error" title="Error">
+              {usersError?.message ||
+                roleError?.message ||
+                statusError?.message}
+            </Notification>
+          ) : null}
+
+          {isRoleSuccess || isStatusSuccess ? (
+            <NotificationWithButtons
+              variant="success"
+              title="Team member updated"
+              buttons={[
+                {
+                  label: "Dismiss",
+                  onClick: () => {
+                    if (isRoleSuccess) {
+                      resetRole();
+                    }
+                    if (isStatusSuccess) {
+                      resetStatus();
+                    }
+                    setUpdatedUser(null);
+                  },
+                },
+              ]}
+            >
+              {renderUpdateUserSuccessMessage()}
+            </NotificationWithButtons>
+          ) : null}
+
+          {isNewUserSuccess ? (
+            <NotificationWithButtons
+              variant="success"
+              title="New team member added"
+              buttons={[
+                {
+                  label: "Dismiss",
+                  onClick: () => {
+                    resetNewUser();
+                  },
+                },
+              ]}
+            >
+              {`Team member ${newUser.first_name} ${
+                newUser.last_name
+              } with role ${userRoleText(
+                newUser.roles[0],
+              )} was added successfully.`}
+            </NotificationWithButtons>
+          ) : null}
 
           {renderUsersContent()}
         </div>
@@ -199,7 +339,7 @@ export const SettingsTeamMembers = ({
             size="sm"
             variant="secondary"
             onClick={hideModal}
-            isLoading={users.updatedUser.status === "PENDING"}
+            isLoading={isStatusLoading}
           >
             Cancel
           </Button>
@@ -208,10 +348,17 @@ export const SettingsTeamMembers = ({
             variant="primary"
             onClick={() => {
               if (selectedUser?.id) {
-                handleStatusChange(selectedUser.id, !selectedUser?.is_active);
+                updateStatus({
+                  userId: selectedUser.id,
+                  isActive: !selectedUser?.is_active,
+                });
+                setUpdatedUser({
+                  id: selectedUser.id,
+                  isActive: !selectedUser?.is_active,
+                });
               }
             }}
-            isLoading={users.updatedUser.status === "PENDING"}
+            isLoading={isStatusLoading}
           >
             Confirm
           </Button>
@@ -236,7 +383,7 @@ export const SettingsTeamMembers = ({
             size="sm"
             variant="secondary"
             onClick={hideModal}
-            isLoading={users.updatedUser.status === "PENDING"}
+            isLoading={isRoleLoading}
           >
             Cancel
           </Button>
@@ -245,10 +392,14 @@ export const SettingsTeamMembers = ({
             variant="primary"
             onClick={() => {
               if (selectedUser?.id && newRole) {
-                handleRoleChange(selectedUser.id, newRole);
+                updateRole({ userId: selectedUser.id, role: newRole });
+                setUpdatedUser({
+                  id: selectedUser.id,
+                  role: newRole,
+                });
               }
             }}
-            isLoading={users.updatedUser.status === "PENDING"}
+            isLoading={isRoleLoading}
           >
             Confirm
           </Button>
@@ -258,9 +409,28 @@ export const SettingsTeamMembers = ({
       {/* New user modal */}
       <NewUserModal
         visible={isNewUserModalVisible}
-        onClose={hideModal}
-        onSubmit={handleSubmitNewUser}
-        isLoading={users.newUser.status === "PENDING"}
+        onClose={() => {
+          hideModal();
+
+          if (isNewUserError) {
+            resetNewUser();
+          }
+        }}
+        onSubmit={(newUser: NewUser) => {
+          if (isNewUserError) {
+            resetNewUser();
+          }
+
+          const t = setTimeout(() => {
+            createNewUser(newUser);
+            clearTimeout(t);
+          }, 100);
+        }}
+        onResetQuery={() => {
+          resetNewUser();
+        }}
+        isLoading={isNewUserLoading}
+        errorMessage={newUserError?.message}
       />
     </>
   );
