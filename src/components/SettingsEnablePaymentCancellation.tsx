@@ -89,8 +89,9 @@ export const SettingsEnablePaymentCancellation = () => {
           </div>
           <div className="Note">
             Select this option to automatically cancel pending payments after a
-            certain time period. The payments will no longer be made once they
-            are canceled, even if the receiver tries to claim funds.
+            certain time period. <b>Uncompleted</b> payments will <b>not</b> be
+            made once they are canceled, even if the receiver tries to claim
+            funds. <b>Completed payments are always final.</b>
           </div>
         </div>
 
