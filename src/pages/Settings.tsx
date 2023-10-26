@@ -6,11 +6,6 @@ import { ReceiverInviteMessage } from "components/ReceiverInviteMessage";
 import { SettingsEnableSmsRetry } from "components/SettingsEnableSmsRetry";
 import { SettingsEnablePaymentCancellation } from "components/SettingsEnablePaymentCancellation";
 
-import { AppDispatch } from "store";
-import { resetNewUserAction, resetUpdatedUserAction } from "store/ducks/users";
-import { useRedux } from "hooks/useRedux";
-import { userRoleText } from "helpers/userRoleText";
-
 export const Settings = () => {
   return (
     <>
