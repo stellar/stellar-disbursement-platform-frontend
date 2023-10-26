@@ -72,15 +72,6 @@ export type AssetsInitialState = {
   errorString?: string;
 };
 
-export type WalletsInitialState = {
-  items: ApiWallet[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-  modalVisibility: boolean;
-  modalWalletId: string;
-  modalWalletEnabled: boolean;
-};
-
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -114,27 +105,6 @@ export type ForgotPasswordInitialState = {
   errorExtras?: AnyObject;
 };
 
-export type ReceiverDetailsInitialState = {
-  id: string;
-  phoneNumber: string;
-  email?: string;
-  assetCode?: string;
-  totalReceived?: string;
-  orgId: string;
-  stats: {
-    paymentsTotalCount: number;
-    paymentsSuccessfulCount: number;
-    paymentsFailedCount: number;
-    paymentsRemainingCount: number;
-  };
-  wallets: ReceiverWallet[];
-  verifications: ReceiverVerification[];
-  status: ActionStatus | undefined;
-  updateStatus: ActionStatus | undefined;
-  retryInvitationStatus: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export type OrganizationInitialState = {
   data: {
     name: string;
@@ -161,29 +131,6 @@ export type ProfileInitialState = {
   errorExtras?: AnyObject;
 };
 
-export type UsersInitialState = {
-  items: ApiUser[];
-  updatedUser: {
-    id: string;
-    role: UserRole | null;
-    is_active: boolean;
-    actionType: "status" | "role" | undefined;
-    status: ActionStatus | undefined;
-    errorString?: string;
-  };
-  newUser: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    role: UserRole | null;
-    email: string;
-    status: ActionStatus | undefined;
-    errorString?: string;
-  };
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export interface Store {
   assets: AssetsInitialState;
   countries: CountriesInitialState;
@@ -193,10 +140,7 @@ export interface Store {
   forgotPassword: ForgotPasswordInitialState;
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
-  receiverDetails: ReceiverDetailsInitialState;
   userAccount: UserAccountInitialState;
-  users: UsersInitialState;
-  wallets: WalletsInitialState;
 }
 
 export type StoreKey = keyof Store;
