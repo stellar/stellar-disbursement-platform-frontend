@@ -11,6 +11,7 @@ import { AppDispatch } from "store";
 import { resetNewUserAction, resetUpdatedUserAction } from "store/ducks/users";
 import { useRedux } from "hooks/useRedux";
 import { userRoleText } from "helpers/userRoleText";
+import { SettingsEnablePaymentCancellation } from "components/SettingsEnablePaymentCancellation";
 
 export const Settings = () => {
   const { users } = useRedux("users");
@@ -62,6 +63,9 @@ export const Settings = () => {
       </SectionHeader>
 
       <div className="CardStack">
+        {/* Enable automatic ready payments cancellation */}
+        <SettingsEnablePaymentCancellation />
+
         {/* Enable SMS retry */}
         <SettingsEnableSmsRetry />
 
