@@ -72,15 +72,6 @@ export type AssetsInitialState = {
   errorString?: string;
 };
 
-export type WalletsInitialState = {
-  items: ApiWallet[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-  modalVisibility: boolean;
-  modalWalletId: string;
-  modalWalletEnabled: boolean;
-};
-
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -112,27 +103,6 @@ export type ForgotPasswordInitialState = {
   status: ActionStatus | undefined;
   errorString?: string;
   errorExtras?: AnyObject;
-};
-
-export type ReceiverDetailsInitialState = {
-  id: string;
-  phoneNumber: string;
-  email?: string;
-  assetCode?: string;
-  totalReceived?: string;
-  orgId: string;
-  stats: {
-    paymentsTotalCount: number;
-    paymentsSuccessfulCount: number;
-    paymentsFailedCount: number;
-    paymentsRemainingCount: number;
-  };
-  wallets: ReceiverWallet[];
-  verifications: ReceiverVerification[];
-  status: ActionStatus | undefined;
-  updateStatus: ActionStatus | undefined;
-  retryInvitationStatus: ActionStatus | undefined;
-  errorString?: string;
 };
 
 export type OrganizationInitialState = {
@@ -169,9 +139,7 @@ export interface Store {
   forgotPassword: ForgotPasswordInitialState;
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
-  receiverDetails: ReceiverDetailsInitialState;
   userAccount: UserAccountInitialState;
-  wallets: WalletsInitialState;
 }
 
 export type StoreKey = keyof Store;

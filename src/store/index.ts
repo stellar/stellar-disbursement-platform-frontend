@@ -18,7 +18,6 @@ import { reducer as forgotPassword } from "store/ducks/forgotPassword";
 import { reducer as organization } from "store/ducks/organization";
 import { reducer as profile } from "store/ducks/profile";
 import { reducer as userAccount } from "store/ducks/userAccount";
-import { reducer as wallets } from "store/ducks/wallets";
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
@@ -44,7 +43,6 @@ const reducers = combineReducers({
   organization,
   profile,
   userAccount,
-  wallets,
 });
 
 export const resetStoreAction = createAction(RESET_STORE_ACTION_TYPE);
