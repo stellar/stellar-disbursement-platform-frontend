@@ -47,15 +47,15 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
   const [formItems, setFormItems] = useState<FormItems>(initForm);
   const [formError, setFormError] = useState<string[]>([]);
 
-  const prevVisible = usePrevious(visible);
+  const iPprevVisible = usePrevious(visible);
 
   useEffect(() => {
     // Clear the form when modal closes
-    if (prevVisible === true && visible === false) {
+    if (iPprevVisible && !visible) {
       setFormItems({});
       setFormError([]);
     }
-  }, [visible, prevVisible]);
+  }, [visible, iPprevVisible]);
 
   const handleClose = () => {
     onClose();
