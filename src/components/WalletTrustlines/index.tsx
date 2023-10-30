@@ -74,7 +74,6 @@ export const WalletTrustlines = ({
     onSuccess: (addedAsset) => {
       handleCloseModal();
       onSuccess();
-      // refetchTrustlines();
       setSuccessNotification({
         title: "Trustline added",
         message: `Trustline ${ASSET_NAME[addedAsset.code]} (${
@@ -94,7 +93,6 @@ export const WalletTrustlines = ({
     onSuccess: (removeAsset) => {
       handleCloseModal();
       onSuccess();
-      // refetchTrustlines();
       setSuccessNotification({
         title: "Trustline removed",
         message: `Trustline ${ASSET_NAME[removeAsset.code]} (${
