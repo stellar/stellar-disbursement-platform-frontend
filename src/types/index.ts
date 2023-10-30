@@ -98,13 +98,6 @@ export type DisbursementDetailsInitialState = {
   errorString?: string;
 };
 
-export type ForgotPasswordInitialState = {
-  response?: string;
-  status: ActionStatus | undefined;
-  errorString?: string;
-  errorExtras?: AnyObject;
-};
-
 export type OrganizationInitialState = {
   data: {
     name: string;
@@ -136,7 +129,6 @@ export interface Store {
   disbursementDetails: DisbursementDetailsInitialState;
   disbursementDrafts: DisbursementDraftsInitialState;
   disbursements: DisbursementsInitialState;
-  forgotPassword: ForgotPasswordInitialState;
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
   userAccount: UserAccountInitialState;
