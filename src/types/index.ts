@@ -108,6 +108,7 @@ export type OrganizationInitialState = {
     isApprovalRequired: boolean | undefined;
     smsResendInterval: number;
     smsRegistrationMessageTemplate?: string;
+    paymentCancellationPeriodDays: number;
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -310,7 +311,8 @@ export type PaymentStatus =
   | "PENDING"
   | "PAUSED"
   | "SUCCESS"
-  | "FAILED";
+  | "FAILED"
+  | "CANCELED";
 
 export type PaymentsSearchParams = CommonFilters &
   SortParams &
@@ -770,6 +772,7 @@ export type ApiOrgInfo = {
   is_approval_required: boolean;
   sms_resend_interval: string;
   sms_registration_message_template?: string;
+  payment_cancellation_period_days: string;
 };
 
 export type ApiStellarAccountBalance = {

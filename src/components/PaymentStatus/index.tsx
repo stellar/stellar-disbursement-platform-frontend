@@ -7,6 +7,8 @@ export const PaymentStatus = ({ status }: { status: PaymentStatusType }) => {
       return <span className="PaymentStatus">Draft</span>;
     case "FAILED":
       return <span className="PaymentStatus">Failed</span>;
+    case "CANCELED":
+      return <span className="PaymentStatus">Canceled</span>;
     case "PAUSED":
       return <span className="PaymentStatus">Paused</span>;
     case "PENDING":

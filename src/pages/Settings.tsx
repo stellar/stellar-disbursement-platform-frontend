@@ -4,6 +4,7 @@ import { SectionHeader } from "components/SectionHeader";
 import { SettingsTeamMembers } from "components/SettingsTeamMembers";
 import { ReceiverInviteMessage } from "components/ReceiverInviteMessage";
 import { SettingsEnableSmsRetry } from "components/SettingsEnableSmsRetry";
+import { SettingsEnablePaymentCancellation } from "components/SettingsEnablePaymentCancellation";
 
 export const Settings = () => {
   return (
@@ -19,6 +20,9 @@ export const Settings = () => {
       </SectionHeader>
 
       <div className="CardStack">
+        {/* Enable automatic ready payments cancellation */}
+        <SettingsEnablePaymentCancellation />
+
         {/* Enable SMS retry */}
         <SettingsEnableSmsRetry />
 
