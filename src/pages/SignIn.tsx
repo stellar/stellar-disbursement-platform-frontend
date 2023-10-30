@@ -141,7 +141,7 @@ export const SignIn = () => {
                 id="si-password"
                 name="si-password"
                 label="Password"
-                type="password"
+                isPassword
                 onChange={(e) => setPassword(e.target.value)}
               />
               <Recaptcha
