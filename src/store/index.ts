@@ -9,7 +9,6 @@ import BigNumber from "bignumber.js";
 
 import { RESET_STORE_ACTION_TYPE } from "constants/settings";
 
-import { reducer as assets } from "store/ducks/assets";
 import { reducer as countries } from "store/ducks/countries";
 import { reducer as disbursementDetails } from "store/ducks/disbursementDetails";
 import { reducer as disbursementDrafts } from "store/ducks/disbursementDrafts";
@@ -33,7 +32,6 @@ const isSerializable = (value: any) =>
   BigNumber.isBigNumber(value) || isPlain(value);
 
 const reducers = combineReducers({
-  assets,
   countries,
   disbursementDetails,
   disbursementDrafts,
