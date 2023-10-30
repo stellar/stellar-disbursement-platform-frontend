@@ -10,9 +10,9 @@ import { useDispatch } from "react-redux";
 
 import { AppDispatch } from "store";
 import { getCountriesAction } from "store/ducks/countries";
-import { getAssetsByWalletAction } from "store/ducks/assets";
 
 import { useWallets } from "apiQueries/useWallets";
+import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
 import { useRedux } from "hooks/useRedux";
@@ -61,7 +61,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   onChange,
   onValidate,
 }: DisbursementDetailsProps) => {
-  const { assets, countries } = useRedux("assets", "countries");
+  const { countries } = useRedux("countries");
 
   enum FieldId {
     NAME = "name",
@@ -76,6 +76,12 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     isLoading: isWalletsLoading,
   } = useWallets();
 
+  const {
+    data: walletAssets,
+    error: walletError,
+    isFetching: isWalletAssetsFetching,
+  } = useAssetsByWallet(details.wallet.id);
+
   const dispatch: AppDispatch = useDispatch();
 
   // Don't fetch again if we already have them in store
@@ -88,7 +94,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   const apiErrors = [
     countries.errorString,
     walletsError?.message,
-    assets.errorString,
+    walletError?.message,
   ];
 
   const sanitizedApiErrors = apiErrors.filter((e) => Boolean(e));
@@ -157,12 +163,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             name: wallet?.name || "",
           },
         });
-        dispatch(getAssetsByWalletAction({ walletId: wallet?.id || "" }));
 
         break;
       case FieldId.ASSET_CODE:
         // eslint-disable-next-line no-case-declarations
-        const asset = assets.items.find((a: ApiAsset) => a.id === value);
+        const asset = walletAssets?.find((a: ApiAsset) => a.id === value);
 
         updateState({
           asset: {
@@ -274,10 +279,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.asset.id}
-          disabled={assets.status === "PENDING" || !details.wallet.id}
+          disabled={isWalletAssetsFetching || !details.wallet.id}
         >
-          {renderDropdownDefault(assets.status === "PENDING")}
-          {assets.items.map((asset: ApiAsset) => (
+          {renderDropdownDefault(isWalletAssetsFetching)}
+          {walletAssets?.map((asset: ApiAsset) => (
             <option key={asset.id} value={asset.id}>
               {asset.code}
             </option>

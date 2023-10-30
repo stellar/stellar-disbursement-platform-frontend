@@ -66,12 +66,6 @@ export type CountriesInitialState = {
   errorString?: string;
 };
 
-export type AssetsInitialState = {
-  items: ApiAsset[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -125,7 +119,6 @@ export type ProfileInitialState = {
 };
 
 export interface Store {
-  assets: AssetsInitialState;
   countries: CountriesInitialState;
   disbursementDetails: DisbursementDetailsInitialState;
   disbursementDrafts: DisbursementDraftsInitialState;
