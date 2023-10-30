@@ -4,7 +4,6 @@
   &__asset {
     display: flex;
     justify-content: space-between;
-    gap: pxToRem(16px);
     border: 1px solid var(--color-gray-30);
     border-radius: pxToRem(4px);
     background-color: var(--color-gray-00);
@@ -13,16 +12,25 @@
     &__info {
       display: flex;
       flex-direction: column;
-      gap: pxToRem(8px);
+      gap: pxToRem(4px);
       font-size: pxToRem(14px);
       line-height: pxToRem(22px);
       font-weight: var(--font-weight-regular);
       color: var(--color-gray-80);
+      overflow: hidden;
 
       span {
         color: var(--color-gray-60);
         font-size: pxToRem(12px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
+    }
+
+    &__button {
+      flex-shrink: 0;
+      padding-left: pxToRem(8px);
     }
   }
 

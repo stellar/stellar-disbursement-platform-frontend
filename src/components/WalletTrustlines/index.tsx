@@ -179,31 +179,33 @@ export const WalletTrustlines = ({
             >
               <div className="WalletTrustlines__asset__info">
                 {ASSET_NAME?.[a.code] && <div>{ASSET_NAME?.[a.code]}</div>}
-                <span>
+                <span title={`${a.code}:${a.issuer}`}>
                   {a.code}:{a.issuer}
                 </span>
               </div>
 
               {!a.isNative && a.id ? (
-                <DropdownMenu triggerEl={<MoreMenuButton />}>
-                  <DropdownMenu.Item
-                    onClick={() => {
-                      if (isRemoveEnabled) {
-                        setIsRemoveModalVisible(true);
-                        setRemoveAssetId(a.id!);
+                <div className="WalletTrustlines__asset__button">
+                  <DropdownMenu triggerEl={<MoreMenuButton />}>
+                    <DropdownMenu.Item
+                      onClick={() => {
+                        if (isRemoveEnabled) {
+                          setIsRemoveModalVisible(true);
+                          setRemoveAssetId(a.id!);
+                        }
+                      }}
+                      isHighlight
+                      aria-disabled={!isRemoveEnabled}
+                      title={
+                        !isRemoveEnabled
+                          ? "You can only remove an asset when the asset balance is 0"
+                          : ""
                       }
-                    }}
-                    isHighlight
-                    aria-disabled={!isRemoveEnabled}
-                    title={
-                      !isRemoveEnabled
-                        ? "You can only remove an asset when the asset balance is 0"
-                        : ""
-                    }
-                  >
-                    Remove trustline
-                  </DropdownMenu.Item>
-                </DropdownMenu>
+                    >
+                      Remove trustline
+                    </DropdownMenu.Item>
+                  </DropdownMenu>
+                </div>
               ) : null}
             </div>
           );
