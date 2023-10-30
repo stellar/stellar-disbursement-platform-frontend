@@ -163,7 +163,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             name: wallet?.name || "",
           },
         });
-        // dispatch(getAssetsByWalletAction({ walletId: wallet?.id || "" }));
 
         break;
       case FieldId.ASSET_CODE:
