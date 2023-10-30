@@ -9,6 +9,8 @@ export const useCountries = () => {
     queryFn: async () => {
       return await fetchApi(`${API_URL}/countries`);
     },
+    // Keeping the fetched data for longer since it won't change that often
+    staleTime: 5 * 60 * 100,
   });
 
   return query;
