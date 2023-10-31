@@ -5,6 +5,7 @@ import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 import { parseJwt } from "helpers/parseJwt";
 import { normalizeApiError } from "helpers/normalizeApiError";
 import { AnyObject } from "types";
+import { getSdpTenantName } from "./getSdpTenantName";
 
 type FetchApiOptions = {
   withoutAuth?: boolean;
@@ -42,6 +43,7 @@ export const fetchApi = async (
     config.headers = {
       ...config.headers,
       Authorization: `Bearer ${token}`,
+      SDP_TENANT_NAME: getSdpTenantName(),
       ...(!options?.omitContentType
         ? {
             "Content-Type":

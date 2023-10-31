@@ -1,5 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/settings";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { ApiProfileInfo } from "types";
 
 export const getProfileInfo = async (
@@ -10,6 +11,7 @@ export const getProfileInfo = async (
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      SDP_TENANT_NAME: getSdpTenantName(),
     },
   });
 

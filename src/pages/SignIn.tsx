@@ -21,6 +21,7 @@ import {
 } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 
 export const SignIn = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -88,6 +89,7 @@ export const SignIn = () => {
 
     const headers = {
       "Device-ID": deviceId,
+      SDP_TENANT_NAME: getSdpTenantName(),
     };
 
     dispatch(signInAction({ email, password, recaptchaToken, headers }));

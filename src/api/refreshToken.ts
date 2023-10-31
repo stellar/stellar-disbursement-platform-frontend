@@ -1,6 +1,7 @@
 import { differenceInMinutes, fromUnixTime } from "date-fns";
 import { API_URL, SESSION_EXPIRED } from "constants/settings";
 import { parseJwt } from "helpers/parseJwt";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 
 export const refreshToken = async (token: string): Promise<string> => {
   const jwt = parseJwt(token);
@@ -15,6 +16,7 @@ export const refreshToken = async (token: string): Promise<string> => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        SDP_TENANT_NAME: getSdpTenantName(),
       },
     });
 
