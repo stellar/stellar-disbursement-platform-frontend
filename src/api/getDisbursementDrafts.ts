@@ -1,5 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL, UI_STATUS_DISBURSEMENT_DRAFT } from "constants/settings";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { ApiDisbursements } from "types";
 
 export const getDisbursementDrafts = async (
@@ -13,6 +14,7 @@ export const getDisbursementDrafts = async (
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        SDP_TENANT_NAME: getSdpTenantName(),
       },
     },
   );

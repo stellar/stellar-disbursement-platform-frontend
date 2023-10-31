@@ -1,5 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/settings";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { ApiDisbursement, Disbursement } from "types";
 
 export const postDisbursement = async (
@@ -11,6 +12,7 @@ export const postDisbursement = async (
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      SDP_TENANT_NAME: getSdpTenantName(),
     },
     body: JSON.stringify({
       name: disbursement.name,

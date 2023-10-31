@@ -21,6 +21,7 @@ import {
 } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 
 export const MFAuth = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -73,6 +74,7 @@ export const MFAuth = () => {
 
     const headers = {
       "Device-ID": deviceId,
+      SDP_TENANT_NAME: getSdpTenantName(),
     };
 
     dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
@@ -88,6 +90,7 @@ export const MFAuth = () => {
 
     const headers = {
       "Device-ID": deviceId,
+      SDP_TENANT_NAME: getSdpTenantName(),
     };
 
     if (email && password) {
