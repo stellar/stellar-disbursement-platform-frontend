@@ -8,21 +8,26 @@ import {
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import { USE_SSO } from "constants/settings";
 import { singleUserStore } from "helpers/singleSingOn";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
 import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 
+import { useNewPassword } from "apiQueries/useNewPassword";
 import { AppDispatch, resetStoreAction } from "store";
-import { setNewPasswordAction } from "store/ducks/forgotPassword";
-import { useRedux } from "hooks/useRedux";
 
 export const SetNewPassword = () => {
+  const {
+    isSuccess,
+    isLoading,
+    error,
+    mutateAsync: submitNewPassword,
+  } = useNewPassword();
+
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { forgotPassword } = useRedux("forgotPassword");
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -33,27 +38,24 @@ export const SetNewPassword = () => {
   const [errorPasswordMatch, setErrorPasswordMatch] = useState("");
 
   useEffect(() => {
-    if (forgotPassword.status === "SUCCESS") {
+    if (isSuccess) {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmNewPassword("");
-    }
-  }, [forgotPassword.status]);
 
-  const handleSignOut = () => {
-    if (USE_SSO) {
-      // reset user store (from session storage)
-      singleUserStore();
+      if (USE_SSO) {
+        // reset user store (from session storage)
+        singleUserStore();
+      }
+      dispatch(resetStoreAction());
+      localStorageSessionToken.remove();
     }
-    dispatch(resetStoreAction());
-    localStorageSessionToken.remove();
-  };
+  }, [dispatch, isSuccess]);
 
   const goToSignIn = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    handleSignOut();
     navigate("/");
   };
 
@@ -75,38 +77,31 @@ export const SetNewPassword = () => {
     event: React.FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
-    dispatch(
-      setNewPasswordAction({
-        currentPassword,
-        newPassword,
-      }),
-    );
+    submitNewPassword({ currentPassword, newPassword });
   };
 
   return (
     <>
       <div className="CardLayout">
-        {forgotPassword.status === "SUCCESS" && (
+        {isSuccess ? (
           <Notification variant="success" title="Password reset">
             Password reset successfully. You can{" "}
             <Link onClick={goToSignIn}>sign in</Link> using your new password.
           </Notification>
-        )}
+        ) : null}
 
-        {forgotPassword.errorString && (
+        {error ? (
           <Notification variant="error" title="Reset password error">
-            {forgotPassword.errorString}
-            {forgotPassword.errorExtras ? (
+            {error.message}
+            {error?.extras ? (
               <ul className="ErrorExtras">
-                {Object.entries(forgotPassword.errorExtras).map(
-                  ([key, value]) => (
-                    <li key={key}>{`${key}: ${value}`}</li>
-                  ),
-                )}
+                {Object.entries(error.extras).map(([key, value]) => (
+                  <li key={key}>{`${key}: ${value}`}</li>
+                ))}
               </ul>
             ) : null}
           </Notification>
-        )}
+        ) : null}
 
         <form onSubmit={handleResetCurrentPassword}>
           <div className="CardLayout__heading">
@@ -117,7 +112,7 @@ export const SetNewPassword = () => {
             <div className="Note">
               New password must be:
               <ul>
-                <li>at least 8 characters long,</li>
+                <li>at least 12 characters long,</li>
                 <li>
                   a combination of uppercase letters, lowercase letters,
                   numbers, and symbols.
@@ -188,7 +183,7 @@ export const SetNewPassword = () => {
             size="sm"
             type="submit"
             disabled={!allInputsValid()}
-            isLoading={forgotPassword.status === "PENDING"}
+            isLoading={isLoading}
           >
             Reset password
           </Button>

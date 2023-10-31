@@ -9,18 +9,13 @@ import BigNumber from "bignumber.js";
 
 import { RESET_STORE_ACTION_TYPE } from "constants/settings";
 
-import { reducer as assets } from "store/ducks/assets";
 import { reducer as countries } from "store/ducks/countries";
 import { reducer as disbursementDetails } from "store/ducks/disbursementDetails";
 import { reducer as disbursementDrafts } from "store/ducks/disbursementDrafts";
 import { reducer as disbursements } from "store/ducks/disbursements";
-import { reducer as forgotPassword } from "store/ducks/forgotPassword";
 import { reducer as organization } from "store/ducks/organization";
 import { reducer as profile } from "store/ducks/profile";
-import { reducer as receiverPayments } from "store/ducks/receiverPayments";
 import { reducer as userAccount } from "store/ducks/userAccount";
-import { reducer as users } from "store/ducks/users";
-import { reducer as wallets } from "store/ducks/wallets";
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
@@ -37,18 +32,13 @@ const isSerializable = (value: any) =>
   BigNumber.isBigNumber(value) || isPlain(value);
 
 const reducers = combineReducers({
-  assets,
   countries,
   disbursementDetails,
   disbursementDrafts,
   disbursements,
-  forgotPassword,
   organization,
   profile,
-  receiverPayments,
   userAccount,
-  users,
-  wallets,
 });
 
 export const resetStoreAction = createAction(RESET_STORE_ACTION_TYPE);

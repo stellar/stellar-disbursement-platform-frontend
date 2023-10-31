@@ -587,6 +587,57 @@ body {
   }
 }
 
+// Settings
+.SdpSettings {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: pxToRem(16px);
+  }
+
+  &__label {
+    font-size: pxToRem(14px);
+  }
+
+  &__form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+
+    .Floater {
+      height: pxToRem(36px);
+      width: pxToRem(24px);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    &__row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    &__buttons {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: pxToRem(16px);
+    }
+  }
+}
+
 // Not found / 404 page
 .NotFoundPage {
   display: flex;
@@ -680,6 +731,17 @@ body {
         display: block;
         fill: var(--color-gray-60);
       }
+    }
+  }
+
+  // TODO: add toggle loader to SDS
+  .Toggle__wrapper {
+    display: flex;
+    align-items: center;
+    gap: pxToRem(4px);
+
+    .Loader {
+      --Loader-color: var(--color-gray-50);
     }
   }
 }

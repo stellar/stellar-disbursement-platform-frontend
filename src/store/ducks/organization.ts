@@ -125,6 +125,8 @@ const initialState: OrganizationInitialState = {
     timezoneUtcOffset: "",
     assetBalances: undefined,
     isApprovalRequired: undefined,
+    smsResendInterval: 0,
+    paymentCancellationPeriodDays: 0,
   },
   updateMessage: undefined,
   status: undefined,
@@ -161,6 +163,10 @@ const organizationSlice = createSlice({
         isApprovalRequired: action.payload.is_approval_required,
         smsRegistrationMessageTemplate:
           action.payload.sms_registration_message_template,
+        smsResendInterval: Number(action.payload.sms_resend_interval || 0),
+        paymentCancellationPeriodDays: Number(
+          action.payload.payment_cancellation_period_days || 0,
+        ),
       };
       state.status = "SUCCESS";
     });

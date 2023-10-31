@@ -66,21 +66,6 @@ export type CountriesInitialState = {
   errorString?: string;
 };
 
-export type AssetsInitialState = {
-  items: ApiAsset[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
-export type WalletsInitialState = {
-  items: ApiWallet[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-  modalVisibility: boolean;
-  modalWalletId: string;
-  modalWalletEnabled: boolean;
-};
-
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -107,42 +92,6 @@ export type DisbursementDetailsInitialState = {
   errorString?: string;
 };
 
-export type ForgotPasswordInitialState = {
-  response?: string;
-  status: ActionStatus | undefined;
-  errorString?: string;
-  errorExtras?: AnyObject;
-};
-
-export type ReceiverDetailsInitialState = {
-  id: string;
-  phoneNumber: string;
-  email?: string;
-  assetCode?: string;
-  totalReceived?: string;
-  orgId: string;
-  stats: {
-    paymentsTotalCount: number;
-    paymentsSuccessfulCount: number;
-    paymentsFailedCount: number;
-    paymentsRemainingCount: number;
-  };
-  wallets: ReceiverWallet[];
-  verifications: ReceiverVerification[];
-  status: ActionStatus | undefined;
-  updateStatus: ActionStatus | undefined;
-  retryInvitationStatus: ActionStatus | undefined;
-  errorString?: string;
-};
-
-export type ReceiverPaymentsInitialState = {
-  items: ApiPayment[];
-  status: ActionStatus | undefined;
-  pagination?: Pagination;
-  errorString?: string;
-  searchParams?: PaymentsSearchParams;
-};
-
 export type OrganizationInitialState = {
   data: {
     name: string;
@@ -151,7 +100,9 @@ export type OrganizationInitialState = {
     timezoneUtcOffset: string;
     assetBalances?: StellarAccountInfo[];
     isApprovalRequired: boolean | undefined;
+    smsResendInterval: number;
     smsRegistrationMessageTemplate?: string;
+    paymentCancellationPeriodDays: number;
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -167,43 +118,14 @@ export type ProfileInitialState = {
   errorExtras?: AnyObject;
 };
 
-export type UsersInitialState = {
-  items: ApiUser[];
-  updatedUser: {
-    id: string;
-    role: UserRole | null;
-    is_active: boolean;
-    actionType: "status" | "role" | undefined;
-    status: ActionStatus | undefined;
-    errorString?: string;
-  };
-  newUser: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    role: UserRole | null;
-    email: string;
-    status: ActionStatus | undefined;
-    errorString?: string;
-  };
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export interface Store {
-  assets: AssetsInitialState;
   countries: CountriesInitialState;
   disbursementDetails: DisbursementDetailsInitialState;
   disbursementDrafts: DisbursementDraftsInitialState;
   disbursements: DisbursementsInitialState;
-  forgotPassword: ForgotPasswordInitialState;
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
-  receiverDetails: ReceiverDetailsInitialState;
-  receiverPayments: ReceiverPaymentsInitialState;
   userAccount: UserAccountInitialState;
-  users: UsersInitialState;
-  wallets: WalletsInitialState;
 }
 
 export type StoreKey = keyof Store;
@@ -382,7 +304,8 @@ export type PaymentStatus =
   | "PENDING"
   | "PAUSED"
   | "SUCCESS"
-  | "FAILED";
+  | "FAILED"
+  | "CANCELED";
 
 export type PaymentsSearchParams = CommonFilters &
   SortParams &
@@ -840,7 +763,9 @@ export type ApiOrgInfo = {
   distribution_account_public_key: string;
   timezone_utc_offset: string;
   is_approval_required: boolean;
+  sms_resend_interval: string;
   sms_registration_message_template?: string;
+  payment_cancellation_period_days: string;
 };
 
 export type ApiStellarAccountBalance = {
