@@ -428,6 +428,7 @@ export type ReceiverEditFields = {
 export type HomeStatistics = {
   paymentsSuccessfulCounts: number;
   paymentsFailedCount: number;
+  paymentsCanceledCount: number;
   paymentsRemainingCount: number;
   paymentsTotalCount: number;
   walletsTotalCount: number;
@@ -618,6 +619,7 @@ export type ApiPayments = {
 export type ApiStatisticsAsset = {
   asset_code: string;
   payment_amounts: {
+    canceled: number;
     draft: number;
     ready: number;
     pending: number;
@@ -631,6 +633,7 @@ export type ApiStatisticsAsset = {
 
 export type ApiStatistics = {
   payment_counters: {
+    canceled: number;
     draft: number;
     ready: number;
     pending: number;
