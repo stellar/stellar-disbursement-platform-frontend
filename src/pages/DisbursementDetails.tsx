@@ -238,6 +238,17 @@ export const DisbursementDetails = () => {
 
               <div className="StatCards__card__item StatCards__card__item--inline">
                 <label className="StatCards__card__item__label">
+                  Canceled payments
+                </label>
+                <div className="StatCards__card__item__value">
+                  {renderNumberOrDash(
+                    disbursementDetails.details.stats?.paymentsCanceledCount,
+                  )}
+                </div>
+              </div>
+
+              <div className="StatCards__card__item StatCards__card__item--inline">
+                <label className="StatCards__card__item__label">
                   Remaining payments
                 </label>
                 <div className="StatCards__card__item__value">
