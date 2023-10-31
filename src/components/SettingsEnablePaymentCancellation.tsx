@@ -119,7 +119,7 @@ export const SettingsEnablePaymentCancellation = () => {
                   }}
                   disabled={!isEditMode}
                   error={
-                    paymentCancellationPeriodDays === 0
+                    paymentCancellationPeriodDays == 0
                       ? "Cancellation period cannot be 0"
                       : ""
                   }
