@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   Card,
   Input,
@@ -6,16 +5,12 @@ import {
   Title,
   Notification,
 } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
-
-import { AppDispatch } from "store";
-import { getCountriesAction } from "store/ducks/countries";
 
 import { useWallets } from "apiQueries/useWallets";
 import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
+import { useCountries } from "apiQueries/useCountries";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { useRedux } from "hooks/useRedux";
 import {
   ApiAsset,
   ApiCountry,
@@ -61,8 +56,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   onChange,
   onValidate,
 }: DisbursementDetailsProps) => {
-  const { countries } = useRedux("countries");
-
   enum FieldId {
     NAME = "name",
     COUNTRY_CODE = "country_code",
@@ -77,22 +70,19 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   } = useWallets();
 
   const {
+    data: countries,
+    error: countriesError,
+    isLoading: isCountriesLoading,
+  } = useCountries();
+
+  const {
     data: walletAssets,
     error: walletError,
     isFetching: isWalletAssetsFetching,
   } = useAssetsByWallet(details.wallet.id);
 
-  const dispatch: AppDispatch = useDispatch();
-
-  // Don't fetch again if we already have them in store
-  useEffect(() => {
-    if (!countries.status) {
-      dispatch(getCountriesAction());
-    }
-  }, [dispatch, countries.status]);
-
   const apiErrors = [
-    countries.errorString,
+    countriesError?.message,
     walletsError?.message,
     walletError?.message,
   ];
@@ -141,9 +131,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     switch (id) {
       case FieldId.COUNTRY_CODE:
         // eslint-disable-next-line no-case-declarations
-        const country = countries.items.find(
-          (c: ApiCountry) => c.code === value,
-        );
+        const country = countries?.find((c: ApiCountry) => c.code === value);
 
         updateState({
           country: {
@@ -244,10 +232,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.country.code}
-          disabled={countries.status === "PENDING"}
+          disabled={isCountriesLoading}
         >
-          {renderDropdownDefault(countries.status === "PENDING")}
-          {countries.items.map((country: ApiCountry) => (
+          {renderDropdownDefault(isCountriesLoading)}
+          {countries?.map((country: ApiCountry) => (
             <option key={country.code} value={country.code}>
               {country.name}
             </option>
