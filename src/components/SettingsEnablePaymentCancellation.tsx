@@ -21,7 +21,7 @@ export const SettingsEnablePaymentCancellation = () => {
   const { organization } = useRedux("organization");
 
   const [paymentCancellationPeriodDays, setPaymentCancellationPeriodDays] =
-    useState(0);
+    useState<number | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
@@ -51,7 +51,10 @@ export const SettingsEnablePaymentCancellation = () => {
     event: React.FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
-    mutateAsync(paymentCancellationPeriodDays);
+
+    if (paymentCancellationPeriodDays) {
+      mutateAsync(paymentCancellationPeriodDays);
+    }
   };
 
   const handlePaymentCancellationReset = (
@@ -108,10 +111,12 @@ export const SettingsEnablePaymentCancellation = () => {
                   id="payment-cancellation-period"
                   label="Payments Cancellation Period (days)"
                   type="number"
-                  value={paymentCancellationPeriodDays}
-                  onChange={(e) =>
-                    setPaymentCancellationPeriodDays(Number(e.target.value))
-                  }
+                  value={paymentCancellationPeriodDays ?? ""}
+                  onChange={(e) => {
+                    e.target.value !== ""
+                      ? setPaymentCancellationPeriodDays(Number(e.target.value))
+                      : setPaymentCancellationPeriodDays(null);
+                  }}
                   disabled={!isEditMode}
                   error={
                     paymentCancellationPeriodDays === 0
