@@ -20,7 +20,7 @@ import { getOrgInfoAction } from "store/ducks/organization";
 export const SettingsEnableSmsRetry = () => {
   const { organization } = useRedux("organization");
 
-  const [smsRetryInterval, setSmsRetryInterval] = useState(0);
+  const [smsRetryInterval, setSmsRetryInterval] = useState<number | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
@@ -46,7 +46,10 @@ export const SettingsEnableSmsRetry = () => {
 
   const handleSmsRetrySubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutateAsync(smsRetryInterval);
+
+    if (smsRetryInterval) {
+      mutateAsync(smsRetryInterval);
+    }
   };
 
   const handleSmsRetryReset = (event: React.FormEvent<HTMLFormElement>) => {
@@ -94,11 +97,15 @@ export const SettingsEnableSmsRetry = () => {
                   id="sms-retry-interval"
                   label="SMS retry interval (days)"
                   type="number"
-                  value={smsRetryInterval}
-                  onChange={(e) => setSmsRetryInterval(Number(e.target.value))}
+                  value={smsRetryInterval ?? ""}
+                  onChange={(e) => {
+                    e.target.value !== ""
+                      ? setSmsRetryInterval(Number(e.target.value))
+                      : setSmsRetryInterval(null);
+                  }}
                   disabled={!isEditMode}
                   error={
-                    smsRetryInterval === 0 ? "Retry interval cannot be 0" : ""
+                    smsRetryInterval == 0 ? "Retry interval cannot be 0" : ""
                   }
                 />
                 {!isEditMode ? (

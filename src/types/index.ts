@@ -60,12 +60,6 @@ export type UserAccountInitialState = {
   restoredPathname?: string;
 };
 
-export type CountriesInitialState = {
-  items: ApiCountry[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -119,7 +113,6 @@ export type ProfileInitialState = {
 };
 
 export interface Store {
-  countries: CountriesInitialState;
   disbursementDetails: DisbursementDetailsInitialState;
   disbursementDrafts: DisbursementDraftsInitialState;
   disbursements: DisbursementsInitialState;
