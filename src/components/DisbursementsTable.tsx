@@ -109,6 +109,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
             <Table.HeaderCell>Total payments</Table.HeaderCell>
             <Table.HeaderCell>Successful</Table.HeaderCell>
             <Table.HeaderCell>Failed</Table.HeaderCell>
+            <Table.HeaderCell>Canceled</Table.HeaderCell>
             <Table.HeaderCell>Remaining</Table.HeaderCell>
             <Table.HeaderCell
               sortDirection={
@@ -148,6 +149,9 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                 </Table.BodyCell>
                 <Table.BodyCell width="2.25rem" textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsFailedCount)}
+                </Table.BodyCell>
+                <Table.BodyCell width="3.4rem" textAlign="right">
+                  {renderNumberOrDash(d.stats?.paymentsCanceledCount)}
                 </Table.BodyCell>
                 <Table.BodyCell width="3.75rem" textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsRemainingCount)}
