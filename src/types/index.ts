@@ -269,6 +269,7 @@ export interface DisbursementDraftRejectMessage extends RejectMessage {
 export type DisbursementDetailsStats = {
   paymentsSuccessfulCount: number;
   paymentsFailedCount: number;
+  paymentsCanceledCount: number;
   paymentsRemainingCount: number;
   paymentsTotalCount: number;
   totalAmount: string;
@@ -411,6 +412,7 @@ export type ReceiverDetails = {
     paymentsTotalCount: number;
     paymentsSuccessfulCount: number;
     paymentsFailedCount: number;
+    paymentsCanceledCount: number;
     paymentsRemainingCount: number;
   };
   wallets: ReceiverWallet[];
@@ -428,6 +430,7 @@ export type ReceiverEditFields = {
 export type HomeStatistics = {
   paymentsSuccessfulCounts: number;
   paymentsFailedCount: number;
+  paymentsCanceledCount: number;
   paymentsRemainingCount: number;
   paymentsTotalCount: number;
   walletsTotalCount: number;
@@ -551,6 +554,7 @@ export type ApiDisbursement = {
   total_payments: number;
   total_payments_sent: number;
   total_payments_failed: number;
+  total_payments_canceled: number;
   total_payments_remaining: number;
   amount_disbursed: string;
   total_amount: string;
@@ -618,6 +622,7 @@ export type ApiPayments = {
 export type ApiStatisticsAsset = {
   asset_code: string;
   payment_amounts: {
+    canceled: number;
     draft: number;
     ready: number;
     pending: number;
@@ -631,6 +636,7 @@ export type ApiStatisticsAsset = {
 
 export type ApiStatistics = {
   payment_counters: {
+    canceled: number;
     draft: number;
     ready: number;
     pending: number;
@@ -725,6 +731,7 @@ export type ApiReceiver = {
   total_payments: string | number;
   successful_payments: string | number;
   failed_payments: string | number;
+  canceled_payments: string | number;
   remaining_payments: string | number;
   received_amounts?: {
     asset_code: string;

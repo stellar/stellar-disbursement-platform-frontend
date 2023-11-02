@@ -4,10 +4,12 @@ export const formatStatistics = (statistics: ApiStatistics): HomeStatistics => {
   return {
     paymentsSuccessfulCounts: statistics.payment_counters.success,
     paymentsFailedCount: statistics.payment_counters.failed,
+    paymentsCanceledCount: statistics.payment_counters.canceled,
     paymentsRemainingCount: Number(
       statistics.payment_counters.total -
         statistics.payment_counters.success -
-        statistics.payment_counters.failed,
+        statistics.payment_counters.failed -
+        statistics.payment_counters.canceled,
     ),
     paymentsTotalCount: statistics.payment_counters.total,
     walletsTotalCount: statistics.receiver_wallets_counters.total,
