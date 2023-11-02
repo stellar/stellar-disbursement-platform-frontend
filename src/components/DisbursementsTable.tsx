@@ -150,7 +150,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                 <Table.BodyCell width="2.25rem" textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsFailedCount)}
                 </Table.BodyCell>
-                <Table.BodyCell width="2.25rem" textAlign="right">
+                <Table.BodyCell width="3.75rem" textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsCanceledCount)}
                 </Table.BodyCell>
                 <Table.BodyCell width="3.75rem" textAlign="right">
