@@ -11,7 +11,7 @@ export const getProfileInfo = async (
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      SDP_TENANT_NAME: getSdpTenantName(),
+      "SDP-Tenant-Name": getSdpTenantName(),
     },
   });
 

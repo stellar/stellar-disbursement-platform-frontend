@@ -11,7 +11,7 @@ export const getDisbursementInstructions = async (
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
-        SDP_TENANT_NAME: getSdpTenantName(),
+        "SDP-Tenant-Name": getSdpTenantName(),
       },
     },
   );

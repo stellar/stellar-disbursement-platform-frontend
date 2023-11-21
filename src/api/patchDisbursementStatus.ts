@@ -15,7 +15,7 @@ export const patchDisbursementStatus = async (
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        SDP_TENANT_NAME: getSdpTenantName(),
+        "SDP-Tenant-Name": getSdpTenantName(),
       },
       body: JSON.stringify({
         status,

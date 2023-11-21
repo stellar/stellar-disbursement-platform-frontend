@@ -46,7 +46,7 @@ export const patchOrgInfo = async (
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
-      SDP_TENANT_NAME: getSdpTenantName(),
+      "SDP-Tenant-Name": getSdpTenantName(),
     },
     body: formData,
   });

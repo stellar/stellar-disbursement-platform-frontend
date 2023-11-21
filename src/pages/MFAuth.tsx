@@ -74,7 +74,7 @@ export const MFAuth = () => {
 
     const headers = {
       "Device-ID": deviceId,
-      SDP_TENANT_NAME: getSdpTenantName(),
+      "SDP-Tenant-Name": getSdpTenantName(),
     };
 
     dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
@@ -90,7 +90,7 @@ export const MFAuth = () => {
 
     const headers = {
       "Device-ID": deviceId,
-      SDP_TENANT_NAME: getSdpTenantName(),
+      "SDP-Tenant-Name": getSdpTenantName(),
     };
 
     if (email && password) {
