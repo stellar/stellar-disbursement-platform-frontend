@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - develop
+      - sdp-multitenant
 
 jobs:
   test-build:
@@ -81,6 +82,29 @@ jobs:
           tags:
             stellar/stellar-disbursement-platform-frontend:edge,stellar/stellar-disbursement-platform-frontend:edge-${{steps.get_date.outputs.DATE
             }}-${{ steps.get_sha.outputs.SHA }}
+          file: Dockerfile
+
+  build_and_push_docker_image_on_multitenant_push:
+    if:
+      github.event_name == 'push' && github.ref == 'refs/heads/sdp-multitenant'
+    name: Push SDP Multi-Tenant to DockerHub # stellar/stellar-disbursement-platform-frontend:multitenant-alpha
+    runs-on: ubuntu-latest
+    needs:
+      - test-build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2.2.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push to DockerHub (sdp-multitenant branch)
+        uses: docker/build-push-action@v4.1.1
+        with:
+          push: true
+          tags: stellar/stellar-disbursement-platform-frontend:multitenant-alpha
           file: Dockerfile
 
   complete:

@@ -16,7 +16,7 @@ export const postDisbursementFile = async (
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        SDP_TENANT_NAME: getSdpTenantName(),
+        "SDP-Tenant-Name": getSdpTenantName(),
       },
       body: formData,
     },
