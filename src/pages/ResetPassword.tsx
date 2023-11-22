@@ -18,6 +18,7 @@ export const ResetPassword = () => {
 
   const navigate = useNavigate();
 
+  const [organizationName, setOrganizationName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmationToken, setConfirmationToken] = useState("");
@@ -28,7 +29,7 @@ export const ResetPassword = () => {
 
   const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutateAsync({ password, resetToken: confirmationToken });
+    mutateAsync({ organizationName, password, resetToken: confirmationToken });
   };
 
   useEffect(() => {
@@ -103,6 +104,16 @@ export const ResetPassword = () => {
               </ul>
             </div>
           </div>
+
+          <Input
+            fieldSize="sm"
+            id="rp-organization-name"
+            name="rp-organization-name"
+            label="Organization name"
+            onChange={(e) => setOrganizationName(e.target.value)}
+            value={organizationName}
+            type="text"
+          />
 
           <Input
             fieldSize="sm"

@@ -30,6 +30,7 @@ export const MFAuth = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
+  const [organizationName, setOrganizationName] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -74,7 +75,7 @@ export const MFAuth = () => {
 
     const headers = {
       "Device-ID": deviceId,
-      "SDP-Tenant-Name": getSdpTenantName(),
+      "SDP-Tenant-Name": organizationName || getSdpTenantName(),
     };
 
     dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
@@ -127,6 +128,16 @@ export const MFAuth = () => {
 
           {!USE_SSO && (
             <>
+              <Input
+                fieldSize="sm"
+                id="2fa-organization-name"
+                name="2fa-organization-name"
+                label="Organization name"
+                onChange={(e) => setOrganizationName(e.target.value)}
+                value={organizationName}
+                type="text"
+              />
+
               <Input
                 fieldSize="sm"
                 id="2fa-verification-code"

@@ -25,12 +25,13 @@ export const ForgotPassword = () => {
   const navigate = useNavigate();
   const recaptchaRef = useRef<Recaptcha>(null);
 
+  const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
   const handleForgotPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    sendLink({ email, recaptchaToken });
+    sendLink({ organizationName, email, recaptchaToken });
   };
 
   const onRecaptchaSubmit = (token: string | null) => {
@@ -79,6 +80,15 @@ export const ForgotPassword = () => {
             Forgot password
           </Heading>
 
+          <Input
+            fieldSize="sm"
+            id="fp-organization-name"
+            name="fp-organization-name"
+            label="Organization name"
+            onChange={(e) => setOrganizationName(e.target.value)}
+            value={organizationName}
+            type="text"
+          />
           <Input
             fieldSize="sm"
             id="fp-email"

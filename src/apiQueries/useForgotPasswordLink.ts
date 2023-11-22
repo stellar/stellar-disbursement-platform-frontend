@@ -4,13 +4,18 @@ import { fetchApi } from "helpers/fetchApi";
 import { AppError } from "types";
 
 type ForgotPasswordLinkProps = {
+  organizationName: string;
   email: string;
   recaptchaToken: string;
 };
 
 export const useForgotPasswordLink = () => {
   const mutation = useMutation({
-    mutationFn: ({ email, recaptchaToken }: ForgotPasswordLinkProps) => {
+    mutationFn: ({
+      organizationName,
+      email,
+      recaptchaToken,
+    }: ForgotPasswordLinkProps) => {
       return fetchApi(
         `${API_URL}/forgot-password`,
         {
@@ -20,7 +25,10 @@ export const useForgotPasswordLink = () => {
             recaptcha_token: recaptchaToken,
           }),
         },
-        { withoutAuth: true },
+        {
+          withoutAuth: true,
+          organizationName,
+        },
       );
     },
     cacheTime: 0,
@@ -30,9 +38,13 @@ export const useForgotPasswordLink = () => {
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as { message: string },
-    mutateAsync: async ({ email, recaptchaToken }: ForgotPasswordLinkProps) => {
+    mutateAsync: async ({
+      organizationName,
+      email,
+      recaptchaToken,
+    }: ForgotPasswordLinkProps) => {
       try {
-        await mutation.mutateAsync({ email, recaptchaToken });
+        await mutation.mutateAsync({ organizationName, email, recaptchaToken });
       } catch (e) {
         // do nothing
       }

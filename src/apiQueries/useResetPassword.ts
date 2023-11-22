@@ -4,13 +4,18 @@ import { fetchApi } from "helpers/fetchApi";
 import { AppError } from "types";
 
 type ResetPasswordProps = {
+  organizationName: string;
   password: string;
   resetToken: string;
 };
 
 export const useResetPassword = () => {
   const mutation = useMutation({
-    mutationFn: ({ password, resetToken }: ResetPasswordProps) => {
+    mutationFn: ({
+      organizationName,
+      password,
+      resetToken,
+    }: ResetPasswordProps) => {
       return fetchApi(
         `${API_URL}/reset-password`,
         {
@@ -29,6 +34,7 @@ export const useResetPassword = () => {
 
             return response;
           },
+          organizationName,
         },
       );
     },
@@ -39,9 +45,13 @@ export const useResetPassword = () => {
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as boolean,
-    mutateAsync: async ({ password, resetToken }: ResetPasswordProps) => {
+    mutateAsync: async ({
+      organizationName,
+      password,
+      resetToken,
+    }: ResetPasswordProps) => {
       try {
-        await mutation.mutateAsync({ password, resetToken });
+        await mutation.mutateAsync({ organizationName, password, resetToken });
       } catch (e) {
         // do nothing
       }
