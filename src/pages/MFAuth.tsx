@@ -167,7 +167,7 @@ export const MFAuth = () => {
                 variant="primary"
                 size="sm"
                 type="submit"
-                disabled={!mfaCode || !recaptchaToken}
+                disabled={!organizationName || !mfaCode || !recaptchaToken}
                 isLoading={userAccount.status === "PENDING"}
                 data-callback="onRecaptchaSubmit"
               >

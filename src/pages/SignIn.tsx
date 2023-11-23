@@ -177,7 +177,9 @@ export const SignIn = () => {
               variant="primary"
               size="sm"
               type="submit"
-              disabled={!email || !password || !recaptchaToken}
+              disabled={
+                !organizationName || !email || !password || !recaptchaToken
+              }
               isLoading={userAccount.status === "PENDING"}
               data-callback="onRecaptchaSubmit"
             >

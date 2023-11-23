@@ -109,7 +109,7 @@ export const ForgotPassword = () => {
             variant="primary"
             size="sm"
             type="submit"
-            disabled={!email || !recaptchaToken}
+            disabled={!organizationName || !email || !recaptchaToken}
             isLoading={isLoading}
             data-callback="onRecaptchaSubmit"
           >

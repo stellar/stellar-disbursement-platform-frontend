@@ -57,7 +57,12 @@ export const ResetPassword = () => {
   const allInputsValid = () => {
     if (errorPassword || errorPasswordMatch || errorConfirmationToken) {
       return false;
-    } else if (password && confirmPassword && confirmationToken) {
+    } else if (
+      organizationName &&
+      password &&
+      confirmPassword &&
+      confirmationToken
+    ) {
       return true;
     }
 
