@@ -81,6 +81,15 @@ export const DashboardAnalytics = () => {
 
               <div className="StatCards__card__item StatCards__card__item--inline">
                 <label className="StatCards__card__item__label">
+                  Canceled payments
+                </label>
+                <div className="StatCards__card__item__value">
+                  {renderNumberOrDash(stats?.paymentsCanceledCount)}
+                </div>
+              </div>
+
+              <div className="StatCards__card__item StatCards__card__item--inline">
+                <label className="StatCards__card__item__label">
                   Remaining payments
                 </label>
                 <div className="StatCards__card__item__value">
@@ -130,26 +139,20 @@ export const DashboardAnalytics = () => {
             </div>
           </div>
 
-          <div>
-            <div className="StatCards__card__walletCounts">
-              <div className="StatCards__card--flexCols">
-                <div className="StatCards__card__item StatCards__card__item--inline">
-                  <label className="StatCards__card__item__label">
-                    Individuals
-                  </label>
-                  <div className="StatCards__card__item__value">
-                    {renderNumberOrDash(stats?.individualsTotalCount)}
-                  </div>
-                </div>
+          <div className="StatCards__card__column">
+            <div className="StatCards__card__item StatCards__card__item--inline">
+              <label className="StatCards__card__item__label">
+                Individuals
+              </label>
+              <div className="StatCards__card__item__value">
+                {renderNumberOrDash(stats?.individualsTotalCount)}
+              </div>
+            </div>
 
-                <div className="StatCards__card__item StatCards__card__item--inline">
-                  <label className="StatCards__card__item__label">
-                    Wallets
-                  </label>
-                  <div className="StatCards__card__item__value">
-                    {renderNumberOrDash(stats?.walletsTotalCount)}
-                  </div>
-                </div>
+            <div className="StatCards__card__item StatCards__card__item--inline">
+              <label className="StatCards__card__item__label">Wallets</label>
+              <div className="StatCards__card__item__value">
+                {renderNumberOrDash(stats?.walletsTotalCount)}
               </div>
             </div>
           </div>

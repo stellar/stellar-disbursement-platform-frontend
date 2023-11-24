@@ -12,6 +12,7 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
     paymentsTotalCount: Number(receiver.total_payments),
     paymentsSuccessfulCount: Number(receiver.successful_payments),
     paymentsFailedCount: Number(receiver.failed_payments),
+    paymentsCanceledCount: Number(receiver.canceled_payments),
     paymentsRemainingCount: Number(receiver.remaining_payments),
   },
   wallets: receiver.wallets.map((w) => ({
