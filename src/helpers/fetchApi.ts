@@ -44,7 +44,7 @@ export const fetchApi = async (
     config.headers = {
       ...config.headers,
       Authorization: `Bearer ${token}`,
-      "SDP-Tenant-Name": options?.organizationName || getSdpTenantName(),
+      "SDP-Tenant-Name": getSdpTenantName(options?.organizationName),
       ...(!options?.omitContentType
         ? {
             "Content-Type":

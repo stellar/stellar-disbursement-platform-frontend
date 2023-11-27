@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { API_URL } from "constants/settings";
 import { fetchApi } from "helpers/fetchApi";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { AppError } from "types";
 
 type ResetPasswordProps = {
@@ -24,6 +25,9 @@ export const useResetPassword = () => {
             password,
             reset_token: resetToken,
           }),
+          headers: {
+            "SDP-Tenant-Name": getSdpTenantName(organizationName),
+          },
         },
         {
           withoutAuth: true,
@@ -34,7 +38,6 @@ export const useResetPassword = () => {
 
             return response;
           },
-          organizationName,
         },
       );
     },
