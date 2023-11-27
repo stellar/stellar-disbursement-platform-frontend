@@ -90,7 +90,7 @@ export const SignIn = () => {
 
     const headers = {
       "Device-ID": deviceId,
-      "SDP-Tenant-Name": organizationName || getSdpTenantName(),
+      "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
     dispatch(signInAction({ email, password, recaptchaToken, headers }));
