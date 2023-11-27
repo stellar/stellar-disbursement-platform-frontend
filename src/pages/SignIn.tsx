@@ -30,6 +30,7 @@ export const SignIn = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
+  const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
@@ -89,7 +90,7 @@ export const SignIn = () => {
 
     const headers = {
       "Device-ID": deviceId,
-      "SDP-Tenant-Name": getSdpTenantName(),
+      "SDP-Tenant-Name": organizationName || getSdpTenantName(),
     };
 
     dispatch(signInAction({ email, password, recaptchaToken, headers }));
@@ -132,6 +133,14 @@ export const SignIn = () => {
             <>
               <Input
                 fieldSize="sm"
+                id="si-organization-name"
+                name="si-organization-name"
+                label="Organization name"
+                onChange={(e) => setOrganizationName(e.target.value)}
+                type="text"
+              />
+              <Input
+                fieldSize="sm"
                 id="si-email"
                 name="si-email"
                 label="Email address"
@@ -168,7 +177,9 @@ export const SignIn = () => {
               variant="primary"
               size="sm"
               type="submit"
-              disabled={!email || !password || !recaptchaToken}
+              disabled={
+                !organizationName || !email || !password || !recaptchaToken
+              }
               isLoading={userAccount.status === "PENDING"}
               data-callback="onRecaptchaSubmit"
             >
