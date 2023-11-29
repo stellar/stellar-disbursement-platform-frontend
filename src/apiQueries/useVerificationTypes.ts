@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { API_URL } from "constants/settings";
 import { fetchApi } from "helpers/fetchApi";
-import { AppError } from "types";
+import { DisbursementVerificationField, AppError } from "types";
 
 export const useVerificationTypes = () => {
-  const query = useQuery<string[], AppError>({
+  const query = useQuery<DisbursementVerificationField[], AppError>({
     queryKey: ["receivers", "verification-types"],
     queryFn: async () => {
       return await fetchApi(`${API_URL}/receivers/verification-types`);

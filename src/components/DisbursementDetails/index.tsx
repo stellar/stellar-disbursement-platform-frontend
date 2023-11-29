@@ -12,13 +12,13 @@ import { useCountries } from "apiQueries/useCountries";
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { formatVerificationFieldString } from "helpers/formatVerificationFieldString";
 import {
   ApiAsset,
   ApiCountry,
   ApiWallet,
   Disbursement,
   DisbursementStep,
+  DisbursementVerificationField,
 } from "types";
 
 import "./styles.scss";
@@ -86,8 +86,8 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   } = useAssetsByWallet(details.wallet.id);
 
   const {
-    data: verificationsTypes,
-    error: verificationsTypesError,
+    data: verificationTypes,
+    error: verificationTypesError,
     isFetching: isVerificationTypesFetching,
   } = useVerificationTypes();
 
@@ -95,8 +95,14 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     countriesError?.message,
     walletsError?.message,
     walletError?.message,
-    verificationsTypesError?.message,
+    verificationTypesError?.message,
   ];
+
+  const typeLabels: Record<DisbursementVerificationField | string, string> = {
+    DATE_OF_BIRTH: "Date of Birth",
+    PIN: "PIN",
+    NATIONAL_ID_NUMBER: "National ID Number",
+  };
 
   const sanitizedApiErrors = apiErrors.filter((e) => Boolean(e));
 
@@ -225,7 +231,8 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           <div>
             <label className="Label Label--sm">Verification Type</label>
             <div className="DisbursementDetailsFields__value">
-              {formatVerificationFieldString(details.verificationField ?? "")}
+              {typeLabels[details.verificationField ?? ""] ||
+                details.verificationField}
             </div>
           </div>
 
@@ -311,9 +318,9 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           disabled={isVerificationTypesFetching}
         >
           {renderDropdownDefault(isVerificationTypesFetching)}
-          {verificationsTypes?.map((type: string) => (
+          {verificationTypes?.map((type: DisbursementVerificationField) => (
             <option key={type} value={type}>
-              {formatVerificationFieldString(type)}
+              {typeLabels[type] || type}
             </option>
           ))}
         </Select>
