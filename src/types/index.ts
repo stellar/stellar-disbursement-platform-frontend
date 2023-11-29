@@ -212,8 +212,10 @@ export type DisbursementStatus =
   | "PAUSED"
   | "COMPLETED";
 
-// TODO: add other fields
-export type DisbursementVerificationField = "DATE_OF_BIRTH";
+export type DisbursementVerificationField =
+  | "DATE_OF_BIRTH"
+  | "PIN"
+  | "NATIONAL_ID_NUMBER";
 
 export type DisbursementDraftAction = "save" | "submit";
 
@@ -249,6 +251,7 @@ export type Disbursement = {
     id: string;
     name: string;
   };
+  verificationField?: string;
   status: DisbursementStatus;
   fileName?: string;
   statusHistory: {
