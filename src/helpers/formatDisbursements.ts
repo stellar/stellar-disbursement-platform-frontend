@@ -35,6 +35,7 @@ export const formatDisbursement = (
     id: disbursement.wallet.id,
     name: disbursement.wallet.name,
   },
+  verificationField: disbursement.verification_field,
   fileName: disbursement.file_name,
   statusHistory: disbursement.status_history
     .sort(

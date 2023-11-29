@@ -17,6 +17,7 @@ export const postDisbursement = async (
       wallet_id: disbursement.wallet.id,
       asset_id: disbursement.asset.id,
       country_code: disbursement.country.code,
+      verification_field: disbursement.verificationField || "",
     }),
   });
 
