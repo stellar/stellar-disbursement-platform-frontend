@@ -15,6 +15,7 @@ export const formatDisbursement = (
   stats: {
     paymentsSuccessfulCount: disbursement.total_payments_sent,
     paymentsFailedCount: disbursement.total_payments_failed,
+    paymentsCanceledCount: disbursement.total_payments_canceled,
     paymentsRemainingCount: disbursement.total_payments_remaining,
     paymentsTotalCount: disbursement.total_payments,
     totalAmount: disbursement.total_amount,
@@ -34,6 +35,7 @@ export const formatDisbursement = (
     id: disbursement.wallet.id,
     name: disbursement.wallet.name,
   },
+  verificationField: disbursement.verification_field,
   fileName: disbursement.file_name,
   statusHistory: disbursement.status_history
     .sort(

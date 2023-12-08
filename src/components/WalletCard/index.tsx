@@ -1,8 +1,5 @@
 import React from "react";
 import { Card, Icon, Toggle, Title } from "@stellar/design-system";
-import { AppDispatch } from "store";
-import { useDispatch } from "react-redux";
-import { actions } from "store/ducks/wallets";
 import "./styles.scss";
 
 interface WalletCardProps {
@@ -11,6 +8,7 @@ interface WalletCardProps {
   homepageUrl: string;
   enabled: boolean;
   assets: string[];
+  onChange: () => void;
 }
 
 export const WalletCard: React.FC<WalletCardProps> = ({
@@ -19,8 +17,8 @@ export const WalletCard: React.FC<WalletCardProps> = ({
   homepageUrl,
   enabled,
   assets,
+  onChange,
 }: WalletCardProps) => {
-  const dispatch: AppDispatch = useDispatch();
   return (
     <Card noPadding>
       <div className="WalletCard">
@@ -40,18 +38,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
               </div>
             </div>
 
-            <Toggle
-              id={walletId}
-              checked={enabled}
-              onChange={() => {
-                dispatch(
-                  actions.setUpdateWalletModalState({
-                    modalWalletId: walletId,
-                    modalWalletEnabled: enabled,
-                  }),
-                );
-              }}
-            />
+            <Toggle id={walletId} checked={enabled} onChange={onChange} />
           </div>
         </div>
 

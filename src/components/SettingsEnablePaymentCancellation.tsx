@@ -12,25 +12,28 @@ import { useDispatch } from "react-redux";
 import { DropdownMenu } from "components/DropdownMenu";
 import { MoreMenuButton } from "components/MoreMenuButton";
 
-import { useUpdateOrgSmsRetryInterval } from "apiQueries/useUpdateOrgSmsRetryInterval";
+import { useUpdateOrgPaymentCancellationPeriodDays } from "apiQueries/useUpdateOrgPaymentCancellationPeriodDays";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import { getOrgInfoAction } from "store/ducks/organization";
 
-export const SettingsEnableSmsRetry = () => {
+export const SettingsEnablePaymentCancellation = () => {
   const { organization } = useRedux("organization");
 
-  const [smsRetryInterval, setSmsRetryInterval] = useState<number | null>(null);
+  const [paymentCancellationPeriodDays, setPaymentCancellationPeriodDays] =
+    useState<number | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
 
   const { mutateAsync, isLoading, error, isSuccess } =
-    useUpdateOrgSmsRetryInterval();
+    useUpdateOrgPaymentCancellationPeriodDays();
 
   useEffect(() => {
-    setSmsRetryInterval(organization.data.smsResendInterval);
-  }, [organization.data.smsResendInterval]);
+    setPaymentCancellationPeriodDays(
+      organization.data.paymentCancellationPeriodDays,
+    );
+  }, [organization.data.paymentCancellationPeriodDays]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -40,22 +43,28 @@ export const SettingsEnableSmsRetry = () => {
   }, [dispatch, isSuccess]);
 
   const handleToggleChange = () => {
-    // Default interval is 2 days
-    mutateAsync(organization.data.smsResendInterval === 0 ? 2 : 0);
+    // Default period is 5 days
+    mutateAsync(organization.data.paymentCancellationPeriodDays === 0 ? 5 : 0);
   };
 
-  const handleSmsRetrySubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handlePaymentCancellationSubmit = (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
-    if (smsRetryInterval) {
-      mutateAsync(smsRetryInterval);
+    if (paymentCancellationPeriodDays) {
+      mutateAsync(paymentCancellationPeriodDays);
     }
   };
 
-  const handleSmsRetryReset = (event: React.FormEvent<HTMLFormElement>) => {
+  const handlePaymentCancellationReset = (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
     setIsEditMode(false);
-    setSmsRetryInterval(organization.data.smsResendInterval);
+    setPaymentCancellationPeriodDays(
+      organization.data.paymentCancellationPeriodDays,
+    );
   };
 
   const renderContent = () => {
@@ -63,49 +72,56 @@ export const SettingsEnableSmsRetry = () => {
       <div className="SdpSettings">
         <div className="SdpSettings__row">
           <div className="SdpSettings__item">
-            <label className="SdpSettings__label" htmlFor="sms-retry">
-              Enable automatic SMS retry
+            <label
+              className="SdpSettings__label"
+              htmlFor="payment-cancellation"
+            >
+              Enable automatic payments cancellation
             </label>
             <div className="Toggle__wrapper">
               {isLoading ? <Loader size="1rem" /> : null}
               <Toggle
-                id="sms-retry"
-                checked={Boolean(organization.data.smsResendInterval)}
+                id="payment-cancellation"
+                checked={Boolean(
+                  organization.data.paymentCancellationPeriodDays,
+                )}
                 onChange={handleToggleChange}
                 disabled={isLoading}
               />
             </div>
           </div>
           <div className="Note">
-            Select this option to automatically re-send the SMS invitation to
-            unregistered receivers after a certain time period. They will
-            receive the same message again. The message will only go to
-            receivers who have not registered their wallet.
+            Select this option to automatically cancel pending payments after a
+            certain time period. Uncompleted payments will not be made once they
+            are canceled, even if the receiver tries to claim funds. Completed
+            payments are always final.
           </div>
         </div>
 
-        {organization.data.smsResendInterval ? (
+        {organization.data.paymentCancellationPeriodDays ? (
           <div className="SdpSettings__row">
             <form
               className="SdpSettings__form"
-              onSubmit={handleSmsRetrySubmit}
-              onReset={handleSmsRetryReset}
+              onSubmit={handlePaymentCancellationSubmit}
+              onReset={handlePaymentCancellationReset}
             >
               <div className="SdpSettings__form__row">
                 <Input
                   fieldSize="sm"
-                  id="sms-retry-interval"
-                  label="SMS retry interval (days)"
+                  id="payment-cancellation-period"
+                  label="Payments Cancellation Period (days)"
                   type="number"
-                  value={smsRetryInterval ?? ""}
+                  value={paymentCancellationPeriodDays ?? ""}
                   onChange={(e) => {
                     e.target.value !== ""
-                      ? setSmsRetryInterval(Number(e.target.value))
-                      : setSmsRetryInterval(null);
+                      ? setPaymentCancellationPeriodDays(Number(e.target.value))
+                      : setPaymentCancellationPeriodDays(null);
                   }}
                   disabled={!isEditMode}
                   error={
-                    smsRetryInterval == 0 ? "Retry interval cannot be 0" : ""
+                    paymentCancellationPeriodDays == 0
+                      ? "Cancellation period cannot be 0"
+                      : ""
                   }
                 />
                 {!isEditMode ? (
@@ -132,8 +148,9 @@ export const SettingsEnableSmsRetry = () => {
                     type="submit"
                     isLoading={isLoading}
                     disabled={
-                      !smsRetryInterval ||
-                      smsRetryInterval === organization.data.smsResendInterval
+                      !paymentCancellationPeriodDays ||
+                      paymentCancellationPeriodDays ===
+                        organization.data.paymentCancellationPeriodDays
                     }
                   >
                     Update

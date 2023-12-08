@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   Card,
   Input,
@@ -6,22 +5,20 @@ import {
   Title,
   Notification,
 } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "store";
-import { getCountriesAction } from "store/ducks/countries";
-import { getAssetsByWalletAction } from "store/ducks/assets";
-import { getWalletsAction } from "store/ducks/wallets";
-
+import { useWallets } from "apiQueries/useWallets";
+import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
+import { useCountries } from "apiQueries/useCountries";
+import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { useRedux } from "hooks/useRedux";
 import {
   ApiAsset,
   ApiCountry,
   ApiWallet,
   Disbursement,
   DisbursementStep,
+  DisbursementVerificationField,
 } from "types";
 
 import "./styles.scss";
@@ -49,6 +46,7 @@ const initDetails: Disbursement = {
     id: "",
     name: "",
   },
+  verificationField: "",
   createdAt: "",
   status: "DRAFT",
   statusHistory: [],
@@ -61,37 +59,50 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   onChange,
   onValidate,
 }: DisbursementDetailsProps) => {
-  const { assets, countries, wallets } = useRedux(
-    "assets",
-    "countries",
-    "wallets",
-  );
-
   enum FieldId {
     NAME = "name",
     COUNTRY_CODE = "country_code",
     ASSET_CODE = "asset_code",
     WALLET_ID = "wallet_id",
+    VERIFICATION_FIELD = "verification_field",
   }
 
-  const dispatch: AppDispatch = useDispatch();
+  const {
+    data: wallets,
+    error: walletsError,
+    isLoading: isWalletsLoading,
+  } = useWallets();
 
-  // Don't fetch again if we already have them in store
-  useEffect(() => {
-    if (!countries.status) {
-      dispatch(getCountriesAction());
-    }
+  const {
+    data: countries,
+    error: countriesError,
+    isLoading: isCountriesLoading,
+  } = useCountries();
 
-    if (!wallets.status) {
-      dispatch(getWalletsAction());
-    }
-  }, [dispatch, countries.status, wallets.status]);
+  const {
+    data: walletAssets,
+    error: walletError,
+    isFetching: isWalletAssetsFetching,
+  } = useAssetsByWallet(details.wallet.id);
+
+  const {
+    data: verificationTypes,
+    error: verificationTypesError,
+    isFetching: isVerificationTypesFetching,
+  } = useVerificationTypes();
 
   const apiErrors = [
-    countries.errorString,
-    wallets.errorString,
-    assets.errorString,
+    countriesError?.message,
+    walletsError?.message,
+    walletError?.message,
+    verificationTypesError?.message,
   ];
+
+  const typeLabels: Record<DisbursementVerificationField | string, string> = {
+    DATE_OF_BIRTH: "Date of Birth",
+    PIN: "PIN",
+    NATIONAL_ID_NUMBER: "National ID Number",
+  };
 
   const sanitizedApiErrors = apiErrors.filter((e) => Boolean(e));
 
@@ -106,6 +117,8 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       missingFields.push(FieldId.WALLET_ID);
     } else if (!inputs.asset.code) {
       missingFields.push(FieldId.ASSET_CODE);
+    } else if (!inputs.verificationField) {
+      missingFields.push(FieldId.VERIFICATION_FIELD);
     }
 
     const isValid = missingFields.length === 0;
@@ -137,9 +150,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     switch (id) {
       case FieldId.COUNTRY_CODE:
         // eslint-disable-next-line no-case-declarations
-        const country = countries.items.find(
-          (c: ApiCountry) => c.code === value,
-        );
+        const country = countries?.find((c: ApiCountry) => c.code === value);
 
         updateState({
           country: {
@@ -151,7 +162,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
         break;
       case FieldId.WALLET_ID:
         // eslint-disable-next-line no-case-declarations
-        const wallet = wallets.items.find((w: ApiWallet) => w.id === value);
+        const wallet = wallets?.find((w: ApiWallet) => w.id === value);
 
         updateState({
           wallet: {
@@ -159,12 +170,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             name: wallet?.name || "",
           },
         });
-        dispatch(getAssetsByWalletAction({ walletId: wallet?.id || "" }));
 
         break;
       case FieldId.ASSET_CODE:
         // eslint-disable-next-line no-case-declarations
-        const asset = assets.items.find((a: ApiAsset) => a.id === value);
+        const asset = walletAssets?.find((a: ApiAsset) => a.id === value);
 
         updateState({
           asset: {
@@ -177,6 +187,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       case FieldId.NAME:
         updateState({
           name: value,
+        });
+        break;
+      case FieldId.VERIFICATION_FIELD:
+        updateState({
+          verificationField: value,
         });
         break;
       default:
@@ -214,6 +229,14 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           </div>
 
           <div>
+            <label className="Label Label--sm">Verification Type</label>
+            <div className="DisbursementDetailsFields__value">
+              {typeLabels[details.verificationField ?? ""] ||
+                details.verificationField}
+            </div>
+          </div>
+
+          <div>
             <label className="Label Label--sm">Disbursement name</label>
             <div className="DisbursementDetailsFields__value">
               {details.name}
@@ -241,10 +264,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.country.code}
-          disabled={countries.status === "PENDING"}
+          disabled={isCountriesLoading}
         >
-          {renderDropdownDefault(countries.status === "PENDING")}
-          {countries.items.map((country: ApiCountry) => (
+          {renderDropdownDefault(isCountriesLoading)}
+          {countries?.map((country: ApiCountry) => (
             <option key={country.code} value={country.code}>
               {country.name}
             </option>
@@ -257,16 +280,17 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.wallet.id}
-          disabled={wallets.status === "PENDING"}
+          disabled={isWalletsLoading}
         >
-          {renderDropdownDefault(wallets.status === "PENDING")}
-          {wallets.items
-            .filter((wallet) => wallet.enabled)
-            .map((wallet: ApiWallet) => (
-              <option key={wallet.id} value={wallet.id}>
-                {wallet.name}
-              </option>
-            ))}
+          {renderDropdownDefault(isWalletsLoading)}
+          {wallets &&
+            wallets
+              .filter((wallet) => wallet.enabled)
+              .map((wallet: ApiWallet) => (
+                <option key={wallet.id} value={wallet.id}>
+                  {wallet.name}
+                </option>
+              ))}
         </Select>
 
         <Select
@@ -275,12 +299,28 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.asset.id}
-          disabled={assets.status === "PENDING" || !details.wallet.id}
+          disabled={isWalletAssetsFetching || !details.wallet.id}
         >
-          {renderDropdownDefault(assets.status === "PENDING")}
-          {assets.items.map((asset: ApiAsset) => (
+          {renderDropdownDefault(isWalletAssetsFetching)}
+          {walletAssets?.map((asset: ApiAsset) => (
             <option key={asset.id} value={asset.id}>
               {asset.code}
+            </option>
+          ))}
+        </Select>
+
+        <Select
+          id={FieldId.VERIFICATION_FIELD}
+          label="Verification type"
+          fieldSize="sm"
+          onChange={updateDraftDetails}
+          value={details.verificationField}
+          disabled={isVerificationTypesFetching}
+        >
+          {renderDropdownDefault(isVerificationTypesFetching)}
+          {verificationTypes?.map((type: DisbursementVerificationField) => (
+            <option key={type} value={type}>
+              {typeLabels[type] || type}
             </option>
           ))}
         </Select>

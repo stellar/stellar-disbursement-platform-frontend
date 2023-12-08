@@ -118,6 +118,7 @@ const initialState: DisbursementDetailsInitialState = {
     stats: {
       paymentsSuccessfulCount: 0,
       paymentsFailedCount: 0,
+      paymentsCanceledCount: 0,
       paymentsRemainingCount: 0,
       paymentsTotalCount: 0,
       totalAmount: "",
