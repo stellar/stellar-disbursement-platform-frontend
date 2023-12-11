@@ -22,6 +22,8 @@ import {
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { getOrganizationName } from "helpers/getOrganizationName";
+import { InfoTooltip } from "components/InfoTooltip";
 
 export const SignIn = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -30,7 +32,9 @@ export const SignIn = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState(
+    getOrganizationName(),
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
@@ -135,8 +139,13 @@ export const SignIn = () => {
                 fieldSize="sm"
                 id="si-organization-name"
                 name="si-organization-name"
-                label="Organization name"
+                label={
+                  <InfoTooltip infoText="You can find your organization name in the invitation email">
+                    Organization name
+                  </InfoTooltip>
+                }
                 onChange={(e) => setOrganizationName(e.target.value)}
+                value={organizationName}
                 type="text"
               />
               <Input

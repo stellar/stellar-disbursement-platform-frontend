@@ -22,6 +22,8 @@ import {
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { getOrganizationName } from "helpers/getOrganizationName";
+import { InfoTooltip } from "components/InfoTooltip";
 
 export const MFAuth = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -30,7 +32,9 @@ export const MFAuth = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState(
+    getOrganizationName(),
+  );
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -132,7 +136,11 @@ export const MFAuth = () => {
                 fieldSize="sm"
                 id="2fa-organization-name"
                 name="2fa-organization-name"
-                label="Organization name"
+                label={
+                  <InfoTooltip infoText="You can find your organization name in the invitation email">
+                    Organization name
+                  </InfoTooltip>
+                }
                 onChange={(e) => setOrganizationName(e.target.value)}
                 value={organizationName}
                 type="text"

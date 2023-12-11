@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
 import { RECAPTCHA_SITE_KEY } from "constants/settings";
+import { getOrganizationName } from "helpers/getOrganizationName";
+import { InfoTooltip } from "components/InfoTooltip";
 
 export const ForgotPassword = () => {
   const {
@@ -25,7 +27,9 @@ export const ForgotPassword = () => {
   const navigate = useNavigate();
   const recaptchaRef = useRef<Recaptcha>(null);
 
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState(
+    getOrganizationName(),
+  );
   const [email, setEmail] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
@@ -84,7 +88,11 @@ export const ForgotPassword = () => {
             fieldSize="sm"
             id="fp-organization-name"
             name="fp-organization-name"
-            label="Organization name"
+            label={
+              <InfoTooltip infoText="You can find your organization name in the invitation email">
+                Organization name
+              </InfoTooltip>
+            }
             onChange={(e) => setOrganizationName(e.target.value)}
             value={organizationName}
             type="text"

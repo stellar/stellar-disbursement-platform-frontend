@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { useResetPassword } from "apiQueries/useResetPassword";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
+import { getOrganizationName } from "helpers/getOrganizationName";
+import { InfoTooltip } from "components/InfoTooltip";
 
 export const ResetPassword = () => {
   const { isSuccess, isLoading, error, mutateAsync, reset } =
@@ -18,7 +20,9 @@ export const ResetPassword = () => {
 
   const navigate = useNavigate();
 
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState(
+    getOrganizationName(),
+  );
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmationToken, setConfirmationToken] = useState("");
@@ -114,7 +118,11 @@ export const ResetPassword = () => {
             fieldSize="sm"
             id="rp-organization-name"
             name="rp-organization-name"
-            label="Organization name"
+            label={
+              <InfoTooltip infoText="You can find your organization name in the invitation email">
+                Organization name
+              </InfoTooltip>
+            }
             onChange={(e) => setOrganizationName(e.target.value)}
             value={organizationName}
             type="text"
