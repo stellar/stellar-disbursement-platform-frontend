@@ -5,5 +5,5 @@ export const getOrganizationName = (): string => {
     words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
   }
 
-  return words.join("");
+  return words.join(" ");
 };
