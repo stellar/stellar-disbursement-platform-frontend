@@ -22,7 +22,6 @@ import {
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { getOrganizationName } from "helpers/getOrganizationName";
 import { InfoTooltip } from "components/InfoTooltip";
 
 export const MFAuth = () => {
@@ -32,9 +31,7 @@ export const MFAuth = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
-  const [organizationName, setOrganizationName] = useState(
-    getOrganizationName(),
-  );
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useResetPassword } from "apiQueries/useResetPassword";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
-import { getOrganizationName } from "helpers/getOrganizationName";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { InfoTooltip } from "components/InfoTooltip";
 
 export const ResetPassword = () => {
@@ -20,9 +20,7 @@ export const ResetPassword = () => {
 
   const navigate = useNavigate();
 
-  const [organizationName, setOrganizationName] = useState(
-    getOrganizationName(),
-  );
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmationToken, setConfirmationToken] = useState("");

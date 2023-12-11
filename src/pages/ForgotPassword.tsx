@@ -11,8 +11,8 @@ import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
 import { RECAPTCHA_SITE_KEY } from "constants/settings";
-import { getOrganizationName } from "helpers/getOrganizationName";
 import { InfoTooltip } from "components/InfoTooltip";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 
 export const ForgotPassword = () => {
   const {
@@ -27,9 +27,7 @@ export const ForgotPassword = () => {
   const navigate = useNavigate();
   const recaptchaRef = useRef<Recaptcha>(null);
 
-  const [organizationName, setOrganizationName] = useState(
-    getOrganizationName(),
-  );
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [email, setEmail] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
 

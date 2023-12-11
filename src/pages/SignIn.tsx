@@ -22,7 +22,6 @@ import {
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { getOrganizationName } from "helpers/getOrganizationName";
 import { InfoTooltip } from "components/InfoTooltip";
 
 export const SignIn = () => {
@@ -32,9 +31,7 @@ export const SignIn = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
-  const [organizationName, setOrganizationName] = useState(
-    getOrganizationName(),
-  );
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
