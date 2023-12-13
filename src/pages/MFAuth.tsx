@@ -18,6 +18,7 @@ import {
   USE_SSO,
   RECAPTCHA_SITE_KEY,
   LOCAL_STORAGE_DEVICE_ID,
+  ORG_NAME_INFO_TEXT,
 } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
@@ -134,7 +135,7 @@ export const MFAuth = () => {
                 id="2fa-organization-name"
                 name="2fa-organization-name"
                 label={
-                  <InfoTooltip infoText="You can find your organization name in the invitation email">
+                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
                     Organization name
                   </InfoTooltip>
                 }

@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
-import { RECAPTCHA_SITE_KEY } from "constants/settings";
+import { RECAPTCHA_SITE_KEY, ORG_NAME_INFO_TEXT } from "constants/settings";
 import { InfoTooltip } from "components/InfoTooltip";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 
@@ -87,7 +87,7 @@ export const ForgotPassword = () => {
             id="fp-organization-name"
             name="fp-organization-name"
             label={
-              <InfoTooltip infoText="You can find your organization name in the invitation email">
+              <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
                 Organization name
               </InfoTooltip>
             }

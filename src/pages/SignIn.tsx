@@ -18,6 +18,7 @@ import {
   USE_SSO,
   RECAPTCHA_SITE_KEY,
   LOCAL_STORAGE_DEVICE_ID,
+  ORG_NAME_INFO_TEXT,
 } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
@@ -137,7 +138,7 @@ export const SignIn = () => {
                 id="si-organization-name"
                 name="si-organization-name"
                 label={
-                  <InfoTooltip infoText="You can find your organization name in the invitation email">
+                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
                     Organization name
                   </InfoTooltip>
                 }

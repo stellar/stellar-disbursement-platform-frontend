@@ -8,6 +8,7 @@ import {
 } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 
+import { ORG_NAME_INFO_TEXT } from "constants/settings";
 import { useResetPassword } from "apiQueries/useResetPassword";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
@@ -117,7 +118,7 @@ export const ResetPassword = () => {
             id="rp-organization-name"
             name="rp-organization-name"
             label={
-              <InfoTooltip infoText="You can find your organization name in the invitation email">
+              <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
                 Organization name
               </InfoTooltip>
             }
