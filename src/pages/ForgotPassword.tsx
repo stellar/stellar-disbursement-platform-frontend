@@ -10,7 +10,9 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
-import { RECAPTCHA_SITE_KEY } from "constants/settings";
+import { RECAPTCHA_SITE_KEY, ORG_NAME_INFO_TEXT } from "constants/settings";
+import { InfoTooltip } from "components/InfoTooltip";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 
 export const ForgotPassword = () => {
   const {
@@ -25,7 +27,7 @@ export const ForgotPassword = () => {
   const navigate = useNavigate();
   const recaptchaRef = useRef<Recaptcha>(null);
 
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [email, setEmail] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
@@ -84,7 +86,11 @@ export const ForgotPassword = () => {
             fieldSize="sm"
             id="fp-organization-name"
             name="fp-organization-name"
-            label="Organization name"
+            label={
+              <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                Organization name
+              </InfoTooltip>
+            }
             onChange={(e) => setOrganizationName(e.target.value)}
             value={organizationName}
             type="text"

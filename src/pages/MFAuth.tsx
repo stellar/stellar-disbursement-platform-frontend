@@ -18,10 +18,12 @@ import {
   USE_SSO,
   RECAPTCHA_SITE_KEY,
   LOCAL_STORAGE_DEVICE_ID,
+  ORG_NAME_INFO_TEXT,
 } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { InfoTooltip } from "components/InfoTooltip";
 
 export const MFAuth = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -30,7 +32,7 @@ export const MFAuth = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -132,7 +134,11 @@ export const MFAuth = () => {
                 fieldSize="sm"
                 id="2fa-organization-name"
                 name="2fa-organization-name"
-                label="Organization name"
+                label={
+                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                    Organization name
+                  </InfoTooltip>
+                }
                 onChange={(e) => setOrganizationName(e.target.value)}
                 value={organizationName}
                 type="text"

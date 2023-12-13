@@ -18,10 +18,12 @@ import {
   USE_SSO,
   RECAPTCHA_SITE_KEY,
   LOCAL_STORAGE_DEVICE_ID,
+  ORG_NAME_INFO_TEXT,
 } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { InfoTooltip } from "components/InfoTooltip";
 
 export const SignIn = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -30,7 +32,7 @@ export const SignIn = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
@@ -135,8 +137,13 @@ export const SignIn = () => {
                 fieldSize="sm"
                 id="si-organization-name"
                 name="si-organization-name"
-                label="Organization name"
+                label={
+                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                    Organization name
+                  </InfoTooltip>
+                }
                 onChange={(e) => setOrganizationName(e.target.value)}
+                value={organizationName}
                 type="text"
               />
               <Input

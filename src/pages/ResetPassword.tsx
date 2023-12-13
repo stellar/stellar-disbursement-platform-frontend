@@ -8,9 +8,12 @@ import {
 } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 
+import { ORG_NAME_INFO_TEXT } from "constants/settings";
 import { useResetPassword } from "apiQueries/useResetPassword";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { InfoTooltip } from "components/InfoTooltip";
 
 export const ResetPassword = () => {
   const { isSuccess, isLoading, error, mutateAsync, reset } =
@@ -18,7 +21,7 @@ export const ResetPassword = () => {
 
   const navigate = useNavigate();
 
-  const [organizationName, setOrganizationName] = useState("");
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmationToken, setConfirmationToken] = useState("");
@@ -114,7 +117,11 @@ export const ResetPassword = () => {
             fieldSize="sm"
             id="rp-organization-name"
             name="rp-organization-name"
-            label="Organization name"
+            label={
+              <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                Organization name
+              </InfoTooltip>
+            }
             onChange={(e) => setOrganizationName(e.target.value)}
             value={organizationName}
             type="text"
