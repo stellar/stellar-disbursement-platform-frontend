@@ -243,6 +243,13 @@ export const PaymentDetails = () => {
                       )}
                     </div>
                   </div>
+
+                  <div className="PaymentDetails__info">
+                    <label className="Label">External Payment ID</label>
+                    <div>
+                      {shortenString(formattedPayment.externalPaymentId, 15) || "-"}
+                    </div>
+                  </div>
                 </div>
               </Card>
             </div>
