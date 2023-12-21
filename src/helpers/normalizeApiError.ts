@@ -11,7 +11,8 @@ export const normalizeApiError = (
   if (JSON.stringify(error) === "{}") {
     message = defaultMessage;
   } else {
-    message = (error?.extras?.message ||
+    message = (error?.extras?.details ||
+      error?.extras?.message ||
       error.error ||
       error ||
       defaultMessage) as string;
