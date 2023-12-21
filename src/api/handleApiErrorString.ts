@@ -7,7 +7,8 @@ export const handleApiErrorString = (error: ApiError): string => {
     return GENERIC_ERROR_MESSAGE;
   }
 
-  return (error?.extras?.message ||
+  return (error?.extras?.details ||
+    error?.extras?.message ||
     error.error ||
     error ||
     GENERIC_ERROR_MESSAGE) as string;
