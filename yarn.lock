@@ -2164,10 +2164,10 @@
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.25.24.tgz#8c7688559979f7079aacaf31aa881c3aa410b718"
   integrity sha512-XJfwUVUKDHF5ugKwIcxEgc9k8b7HbznCp6eUfWgu710hMPNIO4aw4/zB5RogDQz8nd6gyCDpU9O/m6qYEWY6yQ==
 
-"@stellar/design-system@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@stellar/design-system/-/design-system-1.1.0.tgz#8cbdf0e436b23463baf50f19e748eae502a46eb4"
-  integrity sha512-4xg/dKgDGpplDL+XPrwApyyBSChLekw0Z7kx+/X+aI1z/rtTAYwGKvkaHn4mVzzg7ZXSknkX0wFfXm3bge64AA==
+"@stellar/design-system@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@stellar/design-system/-/design-system-1.1.1.tgz#faef026e47f76f1fcc44899e8b3fe04450c8fe1c"
+  integrity sha512-GfaGfUk6qtK5UKCue7zIpzcgekRqWbJBmJpy8plnVV8txtPuthAe2B5JqaaWT5QYT9huTg6vrzljwxt+dKZjWQ==
   dependencies:
     "@floating-ui/dom" "^1.5.3"
     bignumber.js "^9.1.1"
