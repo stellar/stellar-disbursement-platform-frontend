@@ -143,18 +143,16 @@ export const PaymentDetails = () => {
                   </Heading>
                 </SectionHeader.Content>
 
-                <SectionHeader.Content>
-                  <Button
-                    variant="error"
-                    size="sm"
-                    icon={<Icon.Block />}
-                    onClick={showModal}
-                    // isLoading={}
-                    disabled={isCanceled}
-                  >
-                    Cancel
-                  </Button>
-                </SectionHeader.Content>
+                <Button
+                  variant="error"
+                  size="sm"
+                  icon={<Icon.Block />}
+                  onClick={showModal}
+                  // isLoading={}
+                  disabled={isCanceled}
+                >
+                  Cancel
+                </Button>
               </SectionHeader.Row>
             </SectionHeader>
 
