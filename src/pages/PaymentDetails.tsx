@@ -247,7 +247,11 @@ export const PaymentDetails = () => {
                   <div className="PaymentDetails__info">
                     <label className="Label">External Payment ID</label>
                     <div>
-                      {shortenString(formattedPayment.externalPaymentId, 15) || "-"}
+                      {formattedPayment.externalPaymentId ? 
+                        (formattedPayment.externalPaymentId.length > 20 ?
+                          shortenString(formattedPayment.externalPaymentId, 10) : formattedPayment.externalPaymentId) 
+                        : "-"
+                      }
                     </div>
                   </div>
                 </div>
