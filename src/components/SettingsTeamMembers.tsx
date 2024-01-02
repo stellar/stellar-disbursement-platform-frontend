@@ -14,6 +14,7 @@ import { Table } from "components/Table";
 import { NewUserModal } from "components/NewUserModal";
 import { LoadingContent } from "components/LoadingContent";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { USER_ROLES_ARRAY } from "constants/settings";
 import { userRoleText } from "helpers/userRoleText";
@@ -265,9 +266,9 @@ export const SettingsTeamMembers = () => {
 
           {usersError || roleError || statusError ? (
             <Notification variant="error" title="Error">
-              {usersError?.message ||
-                roleError?.message ||
-                statusError?.message}
+              <ErrorWithExtras
+                appError={usersError || roleError || statusError}
+              />
             </Notification>
           ) : null}
 

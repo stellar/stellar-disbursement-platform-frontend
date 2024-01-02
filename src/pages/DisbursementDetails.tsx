@@ -20,6 +20,7 @@ import {
   setDisbursementDetailsAction,
 } from "store/ducks/disbursementDetails";
 import { useRedux } from "hooks/useRedux";
+import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
 import {
   PAGE_LIMIT_OPTIONS,
   Routes,
@@ -33,11 +34,12 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 import { AssetAmount } from "components/AssetAmount";
 import { Pagination } from "components/Pagination";
 import { Table } from "components/Table";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { PaymentStatus } from "components/PaymentStatus";
+
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { number } from "helpers/formatIntlNumber";
-import { PaymentStatus } from "components/PaymentStatus";
 import { saveFile } from "helpers/saveFile";
-import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();
@@ -388,7 +390,11 @@ export const DisbursementDetails = () => {
     if (disbursementDetails.errorString) {
       return (
         <Notification variant="error" title="Error">
-          {disbursementDetails.errorString}
+          <ErrorWithExtras
+            appError={{
+              message: disbursementDetails.errorString,
+            }}
+          />
         </Notification>
       );
     }

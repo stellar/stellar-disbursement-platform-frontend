@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 
 import { DropdownMenu } from "components/DropdownMenu";
 import { MoreMenuButton } from "components/MoreMenuButton";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useUpdateOrgPaymentCancellationPeriodDays } from "apiQueries/useUpdateOrgPaymentCancellationPeriodDays";
 import { useRedux } from "hooks/useRedux";
@@ -168,7 +169,7 @@ export const SettingsEnablePaymentCancellation = () => {
     <>
       {error ? (
         <Notification variant="error" title="Error">
-          {error.message}
+          <ErrorWithExtras appError={error} />
         </Notification>
       ) : null}
 

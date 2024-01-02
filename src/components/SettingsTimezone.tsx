@@ -5,6 +5,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { DropdownMenu } from "components/DropdownMenu";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { TIME_ZONES } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
@@ -73,7 +74,12 @@ export const SettingsTimezone = () => {
 
       {organization.errorString ? (
         <Notification variant="error" title="Error">
-          {organization.errorString}
+          <ErrorWithExtras
+            appError={{
+              message: organization.errorString,
+              extras: organization.errorExtras,
+            }}
+          />
         </Notification>
       ) : null}
 

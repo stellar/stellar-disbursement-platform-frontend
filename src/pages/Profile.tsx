@@ -19,6 +19,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { SectionHeader } from "components/SectionHeader";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { Routes, USE_SSO } from "constants/settings";
 import { singleUserStore } from "helpers/singleSingOn";
@@ -497,29 +498,23 @@ export const Profile = () => {
       <div className="CardStack">
         {profile.errorString ? (
           <Notification variant="error" title="Error">
-            <div>{profile.errorString}</div>
-            {profile.errorExtras ? (
-              <ul className="ErrorExtras">
-                {Object.entries(profile.errorExtras).map(([key, value]) => (
-                  <li key={key}>{`${key}: ${value}`}</li>
-                ))}
-              </ul>
-            ) : null}
+            <ErrorWithExtras
+              appError={{
+                message: profile.errorString,
+                extras: profile.errorExtras,
+              }}
+            />
           </Notification>
         ) : null}
 
         {organization.errorString ? (
           <Notification variant="error" title="Error">
-            <div>{organization.errorString}</div>
-            {organization.errorExtras ? (
-              <ul className="ErrorExtras">
-                {Object.entries(organization.errorExtras).map(
-                  ([key, value]) => (
-                    <li key={key}>{`${key}: ${value}`}</li>
-                  ),
-                )}
-              </ul>
-            ) : null}
+            <ErrorWithExtras
+              appError={{
+                message: organization.errorString,
+                extras: organization.errorExtras,
+              }}
+            />
           </Notification>
         ) : null}
 

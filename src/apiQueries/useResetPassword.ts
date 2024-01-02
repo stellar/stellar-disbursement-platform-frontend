@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { API_URL } from "constants/settings";
 import { fetchApi } from "helpers/fetchApi";
+import { normalizeApiError } from "helpers/normalizeApiError";
 import { AppError } from "types";
 
 type ResetPasswordProps = {
@@ -22,12 +23,18 @@ export const useResetPassword = () => {
         },
         {
           withoutAuth: true,
-          customCallback: (response) => {
+          customCallback: async (response) => {
             if (response.status === 200) {
               return true;
             }
 
-            return response;
+            const responseJson = await response.json();
+
+            if (responseJson?.error) {
+              throw normalizeApiError(responseJson);
+            }
+
+            return responseJson;
           },
         },
       );

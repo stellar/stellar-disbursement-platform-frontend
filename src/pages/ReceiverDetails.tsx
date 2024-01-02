@@ -22,6 +22,7 @@ import { ReceiverWalletHistory } from "components/ReceiverWalletHistory";
 import { LoadingContent } from "components/LoadingContent";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { ReceiverPayments } from "components/ReceiverPayments";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { useReceiverWalletInviteSmsRetry } from "apiQueries/useReceiverWalletInviteSmsRetry";
@@ -272,7 +273,7 @@ export const ReceiverDetails = () => {
               },
             ]}
           >
-            {smsRetryError.message}
+            <ErrorWithExtras appError={smsRetryError} />
           </NotificationWithButtons>
         )}
         <div className="ReceiverDetails__wallets__row">
@@ -468,7 +469,11 @@ export const ReceiverDetails = () => {
     if (receiverDetailsError || !receiverDetails) {
       return (
         <Notification variant="error" title="Error">
-          <div>{receiverDetailsError?.message || GENERIC_ERROR_MESSAGE}</div>
+          <ErrorWithExtras
+            appError={
+              receiverDetailsError || { message: GENERIC_ERROR_MESSAGE }
+            }
+          />
         </Notification>
       );
     }

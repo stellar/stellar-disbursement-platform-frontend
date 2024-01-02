@@ -10,6 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 
 import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { useUpdateSmsTemplate } from "apiQueries/useUpdateOrgSmsTemplate";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
@@ -181,7 +182,7 @@ export const ReceiverInviteMessage = () => {
     <>
       {isError ? (
         <Notification variant="error" title="Error">
-          {error.message}
+          <ErrorWithExtras appError={error} />
         </Notification>
       ) : null}
 

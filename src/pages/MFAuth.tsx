@@ -21,6 +21,7 @@ import {
 } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const MFAuth = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -101,7 +102,11 @@ export const MFAuth = () => {
       <div className="CardLayout">
         {userAccount.errorString && (
           <Notification variant="error" title="MFA error">
-            {userAccount.errorString}
+            <ErrorWithExtras
+              appError={{
+                message: userAccount.errorString,
+              }}
+            />
           </Notification>
         )}
         <form onSubmit={handleSubmit}>

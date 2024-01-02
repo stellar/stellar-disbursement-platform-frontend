@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
-import { handleApiErrorString } from "api/handleApiErrorString";
 import { getOrgInfo } from "api/getOrgInfo";
 import { patchOrgInfo } from "api/patchOrgInfo";
 import { getOrgLogo } from "api/getOrgLogo";
 import { getStellarAccountInfo } from "api/getStellarAccountInfo";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
+import { normalizeApiError } from "helpers/normalizeApiError";
 import {
   ApiError,
   ApiOrgInfo,
@@ -31,7 +31,8 @@ export const getOrgInfoAction = createAsyncThunk<
 
       return orgInfo;
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
@@ -62,13 +63,13 @@ export const updateOrgInfoAction = createAsyncThunk<
       });
       return orgInfo.message;
     } catch (error: unknown) {
-      const err = error as ApiError;
-      const errorString = handleApiErrorString(err);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
         errorString: `Error updating organization info: ${errorString}`,
-        errorExtras: err?.extras,
+        errorExtras: apiError?.extras,
       });
     }
   },
@@ -82,7 +83,8 @@ export const getOrgLogoAction = createAsyncThunk<
   try {
     return await getOrgLogo();
   } catch (error: unknown) {
-    const errorString = handleApiErrorString(error as ApiError);
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
     endSessionIfTokenInvalid(errorString, dispatch);
 
     return rejectWithValue({
@@ -108,7 +110,8 @@ export const getStellarAccountAction = createAsyncThunk<
 
       return { address: accountInfo.id, balances };
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
 
       return rejectWithValue({
         errorString: `Error fetching Stellar account info: ${errorString}`,

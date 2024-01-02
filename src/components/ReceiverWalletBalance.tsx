@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { Loader, Notification } from "@stellar/design-system";
 import { useStellarAccountInfo } from "apiQueries/useStellarAccountInfo";
 import { AssetAmount } from "components/AssetAmount";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 interface ReceiverWalletBalanceProps {
   stellarAddress: string | undefined;
@@ -23,7 +24,7 @@ export const ReceiverWalletBalance = ({
   if (error) {
     return (
       <Notification variant="error" title="Error">
-        {error.message}
+        <ErrorWithExtras appError={error} />
       </Notification>
     );
   }
