@@ -37,8 +37,11 @@ export const PaymentDetails = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const { data: payment, error: paymentError } =
-    usePaymentsPaymentId(paymentId);
+  const {
+    data: payment,
+    error: paymentError,
+    refetch: refetchPayment,
+  } = usePaymentsPaymentId(paymentId);
 
   const {
     error: cancelPaymentError,
@@ -101,7 +104,11 @@ export const PaymentDetails = () => {
     if (isCancelPaymentSuccess || isCancelPaymentError) {
       hideModal();
     }
-  }, [isCancelPaymentSuccess, isCancelPaymentError]);
+
+    if (isCancelPaymentSuccess) {
+      refetchPayment();
+    }
+  }, [isCancelPaymentSuccess, isCancelPaymentError, refetchPayment]);
 
   const renderContent = () => {
     if (paymentError) {
@@ -148,7 +155,6 @@ export const PaymentDetails = () => {
                   size="sm"
                   icon={<Icon.Block />}
                   onClick={showModal}
-                  // isLoading={}
                   disabled={isCanceled}
                 >
                   Cancel
