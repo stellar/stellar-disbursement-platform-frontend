@@ -14,7 +14,12 @@ import {
 import { usePaymentsPaymentId } from "apiQueries/usePaymentsPaymentId";
 import { useCancelPayment } from "apiQueries/useCancelPayment";
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
-import { Routes, STELLAR_EXPERT_URL } from "constants/settings";
+import {
+  Routes,
+  STELLAR_EXPERT_URL,
+  CANCELED_PAYMENT_STATUS,
+  READY_PAYMENT_STATUS,
+} from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { shortenString } from "helpers/shortenString";
 import { formatPaymentDetails } from "helpers/formatPaymentDetails";
@@ -52,7 +57,6 @@ export const PaymentDetails = () => {
   } = useCancelPayment();
 
   const formattedPayment = payment ? formatPaymentDetails(payment) : null;
-  const isCanceled = payment?.status == "CANCELED";
 
   const { data: receiver } = useReceiversReceiverId<PaymentDetailsReceiver>({
     receiverId: payment?.receiver_wallet?.receiver?.id,
@@ -96,7 +100,9 @@ export const PaymentDetails = () => {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    cancelPayment({ paymentId: formattedPayment?.id });
+    if (formattedPayment) {
+      cancelPayment({ paymentId: formattedPayment.id });
+    }
     setIsModalVisible(false);
   };
 
@@ -122,7 +128,7 @@ export const PaymentDetails = () => {
     if (formattedPayment) {
       return (
         <>
-          {isCanceled && (
+          {formattedPayment.status === CANCELED_PAYMENT_STATUS && (
             <div className="SectionBlock">
               <Notification variant="error" title="Payment canceled">
                 This payment is permanently canceled.
@@ -155,7 +161,7 @@ export const PaymentDetails = () => {
                   size="sm"
                   icon={<Icon.Block />}
                   onClick={showModal}
-                  disabled={isCanceled}
+                  disabled={formattedPayment.status !== READY_PAYMENT_STATUS}
                 >
                   Cancel
                 </Button>
