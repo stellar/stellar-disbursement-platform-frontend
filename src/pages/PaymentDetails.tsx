@@ -1,15 +1,25 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  Button,
   Card,
   Heading,
+  Icon,
   Link,
+  Modal,
   Notification,
   Profile,
 } from "@stellar/design-system";
 
 import { usePaymentsPaymentId } from "apiQueries/usePaymentsPaymentId";
+import { useCancelPayment } from "apiQueries/useCancelPayment";
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
-import { Routes, STELLAR_EXPERT_URL } from "constants/settings";
+import {
+  Routes,
+  STELLAR_EXPERT_URL,
+  CANCELED_PAYMENT_STATUS,
+  READY_PAYMENT_STATUS,
+} from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { shortenString } from "helpers/shortenString";
 import { formatPaymentDetails } from "helpers/formatPaymentDetails";
@@ -30,8 +40,21 @@ import { PaymentDetailsReceiver } from "types";
 export const PaymentDetails = () => {
   const { id: paymentId } = useParams();
 
-  const { data: payment, error: paymentError } =
-    usePaymentsPaymentId(paymentId);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const {
+    data: payment,
+    error: paymentError,
+    refetch: refetchPayment,
+  } = usePaymentsPaymentId(paymentId);
+
+  const {
+    error: cancelPaymentError,
+    isSuccess: isCancelPaymentSuccess,
+    isError: isCancelPaymentError,
+    isLoading: isCancelPaymentLoading,
+    mutateAsync: cancelPayment,
+  } = useCancelPayment();
 
   const formattedPayment = payment ? formatPaymentDetails(payment) : null;
 
@@ -59,6 +82,40 @@ export const PaymentDetails = () => {
     navigate(`${Routes.RECEIVERS}/${receiverId}`);
   };
 
+  const showModal = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.preventDefault();
+    setIsModalVisible(true);
+  };
+
+  const hideModal = (
+    event?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event?.preventDefault();
+    setIsModalVisible(false);
+  };
+
+  const handleCancelPayment = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.preventDefault();
+    if (formattedPayment) {
+      cancelPayment({ paymentId: formattedPayment.id });
+    }
+    setIsModalVisible(false);
+  };
+
+  useEffect(() => {
+    if (isCancelPaymentSuccess || isCancelPaymentError) {
+      hideModal();
+    }
+
+    if (isCancelPaymentSuccess) {
+      refetchPayment();
+    }
+  }, [isCancelPaymentSuccess, isCancelPaymentError, refetchPayment]);
+
   const renderContent = () => {
     if (paymentError) {
       return (
@@ -71,6 +128,20 @@ export const PaymentDetails = () => {
     if (formattedPayment) {
       return (
         <>
+          {formattedPayment.status === CANCELED_PAYMENT_STATUS && (
+            <div className="SectionBlock">
+              <Notification variant="error" title="Payment canceled">
+                This payment is permanently canceled.
+              </Notification>
+            </div>
+          )}
+
+          {cancelPaymentError && (
+            <Notification variant="error" title="Error">
+              {cancelPaymentError.message}
+            </Notification>
+          )}
+
           <div className="DetailsSection">
             <RetryFailedPayment
               paymentId={formattedPayment.id}
@@ -84,6 +155,16 @@ export const PaymentDetails = () => {
                     {paymentId}
                   </Heading>
                 </SectionHeader.Content>
+
+                <Button
+                  variant="error"
+                  size="sm"
+                  icon={<Icon.Block />}
+                  onClick={showModal}
+                  disabled={formattedPayment.status !== READY_PAYMENT_STATUS}
+                >
+                  Cancel
+                </Button>
               </SectionHeader.Row>
             </SectionHeader>
 
@@ -331,6 +412,34 @@ export const PaymentDetails = () => {
       />
 
       {renderContent()}
+
+      <Modal visible={isModalVisible} onClose={hideModal}>
+        <Modal.Heading>Cancel payment permanently?</Modal.Heading>
+        <Modal.Body>
+          <div>
+            Clicking 'Cancel payment' will prevent this payment from being
+            processed even if the receiver tries to claim funds.
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={hideModal}
+            isLoading={isCancelPaymentLoading}
+          >
+            Not now
+          </Button>
+          <Button
+            size="sm"
+            variant="error"
+            onClick={(event) => handleCancelPayment(event)}
+            isLoading={isCancelPaymentLoading}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

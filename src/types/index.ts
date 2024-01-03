@@ -337,6 +337,7 @@ export type PaymentDetails = {
   senderAddress?: string;
   totalAmount: string;
   assetCode: string;
+  status: string;
   statusHistory: PaymentDetailsStatusHistoryItem[];
 };
 
