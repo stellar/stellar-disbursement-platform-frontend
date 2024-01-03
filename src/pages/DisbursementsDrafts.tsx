@@ -23,6 +23,7 @@ import { Breadcrumbs } from "components/Breadcrumbs";
 import { NewDisbursementButton } from "components/NewDisbursementButton";
 import { SectionHeader } from "components/SectionHeader";
 import { Table } from "components/Table";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { DisbursementDraft } from "types";
 
 export const DisbursementsDrafts = () => {
@@ -163,7 +164,11 @@ export const DisbursementsDrafts = () => {
 
       {apiError ? (
         <Notification variant="error" title="Error">
-          <div>{apiError}</div>
+          <ErrorWithExtras
+            appError={{
+              message: apiError,
+            }}
+          />
         </Notification>
       ) : null}
 

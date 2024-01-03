@@ -32,6 +32,8 @@ import { ReceiverStatus } from "components/ReceiverStatus";
 import { AssetAmount } from "components/AssetAmount";
 import { MultipleAmounts } from "components/MultipleAmounts";
 import { RetryFailedPayment } from "components/RetryFailedPayment";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+
 import { PaymentDetailsReceiver } from "types";
 
 // TODO: handle loading/fetching state (create component that handles it
@@ -120,7 +122,11 @@ export const PaymentDetails = () => {
     if (paymentError) {
       return (
         <Notification variant="error" title="Error">
-          {`Error fetching payment details: ${paymentError.message}`}
+          <ErrorWithExtras
+            appError={{
+              message: `Error fetching payment details: ${paymentError.message}`,
+            }}
+          />
         </Notification>
       );
     }

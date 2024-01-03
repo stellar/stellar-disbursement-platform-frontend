@@ -13,6 +13,7 @@ import { SectionHeader } from "components/SectionHeader";
 import { AccountBalances } from "components/AccountBalances";
 import { WalletTrustlines } from "components/WalletTrustlines";
 import { LoadingContent } from "components/LoadingContent";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useRedux } from "hooks/useRedux";
 import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
@@ -35,7 +36,12 @@ export const DistributionAccount = () => {
     if (organization.errorString) {
       return (
         <Notification variant="error" title="Error">
-          {organization.errorString}
+          <ErrorWithExtras
+            appError={{
+              message: organization.errorString,
+              extras: organization.errorExtras,
+            }}
+          />
         </Notification>
       );
     }

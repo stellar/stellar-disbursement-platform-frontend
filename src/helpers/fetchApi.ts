@@ -66,7 +66,7 @@ export const fetchApi = async (
   const response = await request.json();
 
   if (response?.error) {
-    throw normalizeApiError(response.error);
+    throw normalizeApiError(response);
   }
 
   return response;

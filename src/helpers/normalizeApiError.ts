@@ -6,6 +6,7 @@ export const normalizeApiError = (
   defaultMessage = GENERIC_ERROR_MESSAGE,
 ): AppError => {
   let message = "";
+  const extras = error?.extras;
 
   // Make sure error is not an empty object
   if (JSON.stringify(error) === "{}") {
@@ -18,8 +19,17 @@ export const normalizeApiError = (
       defaultMessage) as string;
   }
 
+  // Remove details and message from extras to avoid duplicate messages
+  if (extras?.details) {
+    delete extras.details;
+  }
+
+  if (extras?.message) {
+    delete extras.message;
+  }
+
   return {
-    message: message,
-    extras: error?.extras,
+    message,
+    extras,
   };
 };

@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
 import { getDisbursements } from "api/getDisbursements";
-import { handleApiErrorString } from "api/handleApiErrorString";
 import { formatDisbursements } from "helpers/formatDisbursements";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
+import { normalizeApiError } from "helpers/normalizeApiError";
 import {
   ApiDisbursements,
   ApiError,
@@ -28,7 +28,8 @@ export const getDisbursementsAction = createAsyncThunk<
 
       return disbursements;
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
@@ -62,7 +63,8 @@ export const getDisbursementsWithParamsAction = createAsyncThunk<
         searchParams: newParams,
       };
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({

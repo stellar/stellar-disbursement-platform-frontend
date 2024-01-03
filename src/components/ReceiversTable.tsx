@@ -3,6 +3,7 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 import { useSort } from "hooks/useSort";
 import { MultipleAmounts } from "components/MultipleAmounts";
 import { Table } from "components/Table";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { Receiver, SortByReceivers, SortDirection } from "types";
 
 interface ReceiversTableProps {
@@ -12,7 +13,7 @@ interface ReceiversTableProps {
     id: string,
   ) => void;
   searchQuery: string | undefined;
-  apiError: string | boolean | undefined;
+  apiError: string | undefined;
   isFiltersSelected: boolean | undefined;
   isLoading?: boolean;
   onSort?: (sort?: SortByReceivers, direction?: SortDirection) => void;
@@ -32,7 +33,11 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
   if (apiError) {
     return (
       <Notification variant="error" title="Error">
-        {apiError}
+        <ErrorWithExtras
+          appError={{
+            message: apiError,
+          }}
+        />
       </Notification>
     );
   }

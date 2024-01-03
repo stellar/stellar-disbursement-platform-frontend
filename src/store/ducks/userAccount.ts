@@ -4,8 +4,8 @@ import { singleSignOnAction } from "store/ducks/singleSignOnUserAccount";
 import { authLogin } from "api/authLogin";
 import { mfAuth } from "api/mfAuth";
 import { refreshToken } from "api/refreshToken";
-import { handleApiErrorString } from "api/handleApiErrorString";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
+import { normalizeApiError } from "helpers/normalizeApiError";
 import {
   ApiError,
   JwtUser,
@@ -34,7 +34,8 @@ export const signInAction = createAsyncThunk<
       );
       return response;
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
 
       return rejectWithValue({
         errorString,
@@ -56,7 +57,8 @@ export const refreshTokenAction = createAsyncThunk<
       const newToken = await refreshToken(token);
       return newToken;
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
@@ -90,7 +92,8 @@ export const mfaAction = createAsyncThunk<
       );
       return response;
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
 
       return rejectWithValue({
         errorString,

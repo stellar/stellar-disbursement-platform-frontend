@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
 import { RECAPTCHA_SITE_KEY } from "constants/settings";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ForgotPassword = () => {
   const {
@@ -70,7 +71,7 @@ export const ForgotPassword = () => {
 
         {error ? (
           <Notification variant="error" title="Forgot password error">
-            {error.message}
+            <ErrorWithExtras appError={error} />
           </Notification>
         ) : null}
 

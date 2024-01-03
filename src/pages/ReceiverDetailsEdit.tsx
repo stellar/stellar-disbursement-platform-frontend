@@ -17,6 +17,7 @@ import { SectionHeader } from "components/SectionHeader";
 import { CopyWithIcon } from "components/CopyWithIcon";
 import { InfoTooltip } from "components/InfoTooltip";
 import { LoadingContent } from "components/LoadingContent";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { ReceiverDetails, ReceiverEditFields } from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
@@ -143,7 +144,11 @@ export const ReceiverDetailsEdit = () => {
     if (receiverDetailsError || !receiverDetails) {
       return (
         <Notification variant="error" title="Error">
-          <div>{receiverDetailsError?.message || GENERIC_ERROR_MESSAGE}</div>
+          <ErrorWithExtras
+            appError={
+              receiverDetailsError || { message: GENERIC_ERROR_MESSAGE }
+            }
+          />
         </Notification>
       );
     }
@@ -172,7 +177,7 @@ export const ReceiverDetailsEdit = () => {
         <div className="CardStack">
           {updateError ? (
             <Notification variant="error" title="Error">
-              <div>{updateError?.message}</div>
+              <ErrorWithExtras appError={updateError} />
             </Notification>
           ) : null}
 

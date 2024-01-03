@@ -5,6 +5,7 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 
 import { Table } from "components/Table";
 import { AssetAmount } from "components/AssetAmount";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 interface ReceiverWalletHistoryProps {
   stellarAddress: string | undefined;
@@ -23,7 +24,7 @@ export const ReceiverWalletHistory = ({
   if (error) {
     return (
       <Notification variant="error" title="Error">
-        {error.message}
+        <ErrorWithExtras appError={error} />
       </Notification>
     );
   }

@@ -29,6 +29,7 @@ import { DisbursementButtons } from "components/DisbursementButtons";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { InfoTooltip } from "components/InfoTooltip";
 import { AccountBalances } from "components/AccountBalances";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { Disbursement, DisbursementStep } from "types";
 
@@ -341,16 +342,12 @@ export const DisbursementsNew = () => {
               : "Error"
           }
         >
-          <div>{apiError}</div>
-          {disbursementDrafts.errorExtras ? (
-            <ul className="ErrorExtras">
-              {Object.entries(disbursementDrafts.errorExtras).map(
-                ([key, value]) => (
-                  <li key={key}>{`${key}: ${value}`}</li>
-                ),
-              )}
-            </ul>
-          ) : null}
+          <ErrorWithExtras
+            appError={{
+              message: apiError,
+              extras: disbursementDrafts.errorExtras,
+            }}
+          />
         </Notification>
       ) : null}
 

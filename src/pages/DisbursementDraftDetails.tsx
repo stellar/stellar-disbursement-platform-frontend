@@ -26,6 +26,8 @@ import { Toast } from "components/Toast";
 import { DisbursementDetails } from "components/DisbursementDetails";
 import { DisbursementInstructions } from "components/DisbursementInstructions";
 import { DisbursementButtons } from "components/DisbursementButtons";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+
 import { DisbursementDraft, DisbursementStep } from "types";
 
 export const DisbursementDraftDetails = () => {
@@ -379,16 +381,12 @@ export const DisbursementDraftDetails = () => {
               : "Error"
           }
         >
-          <div>{apiError}</div>
-          {disbursementDrafts.errorExtras ? (
-            <ul className="ErrorExtras">
-              {Object.entries(disbursementDrafts.errorExtras).map(
-                ([key, value]) => (
-                  <li key={key}>{`${key}: ${value}`}</li>
-                ),
-              )}
-            </ul>
-          ) : null}
+          <ErrorWithExtras
+            appError={{
+              message: apiError,
+              extras: disbursementDrafts.errorExtras,
+            }}
+          />
         </Notification>
       ) : null}
 
