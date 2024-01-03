@@ -339,7 +339,7 @@ export type PaymentDetails = {
   assetCode: string;
   status: string;
   statusHistory: PaymentDetailsStatusHistoryItem[];
-  externalPaymentId: string;
+  externalPaymentId?: string;
 };
 
 // =============================================================================
@@ -617,7 +617,7 @@ export type ApiPayment = {
   receiver_wallet: ApiPaymentReceiverWallet;
   created_at: string;
   updated_at: string;
-  external_payment_id: string;
+  external_payment_id?: string;
 };
 
 export type ApiPayments = {
