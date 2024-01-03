@@ -12,6 +12,7 @@ export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
     senderAddress: payment.stellar_address,
     totalAmount: payment.amount,
     assetCode: payment.asset.code,
+    externalPaymentId: payment?.external_payment_id,
     status: payment.status,
     statusHistory: payment?.status_history
       .sort(
