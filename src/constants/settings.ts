@@ -23,6 +23,9 @@ export const LOCAL_STORAGE_DEVICE_ID = "sdp_deviceID";
 export const UI_STATUS_DISBURSEMENT = "STARTED,PAUSED,COMPLETED";
 export const UI_STATUS_DISBURSEMENT_DRAFT = "DRAFT,READY";
 
+export const CANCELED_PAYMENT_STATUS = "CANCELED";
+export const READY_PAYMENT_STATUS = "READY";
+
 export enum Routes {
   MFA = "/mfa",
   HOME = "/home",
