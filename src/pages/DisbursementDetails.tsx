@@ -21,11 +21,8 @@ import {
 } from "store/ducks/disbursementDetails";
 import { useRedux } from "hooks/useRedux";
 import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
-import {
-  PAGE_LIMIT_OPTIONS,
-  Routes,
-  STELLAR_EXPERT_URL,
-} from "constants/settings";
+import { STELLAR_EXPERT_URL } from "constants/envVariables";
+import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
 import { SectionHeader } from "components/SectionHeader";

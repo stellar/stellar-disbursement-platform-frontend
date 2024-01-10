@@ -4,7 +4,8 @@ import { NavLink } from "react-router-dom";
 import { Icon } from "@stellar/design-system";
 
 import { PageHeader } from "components/PageHeader";
-import { Routes, USE_SSO } from "constants/settings";
+import { USE_SSO } from "constants/envVariables";
+import { Routes } from "constants/settings";
 import { AppDispatch, resetStoreAction } from "store";
 import { useRedux } from "hooks/useRedux";
 import { singleUserStore } from "helpers/singleSingOn";

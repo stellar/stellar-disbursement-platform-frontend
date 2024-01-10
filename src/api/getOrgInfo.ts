@@ -1,5 +1,5 @@
 import { handleApiResponse } from "api/handleApiResponse";
-import { API_URL } from "constants/settings";
+import { API_URL } from "constants/envVariables";
 import { ApiOrgInfo } from "types";
 
 export const getOrgInfo = async (token: string): Promise<ApiOrgInfo> => {

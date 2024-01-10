@@ -1,5 +1,5 @@
 import { handleApiResponse } from "api/handleApiResponse";
-import { API_URL } from "constants/settings";
+import { API_URL } from "constants/envVariables";
 import { DisbursementStatus } from "types";
 
 export const patchDisbursementStatus = async (

@@ -4,7 +4,7 @@ import {
   OIDC_CLIENT_ID,
   OIDC_REDIRECT_URI,
   OIDC_SCOPE,
-} from "constants/settings";
+} from "constants/envVariables";
 
 const config = {
   authority: OIDC_AUTHORITY,
