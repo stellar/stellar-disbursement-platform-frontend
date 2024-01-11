@@ -73,3 +73,24 @@ REACT_APP_STELLAR_EXPERT_URL=https://stellar.expert/explorer/testnet
 REACT_APP_HORIZON_URL=https://horizon-testnet.stellar.org
 REACT_APP_RECAPTCHA_SITE_KEY=6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn
 ```
+
+## Favicon
+
+[Favicon](https://developer.mozilla.org/en-US/docs/Glossary/Favicon) image files
+are located in `/public` directory. The files are:
+
+- `apple-touch-icon.png` - mostly used for shortcuts
+- `favicon.ico` - for legacy browsers and devices
+- `icon-192.png` and `icon-512.png` - fallback if SVG is not supported
+- `icon.svg` - modern browser support is very good (can be adjusted to match
+  operating system theme)
+
+Having this set of favicons should cover all devices and browsers. They are set
+in `/src/index.html` and `/public/manifest.json` files.
+
+<figure>
+  <img
+  src="public/icon-192.png"
+  alt="Stellar logo favicon">
+  <figcaption>Default favicon</figcaption>
+</figure>
