@@ -38,7 +38,6 @@ import { Unauthorized } from "pages/Unauthorized";
 import { SigninOidc } from "pages/Redirect";
 
 import "styles.scss";
-// TODO: update favicons
 
 const queryClient = new QueryClient({
   defaultOptions: {
