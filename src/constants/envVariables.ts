@@ -14,12 +14,12 @@ declare global {
       HORIZON_URL: string;
       RECAPTCHA_SITE_KEY: string;
 
-      USE_SSO: boolean;
-      OIDC_AUTHORITY: string;
-      OIDC_CLIENT_ID: string;
-      OIDC_REDIRECT_URI: string;
-      OIDC_SCOPE: string;
-      OIDC_USERNAME_MAPPING: OidcUsername;
+      USE_SSO?: boolean;
+      OIDC_AUTHORITY?: string;
+      OIDC_CLIENT_ID?: string;
+      OIDC_REDIRECT_URI?: string;
+      OIDC_SCOPE?: string;
+      OIDC_USERNAME_MAPPING?: OidcUsername;
     };
   }
 }
