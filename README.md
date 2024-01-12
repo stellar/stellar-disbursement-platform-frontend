@@ -47,7 +47,7 @@ Environment variables can be set either on a global `window._env_` object or as
 
 The default location of the `window._env_` object is
 `public/settings/env-config.js` (not included in the repo). The path can be
-updated in `src/index.html`.
+updated in `src/constants/envVariables.ts` variable `WINDOW_ENV_PATH`.
 
 Example settings for local testing:
 
@@ -65,9 +65,17 @@ window._env_ = {
 The `.env` file should be placed in the root directory of the repo. All
 variables should be prefixed with `REACT_APP_`.
 
+Set the value to true to avoid fetching the file if the Window ENV is not used.
+
+<!-- prettier-ignore -->
+> [!NOTE]
+> Set `REACT_APP_DISABLE_WINDOW_ENV=true` to avoid fetching the
+> `public/settings/env-config.js` file if the `window._env_` is not used.
+
 For example:
 
 ```
+REACT_APP_DISABLE_WINDOW_ENV=true
 REACT_APP_API_URL=https://localhost:8000
 REACT_APP_STELLAR_EXPERT_URL=https://stellar.expert/explorer/testnet
 REACT_APP_HORIZON_URL=https://horizon-testnet.stellar.org

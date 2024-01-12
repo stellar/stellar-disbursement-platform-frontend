@@ -24,24 +24,52 @@ declare global {
   }
 }
 
-export const API_URL = process?.env?.REACT_APP_API_URL || window._env_.API_URL;
-export const STELLAR_EXPERT_URL =
-  process?.env?.REACT_APP_STELLAR_EXPERT_URL || window._env_.STELLAR_EXPERT_URL;
-export const HORIZON_URL =
-  process?.env?.REACT_APP_HORIZON_URL || window._env_.HORIZON_URL;
-export const RECAPTCHA_SITE_KEY =
-  process?.env?.REACT_APP_RECAPTCHA_SITE_KEY || window._env_.RECAPTCHA_SITE_KEY;
-export const USE_SSO = Boolean(
-  process?.env?.REACT_APP_USE_SSO || window._env_.USE_SSO,
-);
-export const OIDC_AUTHORITY =
-  process?.env?.REACT_APP_OIDC_AUTHORITY || window._env_.OIDC_AUTHORITY;
-export const OIDC_CLIENT_ID =
-  process?.env?.REACT_APP_OIDC_CLIENT_ID || window._env_.OIDC_CLIENT_ID;
-export const OIDC_REDIRECT_URI =
-  process?.env?.REACT_APP_OIDC_REDIRECT_URI || window._env_.OIDC_REDIRECT_URI;
-export const OIDC_SCOPE =
-  process?.env?.REACT_APP_OIDC_SCOPE || window._env_.OIDC_SCOPE;
-export const OIDC_USERNAME_MAPPING = (process?.env
-  ?.REACT_APP_OIDC_USERNAME_MAPPING ||
-  window._env_.OIDC_USERNAME_MAPPING) as OidcUsername;
+const WINDOW_ENV_PATH = "/settings/env-config.js";
+
+const generateEnvConfig = async () => {
+  if (process?.env?.REACT_APP_DISABLE_WINDOW_ENV !== "true") {
+    const response = await fetch(WINDOW_ENV_PATH);
+    const text = await response.text();
+
+    const script = new Function(text);
+    script.apply(null);
+  }
+
+  return {
+    API_URL: process?.env?.REACT_APP_API_URL || window._env_.API_URL,
+    STELLAR_EXPERT_URL:
+      process?.env?.REACT_APP_STELLAR_EXPERT_URL ||
+      window._env_.STELLAR_EXPERT_URL,
+    HORIZON_URL:
+      process?.env?.REACT_APP_HORIZON_URL || window._env_.HORIZON_URL,
+    RECAPTCHA_SITE_KEY:
+      process?.env?.REACT_APP_RECAPTCHA_SITE_KEY ||
+      window._env_.RECAPTCHA_SITE_KEY,
+    USE_SSO:
+      process?.env?.REACT_APP_USE_SSO === "true" || window?._env_?.USE_SSO,
+    OIDC_AUTHORITY:
+      process?.env?.REACT_APP_OIDC_AUTHORITY || window?._env_?.OIDC_AUTHORITY,
+    OIDC_CLIENT_ID:
+      process?.env?.REACT_APP_OIDC_CLIENT_ID || window?._env_?.OIDC_CLIENT_ID,
+    OIDC_REDIRECT_URI:
+      process?.env?.REACT_APP_OIDC_REDIRECT_URI ||
+      window?._env_?.OIDC_REDIRECT_URI,
+    OIDC_SCOPE: process?.env?.REACT_APP_OIDC_SCOPE || window?._env_?.OIDC_SCOPE,
+    OIDC_USERNAME_MAPPING:
+      ((process?.env?.REACT_APP_OIDC_USERNAME_MAPPING ||
+        window?._env_?.OIDC_USERNAME_MAPPING) as OidcUsername) || undefined,
+  };
+};
+
+export const {
+  API_URL,
+  STELLAR_EXPERT_URL,
+  HORIZON_URL,
+  RECAPTCHA_SITE_KEY,
+  USE_SSO,
+  OIDC_AUTHORITY,
+  OIDC_CLIENT_ID,
+  OIDC_REDIRECT_URI,
+  OIDC_SCOPE,
+  OIDC_USERNAME_MAPPING,
+} = await generateEnvConfig();
