@@ -25,7 +25,7 @@ The SDP's comprehensive dashboard includes the following pages:
   wallet information and payment history. May also search, filter, and export
   receiver data in CSV.
 - Payments Page (Overview): Summary of all payments, including search by payment
-  ID, filters, and export options. Payment detail includes Payment ID, wallet
+  ID, filters, and export options. Payment details include Payment ID, wallet
   address, disbursement name, completion time, amount, and status information.
 - Wallets Page (Management): View Distribution Account information including
   public key, balance, adding funds, and more, and manage which assets you want
@@ -37,9 +37,19 @@ The SDP's comprehensive dashboard includes the following pages:
 
 Feedback and contributions are welcome!
 
-### Config
+## Environment Variables
 
-Make sure to set the following for initial local testing:
+Environment variables can be set either on a global `window._env_` object or as
+`process.env` variables. All environment variables used in this repo are in
+`src/constants/envVariables.ts` file, including types.
+
+### `window`
+
+The default location of the `window._env_` object is
+`public/settings/env-config.js` (not included in the repo). The path can be
+updated in `src/constants/envVariables.ts` variable `WINDOW_ENV_PATH`.
+
+Example settings for local testing:
 
 ```javascript
 window._env_ = {
@@ -48,6 +58,28 @@ window._env_ = {
   HORIZON_URL: "https://horizon-testnet.stellar.org",
   RECAPTCHA_SITE_KEY: "6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn",
 };
+```
+
+### `process`
+
+The `.env` file should be placed in the root directory of the repo. All
+variables should be prefixed with `REACT_APP_`.
+
+Set the value to true to avoid fetching the file if the Window ENV is not used.
+
+<!-- prettier-ignore -->
+> [!NOTE]
+> Set `REACT_APP_DISABLE_WINDOW_ENV=true` to avoid fetching the
+> `public/settings/env-config.js` file if the `window._env_` is not used.
+
+For example:
+
+```
+REACT_APP_DISABLE_WINDOW_ENV=true
+REACT_APP_API_URL=https://localhost:8000
+REACT_APP_STELLAR_EXPERT_URL=https://stellar.expert/explorer/testnet
+REACT_APP_HORIZON_URL=https://horizon-testnet.stellar.org
+REACT_APP_RECAPTCHA_SITE_KEY=6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn
 ```
 
 ## Favicon

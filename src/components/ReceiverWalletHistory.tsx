@@ -1,5 +1,5 @@
 import { Card, Link, Profile, Notification } from "@stellar/design-system";
-import { STELLAR_EXPERT_URL } from "constants/settings";
+import { STELLAR_EXPERT_URL } from "constants/envVariables";
 import { useStellarAccountPayments } from "apiQueries/useStellarAccountPayments";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 

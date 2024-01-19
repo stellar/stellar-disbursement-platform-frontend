@@ -133,7 +133,9 @@ export const App = () => {
             <Route
               path={`${Routes.DISBURSEMENTS}/:id`}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={["owner", "financial_controller", "business"]}
+                >
                   <InnerPage>
                     <DisbursementDetails />
                   </InnerPage>
@@ -186,7 +188,9 @@ export const App = () => {
             <Route
               path={`${Routes.RECEIVERS}/:id`}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={["owner", "financial_controller", "business"]}
+                >
                   <InnerPage>
                     <ReceiverDetails />
                   </InnerPage>
@@ -207,7 +211,9 @@ export const App = () => {
             <Route
               path={`${Routes.PAYMENTS}/:id`}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={["owner", "financial_controller", "business"]}
+                >
                   <InnerPage>
                     <PaymentDetails />
                   </InnerPage>

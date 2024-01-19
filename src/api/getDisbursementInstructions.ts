@@ -1,4 +1,5 @@
-import { API_URL, SESSION_EXPIRED } from "constants/settings";
+import { API_URL } from "constants/envVariables";
+import { SESSION_EXPIRED } from "constants/settings";
 
 export const getDisbursementInstructions = async (
   token: string,

@@ -21,7 +21,8 @@ import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { SectionHeader } from "components/SectionHeader";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { Routes, USE_SSO } from "constants/settings";
+import { USE_SSO } from "constants/envVariables";
+import { Routes } from "constants/settings";
 import { singleUserStore } from "helpers/singleSingOn";
 import { userRoleText } from "helpers/userRoleText";
 import { localStorageSessionToken } from "helpers/localStorageSessionToken";

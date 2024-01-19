@@ -13,12 +13,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
 import { signInAction } from "store/ducks/userAccount";
-import {
-  Routes,
-  USE_SSO,
-  RECAPTCHA_SITE_KEY,
-  LOCAL_STORAGE_DEVICE_ID,
-} from "constants/settings";
+import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import { Routes, LOCAL_STORAGE_DEVICE_ID } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
 import { ErrorWithExtras } from "components/ErrorWithExtras";

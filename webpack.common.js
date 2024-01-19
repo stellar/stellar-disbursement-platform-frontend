@@ -5,8 +5,10 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
-const ProvidePlugin = require("webpack").ProvidePlugin;
+const { ProvidePlugin, DefinePlugin } = require("webpack");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
+
+require("dotenv").config();
 
 module.exports = {
   entry: "./src/index.tsx",
@@ -130,12 +132,16 @@ module.exports = {
       os: require.resolve("os-browserify"),
       url: require.resolve("url"),
       buffer: require.resolve("buffer/"),
+      path: require.resolve("path-browserify"),
     },
   },
   plugins: [
-    // Buffer
     new ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
+      process: "process/browser",
+    }),
+    new DefinePlugin({
+      "process.env": JSON.stringify(process.env),
     }),
     new CopyPlugin({
       patterns: [{ from: "./public", to: "./" }],

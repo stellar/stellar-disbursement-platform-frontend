@@ -1,5 +1,6 @@
 import { differenceInMinutes, fromUnixTime } from "date-fns";
-import { API_URL, SESSION_EXPIRED } from "constants/settings";
+import { API_URL } from "constants/envVariables";
+import { SESSION_EXPIRED } from "constants/settings";
 import { parseJwt } from "helpers/parseJwt";
 
 export const refreshToken = async (token: string): Promise<string> => {
