@@ -1,6 +1,7 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { handleSearchParams } from "api/handleSearchParams";
-import { API_URL, UI_STATUS_DISBURSEMENT } from "constants/settings";
+import { API_URL } from "constants/envVariables";
+import { UI_STATUS_DISBURSEMENT } from "constants/settings";
 import { ApiDisbursements, PaymentsSearchParams } from "types";
 
 export const getDisbursements = async (

@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
-import { RECAPTCHA_SITE_KEY } from "constants/settings";
+import { RECAPTCHA_SITE_KEY } from "constants/envVariables";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ForgotPassword = () => {

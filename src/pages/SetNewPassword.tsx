@@ -9,7 +9,7 @@ import {
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { USE_SSO } from "constants/settings";
+import { USE_SSO } from "constants/envVariables";
 import { singleUserStore } from "helpers/singleSingOn";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";

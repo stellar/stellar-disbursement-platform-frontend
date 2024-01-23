@@ -1,4 +1,4 @@
-import { HORIZON_URL } from "constants/settings";
+import { HORIZON_URL } from "constants/envVariables";
 import { shortenAccountKey } from "helpers/shortenAccountKey";
 import { ApiStellarAccount } from "types";
 
