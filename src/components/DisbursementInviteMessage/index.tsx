@@ -46,15 +46,15 @@ export const DisbursementInviteMessage = ({disbursementInviteMessage, isEditMess
     }
   };
 
-  const updateMessage = <T,>(updatedDisbursementInviteMessage: T) => {
-    // Updating parent state
+  const updateMessage = (updatedDisbursementInviteMessage: string) => {
+    // Updating parent
     if (onChange) {
       onChange(updatedDisbursementInviteMessage);
     }
   };
 
   const updateCustomMessageInput = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+    event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const { value } = event.target;
 

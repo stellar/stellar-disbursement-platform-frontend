@@ -293,7 +293,7 @@ export const DisbursementDraftDetails = () => {
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
-              disbursementInviteMessage={draftDetails.details.smsRegistrationMessageTemplate}
+              disbursementInviteMessage={draftDetails?.details.smsRegistrationMessageTemplate || ""}
               isEditMessage={false}
               onChange={(updatedDisbursementInviteMessage) => {
                 setCustomMessage(updatedDisbursementInviteMessage)
@@ -332,7 +332,7 @@ export const DisbursementDraftDetails = () => {
             details={draftDetails?.details}
           />
           <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails?.details.smsRegistrationMessageTemplate}
+            disbursementInviteMessage={draftDetails?.details.smsRegistrationMessageTemplate || ""}
             isEditMessage={false}
             onChange={(updatedDisbursementInviteMessage) => {
               setCustomMessage(updatedDisbursementInviteMessage)
