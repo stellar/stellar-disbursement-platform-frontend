@@ -110,8 +110,8 @@ export const DisbursementsNew = () => {
       dispatch(
         saveDisbursementDraftAction({
           details: {
-            smsRegistrationMessageTemplate: customMessage,
             ...draftDetails
+            smsRegistrationMessageTemplate: customMessage,
           },
           file: csvFile
         }),
@@ -138,8 +138,8 @@ export const DisbursementsNew = () => {
       dispatch(
         submitDisbursementNewDraftAction({
           details: {
-            smsRegistrationMessageTemplate: customMessage,
             ...draftDetails,
+            smsRegistrationMessageTemplate: customMessage,
           },
           file: csvFile,
         }),
@@ -200,7 +200,7 @@ export const DisbursementsNew = () => {
         <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
           <DisbursementDetails variant="preview" details={draftDetails} />
           <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails.smsRegistrationMessageTemplate}
+            disbursementInviteMessage={draftDetails?.smsRegistrationMessageTemplate}
             isEditMessage={false}
             onChange={(updatedDisbursementInviteMessage) => {
               setCustomMessage(updatedDisbursementInviteMessage)
@@ -250,7 +250,7 @@ export const DisbursementsNew = () => {
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails.smsRegistrationMessageTemplate}
+            disbursementInviteMessage={draftDetails?.smsRegistrationMessageTemplate}
             isEditMessage={false}
             onChange={(updatedDisbursementInviteMessage) => {
               setCustomMessage(updatedDisbursementInviteMessage)
@@ -292,7 +292,7 @@ export const DisbursementsNew = () => {
           />
 
           <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails.smsRegistrationMessageTemplate}
+            disbursementInviteMessage={draftDetails?.smsRegistrationMessageTemplate}
             isEditMessage={true}
             onChange={(updatedDisbursementInviteMessage) => {
               setCustomMessage(updatedDisbursementInviteMessage)

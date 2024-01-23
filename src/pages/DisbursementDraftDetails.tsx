@@ -186,8 +186,8 @@ export const DisbursementDraftDetails = () => {
         submitDisbursementSavedDraftAction({
           savedDraftId: draftId,
           details: {
+            ... draftDetails.details,
             smsRegistrationMessageTemplate: customMessage,
-            ... draftDetails.details
           },
           file: csvFile,
         }),
@@ -332,7 +332,7 @@ export const DisbursementDraftDetails = () => {
             details={draftDetails?.details}
           />
           <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails.details.smsRegistrationMessageTemplate}
+            disbursementInviteMessage={draftDetails?.details.smsRegistrationMessageTemplate}
             isEditMessage={false}
             onChange={(updatedDisbursementInviteMessage) => {
               setCustomMessage(updatedDisbursementInviteMessage)

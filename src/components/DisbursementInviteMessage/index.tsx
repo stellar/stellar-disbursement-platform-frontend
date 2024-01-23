@@ -15,7 +15,7 @@ import "./styles.scss";
 interface DisbursementInviteMessageProps {
   disbursementInviteMessage: string;
   isEditMessage: boolean;
-  onChange?: (state: Disbursement) => void;
+  onChange?: (message: string) => void;
 }
 
 export const DisbursementInviteMessage = ({disbursementInviteMessage, isEditMessage, onChange} : DisbursementInviteMessageProps) => {
@@ -46,20 +46,20 @@ export const DisbursementInviteMessage = ({disbursementInviteMessage, isEditMess
     }
   };
 
-  const updateState = <T,>(updatedDisbursementInviteMessage: T) => {
+  const updateMessage = <T,>(updatedDisbursementInviteMessage: T) => {
     // Updating parent state
     if (onChange) {
       onChange(updatedDisbursementInviteMessage);
     }
   };
 
-  const updateCustomMessageInput = = (
+  const updateCustomMessageInput = (
     event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
   ) => {
     const { value } = event.target;
 
     setCustomMessageInput(value);
-    updateState(value);
+    updateMessage(value);
   }
 
   const renderCustomMessage = () => {
