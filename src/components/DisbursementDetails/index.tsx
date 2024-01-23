@@ -22,7 +22,6 @@ import {
 } from "types";
 
 import "./styles.scss";
-import { DisbursementInviteMessage } from "components/DisbursementInviteMessage";
 
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
@@ -67,7 +66,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     ASSET_CODE = "asset_code",
     WALLET_ID = "wallet_id",
     VERIFICATION_FIELD = "verification_field",
-    SMS_REGISTRATION_MESSAGE_TEMPLATE = "sms_registration_message_template"
   }
 
   const {
@@ -197,11 +195,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           verificationField: value,
         });
         break;
-      case FieldId.SMS_REGISTRATION_MESSAGE_TEMPLATE:
-        updateState({
-          smsRegistrationMessageTemplate: value,
-        });
-        break;
       default:
       // do nothing
     }
@@ -249,11 +242,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             <div className="DisbursementDetailsFields__value">
               {details.name}
             </div>
-          </div>
-
-          <div>
-            <DisbursementInviteMessage disbursementInviteMessage={details.smsRegistrationMessageTemplate}
-              isEditMessage={false} />
           </div>
 
           {variant === "confirmation" ? (
@@ -345,12 +333,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           onChange={updateDraftDetails}
           value={details.name}
         />
-
-        <div>
-          <DisbursementInviteMessage
-            disbursementInviteMessage={""}
-            isEditMessage={true} />
-        </div>
       </>
     );
   };

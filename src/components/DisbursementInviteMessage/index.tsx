@@ -15,9 +15,10 @@ import "./styles.scss";
 interface DisbursementInviteMessageProps {
   disbursementInviteMessage: string;
   isEditMessage: boolean;
+  onChange?: (state: Disbursement) => void;
 }
 
-export const DisbursementInviteMessage = ({disbursementInviteMessage, isEditMessage} : DisbursementInviteMessageProps) => {
+export const DisbursementInviteMessage = ({disbursementInviteMessage, isEditMessage, onChange} : DisbursementInviteMessageProps) => {
   enum radioValue {
     ORGANIZATION = "organization",
     CUSTOM = "custom",
@@ -45,6 +46,22 @@ export const DisbursementInviteMessage = ({disbursementInviteMessage, isEditMess
     }
   };
 
+  const updateState = <T,>(updatedDisbursementInviteMessage: T) => {
+    // Updating parent state
+    if (onChange) {
+      onChange(updatedDisbursementInviteMessage);
+    }
+  };
+
+  const updateCustomMessageInput = = (
+    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+  ) => {
+    const { value } = event.target;
+
+    setCustomMessageInput(value);
+    updateState(value);
+  }
+
   const renderCustomMessage = () => {
     if (isEditMessage) {
       return (
@@ -55,9 +72,10 @@ export const DisbursementInviteMessage = ({disbursementInviteMessage, isEditMess
             fieldSize="sm"
             id="textarea-custom-input"
             rows={5}
-            value={customMessageInput}
+            value={customMessagePlaceholder}
             onChange={(event) => {
               setCustomMessageInput(event.target.value);
+              updateCustomMessageInput(event);
             }}
           ></Textarea>
         </form>
@@ -71,7 +89,7 @@ export const DisbursementInviteMessage = ({disbursementInviteMessage, isEditMess
           id="textarea-custom"
           disabled
           rows={5}
-          value={customMessagePlaceholder}
+          value={customMessageInput}
         ></Textarea>
       </div>
     );

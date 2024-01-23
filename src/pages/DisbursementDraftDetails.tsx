@@ -24,6 +24,7 @@ import { Routes } from "constants/settings";
 import { SectionHeader } from "components/SectionHeader";
 import { Toast } from "components/Toast";
 import { DisbursementDetails } from "components/DisbursementDetails";
+import { DisbursementInviteMessage } from "components/DisbursementInviteMessage";
 import { DisbursementInstructions } from "components/DisbursementInstructions";
 import { DisbursementButtons } from "components/DisbursementButtons";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
@@ -48,6 +49,7 @@ export const DisbursementDraftDetails = () => {
   );
 
   const [draftDetails, setDraftDetails] = useState<DisbursementDraft>();
+  const [customMessage, setCustomMessage] = useState("");
   const [csvFile, setCsvFile] = useState<File>();
   const [isCsvFileUpdated, setIsCsvFileUpdated] = useState(false);
   const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
@@ -183,7 +185,10 @@ export const DisbursementDraftDetails = () => {
       dispatch(
         submitDisbursementSavedDraftAction({
           savedDraftId: draftId,
-          details: draftDetails.details,
+          details: {
+            smsRegistrationMessageTemplate: customMessage,
+            ... draftDetails.details
+          },
           file: csvFile,
         }),
       );
@@ -287,7 +292,13 @@ export const DisbursementDraftDetails = () => {
               details={draftDetails?.details}
               csvFile={csvFile}
             />
-
+            <DisbursementInviteMessage
+              disbursementInviteMessage={draftDetails.details.smsRegistrationMessageTemplate}
+              isEditMessage={false}
+              onChange={(updatedDisbursementInviteMessage) => {
+                setCustomMessage(updatedDisbursementInviteMessage)
+              }}
+            />
             {renderButtons("confirmation")}
           </form>
         </>
@@ -319,6 +330,13 @@ export const DisbursementDraftDetails = () => {
           <DisbursementDetails
             variant="preview"
             details={draftDetails?.details}
+          />
+          <DisbursementInviteMessage
+            disbursementInviteMessage={draftDetails.details.smsRegistrationMessageTemplate}
+            isEditMessage={false}
+            onChange={(updatedDisbursementInviteMessage) => {
+              setCustomMessage(updatedDisbursementInviteMessage)
+            }}
           />
           <DisbursementInstructions
             variant={"preview"}
