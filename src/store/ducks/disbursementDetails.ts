@@ -148,6 +148,7 @@ const initialState: DisbursementDetailsInitialState = {
     status: "DRAFT",
     fileName: undefined,
     statusHistory: [],
+    smsRegistrationMessageTemplate: "",
   },
   instructions: {
     csvName: undefined,
