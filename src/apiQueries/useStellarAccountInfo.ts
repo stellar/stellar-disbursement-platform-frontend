@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { HORIZON_URL } from "constants/settings";
+import { HORIZON_URL } from "constants/envVariables";
 import { fetchStellarApi } from "helpers/fetchStellarApi";
 import { shortenAccountKey } from "helpers/shortenAccountKey";
 import { ApiStellarAccount, AppError } from "types";

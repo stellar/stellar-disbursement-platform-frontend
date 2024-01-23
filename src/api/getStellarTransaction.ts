@@ -1,4 +1,4 @@
-import { HORIZON_URL } from "constants/settings";
+import { HORIZON_URL } from "constants/envVariables";
 import { shortenString } from "helpers/shortenString";
 import { ApiStellarTransaction } from "types";
 

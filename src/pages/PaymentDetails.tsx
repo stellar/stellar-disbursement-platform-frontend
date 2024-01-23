@@ -14,9 +14,9 @@ import {
 import { usePaymentsPaymentId } from "apiQueries/usePaymentsPaymentId";
 import { useCancelPayment } from "apiQueries/useCancelPayment";
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
+import { STELLAR_EXPERT_URL } from "constants/envVariables";
 import {
   Routes,
-  STELLAR_EXPERT_URL,
   CANCELED_PAYMENT_STATUS,
   READY_PAYMENT_STATUS,
 } from "constants/settings";
@@ -253,11 +253,14 @@ export const PaymentDetails = () => {
                   <div className="PaymentDetails__info">
                     <label className="Label">External Payment ID</label>
                     <div>
-                      {formattedPayment.externalPaymentId ? 
-                        (formattedPayment.externalPaymentId.length > 20 ?
-                          shortenString(formattedPayment.externalPaymentId, 10) : formattedPayment.externalPaymentId) 
-                        : "-"
-                      }
+                      {formattedPayment.externalPaymentId
+                        ? formattedPayment.externalPaymentId.length > 20
+                          ? shortenString(
+                              formattedPayment.externalPaymentId,
+                              10,
+                            )
+                          : formattedPayment.externalPaymentId
+                        : "-"}
                     </div>
                   </div>
                 </div>
