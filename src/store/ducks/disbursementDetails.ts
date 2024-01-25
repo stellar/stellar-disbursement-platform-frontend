@@ -118,6 +118,8 @@ const initialState: DisbursementDetailsInitialState = {
     id: "",
     name: "",
     createdAt: "",
+    createdBy: "",
+    startedBy: "",
     stats: {
       paymentsSuccessfulCount: 0,
       paymentsFailedCount: 0,

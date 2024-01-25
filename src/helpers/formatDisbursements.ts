@@ -12,6 +12,8 @@ export const formatDisbursement = (
   id: disbursement.id,
   name: disbursement.name,
   createdAt: disbursement.created_at,
+  createdBy: `${disbursement.created_by.first_name} ${disbursement.created_by.last_name}`,
+  startedBy: `${disbursement.started_by.first_name} ${disbursement.started_by.last_name}`,
   stats: {
     paymentsSuccessfulCount: disbursement.total_payments_sent,
     paymentsFailedCount: disbursement.total_payments_failed,
