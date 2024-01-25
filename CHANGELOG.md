@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [1.0.2](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0...1.0.2)
+
+### Added
+- Add dropdown for choosing verification type when creating new disbursements [#53](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/53)
+- Display external payment ID on payments details page [#59](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/59)
+- Add a cancel button to payments details page [#60](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/60)
+- Add env variable injection to dashboard [#62](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/62)
+
+### Changed
+
+- State Refactors
+  - receiver payments, wallet balance, wallet history [#34](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/34)
+  - users [#36](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/36)
+  - wallet providers [#37](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/37)
+  - countries [#42](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/42)
+- Automatic cancellation of payments in `READY` status after a certain time period [#38](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/38)
+
+
 ## [1.0.0](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0-rc2...1.0.0)
 
 ### Added
