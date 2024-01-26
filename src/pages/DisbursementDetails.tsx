@@ -194,6 +194,20 @@ export const DisbursementDetails = () => {
                 </CopyWithIcon>
               </div>
             </div>
+
+            <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">Created by</label>
+              <div className="StatCards__card__item__value">
+                {disbursementDetails.details.createdBy ?? ""}
+              </div>
+            </div>
+
+            <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">Started by</label>
+              <div className="StatCards__card__item__value">
+                {disbursementDetails.details.startedBy ?? ""}
+              </div>
+            </div>
           </div>
         </Card>
         <Card>
