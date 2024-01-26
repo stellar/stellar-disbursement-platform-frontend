@@ -210,8 +210,8 @@ export type Disbursement = {
   id: string;
   name: string;
   createdAt: string;
-  createdBy: string;
-  startedBy: string;
+  createdBy?: string;
+  startedBy?: string;
   stats?: DisbursementDetailsStats;
   receivers?: {
     items: DisbursementReceiver[];
