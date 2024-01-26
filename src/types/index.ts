@@ -535,12 +535,12 @@ export type ApiDisbursement = {
   status_history: ApiDisbursementHistory[];
   created_at: string;
   updated_at: string;
-  created_by: {
+  created_by?: {
     id: string;
     first_name: string;
     last_name: string;
   };
-  started_by: {
+  started_by?: {
     id: string;
     first_name: string;
     last_name: string;
