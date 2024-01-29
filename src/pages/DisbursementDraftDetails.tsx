@@ -49,7 +49,6 @@ export const DisbursementDraftDetails = () => {
   );
 
   const [draftDetails, setDraftDetails] = useState<DisbursementDraft>();
-  const [customMessage, setCustomMessage] = useState("");
   const [csvFile, setCsvFile] = useState<File>();
   const [isCsvFileUpdated, setIsCsvFileUpdated] = useState(false);
   const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
@@ -185,10 +184,7 @@ export const DisbursementDraftDetails = () => {
       dispatch(
         submitDisbursementSavedDraftAction({
           savedDraftId: draftId,
-          details: {
-            ... draftDetails.details,
-            smsRegistrationMessageTemplate: customMessage,
-          },
+          details: draftDetails.details,
           file: csvFile,
         }),
       );
@@ -292,13 +288,14 @@ export const DisbursementDraftDetails = () => {
               details={draftDetails?.details}
               csvFile={csvFile}
             />
+
             <DisbursementInviteMessage
-              disbursementInviteMessage={draftDetails?.details.smsRegistrationMessageTemplate || ""}
               isEditMessage={false}
-              onChange={(updatedDisbursementInviteMessage) => {
-                setCustomMessage(updatedDisbursementInviteMessage)
-              }}
+              draftMessage={
+                disbursementDetails?.details.smsRegistrationMessageTemplate
+              }
             />
+
             {renderButtons("confirmation")}
           </form>
         </>
@@ -332,11 +329,10 @@ export const DisbursementDraftDetails = () => {
             details={draftDetails?.details}
           />
           <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails?.details.smsRegistrationMessageTemplate || ""}
             isEditMessage={false}
-            onChange={(updatedDisbursementInviteMessage) => {
-              setCustomMessage(updatedDisbursementInviteMessage)
-            }}
+            draftMessage={
+              disbursementDetails?.details.smsRegistrationMessageTemplate
+            }
           />
           <DisbursementInstructions
             variant={"preview"}

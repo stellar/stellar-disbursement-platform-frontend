@@ -113,7 +113,7 @@ export const DisbursementsNew = () => {
             ...draftDetails,
             smsRegistrationMessageTemplate: customMessage,
           },
-          file: csvFile
+          file: csvFile,
         }),
       );
     }
@@ -200,11 +200,8 @@ export const DisbursementsNew = () => {
         <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
           <DisbursementDetails variant="preview" details={draftDetails} />
           <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails?.smsRegistrationMessageTemplate || ""}
             isEditMessage={false}
-            onChange={(updatedDisbursementInviteMessage) => {
-              setCustomMessage(updatedDisbursementInviteMessage)
-            }}
+            draftMessage={draftDetails?.smsRegistrationMessageTemplate}
           />
           <DisbursementInstructions
             variant="preview"
@@ -250,12 +247,9 @@ export const DisbursementsNew = () => {
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails?.smsRegistrationMessageTemplate || ""}
-            isEditMessage={false}
-            onChange={(updatedDisbursementInviteMessage) => {
-              setCustomMessage(updatedDisbursementInviteMessage)
-            }}
-          />
+              isEditMessage={false}
+              draftMessage={draftDetails?.smsRegistrationMessageTemplate}
+            />
 
             {renderButtons("confirmation")}
           </form>
@@ -292,10 +286,9 @@ export const DisbursementsNew = () => {
           />
 
           <DisbursementInviteMessage
-            disbursementInviteMessage={draftDetails?.smsRegistrationMessageTemplate || ""}
             isEditMessage={true}
             onChange={(updatedDisbursementInviteMessage) => {
-              setCustomMessage(updatedDisbursementInviteMessage)
+              setCustomMessage(updatedDisbursementInviteMessage);
             }}
           />
 
