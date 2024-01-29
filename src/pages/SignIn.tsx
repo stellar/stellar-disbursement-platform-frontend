@@ -13,16 +13,18 @@ import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
 import { signInAction } from "store/ducks/userAccount";
-import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import { USE_SSO } from "constants/envVariables";
 import { Routes, LOCAL_STORAGE_DEVICE_ID } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { ReCaptcha } from "components/ReCaptcha";
 
 export const SignIn = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
@@ -145,12 +147,7 @@ export const SignIn = () => {
                 isPassword
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Recaptcha
-                ref={recaptchaRef}
-                size="normal"
-                sitekey={RECAPTCHA_SITE_KEY}
-                onChange={onRecaptchaSubmit}
-              />
+              <ReCaptcha ref={recaptchaRef} onSubmit={onRecaptchaSubmit} />
             </>
           )}
           {USE_SSO ? (
