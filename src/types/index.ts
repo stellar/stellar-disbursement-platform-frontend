@@ -210,6 +210,8 @@ export type Disbursement = {
   id: string;
   name: string;
   createdAt: string;
+  createdBy?: string;
+  startedBy?: string;
   stats?: DisbursementDetailsStats;
   receivers?: {
     items: DisbursementReceiver[];
@@ -535,6 +537,16 @@ export type ApiDisbursement = {
   sms_registration_message_template: string;
   created_at: string;
   updated_at: string;
+  created_by?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+  };
+  started_by?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+  };
   total_payments: number;
   total_payments_sent: number;
   total_payments_failed: number;
