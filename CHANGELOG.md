@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Display external payment ID on payments details page [#59](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/59)
 - Add a cancel button to payments details page [#60](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/60)
 - Add env variable injection to dashboard [#62](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/62)
+- Display `Created By` and `Started By` on disbursement details page [#68](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/68)
 
 ### Changed
 
