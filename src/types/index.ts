@@ -238,6 +238,7 @@ export type Disbursement = {
     timestamp: string;
     userId: string | null;
   }[];
+  smsRegistrationMessageTemplate: string;
 };
 
 export type DisbursementsSearchParams = CommonFilters &
@@ -533,6 +534,7 @@ export type ApiDisbursement = {
   status: DisbursementStatus;
   verification_field: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
+  sms_registration_message_template: string;
   created_at: string;
   updated_at: string;
   created_by?: {

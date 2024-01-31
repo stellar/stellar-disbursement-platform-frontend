@@ -24,6 +24,7 @@ import { Routes } from "constants/settings";
 import { SectionHeader } from "components/SectionHeader";
 import { Toast } from "components/Toast";
 import { DisbursementDetails } from "components/DisbursementDetails";
+import { DisbursementInviteMessage } from "components/DisbursementInviteMessage";
 import { DisbursementInstructions } from "components/DisbursementInstructions";
 import { DisbursementButtons } from "components/DisbursementButtons";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
@@ -287,6 +288,12 @@ export const DisbursementDraftDetails = () => {
               details={draftDetails?.details}
               csvFile={csvFile}
             />
+            <DisbursementInviteMessage
+              isEditMessage={false}
+              draftMessage={
+                draftDetails?.details.smsRegistrationMessageTemplate
+              }
+            />
 
             {renderButtons("confirmation")}
           </form>
@@ -319,6 +326,10 @@ export const DisbursementDraftDetails = () => {
           <DisbursementDetails
             variant="preview"
             details={draftDetails?.details}
+          />
+          <DisbursementInviteMessage
+            isEditMessage={false}
+            draftMessage={draftDetails?.details.smsRegistrationMessageTemplate}
           />
           <DisbursementInstructions
             variant={"preview"}

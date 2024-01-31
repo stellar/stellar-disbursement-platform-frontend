@@ -50,6 +50,7 @@ const initDetails: Disbursement = {
   createdAt: "",
   status: "DRAFT",
   statusHistory: [],
+  smsRegistrationMessageTemplate: ""
 };
 
 export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
