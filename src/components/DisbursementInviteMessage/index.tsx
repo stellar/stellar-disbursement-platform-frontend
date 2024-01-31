@@ -6,7 +6,7 @@ import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import { getOrgInfoAction } from "store/ducks/organization";
 
-import "./styles.scss";
+import "../ReceiverInviteMessage/styles.scss";
 
 interface DisbursementInviteMessageProps {
   draftMessage?: string;
@@ -59,7 +59,7 @@ export const DisbursementInviteMessage = ({
   return (
     <>
       <Card>
-        <div className="CardStack__card DisbursementInviteMessage">
+        <div className="CardStack__card ReceiverInviteMessage">
           <div className="CardStack__title">Customize invite</div>
 
           <div className="Note">
@@ -70,7 +70,7 @@ export const DisbursementInviteMessage = ({
           </div>
 
           {isEditMessage && (
-            <div className="DisbursementInviteMessage__options">
+            <div className="ReceiverInviteMessage__options">
               <RadioButton
                 id="msg-std"
                 name="disbursement-message"
@@ -92,7 +92,7 @@ export const DisbursementInviteMessage = ({
             </div>
           )}
           {selectedOption === radioValue.CUSTOM ? (
-            <form className="DisbursementInviteMessage__form">
+            <form className="ReceiverInviteMessage__form">
               <Textarea
                 fieldSize="sm"
                 id="textarea-custom-input"
@@ -105,7 +105,7 @@ export const DisbursementInviteMessage = ({
               ></Textarea>
             </form>
           ) : (
-            <div className="DisbursementInviteMessage__form">
+            <div className="ReceiverInviteMessage__form">
               <Textarea
                 fieldSize="sm"
                 id="textarea-standard"
