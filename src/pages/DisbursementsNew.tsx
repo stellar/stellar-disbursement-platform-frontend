@@ -201,7 +201,7 @@ export const DisbursementsNew = () => {
           <DisbursementDetails variant="preview" details={draftDetails} />
           <DisbursementInviteMessage
             isEditMessage={false}
-            draftMessage={draftDetails?.smsRegistrationMessageTemplate}
+            draftMessage={customMessage}
           />
           <DisbursementInstructions
             variant="preview"
@@ -248,7 +248,7 @@ export const DisbursementsNew = () => {
             />
             <DisbursementInviteMessage
               isEditMessage={false}
-              draftMessage={draftDetails?.smsRegistrationMessageTemplate}
+              draftMessage={customMessage}
             />
 
             {renderButtons("confirmation")}

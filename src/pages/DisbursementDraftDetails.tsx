@@ -288,11 +288,10 @@ export const DisbursementDraftDetails = () => {
               details={draftDetails?.details}
               csvFile={csvFile}
             />
-
             <DisbursementInviteMessage
               isEditMessage={false}
               draftMessage={
-                disbursementDetails?.details.smsRegistrationMessageTemplate
+                draftDetails?.details.smsRegistrationMessageTemplate
               }
             />
 
@@ -330,9 +329,7 @@ export const DisbursementDraftDetails = () => {
           />
           <DisbursementInviteMessage
             isEditMessage={false}
-            draftMessage={
-              disbursementDetails?.details.smsRegistrationMessageTemplate
-            }
+            draftMessage={draftDetails?.details.smsRegistrationMessageTemplate}
           />
           <DisbursementInstructions
             variant={"preview"}

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, RadioButton, Textarea } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
@@ -19,7 +19,6 @@ export const DisbursementInviteMessage = ({
   isEditMessage,
   onChange,
 }: DisbursementInviteMessageProps) => {
-  console.log(draftMessage);
   enum radioValue {
     ORGANIZATION = "organization",
     CUSTOM = "custom",
@@ -34,9 +33,7 @@ export const DisbursementInviteMessage = ({
   const dispatch: AppDispatch = useDispatch();
 
   const [selectedOption, setSelectedOption] = useState(radioValue.ORGANIZATION);
-  const [customMessageInput, setCustomMessageInput] = useState(
-    customMessagePlaceholder,
-  );
+  const [customMessageInput, setCustomMessageInput] = useState("");
 
   useEffect(() => {
     dispatch(getOrgInfoAction());
@@ -44,7 +41,7 @@ export const DisbursementInviteMessage = ({
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === radioValue.ORGANIZATION) {
-      setCustomMessageInput("");
+      updateMessage("");
       setSelectedOption(radioValue.ORGANIZATION);
     } else {
       setSelectedOption(radioValue.CUSTOM);
@@ -52,25 +49,17 @@ export const DisbursementInviteMessage = ({
   };
 
   const updateMessage = (updatedDisbursementInviteMessage: string) => {
+    setCustomMessageInput(updatedDisbursementInviteMessage);
     // Updating parent
     if (onChange) {
       onChange(updatedDisbursementInviteMessage);
     }
   };
 
-  const updateCustomMessageInput = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    const { value } = event.target;
-
-    setCustomMessageInput(value);
-    updateMessage(value);
-  };
-
   return (
     <>
       <Card>
-        <div className="CardStack__card ReceiverInviteMessage">
+        <div className="CardStack__card DisbursementInviteMessage">
           <div className="CardStack__title">Customize invite</div>
 
           <div className="Note">
@@ -80,71 +69,55 @@ export const DisbursementInviteMessage = ({
             end of the message. Please check all values for accuracy.
           </div>
 
-          {isEditMessage ? (
-            <>
-              <div className="ReceiverInviteMessage__options">
-                <RadioButton
-                  id="msg-std"
-                  name="receiver-message"
-                  label={
-                    <Fragment key="msg-std-label">
-                      {"Default message"}{" "}
-                    </Fragment>
-                  }
-                  fieldSize="xs"
-                  value={radioValue.ORGANIZATION}
-                  onChange={handleOptionChange}
-                  checked={selectedOption === radioValue.ORGANIZATION}
-                />
-                <RadioButton
-                  id="msg-cst"
-                  name="receiver-message"
-                  label="Custom message"
-                  fieldSize="xs"
-                  value={radioValue.CUSTOM}
-                  onChange={handleOptionChange}
-                  checked={selectedOption === radioValue.CUSTOM}
-                />
-              </div>
-              {selectedOption === radioValue.CUSTOM ? (
-                <form className="ReceiverInviteMessage__form">
-                  <Textarea
-                    fieldSize="sm"
-                    id="textarea-custom-input"
-                    rows={5}
-                    value={customMessageInput}
-                    onChange={(event) => {
-                      setCustomMessageInput(event.target.value);
-                      updateCustomMessageInput(event);
-                    }}
-                  ></Textarea>
-                </form>
-              ) : (
-                <div className="ReceiverInviteMessage__form">
-                  <Textarea
-                    fieldSize="sm"
-                    id="textarea-standard"
-                    disabled
-                    rows={5}
-                    value={
-                      organization.data.smsRegistrationMessageTemplate ??
-                      standardOrgMessage
-                    }
-                  ></Textarea>
-                </div>
-              )}
-            </>
+          {isEditMessage && (
+            <div className="DisbursementInviteMessage__options">
+              <RadioButton
+                id="msg-std"
+                name="disbursement-message"
+                label="Default message"
+                fieldSize="xs"
+                value={radioValue.ORGANIZATION}
+                onChange={handleOptionChange}
+                checked={selectedOption === radioValue.ORGANIZATION}
+              />
+              <RadioButton
+                id="msg-cst"
+                name="disbursement-message"
+                label="Custom message"
+                fieldSize="xs"
+                value={radioValue.CUSTOM}
+                onChange={handleOptionChange}
+                checked={selectedOption === radioValue.CUSTOM}
+              />
+            </div>
+          )}
+          {selectedOption === radioValue.CUSTOM ? (
+            <form className="DisbursementInviteMessage__form">
+              <Textarea
+                fieldSize="sm"
+                id="textarea-custom-input"
+                rows={5}
+                placeholder={customMessagePlaceholder}
+                value={customMessageInput}
+                onChange={(event) => {
+                  updateMessage(event.target.value);
+                }}
+              ></Textarea>
+            </form>
           ) : (
-            <div className="ReceiverInviteMessage__form">
+            <div className="DisbursementInviteMessage__form">
               <Textarea
                 fieldSize="sm"
                 id="textarea-standard"
                 disabled
                 rows={5}
                 value={
-                  draftMessage ??
-                  organization.data.smsRegistrationMessageTemplate ??
-                  standardOrgMessage
+                  isEditMessage
+                    ? organization.data.smsRegistrationMessageTemplate ??
+                      standardOrgMessage
+                    : draftMessage ??
+                      organization.data.smsRegistrationMessageTemplate ??
+                      standardOrgMessage
                 }
               ></Textarea>
             </div>
