@@ -1,23 +1,35 @@
-import { useCallback, useEffect, useState } from "react";
-import { Button, Icon, Input, Modal, Select } from "@stellar/design-system";
+import { useEffect, useState } from "react";
+import {
+  Button,
+  Icon,
+  Input,
+  Modal,
+  Select,
+  Notification,
+} from "@stellar/design-system";
 import { InfoTooltip } from "components/InfoTooltip";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { USER_ROLES_ARRAY } from "constants/settings";
 import { userRoleText } from "helpers/userRoleText";
-import { useRedux } from "hooks/useRedux";
+import { usePrevious } from "hooks/usePrevious";
 import { NewUser, UserRole } from "types";
 
 interface NewUserModalProps {
   visible: boolean;
   onClose: () => void;
   onSubmit: (newUser: NewUser) => void;
+  onResetQuery: () => void;
   isLoading: boolean;
+  errorMessage?: string;
 }
 
 export const NewUserModal: React.FC<NewUserModalProps> = ({
   visible,
   onClose,
   onSubmit,
+  onResetQuery,
   isLoading,
+  errorMessage,
 }: NewUserModalProps) => {
   type FormItems = {
     fname?: string;
@@ -33,25 +45,22 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
     role: undefined,
   };
 
-  const { users } = useRedux("users");
-
   const [formItems, setFormItems] = useState<FormItems>(initForm);
   const [formError, setFormError] = useState<string[]>([]);
 
-  const handleClose = useCallback(() => {
-    setFormItems({});
-    setFormError([]);
-    onClose();
-  }, [onClose]);
+  const iPprevVisible = usePrevious(visible);
 
   useEffect(() => {
-    if (
-      users.newUser.status === "ERROR" ||
-      users.newUser.status === "SUCCESS"
-    ) {
-      handleClose();
+    // Clear the form when modal closes
+    if (iPprevVisible && !visible) {
+      setFormItems({});
+      setFormError([]);
     }
-  }, [handleClose, users.newUser.status]);
+  }, [visible, iPprevVisible]);
+
+  const handleClose = () => {
+    onClose();
+  };
 
   const filledItems = () => Object.values(formItems).filter((v) => v);
 
@@ -66,6 +75,9 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLSelectElement>,
   ) => {
+    if (errorMessage) {
+      onResetQuery();
+    }
     removeItemFromErrors(event.target.id);
     setFormItems({
       ...formItems,
@@ -141,6 +153,16 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
         onReset={handleClose}
       >
         <Modal.Body>
+          {errorMessage ? (
+            <Notification variant="error" title="Error">
+              <ErrorWithExtras
+                appError={{
+                  message: errorMessage,
+                }}
+              />
+            </Notification>
+          ) : null}
+
           <div className="NewUserForm">
             <Input
               fieldSize="sm"

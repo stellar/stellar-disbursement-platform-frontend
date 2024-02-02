@@ -4,10 +4,10 @@ import { getDisbursementDrafts } from "api/getDisbursementDrafts";
 import { postDisbursement } from "api/postDisbursement";
 import { postDisbursementFile } from "api/postDisbursementFile";
 import { patchDisbursementStatus } from "api/patchDisbursementStatus";
-import { handleApiErrorString } from "api/handleApiErrorString";
 import { formatDisbursement } from "helpers/formatDisbursements";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
+import { normalizeApiError } from "helpers/normalizeApiError";
 import {
   ApiError,
   Disbursement,
@@ -46,7 +46,7 @@ export const getDisbursementDraftsAction = createAsyncThunk<
         pagination,
       };
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const errorString = normalizeApiError(error as ApiError).message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
@@ -85,13 +85,13 @@ export const saveDisbursementDraftAction = createAsyncThunk<
         return draftId;
       }
     } catch (error: unknown) {
-      const err = error as ApiError;
-      const errorString = handleApiErrorString(err);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
         errorString: `Error saving draft: ${errorString}`,
-        errorExtras: err?.extras,
+        errorExtras: apiError?.extras,
         // Need to save draft ID if it failed because of CSV upload
         newDraftId: draftId,
       });
@@ -127,13 +127,13 @@ export const submitDisbursementNewDraftAction = createAsyncThunk<
 
       return draftId;
     } catch (error: unknown) {
-      const err = error as ApiError;
-      const errorString = handleApiErrorString(err);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
         errorString: `Error submitting disbursement: ${errorString}`,
-        errorExtras: err?.extras,
+        errorExtras: apiError?.extras,
         // Need to save draft ID if it failed because of CSV upload
         newDraftId: draftId,
       });
@@ -158,13 +158,13 @@ export const saveNewCsvFileAction = createAsyncThunk<
 
       return true;
     } catch (error: unknown) {
-      const err = error as ApiError;
-      const errorString = handleApiErrorString(err);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
         errorString: `Error uploading new CSV file: ${errorString}`,
-        errorExtras: err?.extras,
+        errorExtras: apiError?.extras,
       });
     }
   },
@@ -209,13 +209,13 @@ export const submitDisbursementSavedDraftAction = createAsyncThunk<
 
       return draftId;
     } catch (error: unknown) {
-      const err = error as ApiError;
-      const errorString = handleApiErrorString(err);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
         errorString: `Error submitting disbursement: ${errorString}`,
-        errorExtras: err?.extras,
+        errorExtras: apiError?.extras,
         // Need to save draft ID if it failed because of CSV upload
         newDraftId: draftId,
       });

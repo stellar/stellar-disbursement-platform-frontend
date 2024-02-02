@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
-import { handleApiErrorString } from "api/handleApiErrorString";
 import { getProfileInfo } from "api/getProfileInfo";
 import { patchProfileInfo } from "api/patchProfileInfo";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
+import { normalizeApiError } from "helpers/normalizeApiError";
 import {
   ApiError,
   ApiProfileInfo,
@@ -27,7 +27,8 @@ export const getProfileInfoAction = createAsyncThunk<
 
       return profileInfo;
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
@@ -57,13 +58,13 @@ export const updateProfileInfoAction = createAsyncThunk<
       });
       return profileInfo.message;
     } catch (error: unknown) {
-      const err = error as ApiError;
-      const errorString = handleApiErrorString(err);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
         errorString: `Error updating profile info: ${errorString}`,
-        errorExtras: err?.extras,
+        errorExtras: apiError?.extras,
       });
     }
   },

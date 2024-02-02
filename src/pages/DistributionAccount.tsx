@@ -7,10 +7,14 @@ import {
   Notification,
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
+
 import { InfoTooltip } from "components/InfoTooltip";
 import { SectionHeader } from "components/SectionHeader";
 import { AccountBalances } from "components/AccountBalances";
 import { WalletTrustlines } from "components/WalletTrustlines";
+import { LoadingContent } from "components/LoadingContent";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+
 import { useRedux } from "hooks/useRedux";
 import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
 import { AppDispatch } from "store";
@@ -25,15 +29,24 @@ export const DistributionAccount = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const renderContent = () => {
+    if (organization.status === "PENDING") {
+      return <LoadingContent />;
+    }
+
     if (organization.errorString) {
       return (
         <Notification variant="error" title="Error">
-          {organization.errorString}
+          <ErrorWithExtras
+            appError={{
+              message: organization.errorString,
+              extras: organization.errorExtras,
+            }}
+          />
         </Notification>
       );
     }
 
-    if (!assetBalances || assetBalances.length === 0) {
+    if (assetBalances?.length === 0) {
       return <div className="Note">There are no distribution accounts</div>;
     }
 
@@ -62,7 +75,7 @@ export const DistributionAccount = () => {
           <Title size="sm">Current balance:</Title>
 
           <>
-            {assetBalances.map((a) => (
+            {assetBalances?.map((a) => (
               <Fragment key={a.address}>
                 {<AccountBalances accountInfo={a} />}
               </Fragment>

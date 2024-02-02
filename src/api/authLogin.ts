@@ -1,4 +1,4 @@
-import { API_URL } from "constants/settings";
+import { API_URL } from "constants/envVariables";
 
 export const authLogin = async (
   email: string,

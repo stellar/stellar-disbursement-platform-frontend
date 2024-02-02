@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Card,
@@ -6,18 +6,18 @@ import {
   Modal,
   Notification,
 } from "@stellar/design-system";
-import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { getAssets } from "api/getAssets";
-import { postAssets } from "api/postAssets";
-import { deleteAsset } from "api/deleteAsset";
 import { InfoTooltip } from "components/InfoTooltip";
 import { DropdownMenu } from "components/DropdownMenu";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
+import { useBalanceTrustline } from "apiQueries/useBalanceTrustline";
+import { useAssetsAdd } from "apiQueries/useAssetsAdd";
+import { useAssetsDelete } from "apiQueries/useAssetsDelete";
 import { parseApiError } from "helpers/parseApiError";
-import { useSessionToken } from "hooks/useSessionToken";
+
 import { ApiError, StellarAccountBalance } from "types";
 
 import "./styles.scss";
@@ -41,96 +41,40 @@ export const WalletTrustlines = ({
     fassetissuer: "",
   };
 
-  type Trustline = {
-    id: string | null;
-    code: string;
-    issuer: string;
-    balance: string;
-    isNative: boolean;
-  };
-
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
   const [formItems, setFormItems] = useState<FormItems>(initForm);
   const [formError, setFormError] = useState<string[]>([]);
   const [removeAssetId, setRemoveAssetId] = useState<string>();
-  const [trustlines, setTrustlines] = useState<Trustline[]>();
   const [successNotification, setSuccessNotification] = useState<
     { title: string; message: string } | undefined
   >();
 
-  const sessionToken = useSessionToken();
-
   const ASSET_NAME: { [key: string]: string } = {
     XLM: "Stellar Lumens",
     USDC: "USD Coin",
-    EUROC: "EURO Coin",
+    EURC: "EURC",
     // SRT is used for testing
     SRT: "Stellar Reference Token",
   };
 
-  const getTrustlines = async () => {
-    if (!balances) {
-      return [];
-    }
-
-    return await getAssets(sessionToken);
-  };
-
-  const submitAddTrustline = () => {
-    return postAssets(sessionToken, {
-      code: formItems.fassetcode!,
-      issuer: formItems.fassetissuer!,
-    });
-  };
+  const {
+    isFetching: isTrustlinesFetching,
+    isLoading: isTrustlinesLoading,
+    data: trustlines,
+    error: trustlinesError,
+  } = useBalanceTrustline(balances);
 
   const {
-    isFetching: assetsIsFetching,
-    data: assets,
-    isError: assetsIsError,
-    isSuccess: assetsIsSuccess,
-    error: assetsError,
-    refetch: assetsRefetch,
-  } = useQuery({
-    queryKey: ["WalletTrustlinesAssets"],
-    queryFn: () => (balances ? getTrustlines() : []),
-    enabled: Boolean(balances),
-  });
-
-  useEffect(() => {
-    if (balances?.length && assetsIsSuccess) {
-      const test = balances?.map((b) => {
-        const id =
-          assets?.find(
-            (a) => a.code === b?.assetCode && a.issuer === b?.assetIssuer,
-          )?.id || null;
-
-        return {
-          id,
-          code: b?.assetCode || "XLM",
-          issuer: b?.assetIssuer || "native",
-          balance: b.balance,
-          isNative: Boolean(!b.assetCode && !b.assetIssuer),
-        };
-      });
-
-      setTrustlines(test);
-    }
-  }, [assets, assetsIsSuccess, balances]);
-
-  const {
-    mutate: trustlineAdd,
-    isLoading: trustlineAddIsLoading,
-    isError: trustlineAddIsError,
+    isLoading: isTrustlineAddLoading,
+    isError: isTrustlineAddError,
     error: trustlineAddError,
+    mutateAsync: trustlineAdd,
     reset: trustlineAddReset,
-  } = useMutation({
-    mutationFn: submitAddTrustline,
-    retry: false,
+  } = useAssetsAdd({
     onSuccess: (addedAsset) => {
       handleCloseModal();
       onSuccess();
-      assetsRefetch();
       setSuccessNotification({
         title: "Trustline added",
         message: `Trustline ${ASSET_NAME[addedAsset.code]} (${
@@ -141,18 +85,15 @@ export const WalletTrustlines = ({
   });
 
   const {
-    mutate: trustlineRemove,
+    mutateAsync: trustlineRemove,
     isLoading: trustlineRemoveIsLoading,
     isError: trustlineRemoveIsError,
     error: trustlineRemoveError,
     reset: trustlineRemoveReset,
-  } = useMutation({
-    mutationFn: () => deleteAsset(sessionToken, removeAssetId!),
-    retry: false,
+  } = useAssetsDelete({
     onSuccess: (removeAsset) => {
       handleCloseModal();
       onSuccess();
-      assetsRefetch();
       setSuccessNotification({
         title: "Trustline removed",
         message: `Trustline ${ASSET_NAME[removeAsset.code]} (${
@@ -169,7 +110,7 @@ export const WalletTrustlines = ({
     setFormError([]);
     setRemoveAssetId(undefined);
 
-    if (trustlineAddIsError) {
+    if (isTrustlineAddError) {
       trustlineAddReset();
     }
 
@@ -197,7 +138,7 @@ export const WalletTrustlines = ({
       [event.target.id]: event.target.value,
     });
 
-    if (trustlineAddIsError) {
+    if (isTrustlineAddError) {
       trustlineAddReset();
     }
   };
@@ -219,7 +160,7 @@ export const WalletTrustlines = ({
   };
 
   const renderContent = () => {
-    if (assetsIsFetching) {
+    if (isTrustlinesLoading || isTrustlinesFetching) {
       return <div className="Note">Loading…</div>;
     }
 
@@ -239,31 +180,33 @@ export const WalletTrustlines = ({
             >
               <div className="WalletTrustlines__asset__info">
                 {ASSET_NAME?.[a.code] && <div>{ASSET_NAME?.[a.code]}</div>}
-                <span>
+                <span title={`${a.code}:${a.issuer}`}>
                   {a.code}:{a.issuer}
                 </span>
               </div>
 
               {!a.isNative && a.id ? (
-                <DropdownMenu triggerEl={<MoreMenuButton />}>
-                  <DropdownMenu.Item
-                    onClick={() => {
-                      if (isRemoveEnabled) {
-                        setIsRemoveModalVisible(true);
-                        setRemoveAssetId(a.id!);
+                <div className="WalletTrustlines__asset__button">
+                  <DropdownMenu triggerEl={<MoreMenuButton />}>
+                    <DropdownMenu.Item
+                      onClick={() => {
+                        if (isRemoveEnabled) {
+                          setIsRemoveModalVisible(true);
+                          setRemoveAssetId(a.id!);
+                        }
+                      }}
+                      isHighlight
+                      aria-disabled={!isRemoveEnabled}
+                      title={
+                        !isRemoveEnabled
+                          ? "You can only remove an asset when the asset balance is 0"
+                          : ""
                       }
-                    }}
-                    isHighlight
-                    aria-disabled={!isRemoveEnabled}
-                    title={
-                      !isRemoveEnabled
-                        ? "You can only remove an asset when the asset balance is 0"
-                        : ""
-                    }
-                  >
-                    Remove trustline
-                  </DropdownMenu.Item>
-                </DropdownMenu>
+                    >
+                      Remove trustline
+                    </DropdownMenu.Item>
+                  </DropdownMenu>
+                </div>
               ) : null}
             </div>
           );
@@ -285,7 +228,7 @@ export const WalletTrustlines = ({
   };
 
   const getRemoveAssetConfirmation = () => {
-    const asset = assets?.find((a) => a.id === removeAssetId);
+    const asset = trustlines?.find((a) => a.id === removeAssetId);
 
     if (asset) {
       return `Are you sure you want to remove ${
@@ -298,9 +241,9 @@ export const WalletTrustlines = ({
 
   return (
     <>
-      {assetsIsError ? (
+      {trustlinesError ? (
         <Notification variant="error" title="Error">
-          {assetsError as string}
+          <ErrorWithExtras appError={trustlinesError} />
         </Notification>
       ) : null}
 
@@ -341,12 +284,18 @@ export const WalletTrustlines = ({
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            trustlineAdd();
+
+            if (formItems.fassetcode && formItems.fassetissuer) {
+              trustlineAdd({
+                assetCode: formItems.fassetcode,
+                assetIssuer: formItems.fassetissuer,
+              });
+            }
           }}
           onReset={handleCloseModal}
         >
           <Modal.Body>
-            {trustlineAddIsError ? (
+            {isTrustlineAddError ? (
               <Notification variant="error" title="Error">
                 {parseApiError(trustlineAddError as ApiError)}
               </Notification>
@@ -388,7 +337,7 @@ export const WalletTrustlines = ({
               size="sm"
               variant="secondary"
               type="reset"
-              isLoading={trustlineAddIsLoading}
+              isLoading={isTrustlineAddLoading}
             >
               Cancel
             </Button>
@@ -397,7 +346,7 @@ export const WalletTrustlines = ({
               variant="primary"
               type="submit"
               disabled={!canSubmit}
-              isLoading={trustlineAddIsLoading}
+              isLoading={isTrustlineAddLoading}
             >
               Add trustline
             </Button>
@@ -414,7 +363,10 @@ export const WalletTrustlines = ({
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            trustlineRemove();
+
+            if (removeAssetId) {
+              trustlineRemove(removeAssetId);
+            }
           }}
           onReset={handleCloseModal}
         >

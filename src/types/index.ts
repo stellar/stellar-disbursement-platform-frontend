@@ -1,27 +1,4 @@
 /* eslint-disable camelcase */
-import { OidcStandardClaims } from "oidc-client-ts";
-
-declare global {
-  interface Window {
-    _env_: {
-      API_URL: string;
-      STELLAR_EXPERT_URL: string;
-      USDC_ASSET_ISSUER: string;
-      HORIZON_URL: string;
-      RECAPTCHA_SITE_KEY: string;
-
-      USE_SSO: boolean;
-      OIDC_AUTHORITY: string;
-      OIDC_CLIENT_ID: string;
-      OIDC_REDIRECT_URI: string;
-      OIDC_SCOPE: string;
-      OIDC_USERNAME_MAPPING: keyof Pick<
-        OidcStandardClaims,
-        "name" | "preferred_username" | "nickname"
-      >;
-    };
-  }
-}
 
 // =============================================================================
 // Store
@@ -60,27 +37,6 @@ export type UserAccountInitialState = {
   restoredPathname?: string;
 };
 
-export type CountriesInitialState = {
-  items: ApiCountry[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
-export type AssetsInitialState = {
-  items: ApiAsset[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
-export type WalletsInitialState = {
-  items: ApiWallet[];
-  status: ActionStatus | undefined;
-  errorString?: string;
-  modalVisibility: boolean;
-  modalWalletId: string;
-  modalWalletEnabled: boolean;
-};
-
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -107,42 +63,6 @@ export type DisbursementDetailsInitialState = {
   errorString?: string;
 };
 
-export type ForgotPasswordInitialState = {
-  response?: string;
-  status: ActionStatus | undefined;
-  errorString?: string;
-  errorExtras?: AnyObject;
-};
-
-export type ReceiverDetailsInitialState = {
-  id: string;
-  phoneNumber: string;
-  email?: string;
-  assetCode?: string;
-  totalReceived?: string;
-  orgId: string;
-  stats: {
-    paymentsTotalCount: number;
-    paymentsSuccessfulCount: number;
-    paymentsFailedCount: number;
-    paymentsRemainingCount: number;
-  };
-  wallets: ReceiverWallet[];
-  verifications: ReceiverVerification[];
-  status: ActionStatus | undefined;
-  updateStatus: ActionStatus | undefined;
-  retryInvitationStatus: ActionStatus | undefined;
-  errorString?: string;
-};
-
-export type ReceiverPaymentsInitialState = {
-  items: ApiPayment[];
-  status: ActionStatus | undefined;
-  pagination?: Pagination;
-  errorString?: string;
-  searchParams?: PaymentsSearchParams;
-};
-
 export type OrganizationInitialState = {
   data: {
     name: string;
@@ -153,6 +73,7 @@ export type OrganizationInitialState = {
     isApprovalRequired: boolean | undefined;
     smsResendInterval: number;
     smsRegistrationMessageTemplate?: string;
+    paymentCancellationPeriodDays: number;
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -168,43 +89,13 @@ export type ProfileInitialState = {
   errorExtras?: AnyObject;
 };
 
-export type UsersInitialState = {
-  items: ApiUser[];
-  updatedUser: {
-    id: string;
-    role: UserRole | null;
-    is_active: boolean;
-    actionType: "status" | "role" | undefined;
-    status: ActionStatus | undefined;
-    errorString?: string;
-  };
-  newUser: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    role: UserRole | null;
-    email: string;
-    status: ActionStatus | undefined;
-    errorString?: string;
-  };
-  status: ActionStatus | undefined;
-  errorString?: string;
-};
-
 export interface Store {
-  assets: AssetsInitialState;
-  countries: CountriesInitialState;
   disbursementDetails: DisbursementDetailsInitialState;
   disbursementDrafts: DisbursementDraftsInitialState;
   disbursements: DisbursementsInitialState;
-  forgotPassword: ForgotPasswordInitialState;
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
-  receiverDetails: ReceiverDetailsInitialState;
-  receiverPayments: ReceiverPaymentsInitialState;
   userAccount: UserAccountInitialState;
-  users: UsersInitialState;
-  wallets: WalletsInitialState;
 }
 
 export type StoreKey = keyof Store;
@@ -298,8 +189,10 @@ export type DisbursementStatus =
   | "PAUSED"
   | "COMPLETED";
 
-// TODO: add other fields
-export type DisbursementVerificationField = "DATE_OF_BIRTH";
+export type DisbursementVerificationField =
+  | "DATE_OF_BIRTH"
+  | "PIN"
+  | "NATIONAL_ID_NUMBER";
 
 export type DisbursementDraftAction = "save" | "submit";
 
@@ -317,6 +210,8 @@ export type Disbursement = {
   id: string;
   name: string;
   createdAt: string;
+  createdBy?: string;
+  startedBy?: string;
   stats?: DisbursementDetailsStats;
   receivers?: {
     items: DisbursementReceiver[];
@@ -335,6 +230,7 @@ export type Disbursement = {
     id: string;
     name: string;
   };
+  verificationField?: string;
   status: DisbursementStatus;
   fileName?: string;
   statusHistory: {
@@ -342,6 +238,7 @@ export type Disbursement = {
     timestamp: string;
     userId: string | null;
   }[];
+  smsRegistrationMessageTemplate: string;
 };
 
 export type DisbursementsSearchParams = CommonFilters &
@@ -355,6 +252,7 @@ export interface DisbursementDraftRejectMessage extends RejectMessage {
 export type DisbursementDetailsStats = {
   paymentsSuccessfulCount: number;
   paymentsFailedCount: number;
+  paymentsCanceledCount: number;
   paymentsRemainingCount: number;
   paymentsTotalCount: number;
   totalAmount: string;
@@ -383,7 +281,8 @@ export type PaymentStatus =
   | "PENDING"
   | "PAUSED"
   | "SUCCESS"
-  | "FAILED";
+  | "FAILED"
+  | "CANCELED";
 
 export type PaymentsSearchParams = CommonFilters &
   SortParams &
@@ -418,7 +317,9 @@ export type PaymentDetails = {
   senderAddress?: string;
   totalAmount: string;
   assetCode: string;
+  status: string;
   statusHistory: PaymentDetailsStatusHistoryItem[];
+  externalPaymentId?: string;
 };
 
 // =============================================================================
@@ -496,6 +397,7 @@ export type ReceiverDetails = {
     paymentsTotalCount: number;
     paymentsSuccessfulCount: number;
     paymentsFailedCount: number;
+    paymentsCanceledCount: number;
     paymentsRemainingCount: number;
   };
   wallets: ReceiverWallet[];
@@ -513,6 +415,7 @@ export type ReceiverEditFields = {
 export type HomeStatistics = {
   paymentsSuccessfulCounts: number;
   paymentsFailedCount: number;
+  paymentsCanceledCount: number;
   paymentsRemainingCount: number;
   paymentsTotalCount: number;
   walletsTotalCount: number;
@@ -631,11 +534,23 @@ export type ApiDisbursement = {
   status: DisbursementStatus;
   verification_field: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
+  sms_registration_message_template: string;
   created_at: string;
   updated_at: string;
+  created_by?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+  };
+  started_by?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+  };
   total_payments: number;
   total_payments_sent: number;
   total_payments_failed: number;
+  total_payments_canceled: number;
   total_payments_remaining: number;
   amount_disbursed: string;
   total_amount: string;
@@ -693,6 +608,7 @@ export type ApiPayment = {
   receiver_wallet: ApiPaymentReceiverWallet;
   created_at: string;
   updated_at: string;
+  external_payment_id?: string;
 };
 
 export type ApiPayments = {
@@ -703,6 +619,7 @@ export type ApiPayments = {
 export type ApiStatisticsAsset = {
   asset_code: string;
   payment_amounts: {
+    canceled: number;
     draft: number;
     ready: number;
     pending: number;
@@ -716,6 +633,7 @@ export type ApiStatisticsAsset = {
 
 export type ApiStatistics = {
   payment_counters: {
+    canceled: number;
     draft: number;
     ready: number;
     pending: number;
@@ -810,6 +728,7 @@ export type ApiReceiver = {
   total_payments: string | number;
   successful_payments: string | number;
   failed_payments: string | number;
+  canceled_payments: string | number;
   remaining_payments: string | number;
   received_amounts?: {
     asset_code: string;
@@ -843,6 +762,7 @@ export type ApiOrgInfo = {
   is_approval_required: boolean;
   sms_resend_interval: string;
   sms_registration_message_template?: string;
+  payment_cancellation_period_days: string;
 };
 
 export type ApiStellarAccountBalance = {

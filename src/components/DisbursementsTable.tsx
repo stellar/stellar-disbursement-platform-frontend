@@ -6,6 +6,7 @@ import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { useSort } from "hooks/useSort";
 import { Table } from "components/Table";
 import { AssetAmount } from "components/AssetAmount";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import {
   ActionStatus,
   Disbursement,
@@ -17,7 +18,7 @@ import {
 interface DisbursementsTableProps {
   disbursementItems: Disbursement[];
   searchParams: DisbursementsSearchParams | undefined;
-  apiError: string | boolean | undefined;
+  apiError: string | undefined;
   isFiltersSelected: boolean | undefined;
   status: ActionStatus | undefined;
   onSort?: (sort?: SortByDisbursements, direction?: SortDirection) => void;
@@ -52,7 +53,11 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
   if (apiError) {
     return (
       <Notification variant="error" title="Error">
-        {apiError}
+        <ErrorWithExtras
+          appError={{
+            message: apiError,
+          }}
+        />
       </Notification>
     );
   }
@@ -109,6 +114,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
             <Table.HeaderCell>Total payments</Table.HeaderCell>
             <Table.HeaderCell>Successful</Table.HeaderCell>
             <Table.HeaderCell>Failed</Table.HeaderCell>
+            <Table.HeaderCell>Canceled</Table.HeaderCell>
             <Table.HeaderCell>Remaining</Table.HeaderCell>
             <Table.HeaderCell
               sortDirection={
@@ -148,6 +154,9 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                 </Table.BodyCell>
                 <Table.BodyCell width="2.25rem" textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsFailedCount)}
+                </Table.BodyCell>
+                <Table.BodyCell width="3.4rem" textAlign="right">
+                  {renderNumberOrDash(d.stats?.paymentsCanceledCount)}
                 </Table.BodyCell>
                 <Table.BodyCell width="3.75rem" textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsRemainingCount)}

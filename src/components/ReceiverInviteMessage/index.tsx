@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -10,6 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 
 import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { useUpdateSmsTemplate } from "apiQueries/useUpdateOrgSmsTemplate";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
@@ -181,7 +182,7 @@ export const ReceiverInviteMessage = () => {
     <>
       {isError ? (
         <Notification variant="error" title="Error">
-          {error.message}
+          <ErrorWithExtras appError={error} />
         </Notification>
       ) : null}
 
@@ -221,12 +222,12 @@ export const ReceiverInviteMessage = () => {
               id="msg-std"
               name="receiver-message"
               label={
-                <>
+                <Fragment key="msg-std-label">
                   {"Standard message"}{" "}
                   {selectedOption === radioValue.STANDARD && isLoading ? (
                     <Loader size="1.25rem" />
                   ) : null}
-                </>
+                </Fragment>
               }
               fieldSize="xs"
               value={radioValue.STANDARD}

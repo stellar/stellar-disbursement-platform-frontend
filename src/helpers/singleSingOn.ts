@@ -4,13 +4,13 @@ import {
   OIDC_CLIENT_ID,
   OIDC_REDIRECT_URI,
   OIDC_SCOPE,
-} from "constants/settings";
+} from "constants/envVariables";
 
 const config = {
-  authority: OIDC_AUTHORITY,
-  client_id: OIDC_CLIENT_ID,
-  redirect_uri: OIDC_REDIRECT_URI,
-  scope: OIDC_SCOPE,
+  authority: OIDC_AUTHORITY || "",
+  client_id: OIDC_CLIENT_ID || "",
+  redirect_uri: OIDC_REDIRECT_URI || "",
+  scope: OIDC_SCOPE || "",
   automaticSilentRenew: false,
 };
 

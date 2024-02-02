@@ -24,11 +24,13 @@ import { Breadcrumbs } from "components/Breadcrumbs";
 import { SectionHeader } from "components/SectionHeader";
 import { Toast } from "components/Toast";
 import { DisbursementDetails } from "components/DisbursementDetails";
+import { DisbursementInviteMessage } from "components/DisbursementInviteMessage";
 import { DisbursementInstructions } from "components/DisbursementInstructions";
 import { DisbursementButtons } from "components/DisbursementButtons";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { InfoTooltip } from "components/InfoTooltip";
 import { AccountBalances } from "components/AccountBalances";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { Disbursement, DisbursementStep } from "types";
 
@@ -40,6 +42,7 @@ export const DisbursementsNew = () => {
   const { assetBalances, distributionAccountPublicKey } = organization.data;
 
   const [draftDetails, setDraftDetails] = useState<Disbursement>();
+  const [customMessage, setCustomMessage] = useState("");
   const [isDetailsValid, setIsDetailsValid] = useState(false);
   const [csvFile, setCsvFile] = useState<File | undefined>();
 
@@ -105,7 +108,13 @@ export const DisbursementsNew = () => {
 
     if (draftDetails) {
       dispatch(
-        saveDisbursementDraftAction({ details: draftDetails, file: csvFile }),
+        saveDisbursementDraftAction({
+          details: {
+            ...draftDetails,
+            smsRegistrationMessageTemplate: customMessage,
+          },
+          file: csvFile,
+        }),
       );
     }
   };
@@ -128,7 +137,10 @@ export const DisbursementsNew = () => {
     if (draftDetails && csvFile) {
       dispatch(
         submitDisbursementNewDraftAction({
-          details: draftDetails,
+          details: {
+            ...draftDetails,
+            smsRegistrationMessageTemplate: customMessage,
+          },
           file: csvFile,
         }),
       );
@@ -187,6 +199,10 @@ export const DisbursementsNew = () => {
       return (
         <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
           <DisbursementDetails variant="preview" details={draftDetails} />
+          <DisbursementInviteMessage
+            isEditMessage={false}
+            draftMessage={customMessage}
+          />
           <DisbursementInstructions
             variant="preview"
             csvFile={csvFile}
@@ -230,6 +246,10 @@ export const DisbursementsNew = () => {
               details={draftDetails}
               csvFile={csvFile}
             />
+            <DisbursementInviteMessage
+              isEditMessage={false}
+              draftMessage={customMessage}
+            />
 
             {renderButtons("confirmation")}
           </form>
@@ -262,6 +282,13 @@ export const DisbursementsNew = () => {
             }}
             onValidate={(isValid) => {
               setIsDetailsValid(isValid);
+            }}
+          />
+
+          <DisbursementInviteMessage
+            isEditMessage={true}
+            onChange={(updatedDisbursementInviteMessage) => {
+              setCustomMessage(updatedDisbursementInviteMessage);
             }}
           />
 
@@ -341,16 +368,12 @@ export const DisbursementsNew = () => {
               : "Error"
           }
         >
-          <div>{apiError}</div>
-          {disbursementDrafts.errorExtras ? (
-            <ul className="ErrorExtras">
-              {Object.entries(disbursementDrafts.errorExtras).map(
-                ([key, value]) => (
-                  <li key={key}>{`${key}: ${value}`}</li>
-                ),
-              )}
-            </ul>
-          ) : null}
+          <ErrorWithExtras
+            appError={{
+              message: apiError,
+              extras: disbursementDrafts.errorExtras,
+            }}
+          />
         </Notification>
       ) : null}
 

@@ -13,14 +13,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
-import {
-  Routes,
-  USE_SSO,
-  RECAPTCHA_SITE_KEY,
-  LOCAL_STORAGE_DEVICE_ID,
-} from "constants/settings";
+import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import { Routes, LOCAL_STORAGE_DEVICE_ID } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const MFAuth = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -101,7 +98,11 @@ export const MFAuth = () => {
       <div className="CardLayout">
         {userAccount.errorString && (
           <Notification variant="error" title="MFA error">
-            {userAccount.errorString}
+            <ErrorWithExtras
+              appError={{
+                message: userAccount.errorString,
+              }}
+            />
           </Notification>
         )}
         <form onSubmit={handleSubmit}>

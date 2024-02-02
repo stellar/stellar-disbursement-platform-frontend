@@ -6,23 +6,18 @@ import {
   Notification,
   Link,
 } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { AppDispatch } from "store";
-import {
-  resetForgotPasswordAction,
-  resetPasswordAction,
-} from "store/ducks/forgotPassword";
-import { useRedux } from "hooks/useRedux";
+import { useResetPassword } from "apiQueries/useResetPassword";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ResetPassword = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const navigate = useNavigate();
+  const { isSuccess, isLoading, error, mutateAsync, reset } =
+    useResetPassword();
 
-  const { forgotPassword } = useRedux("forgotPassword");
+  const navigate = useNavigate();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -34,22 +29,22 @@ export const ResetPassword = () => {
 
   const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(resetPasswordAction({ password, confirmationToken }));
+    mutateAsync({ password, resetToken: confirmationToken });
   };
 
   useEffect(() => {
-    if (forgotPassword.status === "SUCCESS") {
+    if (isSuccess) {
       setPassword("");
       setConfirmPassword("");
       setConfirmationToken("");
     }
-  }, [forgotPassword.status]);
+  }, [isSuccess]);
 
   const goToSignIn = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    dispatch(resetForgotPasswordAction());
+    reset();
     navigate("/");
   };
 
@@ -72,27 +67,18 @@ export const ResetPassword = () => {
   return (
     <>
       <div className="CardLayout">
-        {forgotPassword.status === "SUCCESS" && (
+        {isSuccess ? (
           <Notification variant="success" title="Password reset">
             Password reset successfully. You can{" "}
             <Link onClick={goToSignIn}>sign in</Link> using your new password.
           </Notification>
-        )}
+        ) : null}
 
-        {forgotPassword.errorString && (
+        {error ? (
           <Notification variant="error" title="Reset password error">
-            {forgotPassword.errorString}
-            {forgotPassword.errorExtras ? (
-              <ul className="ErrorExtras">
-                {Object.entries(forgotPassword.errorExtras).map(
-                  ([key, value]) => (
-                    <li key={key}>{`${key}: ${value}`}</li>
-                  ),
-                )}
-              </ul>
-            ) : null}
+            <ErrorWithExtras appError={error} />
           </Notification>
-        )}
+        ) : null}
 
         <form onSubmit={handleResetPassword}>
           <div className="CardLayout__heading">
@@ -173,7 +159,7 @@ export const ResetPassword = () => {
             size="sm"
             type="submit"
             disabled={!allInputsValid()}
-            isLoading={forgotPassword.status === "PENDING"}
+            isLoading={isLoading}
           >
             Reset password
           </Button>

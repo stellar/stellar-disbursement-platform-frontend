@@ -1,6 +1,7 @@
 import { Card, Notification } from "@stellar/design-system";
 import { InfoTooltip } from "components/InfoTooltip";
 import { AssetAmount } from "components/AssetAmount";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useStatistics } from "apiQueries/useStatistics";
 import { percent } from "helpers/formatIntlNumber";
@@ -28,7 +29,7 @@ export const DashboardAnalytics = () => {
   if (error) {
     return (
       <Notification variant="error" title="Error">
-        {error.message}
+        <ErrorWithExtras appError={error} />
       </Notification>
     );
   }
@@ -76,6 +77,15 @@ export const DashboardAnalytics = () => {
                 </label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(stats?.paymentsFailedCount)}
+                </div>
+              </div>
+
+              <div className="StatCards__card__item StatCards__card__item--inline">
+                <label className="StatCards__card__item__label">
+                  Canceled payments
+                </label>
+                <div className="StatCards__card__item__value">
+                  {renderNumberOrDash(stats?.paymentsCanceledCount)}
                 </div>
               </div>
 
@@ -130,26 +140,20 @@ export const DashboardAnalytics = () => {
             </div>
           </div>
 
-          <div>
-            <div className="StatCards__card__walletCounts">
-              <div className="StatCards__card--flexCols">
-                <div className="StatCards__card__item StatCards__card__item--inline">
-                  <label className="StatCards__card__item__label">
-                    Individuals
-                  </label>
-                  <div className="StatCards__card__item__value">
-                    {renderNumberOrDash(stats?.individualsTotalCount)}
-                  </div>
-                </div>
+          <div className="StatCards__card__column">
+            <div className="StatCards__card__item StatCards__card__item--inline">
+              <label className="StatCards__card__item__label">
+                Individuals
+              </label>
+              <div className="StatCards__card__item__value">
+                {renderNumberOrDash(stats?.individualsTotalCount)}
+              </div>
+            </div>
 
-                <div className="StatCards__card__item StatCards__card__item--inline">
-                  <label className="StatCards__card__item__label">
-                    Wallets
-                  </label>
-                  <div className="StatCards__card__item__value">
-                    {renderNumberOrDash(stats?.walletsTotalCount)}
-                  </div>
-                </div>
+            <div className="StatCards__card__item StatCards__card__item--inline">
+              <label className="StatCards__card__item__label">Wallets</label>
+              <div className="StatCards__card__item__value">
+                {renderNumberOrDash(stats?.walletsTotalCount)}
               </div>
             </div>
           </div>

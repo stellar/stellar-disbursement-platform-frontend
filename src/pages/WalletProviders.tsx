@@ -1,65 +1,93 @@
+import { useEffect, useState } from "react";
 import {
   Card,
   Heading,
   Notification,
   Modal,
   Button,
+  Loader,
 } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
+
 import { InfoTooltip } from "components/InfoTooltip";
 import { SectionHeader } from "components/SectionHeader";
-import { useRedux } from "hooks/useRedux";
-import { useEffect } from "react";
-import { AppDispatch } from "store";
-import {
-  getWalletsAction,
-  actions,
-  updateWalletAction,
-} from "store/ducks/wallets";
+import { LoadingContent } from "components/LoadingContent";
 import { WalletCard } from "components/WalletCard";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+
+import { useWallets } from "apiQueries/useWallets";
+import { useUpdateWallet } from "apiQueries/useUpdateWallet";
 import { ApiWallet } from "types";
 
 export const WalletProviders = () => {
-  const { wallets } = useRedux("wallets");
-  const dispatch: AppDispatch = useDispatch();
+  const [selectedWallet, setSelectedWallet] = useState<
+    { id: string; enabled: boolean } | undefined
+  >();
 
-  useEffect(() => {
-    if (!wallets.status) {
-      dispatch(getWalletsAction());
-    }
-  }, [wallets.status, dispatch]);
+  const {
+    data: wallets,
+    error: walletsError,
+    isLoading: isWalletsLoading,
+    isFetching: isWalletsFetching,
+    refetch: refetchWallets,
+  } = useWallets();
 
-  const myWallets = wallets?.items.filter((e) => e.enabled);
-  const avalaibleWallets = wallets?.items.filter((e) => !e.enabled);
+  const {
+    error: walletUpdateError,
+    isSuccess: isWalletUpdateSuccess,
+    isError: isWalletUpdateError,
+    isLoading: isWalletUpdateLoading,
+    mutateAsync: updateWallet,
+    reset: resetUpdateWallet,
+  } = useUpdateWallet();
+
+  const myWallets = wallets?.filter((e) => e.enabled);
+  const avalaibleWallets = wallets?.filter((e) => !e.enabled);
 
   const handleCloseModal = () => {
-    dispatch(actions.resetUpdateWalletModal());
+    setSelectedWallet(undefined);
   };
 
-  const handleUpdateWallet = async (walletId: string, enabled: boolean) => {
-    await dispatch(updateWalletAction({ walletId, enabled }));
-    window.location.reload();
-  };
-
-  const renderWalletCard = (walletsArray: ApiWallet[]) => {
-    if (wallets.errorString) {
-      return (
-        <Notification variant="error" title="Error">
-          {wallets.errorString}
-        </Notification>
-      );
+  useEffect(() => {
+    if (isWalletUpdateSuccess || isWalletUpdateError) {
+      handleCloseModal();
     }
 
-    return walletsArray?.map((item) => (
-      <WalletCard
-        key={item.id}
-        walletName={item.name}
-        walletId={item.id}
-        homepageUrl={item.homepage}
-        enabled={item.enabled}
-        assets={item.assets?.map((asset) => asset.code)}
-      />
-    ));
+    if (isWalletUpdateSuccess) {
+      refetchWallets();
+    }
+  }, [isWalletUpdateSuccess, isWalletUpdateError, refetchWallets]);
+
+  const renderWalletCard = (
+    walletsArray: ApiWallet[] | undefined,
+    cardType: "selected" | "available",
+  ) => {
+    if (walletsArray?.length) {
+      return walletsArray?.map((item) => (
+        <WalletCard
+          key={item.id}
+          walletName={item.name}
+          walletId={item.id}
+          homepageUrl={item.homepage}
+          enabled={item.enabled}
+          assets={item.assets?.map((asset) => asset.code)}
+          onChange={() => {
+            setSelectedWallet({ id: item.id, enabled: item.enabled });
+
+            if (isWalletUpdateSuccess || isWalletUpdateError) {
+              resetUpdateWallet();
+            }
+          }}
+        />
+      ));
+    }
+
+    return (
+      <div className="Note">
+        {cardType === "available"
+          ? "There are no available wallet providers."
+          : "There are no wallet providers allowed by your organization."}
+      </div>
+    );
   };
 
   return (
@@ -70,77 +98,110 @@ export const WalletProviders = () => {
             <Heading as="h2" size="sm">
               Wallet Providers
             </Heading>
+            {isWalletsFetching && !isWalletsLoading ? <Loader /> : null}
           </SectionHeader.Content>
         </SectionHeader.Row>
       </SectionHeader>
 
+      {isWalletsLoading ? <LoadingContent /> : null}
+
       <div className="CardStack">
-        <Card>
-          <div className="CardStack__card">
-            <div className="CardStack__title">
-              <InfoTooltip infoText="The wallet providers allowed by your organization for receiving payments.">
-                My Wallet Providers
-              </InfoTooltip>
-            </div>
+        {walletsError || walletUpdateError ? (
+          <Notification variant="error" title="Error">
+            <ErrorWithExtras appError={walletsError || walletUpdateError} />
+          </Notification>
+        ) : null}
 
-            {renderWalletCard(myWallets)}
-          </div>
-        </Card>
+        {wallets ? (
+          <>
+            <Card>
+              <div className="CardStack__card">
+                <div className="CardStack__title">
+                  <InfoTooltip infoText="The wallet providers allowed by your organization for receiving payments.">
+                    My Wallet Providers
+                  </InfoTooltip>
+                </div>
 
-        <Card>
-          <div className="CardStack__card">
-            <div className="CardStack__title">
-              <InfoTooltip infoText="All available wallet providers that can receive disbursements. You must add these to your wallet providers in order to send payments into them.">
-                Available Wallet Providers
-              </InfoTooltip>
-            </div>
-            <div className="Note">
-              Make sure you agree with the wallet provider before adding them.
-              They will also need to enable your organization before payments
-              will succeed.
-            </div>
+                {renderWalletCard(myWallets, "selected")}
+              </div>
+            </Card>
 
-            {renderWalletCard(avalaibleWallets)}
-          </div>
-        </Card>
+            <Card>
+              <div className="CardStack__card">
+                <div className="CardStack__title">
+                  <InfoTooltip infoText="All available wallet providers that can receive disbursements. You must add these to your wallet providers in order to send payments into them.">
+                    Available Wallet Providers
+                  </InfoTooltip>
+                </div>
+                {avalaibleWallets?.length ? (
+                  <div className="Note">
+                    Make sure you agree with the wallet provider before adding
+                    them. They will also need to enable your organization before
+                    payments will succeed.
+                  </div>
+                ) : null}
+
+                {renderWalletCard(avalaibleWallets, "available")}
+              </div>
+            </Card>
+          </>
+        ) : null}
       </div>
 
       {/* Enable/Disable wallet modal */}
-      <Modal visible={wallets.modalVisibility} onClose={handleCloseModal}>
+      <Modal visible={Boolean(selectedWallet)} onClose={handleCloseModal}>
         <Modal.Heading>
-          Confirm turning {wallets.modalWalletEnabled ? "off" : "on"} wallet
+          Confirm turning {selectedWallet?.enabled ? "off" : "on"} wallet
           provider
         </Modal.Heading>
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            handleUpdateWallet(
-              wallets.modalWalletId,
-              !wallets.modalWalletEnabled,
-            );
+
+            if (selectedWallet) {
+              updateWallet({
+                walletId: selectedWallet.id,
+                enabled: !selectedWallet.enabled,
+              });
+            }
           }}
           onReset={handleCloseModal}
         >
-          <Modal.Body>
-            <div className="Note">
-              Make sure the wallet provider knows you have added them as they
-              will have to add you in order for this to work.
-            </div>
-            <Notification
-              variant="warning"
-              title="This will allow ANY disbursement to this provider"
-            ></Notification>
-          </Modal.Body>
+          {selectedWallet?.enabled ? (
+            <Modal.Body>
+              <Notification
+                variant="warning"
+                title="This will disable all new disbursements to this provider"
+              ></Notification>
+            </Modal.Body>
+          ) : (
+            <Modal.Body>
+              <div className="Note">
+                Make sure the wallet provider knows you have added them as they
+                will have to add you in order for this to work.
+              </div>
+              <Notification
+                variant="warning"
+                title="This will allow ANY disbursement to this provider"
+              ></Notification>
+            </Modal.Body>
+          )}
           <Modal.Footer>
-            <Button size="sm" variant="secondary" type="reset">
+            <Button
+              size="sm"
+              variant="secondary"
+              type="reset"
+              isLoading={isWalletUpdateLoading}
+            >
               Cancel
             </Button>
             <Button
               size="sm"
-              variant={wallets.modalWalletEnabled ? "destructive" : "primary"}
+              variant={selectedWallet?.enabled ? "destructive" : "primary"}
               type="submit"
+              isLoading={isWalletUpdateLoading}
             >
-              Turn {wallets.modalWalletEnabled ? "off" : "on"}
+              Turn {selectedWallet?.enabled ? "off" : "on"}
             </Button>
           </Modal.Footer>
         </form>

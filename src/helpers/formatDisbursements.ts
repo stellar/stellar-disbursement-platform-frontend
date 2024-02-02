@@ -12,9 +12,18 @@ export const formatDisbursement = (
   id: disbursement.id,
   name: disbursement.name,
   createdAt: disbursement.created_at,
+  createdBy:
+    disbursement.created_by?.first_name && disbursement.created_by?.last_name
+      ? `${disbursement.created_by?.first_name} ${disbursement.created_by?.last_name}`
+      : undefined,
+  startedBy:
+    disbursement.started_by?.first_name && disbursement.started_by?.last_name
+      ? `${disbursement.started_by?.first_name} ${disbursement.started_by?.last_name}`
+      : undefined,
   stats: {
     paymentsSuccessfulCount: disbursement.total_payments_sent,
     paymentsFailedCount: disbursement.total_payments_failed,
+    paymentsCanceledCount: disbursement.total_payments_canceled,
     paymentsRemainingCount: disbursement.total_payments_remaining,
     paymentsTotalCount: disbursement.total_payments,
     totalAmount: disbursement.total_amount,
@@ -34,6 +43,7 @@ export const formatDisbursement = (
     id: disbursement.wallet.id,
     name: disbursement.wallet.name,
   },
+  verificationField: disbursement.verification_field,
   fileName: disbursement.file_name,
   statusHistory: disbursement.status_history
     .sort(
@@ -45,4 +55,5 @@ export const formatDisbursement = (
       timestamp: h.timestamp,
       userId: h.user_id,
     })),
+  smsRegistrationMessageTemplate: disbursement.sms_registration_message_template,
 });

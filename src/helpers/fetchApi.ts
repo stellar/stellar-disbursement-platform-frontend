@@ -9,6 +9,7 @@ import { AnyObject } from "types";
 type FetchApiOptions = {
   withoutAuth?: boolean;
   omitContentType?: boolean;
+  customCallback?: (request: Response) => void;
 };
 
 export const fetchApi = async (
@@ -54,14 +55,18 @@ export const fetchApi = async (
   // Handle initial request
   const request = await fetch(fetchUrl, config);
 
+  if (options?.customCallback) {
+    return options.customCallback(request);
+  }
+
   if (request.status === 401) {
     sessionExpired();
   }
 
   const response = await request.json();
 
-  if (response.error) {
-    throw normalizeApiError(response.error);
+  if (response?.error) {
+    throw normalizeApiError(response);
   }
 
   return response;

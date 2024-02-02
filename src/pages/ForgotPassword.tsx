@@ -7,28 +7,31 @@ import {
   Notification,
   Link,
 } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { AppDispatch } from "store";
-import { sendResetPasswordLinkAction } from "store/ducks/forgotPassword";
-import { RECAPTCHA_SITE_KEY } from "constants/settings";
-import { useRedux } from "hooks/useRedux";
+import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
+import { RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ForgotPassword = () => {
-  const dispatch: AppDispatch = useDispatch();
+  const {
+    isSuccess,
+    isLoading,
+    isError,
+    error,
+    data,
+    mutateAsync: sendLink,
+  } = useForgotPasswordLink();
+
   const navigate = useNavigate();
   const recaptchaRef = useRef<Recaptcha>(null);
 
-  const { forgotPassword } = useRedux("forgotPassword");
   const [email, setEmail] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
   const handleForgotPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    dispatch(sendResetPasswordLinkAction({ email, recaptchaToken }));
-    recaptchaRef.current?.reset();
-    setRecaptchaToken("");
+    sendLink({ email, recaptchaToken });
   };
 
   const onRecaptchaSubmit = (token: string | null) => {
@@ -38,10 +41,17 @@ export const ForgotPassword = () => {
   };
 
   useEffect(() => {
-    if (forgotPassword.status === "SUCCESS") {
+    if (isSuccess) {
       setEmail("");
+      setRecaptchaToken("");
+      recaptchaRef.current?.reset();
     }
-  }, [forgotPassword.status]);
+
+    if (isError) {
+      setRecaptchaToken("");
+      recaptchaRef.current?.reset();
+    }
+  }, [isError, isSuccess]);
 
   const goToSignIn = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -53,17 +63,17 @@ export const ForgotPassword = () => {
   return (
     <>
       <div className="CardLayout">
-        {forgotPassword.status === "SUCCESS" && (
+        {isSuccess ? (
           <Notification variant="success" title="Password reset email sent">
-            {forgotPassword.response}
+            {data?.message}
           </Notification>
-        )}
+        ) : null}
 
-        {forgotPassword.errorString && (
+        {error ? (
           <Notification variant="error" title="Forgot password error">
-            {forgotPassword.errorString}
+            <ErrorWithExtras appError={error} />
           </Notification>
-        )}
+        ) : null}
 
         <form onSubmit={handleForgotPassword}>
           <Heading size="sm" as="h1">
@@ -91,7 +101,7 @@ export const ForgotPassword = () => {
             size="sm"
             type="submit"
             disabled={!email || !recaptchaToken}
-            isLoading={forgotPassword.status === "PENDING"}
+            isLoading={isLoading}
             data-callback="onRecaptchaSubmit"
           >
             Submit
