@@ -151,7 +151,7 @@ export const PaymentDetails = () => {
           <div className="DetailsSection">
             <RetryFailedPayment
               paymentId={formattedPayment.id}
-              paymentStatus={formattedPayment.statusHistory}
+              paymentStatus={formattedPayment.status}
             />
 
             <SectionHeader>
