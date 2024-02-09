@@ -8,41 +8,69 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [1.1.1](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.1.0...1.1.1)
+
+### Fixed
+
+- Retry payment button was not showing up on failed payments
+  [#72](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/72).
+
 ## [1.1.0](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.1...1.1.0)
 
 ### Added
-- Add dropdown for choosing verification type when creating new disbursements [#53](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/53)
-- Display external payment ID on payments details page [#59](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/59)
-- Add a cancel button to payments details page [#60](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/60)
-- Add env variable injection to dashboard [#62](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/62)
-- Add SMS preview & editing before sending a new disbursement [#66](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/66)
-- Display `Created By` and `Started By` on disbursement details page [#68](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/68)
 
+- Add dropdown for choosing verification type when creating new disbursements
+  [#53](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/53)
+- Display external payment ID on payments details page
+  [#59](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/59)
+- Add a cancel button to payments details page
+  [#60](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/60)
+- Add env variable injection to dashboard
+  [#62](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/62)
+- Add SMS preview & editing before sending a new disbursement
+  [#66](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/66)
+- Display `Created By` and `Started By` on disbursement details page
+  [#68](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/68)
 
 ### Changed
 
 - State Refactors
-  - receiver payments, wallet balance, wallet history [#34](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/34)
-  - users [#36](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/36)
-  - wallet providers [#37](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/37)
-  - countries [#42](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/42)
-- Automatic cancellation of payments in `READY` status after a certain time period [#38](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/38)
-
+  - receiver payments, wallet balance, wallet history
+    [#34](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/34)
+  - users
+    [#36](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/36)
+  - wallet providers
+    [#37](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/37)
+  - countries
+    [#42](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/42)
+- Automatic cancellation of payments in `READY` status after a certain time
+  period
+  [#38](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/38)
 
 ### Chores
-- Optimize refresh token for dispatch actions [#39](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/39)
-- Analytics cards: adjust layout [#47](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/47)
-- Updated favicons and README [#64](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/64)
-- Business user role should receive permission to view details for individual payments, details, and receivers [#63](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/63)
-- Standardize errors with extras [#61](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/61)
-- Update SDS package [#58](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/58)
-- Show error details upon sign-in [#57](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/57)
 
+- Optimize refresh token for dispatch actions
+  [#39](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/39)
+- Analytics cards: adjust layout
+  [#47](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/47)
+- Updated favicons and README
+  [#64](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/64)
+- Business user role should receive permission to view details for individual
+  payments, details, and receivers
+  [#63](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/63)
+- Standardize errors with extras
+  [#61](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/61)
+- Update SDS package
+  [#58](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/58)
+- Show error details upon sign-in
+  [#57](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/57)
 
 ### Fixed
-- Fix input entry for Payments cancellation and SMS retry [#43](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/43)
-- Fix table overflow crop [#55](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/55)
 
+- Fix input entry for Payments cancellation and SMS retry
+  [#43](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/43)
+- Fix table overflow crop
+  [#55](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/55)
 
 ## [1.0.0](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0-rc2...1.0.0)
 
