@@ -16,8 +16,6 @@ export const RetryFailedPayment = ({
   console.log("paymentStatus", paymentStatus);
   const isFailed = paymentStatus === "FAILED";
 
-  console.log("isFailed", isFailed);
-
   const { isFetching, data, isError, isSuccess, error, refetch } =
     usePaymentsRetry([paymentId]);
   const queryClient = useQueryClient();
