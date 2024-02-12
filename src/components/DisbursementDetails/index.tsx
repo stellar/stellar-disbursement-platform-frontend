@@ -9,6 +9,7 @@ import {
 import { useWallets } from "apiQueries/useWallets";
 import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
 import { useCountries } from "apiQueries/useCountries";
+import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
 import {
@@ -17,6 +18,7 @@ import {
   ApiWallet,
   Disbursement,
   DisbursementStep,
+  DisbursementVerificationField,
 } from "types";
 
 import "./styles.scss";
@@ -44,9 +46,11 @@ const initDetails: Disbursement = {
     id: "",
     name: "",
   },
+  verificationField: "",
   createdAt: "",
   status: "DRAFT",
   statusHistory: [],
+  smsRegistrationMessageTemplate: "",
 };
 
 export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
@@ -61,6 +65,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     COUNTRY_CODE = "country_code",
     ASSET_CODE = "asset_code",
     WALLET_ID = "wallet_id",
+    VERIFICATION_FIELD = "verification_field",
   }
 
   const {
@@ -81,11 +86,24 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     isFetching: isWalletAssetsFetching,
   } = useAssetsByWallet(details.wallet.id);
 
+  const {
+    data: verificationTypes,
+    error: verificationTypesError,
+    isFetching: isVerificationTypesFetching,
+  } = useVerificationTypes();
+
   const apiErrors = [
     countriesError?.message,
     walletsError?.message,
     walletError?.message,
+    verificationTypesError?.message,
   ];
+
+  const typeLabels: Record<DisbursementVerificationField | string, string> = {
+    DATE_OF_BIRTH: "Date of Birth",
+    PIN: "PIN",
+    NATIONAL_ID_NUMBER: "National ID Number",
+  };
 
   const sanitizedApiErrors = apiErrors.filter((e) => Boolean(e));
 
@@ -100,6 +118,8 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       missingFields.push(FieldId.WALLET_ID);
     } else if (!inputs.asset.code) {
       missingFields.push(FieldId.ASSET_CODE);
+    } else if (!inputs.verificationField) {
+      missingFields.push(FieldId.VERIFICATION_FIELD);
     }
 
     const isValid = missingFields.length === 0;
@@ -170,6 +190,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           name: value,
         });
         break;
+      case FieldId.VERIFICATION_FIELD:
+        updateState({
+          verificationField: value,
+        });
+        break;
       default:
       // do nothing
     }
@@ -201,6 +226,14 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             <label className="Label Label--sm">Asset</label>
             <div className="DisbursementDetailsFields__value">
               {details.asset.code}
+            </div>
+          </div>
+
+          <div>
+            <label className="Label Label--sm">Verification Type</label>
+            <div className="DisbursementDetailsFields__value">
+              {typeLabels[details.verificationField ?? ""] ||
+                details.verificationField}
             </div>
           </div>
 
@@ -273,6 +306,22 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           {walletAssets?.map((asset: ApiAsset) => (
             <option key={asset.id} value={asset.id}>
               {asset.code}
+            </option>
+          ))}
+        </Select>
+
+        <Select
+          id={FieldId.VERIFICATION_FIELD}
+          label="Verification type"
+          fieldSize="sm"
+          onChange={updateDraftDetails}
+          value={details.verificationField}
+          disabled={isVerificationTypesFetching}
+        >
+          {renderDropdownDefault(isVerificationTypesFetching)}
+          {verificationTypes?.map((type: DisbursementVerificationField) => (
+            <option key={type} value={type}>
+              {typeLabels[type] || type}
             </option>
           ))}
         </Select>

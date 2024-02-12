@@ -14,6 +14,7 @@ import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { InfoTooltip } from "components/InfoTooltip";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ResetPassword = () => {
   const { isSuccess, isLoading, error, mutateAsync, reset } =
@@ -84,14 +85,7 @@ export const ResetPassword = () => {
 
         {error ? (
           <Notification variant="error" title="Reset password error">
-            {error.message}
-            {error?.extras ? (
-              <ul className="ErrorExtras">
-                {Object.entries(error?.extras).map(([key, value]) => (
-                  <li key={key}>{`${key}: ${value}`}</li>
-                ))}
-              </ul>
-            ) : null}
+            <ErrorWithExtras appError={error} />
           </Notification>
         ) : null}
 

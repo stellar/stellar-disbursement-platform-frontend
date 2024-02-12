@@ -6,6 +6,7 @@ import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { useSort } from "hooks/useSort";
 import { Table } from "components/Table";
 import { AssetAmount } from "components/AssetAmount";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import {
   ActionStatus,
   Disbursement,
@@ -17,7 +18,7 @@ import {
 interface DisbursementsTableProps {
   disbursementItems: Disbursement[];
   searchParams: DisbursementsSearchParams | undefined;
-  apiError: string | boolean | undefined;
+  apiError: string | undefined;
   isFiltersSelected: boolean | undefined;
   status: ActionStatus | undefined;
   onSort?: (sort?: SortByDisbursements, direction?: SortDirection) => void;
@@ -52,7 +53,11 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
   if (apiError) {
     return (
       <Notification variant="error" title="Error">
-        {apiError}
+        <ErrorWithExtras
+          appError={{
+            message: apiError,
+          }}
+        />
       </Notification>
     );
   }

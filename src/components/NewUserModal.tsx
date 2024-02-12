@@ -8,6 +8,7 @@ import {
   Notification,
 } from "@stellar/design-system";
 import { InfoTooltip } from "components/InfoTooltip";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { USER_ROLES_ARRAY } from "constants/settings";
 import { userRoleText } from "helpers/userRoleText";
 import { usePrevious } from "hooks/usePrevious";
@@ -154,7 +155,11 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
         <Modal.Body>
           {errorMessage ? (
             <Notification variant="error" title="Error">
-              {errorMessage}
+              <ErrorWithExtras
+                appError={{
+                  message: errorMessage,
+                }}
+              />
             </Notification>
           ) : null}
 

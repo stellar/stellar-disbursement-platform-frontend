@@ -10,7 +10,9 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
-import { RECAPTCHA_SITE_KEY, ORG_NAME_INFO_TEXT } from "constants/settings";
+import { ORG_NAME_INFO_TEXT } from "constants/settings";
+import { RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { InfoTooltip } from "components/InfoTooltip";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 
@@ -73,7 +75,7 @@ export const ForgotPassword = () => {
 
         {error ? (
           <Notification variant="error" title="Forgot password error">
-            {error.message}
+            <ErrorWithExtras appError={error} />
           </Notification>
         ) : null}
 

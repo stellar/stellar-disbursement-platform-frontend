@@ -9,7 +9,7 @@ import {
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { USE_SSO } from "constants/settings";
+import { USE_SSO } from "constants/envVariables";
 import { singleUserStore } from "helpers/singleSingOn";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
@@ -17,6 +17,7 @@ import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 
 import { useNewPassword } from "apiQueries/useNewPassword";
 import { AppDispatch, resetStoreAction } from "store";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const SetNewPassword = () => {
   const {
@@ -92,14 +93,7 @@ export const SetNewPassword = () => {
 
         {error ? (
           <Notification variant="error" title="Reset password error">
-            {error.message}
-            {error?.extras ? (
-              <ul className="ErrorExtras">
-                {Object.entries(error.extras).map(([key, value]) => (
-                  <li key={key}>{`${key}: ${value}`}</li>
-                ))}
-              </ul>
-            ) : null}
+            <ErrorWithExtras appError={error} />
           </Notification>
         ) : null}
 

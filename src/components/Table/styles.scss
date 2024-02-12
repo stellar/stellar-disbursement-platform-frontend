@@ -5,7 +5,6 @@
   position: relative;
 
   &--loading {
-    overflow-y: hidden;
     pointer-events: none;
 
     .Table-v2__wrapper {
@@ -25,8 +24,6 @@
 }
 
 .Table-v2__wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
   opacity: 1;
   transition: opacity var(--anim-transition-default);
 }

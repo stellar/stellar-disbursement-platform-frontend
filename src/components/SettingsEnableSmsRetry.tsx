@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 
 import { DropdownMenu } from "components/DropdownMenu";
 import { MoreMenuButton } from "components/MoreMenuButton";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useUpdateOrgSmsRetryInterval } from "apiQueries/useUpdateOrgSmsRetryInterval";
 import { useRedux } from "hooks/useRedux";
@@ -151,7 +152,7 @@ export const SettingsEnableSmsRetry = () => {
     <>
       {error ? (
         <Notification variant="error" title="Error">
-          {error.message}
+          <ErrorWithExtras appError={error} />
         </Notification>
       ) : null}
 

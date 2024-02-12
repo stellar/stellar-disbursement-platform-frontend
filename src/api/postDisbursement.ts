@@ -1,5 +1,5 @@
 import { handleApiResponse } from "api/handleApiResponse";
-import { API_URL } from "constants/settings";
+import { API_URL } from "constants/envVariables";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { ApiDisbursement, Disbursement } from "types";
 
@@ -19,6 +19,9 @@ export const postDisbursement = async (
       wallet_id: disbursement.wallet.id,
       asset_id: disbursement.asset.id,
       country_code: disbursement.country.code,
+      verification_field: disbursement.verificationField || "",
+      sms_registration_message_template:
+        disbursement.smsRegistrationMessageTemplate,
     }),
   });
 

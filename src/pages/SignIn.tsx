@@ -13,10 +13,9 @@ import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
 import { signInAction } from "store/ducks/userAccount";
+import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
 import {
   Routes,
-  USE_SSO,
-  RECAPTCHA_SITE_KEY,
   LOCAL_STORAGE_DEVICE_ID,
   ORG_NAME_INFO_TEXT,
 } from "constants/settings";
@@ -24,6 +23,7 @@ import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { InfoTooltip } from "components/InfoTooltip";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const SignIn = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -123,7 +123,11 @@ export const SignIn = () => {
         )}
         {!isSessionExpired && userAccount.errorString && (
           <Notification variant="error" title="Sign in error">
-            {userAccount.errorString}
+            <ErrorWithExtras
+              appError={{
+                message: userAccount.errorString,
+              }}
+            />
           </Notification>
         )}
 

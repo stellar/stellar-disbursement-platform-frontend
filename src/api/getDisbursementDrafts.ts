@@ -1,5 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
-import { API_URL, UI_STATUS_DISBURSEMENT_DRAFT } from "constants/settings";
+import { API_URL } from "constants/envVariables";
+import { UI_STATUS_DISBURSEMENT_DRAFT } from "constants/settings";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { ApiDisbursements } from "types";
 

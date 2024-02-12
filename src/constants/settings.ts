@@ -3,17 +3,6 @@ import { UserRole } from "types";
 export const PROJECT_NAME = "stellarDisbursementPlatform";
 export const LOCALE = "en-US";
 export const RESET_STORE_ACTION_TYPE = "RESET";
-export const API_URL = window._env_.API_URL;
-export const STELLAR_EXPERT_URL = window._env_.STELLAR_EXPERT_URL;
-export const HORIZON_URL = window._env_.HORIZON_URL;
-export const RECAPTCHA_SITE_KEY = window._env_.RECAPTCHA_SITE_KEY;
-
-export const USE_SSO = window._env_.USE_SSO;
-export const OIDC_AUTHORITY = window._env_.OIDC_AUTHORITY;
-export const OIDC_CLIENT_ID = window._env_.OIDC_CLIENT_ID;
-export const OIDC_REDIRECT_URI = window._env_.OIDC_REDIRECT_URI;
-export const OIDC_SCOPE = window._env_.OIDC_SCOPE;
-export const OIDC_USERNAME_MAPPING = window._env_.OIDC_USERNAME_MAPPING;
 
 export const GENERIC_ERROR_MESSAGE = "Something went wrong, please try again";
 export const SESSION_EXPIRED = "SESSION EXPIRED";
@@ -24,6 +13,9 @@ export const UI_STATUS_DISBURSEMENT = "STARTED,PAUSED,COMPLETED";
 export const UI_STATUS_DISBURSEMENT_DRAFT = "DRAFT,READY";
 export const ORG_NAME_INFO_TEXT =
   "You can find your organization name in the invitation email";
+
+export const CANCELED_PAYMENT_STATUS = "CANCELED";
+export const READY_PAYMENT_STATUS = "READY";
 
 export enum Routes {
   MFA = "/mfa",

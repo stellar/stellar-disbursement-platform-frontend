@@ -20,11 +20,9 @@ import {
   setDisbursementDetailsAction,
 } from "store/ducks/disbursementDetails";
 import { useRedux } from "hooks/useRedux";
-import {
-  PAGE_LIMIT_OPTIONS,
-  Routes,
-  STELLAR_EXPERT_URL,
-} from "constants/settings";
+import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
+import { STELLAR_EXPERT_URL } from "constants/envVariables";
+import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
 import { SectionHeader } from "components/SectionHeader";
@@ -33,11 +31,12 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 import { AssetAmount } from "components/AssetAmount";
 import { Pagination } from "components/Pagination";
 import { Table } from "components/Table";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { PaymentStatus } from "components/PaymentStatus";
+
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { number } from "helpers/formatIntlNumber";
-import { PaymentStatus } from "components/PaymentStatus";
 import { saveFile } from "helpers/saveFile";
-import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();
@@ -193,6 +192,20 @@ export const DisbursementDetails = () => {
                 >
                   {disbursementDetails.details.id}
                 </CopyWithIcon>
+              </div>
+            </div>
+
+            <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">Created by</label>
+              <div className="StatCards__card__item__value">
+                {disbursementDetails.details.createdBy ?? ""}
+              </div>
+            </div>
+
+            <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">Started by</label>
+              <div className="StatCards__card__item__value">
+                {disbursementDetails.details.startedBy ?? ""}
               </div>
             </div>
           </div>
@@ -388,7 +401,11 @@ export const DisbursementDetails = () => {
     if (disbursementDetails.errorString) {
       return (
         <Notification variant="error" title="Error">
-          {disbursementDetails.errorString}
+          <ErrorWithExtras
+            appError={{
+              message: disbursementDetails.errorString,
+            }}
+          />
         </Notification>
       );
     }
