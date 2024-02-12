@@ -60,7 +60,9 @@ export const Disbursements = () => {
   }, [dispatch]);
 
   const apiError =
-    disbursements.status === "ERROR" && disbursements.errorString;
+    disbursements.status === "ERROR" && disbursements.errorString
+      ? disbursements.errorString
+      : undefined;
   const maxPages = disbursements.pagination?.pages || 1;
   const isSearchInProgress = Boolean(
     disbursements.searchParams?.q && disbursements.status === "PENDING",

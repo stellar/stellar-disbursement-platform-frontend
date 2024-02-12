@@ -12,6 +12,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { SectionHeader } from "components/SectionHeader";
 import { LoadingContent } from "components/LoadingContent";
 import { WalletCard } from "components/WalletCard";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useWallets } from "apiQueries/useWallets";
 import { useUpdateWallet } from "apiQueries/useUpdateWallet";
@@ -107,7 +108,7 @@ export const WalletProviders = () => {
       <div className="CardStack">
         {walletsError || walletUpdateError ? (
           <Notification variant="error" title="Error">
-            {walletsError?.message || walletUpdateError.message}
+            <ErrorWithExtras appError={walletsError || walletUpdateError} />
           </Notification>
         ) : null}
 

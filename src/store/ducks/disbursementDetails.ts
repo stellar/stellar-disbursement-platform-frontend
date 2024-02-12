@@ -2,11 +2,11 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
 import { getDisbursementDetails } from "api/getDisbursementDetails";
 import { getDisbursementReceivers } from "api/getDisbursementReceivers";
-import { handleApiErrorString } from "api/handleApiErrorString";
 import { patchDisbursementStatus } from "api/patchDisbursementStatus";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
 import { formatDisbursement } from "helpers/formatDisbursements";
+import { normalizeApiError } from "helpers/normalizeApiError";
 import {
   ApiDisbursementReceiver,
   ApiDisbursementReceivers,
@@ -38,7 +38,8 @@ export const getDisbursementDetailsAction = createAsyncThunk<
 
       return formatDisbursement(disbursementDetails);
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
@@ -72,7 +73,8 @@ export const getDisbursementReceiversAction = createAsyncThunk<
         searchParams: newParams,
       };
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
@@ -98,7 +100,8 @@ export const pauseOrStartDisbursementAction = createAsyncThunk<
 
       return { status: newStatus, message };
     } catch (error: unknown) {
-      const errorString = handleApiErrorString(error as ApiError);
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
       endSessionIfTokenInvalid(errorString, dispatch);
 
       return rejectWithValue({
@@ -115,6 +118,8 @@ const initialState: DisbursementDetailsInitialState = {
     id: "",
     name: "",
     createdAt: "",
+    createdBy: "",
+    startedBy: "",
     stats: {
       paymentsSuccessfulCount: 0,
       paymentsFailedCount: 0,
@@ -145,6 +150,7 @@ const initialState: DisbursementDetailsInitialState = {
     status: "DRAFT",
     fileName: undefined,
     statusHistory: [],
+    smsRegistrationMessageTemplate: "",
   },
   instructions: {
     csvName: undefined,

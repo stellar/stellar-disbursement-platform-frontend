@@ -1,6 +1,7 @@
 import { Card, Notification } from "@stellar/design-system";
 import { InfoTooltip } from "components/InfoTooltip";
 import { AssetAmount } from "components/AssetAmount";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useStatistics } from "apiQueries/useStatistics";
 import { percent } from "helpers/formatIntlNumber";
@@ -28,7 +29,7 @@ export const DashboardAnalytics = () => {
   if (error) {
     return (
       <Notification variant="error" title="Error">
-        {error.message}
+        <ErrorWithExtras appError={error} />
       </Notification>
     );
   }

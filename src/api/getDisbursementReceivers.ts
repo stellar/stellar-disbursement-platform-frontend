@@ -1,6 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { handleSearchParams } from "api/handleSearchParams";
-import { API_URL } from "constants/settings";
+import { API_URL } from "constants/envVariables";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { ApiDisbursementReceivers, PaginationParams } from "types";
 

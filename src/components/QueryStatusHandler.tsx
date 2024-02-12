@@ -1,4 +1,5 @@
 import { Notification } from "@stellar/design-system";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 interface QueryStatusHandlerProps {
   isLoading?: boolean;
@@ -24,7 +25,11 @@ export const QueryStatusHandler = ({
   if (isError) {
     return (
       <Notification variant="error" title="Error">
-        {errorMessage}
+        <ErrorWithExtras
+          appError={{
+            message: errorMessage,
+          }}
+        />
       </Notification>
     );
   }

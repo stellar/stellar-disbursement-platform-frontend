@@ -41,7 +41,9 @@ export const Home = () => {
   }, [dispatch, isRoleAccepted, userAccount.isAuthenticated]);
 
   const apiErrorDisbursements =
-    disbursements.status === "ERROR" && disbursements.errorString;
+    disbursements.status === "ERROR" && disbursements.errorString
+      ? disbursements.errorString
+      : undefined;
 
   const goToAnalytics = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,

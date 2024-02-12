@@ -11,6 +11,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { DropdownMenu } from "components/DropdownMenu";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useBalanceTrustline } from "apiQueries/useBalanceTrustline";
 import { useAssetsAdd } from "apiQueries/useAssetsAdd";
@@ -242,7 +243,7 @@ export const WalletTrustlines = ({
     <>
       {trustlinesError ? (
         <Notification variant="error" title="Error">
-          {trustlinesError.message}
+          <ErrorWithExtras appError={trustlinesError} />
         </Notification>
       ) : null}
 

@@ -1,27 +1,4 @@
 /* eslint-disable camelcase */
-import { OidcStandardClaims } from "oidc-client-ts";
-
-declare global {
-  interface Window {
-    _env_: {
-      API_URL: string;
-      STELLAR_EXPERT_URL: string;
-      USDC_ASSET_ISSUER: string;
-      HORIZON_URL: string;
-      RECAPTCHA_SITE_KEY: string;
-
-      USE_SSO: boolean;
-      OIDC_AUTHORITY: string;
-      OIDC_CLIENT_ID: string;
-      OIDC_REDIRECT_URI: string;
-      OIDC_SCOPE: string;
-      OIDC_USERNAME_MAPPING: keyof Pick<
-        OidcStandardClaims,
-        "name" | "preferred_username" | "nickname"
-      >;
-    };
-  }
-}
 
 // =============================================================================
 // Store
@@ -212,8 +189,10 @@ export type DisbursementStatus =
   | "PAUSED"
   | "COMPLETED";
 
-// TODO: add other fields
-export type DisbursementVerificationField = "DATE_OF_BIRTH";
+export type DisbursementVerificationField =
+  | "DATE_OF_BIRTH"
+  | "PIN"
+  | "NATIONAL_ID_NUMBER";
 
 export type DisbursementDraftAction = "save" | "submit";
 
@@ -231,6 +210,8 @@ export type Disbursement = {
   id: string;
   name: string;
   createdAt: string;
+  createdBy?: string;
+  startedBy?: string;
   stats?: DisbursementDetailsStats;
   receivers?: {
     items: DisbursementReceiver[];
@@ -249,6 +230,7 @@ export type Disbursement = {
     id: string;
     name: string;
   };
+  verificationField?: string;
   status: DisbursementStatus;
   fileName?: string;
   statusHistory: {
@@ -256,6 +238,7 @@ export type Disbursement = {
     timestamp: string;
     userId: string | null;
   }[];
+  smsRegistrationMessageTemplate: string;
 };
 
 export type DisbursementsSearchParams = CommonFilters &
@@ -334,7 +317,9 @@ export type PaymentDetails = {
   senderAddress?: string;
   totalAmount: string;
   assetCode: string;
+  status: PaymentStatus;
   statusHistory: PaymentDetailsStatusHistoryItem[];
+  externalPaymentId?: string;
 };
 
 // =============================================================================
@@ -549,8 +534,19 @@ export type ApiDisbursement = {
   status: DisbursementStatus;
   verification_field: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
+  sms_registration_message_template: string;
   created_at: string;
   updated_at: string;
+  created_by?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+  };
+  started_by?: {
+    id: string;
+    first_name: string;
+    last_name: string;
+  };
   total_payments: number;
   total_payments_sent: number;
   total_payments_failed: number;
@@ -612,6 +608,7 @@ export type ApiPayment = {
   receiver_wallet: ApiPaymentReceiverWallet;
   created_at: string;
   updated_at: string;
+  external_payment_id?: string;
 };
 
 export type ApiPayments = {
