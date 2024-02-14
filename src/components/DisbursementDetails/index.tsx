@@ -25,6 +25,7 @@ import "./styles.scss";
 
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
+  assetBalance?: string;
   details?: Disbursement;
   csvFile?: File;
   onChange?: (state: Disbursement) => void;
@@ -50,12 +51,14 @@ const initDetails: Disbursement = {
   createdAt: "",
   status: "DRAFT",
   statusHistory: [],
-  smsRegistrationMessageTemplate: ""
+  smsRegistrationMessageTemplate: "",
+  stats: undefined,
 };
 
 export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   variant,
   details = initDetails,
+  assetBalance,
   csvFile,
   onChange,
   onValidate,
@@ -241,6 +244,13 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             <label className="Label Label--sm">Disbursement name</label>
             <div className="DisbursementDetailsFields__value">
               {details.name}
+            </div>
+          </div>
+
+          <div>
+            <label className="Label Label--sm">Future Balance</label>
+            <div className="DisbursementDetailsFields__value">
+              {Number(assetBalance) - Number(details.stats?.totalAmount)}
             </div>
           </div>
 

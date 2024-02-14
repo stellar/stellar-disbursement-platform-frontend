@@ -40,6 +40,7 @@ export const DisbursementsNew = () => {
     "organization",
   );
   const { assetBalances, distributionAccountPublicKey } = organization.data;
+  const allBalances = assetBalances?.[0].balances;
 
   const [draftDetails, setDraftDetails] = useState<Disbursement>();
   const [customMessage, setCustomMessage] = useState("");
@@ -198,7 +199,14 @@ export const DisbursementsNew = () => {
     if (currentStep === "preview") {
       return (
         <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
-          <DisbursementDetails variant="preview" details={draftDetails} />
+          <DisbursementDetails
+            variant="preview"
+            details={draftDetails}
+            assetBalance={
+              allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)
+                ?.balance
+            }
+          />
           <DisbursementInviteMessage
             isEditMessage={false}
             draftMessage={customMessage}
@@ -244,6 +252,11 @@ export const DisbursementsNew = () => {
             <DisbursementDetails
               variant="confirmation"
               details={draftDetails}
+              assetBalance={
+                allBalances?.find(
+                  (a) => a.assetCode === draftDetails?.asset.code,
+                )?.balance
+              }
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
@@ -273,6 +286,10 @@ export const DisbursementsNew = () => {
           <DisbursementDetails
             variant="edit"
             details={draftDetails}
+            assetBalance={
+              allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)
+                ?.balance
+            }
             onChange={(updatedState) => {
               if (apiError) {
                 dispatch(clearDisbursementDraftsErrorAction());

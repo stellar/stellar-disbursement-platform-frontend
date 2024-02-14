@@ -57,6 +57,9 @@ export const DisbursementDraftDetails = () => {
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
 
+  const allBalances = organization.data.assetBalances?.[0].balances;
+
+  console.log(organization.data.assetBalances);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(
@@ -286,6 +289,11 @@ export const DisbursementDraftDetails = () => {
             <DisbursementDetails
               variant="confirmation"
               details={draftDetails?.details}
+              assetBalance={
+                allBalances?.find(
+                  (a) => a.assetCode === draftDetails?.details.asset.code,
+                )?.balance
+              }
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
@@ -326,6 +334,11 @@ export const DisbursementDraftDetails = () => {
           <DisbursementDetails
             variant="preview"
             details={draftDetails?.details}
+            assetBalance={
+              allBalances?.find(
+                (a) => a.assetCode === draftDetails?.details.asset.code,
+              )?.balance
+            }
           />
           <DisbursementInviteMessage
             isEditMessage={false}
