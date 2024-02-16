@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Badge, Heading, Link, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useRedux } from "hooks/useRedux";
+import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
 import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
 
 import { AppDispatch } from "store";
@@ -59,7 +60,6 @@ export const DisbursementDraftDetails = () => {
 
   const allBalances = organization.data.assetBalances?.[0].balances;
 
-  console.log(organization.data.assetBalances);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(
@@ -109,6 +109,8 @@ export const DisbursementDraftDetails = () => {
     disbursementDetails.details.id,
     disbursementDetails.status,
   ]);
+
+  useOrgAccountInfo(organization.data.distributionAccountPublicKey);
 
   useEffect(() => {
     setDraftDetails(disbursementDetails);
