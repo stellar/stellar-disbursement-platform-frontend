@@ -156,7 +156,35 @@ export const DisbursementsNew = () => {
     if (apiError) {
       dispatch(clearDisbursementDraftsErrorAction());
     }
+    calculateDisbursementTotalAmountFromFile(file);
     setCsvFile(file);
+  };
+
+  const calculateDisbursementTotalAmountFromFile = (file?: File) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsText(file);
+      const handleLoadFile = () => {
+        const totalAmount = reader.result
+          ?.toString()
+          .split("\n")
+          .slice(1)
+          .reduce(
+            (accumulator, line) =>
+              !line ? accumulator : accumulator + Number(line.split(",")[2]),
+            0,
+          );
+
+        setDraftDetails({
+          ...draftDetails,
+          stats: {
+            ...draftDetails?.stats,
+            totalAmount: totalAmount?.toString() ?? "0",
+          },
+        } as Disbursement);
+      };
+      reader.addEventListener("load", handleLoadFile, false);
+    }
   };
 
   const handleViewDetails = () => {
