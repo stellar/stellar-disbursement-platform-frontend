@@ -25,8 +25,8 @@ import "./styles.scss";
 
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
-  assetBalance?: string;
   details?: Disbursement;
+  futureBalance?: number;
   csvFile?: File;
   onChange?: (state: Disbursement) => void;
   onValidate?: (isValid: boolean) => void;
@@ -58,7 +58,7 @@ const initDetails: Disbursement = {
 export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   variant,
   details = initDetails,
-  assetBalance,
+  futureBalance = 0,
   csvFile,
   onChange,
   onValidate,
@@ -248,9 +248,13 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           </div>
 
           <div>
-            <label className="Label Label--sm">Future Balance</label>
-            <div className="DisbursementDetailsFields__value">
-              {Number(assetBalance) - Number(details.stats?.totalAmount)}
+            <label className="Label Label--sm">Future balance</label>
+            <div
+              className={`DisbursementDetailsFields__value ${
+                futureBalance >= 0 ? "" : "DisbursementDetailsFields__negative"
+              }`}
+            >
+              {futureBalance}
             </div>
           </div>
 

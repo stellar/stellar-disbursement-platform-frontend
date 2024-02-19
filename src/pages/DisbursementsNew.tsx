@@ -46,6 +46,7 @@ export const DisbursementsNew = () => {
   const [customMessage, setCustomMessage] = useState("");
   const [isDetailsValid, setIsDetailsValid] = useState(false);
   const [csvFile, setCsvFile] = useState<File | undefined>();
+  const [futureBalance, setFutureBalance] = useState(0);
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("edit");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
@@ -182,6 +183,12 @@ export const DisbursementsNew = () => {
             totalAmount: totalAmount?.toString() ?? "0",
           },
         } as Disbursement);
+
+        // update future balance
+        const assetBalance = allBalances?.find(
+          (a) => a.assetCode === draftDetails?.asset.code,
+        )?.balance;
+        setFutureBalance(Number(assetBalance) - totalAmount!);
       };
       reader.addEventListener("load", handleLoadFile, false);
     }
@@ -208,7 +215,9 @@ export const DisbursementsNew = () => {
           Boolean(disbursementDrafts.newDraftId && currentStep === "preview")
         }
         isSubmitDisabled={
-          organization.data.isApprovalRequired || !(draftDetails && csvFile)
+          organization.data.isApprovalRequired ||
+          !(draftDetails && csvFile) ||
+          futureBalance < 0
         }
         isReviewDisabled={!isReviewEnabled}
         isDraftPending={disbursementDrafts.status === "PENDING"}
@@ -230,10 +239,7 @@ export const DisbursementsNew = () => {
           <DisbursementDetails
             variant="preview"
             details={draftDetails}
-            assetBalance={
-              allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)
-                ?.balance
-            }
+            futureBalance={futureBalance}
           />
           <DisbursementInviteMessage
             isEditMessage={false}
@@ -280,11 +286,7 @@ export const DisbursementsNew = () => {
             <DisbursementDetails
               variant="confirmation"
               details={draftDetails}
-              assetBalance={
-                allBalances?.find(
-                  (a) => a.assetCode === draftDetails?.asset.code,
-                )?.balance
-              }
+              futureBalance={futureBalance}
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
@@ -314,10 +316,7 @@ export const DisbursementsNew = () => {
           <DisbursementDetails
             variant="edit"
             details={draftDetails}
-            assetBalance={
-              allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)
-                ?.balance
-            }
+            futureBalance={futureBalance}
             onChange={(updatedState) => {
               if (apiError) {
                 dispatch(clearDisbursementDraftsErrorAction());
