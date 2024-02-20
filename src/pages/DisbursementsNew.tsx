@@ -188,7 +188,10 @@ export const DisbursementsNew = () => {
         const assetBalance = allBalances?.find(
           (a) => a.assetCode === draftDetails?.asset.code,
         )?.balance;
-        setFutureBalance(Number(assetBalance) - totalAmount!);
+
+        if (totalAmount) {
+          setFutureBalance(Number(assetBalance) - totalAmount);
+        }
       };
       reader.addEventListener("load", handleLoadFile, false);
     }

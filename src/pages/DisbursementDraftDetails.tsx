@@ -186,8 +186,10 @@ export const DisbursementDraftDetails = () => {
       allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)
         ?.balance,
     );
-    return assetBalance - Number(draftDetails?.details.stats?.totalAmount);
+    return assetBalance - Number(draftDetails?.details.stats?.totalAmount || 0);
   };
+
+  const futureBalance = handleCalculateFutureBalance();
 
   const handleSubmitDisbursement = (
     event: React.FormEvent<HTMLFormElement>,
@@ -245,7 +247,7 @@ export const DisbursementDraftDetails = () => {
         isDraftDisabled={!isCsvFileUpdated}
         isSubmitDisabled={
           !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) ||
-          handleCalculateFutureBalance() < 0
+          futureBalance < 0
         }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
@@ -300,7 +302,7 @@ export const DisbursementDraftDetails = () => {
             <DisbursementDetails
               variant="confirmation"
               details={draftDetails?.details}
-              futureBalance={handleCalculateFutureBalance()}
+              futureBalance={futureBalance}
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
@@ -341,7 +343,7 @@ export const DisbursementDraftDetails = () => {
           <DisbursementDetails
             variant="preview"
             details={draftDetails?.details}
-            futureBalance={handleCalculateFutureBalance()}
+            futureBalance={futureBalance}
           />
           <DisbursementInviteMessage
             isEditMessage={false}
