@@ -22,6 +22,7 @@ import {
 } from "types";
 
 import "./styles.scss";
+import BigNumber from "bignumber.js";
 
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
@@ -251,7 +252,9 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             <label className="Label Label--sm">Future balance</label>
             <div
               className={`DisbursementDetailsFields__value ${
-                futureBalance >= 0 ? "" : "DisbursementDetailsFields__negative"
+                BigNumber(futureBalance).gte(0)
+                  ? ""
+                  : "DisbursementDetailsFields__negative"
               }`}
             >
               {futureBalance}

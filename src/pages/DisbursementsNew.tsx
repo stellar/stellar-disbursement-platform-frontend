@@ -33,6 +33,7 @@ import { AccountBalances } from "components/AccountBalances";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { Disbursement, DisbursementStep } from "types";
+import BigNumber from "bignumber.js";
 
 export const DisbursementsNew = () => {
   const { disbursementDrafts, organization } = useRedux(
@@ -172,7 +173,11 @@ export const DisbursementsNew = () => {
           .slice(1)
           .reduce(
             (accumulator, line) =>
-              !line ? accumulator : accumulator + Number(line.split(",")[2]),
+              !line
+                ? accumulator
+                : BigNumber(accumulator)
+                    .plus(BigNumber(line.split(",")[2]))
+                    .toNumber(),
             0,
           );
 
@@ -220,7 +225,7 @@ export const DisbursementsNew = () => {
         isSubmitDisabled={
           organization.data.isApprovalRequired ||
           !(draftDetails && csvFile) ||
-          futureBalance < 0
+          BigNumber(futureBalance).lt(0)
         }
         isReviewDisabled={!isReviewEnabled}
         isDraftPending={disbursementDrafts.status === "PENDING"}

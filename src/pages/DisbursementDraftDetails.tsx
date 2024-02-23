@@ -31,6 +31,7 @@ import { DisbursementButtons } from "components/DisbursementButtons";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { DisbursementDraft, DisbursementStep } from "types";
+import BigNumber from "bignumber.js";
 
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
@@ -182,11 +183,13 @@ export const DisbursementDraftDetails = () => {
   };
 
   const handleCalculateFutureBalance = (): number => {
-    const assetBalance = Number(
+    const assetBalance = BigNumber(
       allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)
-        ?.balance,
+        ?.balance || 0,
     );
-    return assetBalance - Number(draftDetails?.details.stats?.totalAmount || 0);
+    return assetBalance
+      .minus(BigNumber(draftDetails?.details.stats?.totalAmount || 0))
+      .toNumber();
   };
 
   const futureBalance = handleCalculateFutureBalance();
