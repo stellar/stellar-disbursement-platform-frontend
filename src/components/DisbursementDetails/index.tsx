@@ -5,11 +5,13 @@ import {
   Title,
   Notification,
 } from "@stellar/design-system";
+import BigNumber from "bignumber.js";
 
 import { useWallets } from "apiQueries/useWallets";
 import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
 import { useCountries } from "apiQueries/useCountries";
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
+import { AssetAmount } from "components/AssetAmount";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
 import {
@@ -22,8 +24,6 @@ import {
 } from "types";
 
 import "./styles.scss";
-import BigNumber from "bignumber.js";
-import { AssetAmount } from "components/AssetAmount";
 
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
