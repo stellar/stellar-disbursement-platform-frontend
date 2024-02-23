@@ -19,4 +19,8 @@
     font-weight: var(--font-weight-medium);
     margin-top: pxToRem(4px);
   }
+
+  &__negative {
+    color: var(--color-red-60);
+  }
 }

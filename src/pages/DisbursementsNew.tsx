@@ -8,6 +8,7 @@ import {
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import BigNumber from "bignumber.js";
 
 import { AppDispatch } from "store";
 import {
@@ -40,11 +41,13 @@ export const DisbursementsNew = () => {
     "organization",
   );
   const { assetBalances, distributionAccountPublicKey } = organization.data;
+  const allBalances = assetBalances?.[0].balances;
 
   const [draftDetails, setDraftDetails] = useState<Disbursement>();
   const [customMessage, setCustomMessage] = useState("");
   const [isDetailsValid, setIsDetailsValid] = useState(false);
   const [csvFile, setCsvFile] = useState<File | undefined>();
+  const [futureBalance, setFutureBalance] = useState(0);
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("edit");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
@@ -155,7 +158,48 @@ export const DisbursementsNew = () => {
     if (apiError) {
       dispatch(clearDisbursementDraftsErrorAction());
     }
+    calculateDisbursementTotalAmountFromFile(file);
     setCsvFile(file);
+  };
+
+  const calculateDisbursementTotalAmountFromFile = (file?: File) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsText(file);
+      const handleLoadFile = () => {
+        const totalAmount = reader.result
+          ?.toString()
+          .split("\n")
+          .slice(1)
+          .reduce(
+            (accumulator, line) =>
+              !line
+                ? accumulator
+                : BigNumber(accumulator)
+                    .plus(BigNumber(line.split(",")[2]))
+                    .toNumber(),
+            0,
+          );
+
+        setDraftDetails({
+          ...draftDetails,
+          stats: {
+            ...draftDetails?.stats,
+            totalAmount: totalAmount?.toString() ?? "0",
+          },
+        } as Disbursement);
+
+        // update future balance
+        const assetBalance = allBalances?.find(
+          (a) => a.assetCode === draftDetails?.asset.code,
+        )?.balance;
+
+        if (totalAmount) {
+          setFutureBalance(Number(assetBalance) - totalAmount);
+        }
+      };
+      reader.addEventListener("load", handleLoadFile, false);
+    }
   };
 
   const handleViewDetails = () => {
@@ -179,7 +223,9 @@ export const DisbursementsNew = () => {
           Boolean(disbursementDrafts.newDraftId && currentStep === "preview")
         }
         isSubmitDisabled={
-          organization.data.isApprovalRequired || !(draftDetails && csvFile)
+          organization.data.isApprovalRequired ||
+          !(draftDetails && csvFile) ||
+          BigNumber(futureBalance).lt(0)
         }
         isReviewDisabled={!isReviewEnabled}
         isDraftPending={disbursementDrafts.status === "PENDING"}
@@ -198,7 +244,11 @@ export const DisbursementsNew = () => {
     if (currentStep === "preview") {
       return (
         <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
-          <DisbursementDetails variant="preview" details={draftDetails} />
+          <DisbursementDetails
+            variant="preview"
+            details={draftDetails}
+            futureBalance={futureBalance}
+          />
           <DisbursementInviteMessage
             isEditMessage={false}
             draftMessage={customMessage}
@@ -244,6 +294,7 @@ export const DisbursementsNew = () => {
             <DisbursementDetails
               variant="confirmation"
               details={draftDetails}
+              futureBalance={futureBalance}
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
@@ -273,6 +324,7 @@ export const DisbursementsNew = () => {
           <DisbursementDetails
             variant="edit"
             details={draftDetails}
+            futureBalance={futureBalance}
             onChange={(updatedState) => {
               if (apiError) {
                 dispatch(clearDisbursementDraftsErrorAction());
