@@ -8,6 +8,7 @@ import {
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import BigNumber from "bignumber.js";
 
 import { AppDispatch } from "store";
 import {
@@ -33,7 +34,6 @@ import { AccountBalances } from "components/AccountBalances";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { Disbursement, DisbursementStep } from "types";
-import BigNumber from "bignumber.js";
 
 export const DisbursementsNew = () => {
   const { disbursementDrafts, organization } = useRedux(
