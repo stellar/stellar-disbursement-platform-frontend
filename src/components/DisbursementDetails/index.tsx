@@ -23,6 +23,7 @@ import {
 
 import "./styles.scss";
 import BigNumber from "bignumber.js";
+import { AssetAmount } from "components/AssetAmount";
 
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
@@ -257,7 +258,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
                   : "DisbursementDetailsFields__negative"
               }`}
             >
-              {futureBalance}
+              <AssetAmount
+                amount={futureBalance.toString()}
+                assetCode={details.asset.code}
+              />
             </div>
           </div>
 
