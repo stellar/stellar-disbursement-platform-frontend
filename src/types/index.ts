@@ -364,6 +364,7 @@ export type ReceiverWallet = {
 export type ReceiverVerification = {
   verificationField: string;
   value: string;
+  confirmedAt?: string;
 };
 
 export type ReceiverWalletBalance = {
@@ -407,6 +408,9 @@ export type ReceiverDetails = {
 export type ReceiverEditFields = {
   email: string;
   externalId: string;
+  dateOfBirth: string;
+  pin: string;
+  nationalId: string;
 };
 
 // =============================================================================
@@ -715,8 +719,9 @@ export type ApiReceiverWallet = {
 };
 
 export type ApiReceiverVerification = {
-  VerificationField: string;
-  HashedValue: string;
+  verification_field: string;
+  hashed_value: string;
+  confirmed_at: string;
 };
 
 export type ApiReceiver = {
