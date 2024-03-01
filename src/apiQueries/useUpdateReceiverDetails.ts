@@ -4,12 +4,23 @@ import { fetchApi } from "helpers/fetchApi";
 import { sanitizeObject } from "helpers/sanitizeObject";
 import { AppError } from "types";
 
+interface ReceiverDetailsUpdate {
+  email: string;
+  externalId: string;
+  dataOfBirth: string;
+  pin: string;
+  nationalId: string;
+}
+
 export const useUpdateReceiverDetails = (receiverId: string | undefined) => {
   const mutation = useMutation({
-    mutationFn: (fields: { email: string; externalId: string }) => {
+    mutationFn: (fields: ReceiverDetailsUpdate) => {
       const fieldsToSubmit = sanitizeObject({
         email: fields.email,
         external_id: fields.externalId,
+        date_of_birth: fields.dataOfBirth,
+        pin: fields.pin,
+        national_id: fields.nationalId,
       });
 
       if (Object.keys(fieldsToSubmit).length === 0) {
