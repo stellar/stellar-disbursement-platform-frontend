@@ -43,7 +43,9 @@ jobs:
           push: true
           build-args: |
             GIT_COMMIT=${{ github.event.release.tag_name }}
-          tags: stellar/stellar-disbursement-platform-frontend:${{github.event.release.tag_name}},stellar/stellar-disbursement-platform-frontend:latest
+          tags: | 
+            stellar/stellar-disbursement-platform-frontend:${{github.event.release.tag_name}}
+            ${{ if eq(github.event.release.prerelease, 'false') }}stellar/stellar-disbursement-platform-frontend:latest${{ endif }}
           file: Dockerfile
 
   build_and_push_docker_image_on_dev_push:
