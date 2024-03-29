@@ -1,5 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/envVariables";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { sanitizeObject } from "helpers/sanitizeObject";
 
 export const patchProfileInfo = async (
@@ -24,6 +25,7 @@ export const patchProfileInfo = async (
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
+      "SDP-Tenant-Name": getSdpTenantName(),
     },
     body: JSON.stringify(fieldsToSubmit),
   });

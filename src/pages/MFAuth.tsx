@@ -14,9 +14,15 @@ import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
 import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
-import { Routes, LOCAL_STORAGE_DEVICE_ID } from "constants/settings";
+import {
+  Routes,
+  LOCAL_STORAGE_DEVICE_ID,
+  ORG_NAME_INFO_TEXT,
+} from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { InfoTooltip } from "components/InfoTooltip";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const MFAuth = () => {
@@ -26,6 +32,7 @@ export const MFAuth = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -70,6 +77,7 @@ export const MFAuth = () => {
 
     const headers = {
       "Device-ID": deviceId,
+      "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
     dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
@@ -85,6 +93,7 @@ export const MFAuth = () => {
 
     const headers = {
       "Device-ID": deviceId,
+      "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
     if (email && password) {
@@ -127,6 +136,20 @@ export const MFAuth = () => {
             <>
               <Input
                 fieldSize="sm"
+                id="2fa-organization-name"
+                name="2fa-organization-name"
+                label={
+                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                    Organization name
+                  </InfoTooltip>
+                }
+                onChange={(e) => setOrganizationName(e.target.value)}
+                value={organizationName}
+                type="text"
+              />
+
+              <Input
+                fieldSize="sm"
                 id="2fa-verification-code"
                 name="2fa-verification-code"
                 label="Verification Code"
@@ -154,7 +177,7 @@ export const MFAuth = () => {
                 variant="primary"
                 size="sm"
                 type="submit"
-                disabled={!mfaCode || !recaptchaToken}
+                disabled={!organizationName || !mfaCode || !recaptchaToken}
                 isLoading={userAccount.status === "PENDING"}
                 data-callback="onRecaptchaSubmit"
               >

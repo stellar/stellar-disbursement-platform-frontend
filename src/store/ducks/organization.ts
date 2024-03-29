@@ -79,19 +79,23 @@ export const getOrgLogoAction = createAsyncThunk<
   string,
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->("organization/getOrgLogoAction", async (_, { rejectWithValue, dispatch }) => {
-  try {
-    return await getOrgLogo();
-  } catch (error: unknown) {
-    const apiError = normalizeApiError(error as ApiError);
-    const errorString = apiError.message;
-    endSessionIfTokenInvalid(errorString, dispatch);
+>(
+  "organization/getOrgLogoAction",
+  async (_, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+    try {
+      return await getOrgLogo(token);
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
 
-    return rejectWithValue({
-      errorString: `Error fetching organization logo: ${errorString}`,
-    });
-  }
-});
+      return rejectWithValue({
+        errorString: `Error fetching organization logo: ${errorString}`,
+      });
+    }
+  },
+);
 
 export const getStellarAccountAction = createAsyncThunk<
   StellarAccountInfo,

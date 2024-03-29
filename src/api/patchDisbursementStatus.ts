@@ -1,5 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/envVariables";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { DisbursementStatus } from "types";
 
 export const patchDisbursementStatus = async (
@@ -14,6 +15,7 @@ export const patchDisbursementStatus = async (
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        "SDP-Tenant-Name": getSdpTenantName(),
       },
       body: JSON.stringify({
         status,
