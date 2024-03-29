@@ -5,11 +5,13 @@ import {
   Title,
   Notification,
 } from "@stellar/design-system";
+import BigNumber from "bignumber.js";
 
 import { useWallets } from "apiQueries/useWallets";
 import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
 import { useCountries } from "apiQueries/useCountries";
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
+import { AssetAmount } from "components/AssetAmount";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
 import {
@@ -26,6 +28,7 @@ import "./styles.scss";
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
   details?: Disbursement;
+  futureBalance?: number;
   csvFile?: File;
   onChange?: (state: Disbursement) => void;
   onValidate?: (isValid: boolean) => void;
@@ -51,11 +54,13 @@ const initDetails: Disbursement = {
   status: "DRAFT",
   statusHistory: [],
   smsRegistrationMessageTemplate: "",
+  stats: undefined,
 };
 
 export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   variant,
   details = initDetails,
+  futureBalance = 0,
   csvFile,
   onChange,
   onValidate,
@@ -241,6 +246,22 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             <label className="Label Label--sm">Disbursement name</label>
             <div className="DisbursementDetailsFields__value">
               {details.name}
+            </div>
+          </div>
+
+          <div>
+            <label className="Label Label--sm">Future balance</label>
+            <div
+              className={`DisbursementDetailsFields__value ${
+                BigNumber(futureBalance).gte(0)
+                  ? ""
+                  : "DisbursementDetailsFields__negative"
+              }`}
+            >
+              <AssetAmount
+                amount={futureBalance.toString()}
+                assetCode={details.asset.code}
+              />
             </div>
           </div>
 
