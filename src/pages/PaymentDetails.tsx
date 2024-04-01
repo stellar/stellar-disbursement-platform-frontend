@@ -20,7 +20,10 @@ import {
   CANCELED_PAYMENT_STATUS,
   READY_PAYMENT_STATUS,
 } from "constants/settings";
-import { formatDateTime } from "helpers/formatIntlDateTime";
+import {
+  formatDateTime,
+  formatDateTimeWithSeconds,
+} from "helpers/formatIntlDateTime";
 import { shortenString } from "helpers/shortenString";
 import { formatPaymentDetails } from "helpers/formatPaymentDetails";
 
@@ -297,7 +300,7 @@ export const PaymentDetails = () => {
                       </Table.BodyCell>
                       <Table.BodyCell textAlign="right">
                         <span className="Table-v2__cell--secondary">
-                          {formatDateTime(h.updatedAt)}
+                          {formatDateTimeWithSeconds(h.updatedAt)}
                         </span>
                       </Table.BodyCell>
                     </Table.BodyRow>
