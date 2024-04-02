@@ -20,7 +20,10 @@ import {
   CANCELED_PAYMENT_STATUS,
   READY_PAYMENT_STATUS,
 } from "constants/settings";
-import { formatDateTime } from "helpers/formatIntlDateTime";
+import {
+  formatDateTime,
+  formatDateTimeWithSeconds,
+} from "helpers/formatIntlDateTime";
 import { shortenString } from "helpers/shortenString";
 import { formatPaymentDetails } from "helpers/formatPaymentDetails";
 
@@ -179,7 +182,9 @@ export const PaymentDetails = () => {
                 <div className="PaymentDetails__wrapper">
                   <div className="PaymentDetails__info">
                     <label className="Label">Created at</label>
-                    <div>{formatDateTime(formattedPayment.createdAt)}</div>
+                    <div>
+                      {formatDateTimeWithSeconds(formattedPayment.createdAt)}
+                    </div>
                   </div>
 
                   <div className="PaymentDetails__info">
@@ -297,7 +302,7 @@ export const PaymentDetails = () => {
                       </Table.BodyCell>
                       <Table.BodyCell textAlign="right">
                         <span className="Table-v2__cell--secondary">
-                          {formatDateTime(h.updatedAt)}
+                          {formatDateTimeWithSeconds(h.updatedAt)}
                         </span>
                       </Table.BodyCell>
                     </Table.BodyRow>
