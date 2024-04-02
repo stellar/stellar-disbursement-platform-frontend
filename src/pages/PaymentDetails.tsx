@@ -182,7 +182,9 @@ export const PaymentDetails = () => {
                 <div className="PaymentDetails__wrapper">
                   <div className="PaymentDetails__info">
                     <label className="Label">Created at</label>
-                    <div>{formatDateTime(formattedPayment.createdAt)}</div>
+                    <div>
+                      {formatDateTimeWithSeconds(formattedPayment.createdAt)}
+                    </div>
                   </div>
 
                   <div className="PaymentDetails__info">
