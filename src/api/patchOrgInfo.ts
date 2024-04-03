@@ -23,6 +23,9 @@ export const patchOrgInfo = async (
       case "name":
         formData.append("data", `{"organization_name": "${value}"}`);
         break;
+      case "privacyPolicyLink":
+        formData.append("data", `{"privacy_policy_link": "${value}"}`);
+        break;
       case "timezone":
         formData.append("data", `{"timezone_utc_offset": "${value}"}`);
         break;

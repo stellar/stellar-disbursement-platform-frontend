@@ -65,6 +65,7 @@ export const Profile = () => {
   });
   const [organizationDetails, setOrganizationDetails] = useState({
     name: "",
+    privacyPolicyLink: "",
     logo: "",
   });
 
@@ -211,7 +212,7 @@ export const Profile = () => {
       id: profile.data.id,
       firstName: profile.data.firstName,
       lastName: profile.data.lastName,
-      email: profile.data.lastName,
+      email: profile.data.email,
       role: profile.data.role,
     });
     dispatch(clearErrorAction());
@@ -222,12 +223,21 @@ export const Profile = () => {
   ) => {
     event.preventDefault();
 
-    if (organizationDetails.name || imageFile || isApprovalRequired) {
+    if (
+      organizationDetails.name ||
+      organizationDetails.privacyPolicyLink ||
+      imageFile ||
+      isApprovalRequired
+    ) {
       dispatch(
         updateOrgInfoAction({
           name: emptyValueIfNotChanged(
             organizationDetails.name,
             organization.data.name,
+          ),
+          privacyPolicyLink: emptyValueIfNotChanged(
+            organizationDetails.privacyPolicyLink,
+            organization.data.privacyPolicyLink,
           ),
           logo: imageFile,
           isApprovalRequired,
@@ -244,6 +254,7 @@ export const Profile = () => {
     setImageFile(undefined);
     setOrganizationDetails({
       name: organization.data.name,
+      privacyPolicyLink: organization.data.privacyPolicyLink,
       logo: organization.data.logo,
     });
     setIsApprovalRequired(Boolean(organization.data.isApprovalRequired));
@@ -416,7 +427,7 @@ export const Profile = () => {
           : {})}
       >
         {isEditOrganization ? (
-          <>
+          <div className="CardStack__grid">
             <Input
               id="name"
               name="name"
@@ -425,16 +436,41 @@ export const Profile = () => {
               value={organizationDetails.name}
               onChange={handleOrgDetailsChange}
             />
-          </>
+
+            <Input
+              id="privacyPolicyLink"
+              name="privacyPolicyLink"
+              label="Privacy Policy Link"
+              fieldSize="sm"
+              value={organizationDetails.privacyPolicyLink}
+              onChange={handleOrgDetailsChange}
+            />
+          </div>
         ) : (
-          <>
+          <div className="CardStack__grid">
             <div className="CardStack__infoItem">
               <label className="Label Label--sm">Name</label>
               <div className="CardStack__infoItem__value">
                 {organization.data.name}
               </div>
             </div>
-          </>
+
+            <div className="CardStack__infoItem">
+              <label className="Label Label--sm">Privacy Policy Link</label>
+              <div className="CardStack__infoItem__value">
+                {organization.data.privacyPolicyLink ? (
+                  <Link
+                    href={organization.data.privacyPolicyLink}
+                    target="_blank"
+                  >
+                    {organization.data.privacyPolicyLink}
+                  </Link>
+                ) : (
+                  "-"
+                )}
+              </div>
+            </div>
+          </div>
         )}
         <div className="Label Label--sm">
           <InfoTooltip
@@ -471,6 +507,8 @@ export const Profile = () => {
               type="submit"
               disabled={
                 organizationDetails.name === organization.data.name &&
+                organizationDetails.privacyPolicyLink ===
+                  organization.data.privacyPolicyLink &&
                 !imageFile &&
                 isApprovalRequired === organization.data.isApprovalRequired
               }
@@ -584,6 +622,7 @@ export const Profile = () => {
                       setIsEditOrganization(true);
                       setOrganizationDetails({
                         name: organization.data.name,
+                        privacyPolicyLink: organization.data.privacyPolicyLink,
                         logo: organization.data.logo,
                       });
                       setIsApprovalRequired(

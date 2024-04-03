@@ -66,6 +66,7 @@ export type DisbursementDetailsInitialState = {
 export type OrganizationInitialState = {
   data: {
     name: string;
+    privacyPolicyLink: string;
     logo: string;
     distributionAccountPublicKey: string;
     timezoneUtcOffset: string;
@@ -447,6 +448,7 @@ export type AccountProfile = {
 // =============================================================================
 export type OrgUpdateInfo = {
   name?: string;
+  privacyPolicyLink?: string;
   timezone?: string;
   logo?: File;
   isApprovalRequired?: boolean;
@@ -761,6 +763,7 @@ export type ApiProfileInfo = {
 
 export type ApiOrgInfo = {
   name: string;
+  privacy_policy_link: string;
   logo_url: string;
   distribution_account_public_key: string;
   timezone_utc_offset: string;
