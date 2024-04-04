@@ -103,7 +103,7 @@ export const ResetPassword = () => {
                   a combination of uppercase letters, lowercase letters and
                   numbers
                 </li>
-                <li>at least one symbol from: <span style={{fontFamily: 'monospace'}}>! @ # $ % ^ &amp; *</span></li>
+                <li>at least one symbol from: <span className="CodeSnippet">! @ # $ % ^ &amp; *</span></li>
               </ul>
             </div>
           </div>
