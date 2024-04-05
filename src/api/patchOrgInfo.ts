@@ -17,28 +17,31 @@ export const patchOrgInfo = async (
   }
 
   const formData = new FormData();
+  let data = {};
 
   Object.entries(fieldsToSubmit).forEach(([key, value]) => {
     switch (key) {
       case "name":
-        formData.append("data", `{"organization_name": "${value}"}`);
+        data = { ...data, organization_name: `${value}` };
         break;
       case "privacyPolicyLink":
-        formData.append("data", `{"privacy_policy_link": "${value}"}`);
+        data = { ...data, privacy_policy_link: `${value}` };
         break;
       case "timezone":
-        formData.append("data", `{"timezone_utc_offset": "${value}"}`);
+        data = { ...data, timezone_utc_offset: `${value}` };
+        break;
+      case "isApprovalRequired":
+        data = { ...data, is_approval_required: value };
         break;
       case "logo":
         formData.append("logo", value as Blob);
-        break;
-      case "isApprovalRequired":
-        formData.append("data", `{"is_approval_required": ${value}}`);
         break;
       default:
         throw Error(`Update organization does not accept ${key} field`);
     }
   });
+
+  formData.append("data", `${JSON.stringify(data)}`);
 
   // BE always expects data object
   if (!formData.get("data")) {
