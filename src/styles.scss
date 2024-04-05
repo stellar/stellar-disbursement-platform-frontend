@@ -52,6 +52,10 @@ body {
       list-style-type: disc;
       margin-left: pxToRem(8px);
     }
+
+    .CodeSnippet {
+      font-family: var(--font-family-monospace);
+    }
   }
 
   form {
