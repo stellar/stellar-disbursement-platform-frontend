@@ -8,6 +8,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+### Added
+
+First Release Candidate of the Stellar Disbursement Platform v2.0.0. This
+release introduces multi-tenancy support, allowing multiple tenants
+(organizations) to use the platform simultaneously.
+
+Each organization has its own set of users, receivers, disbursements, etc.
+
+> [!Warning] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version 2.x.x.
+
+### Added
+
+- Make the dashboard tenant aware
+  [#44](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/44)
+- Add Organization (Tenant Name) selection text box to Login, Reset Password and
+  Forgot Password pages
+  [#50](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/50)
+- Derive Organization (Tenant Name) from the hostname prefix when possible
+  [#56](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/56)
+- Add Future Balance label in the Disbursement Details page.
+  [#76](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/76)
+- Ability for users to add/update verification info for receivers.
+  [#78](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/78)
+
 ## [1.1.2](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.1.1...1.1.2)
 
 Attention, this version is compatible with the backend version

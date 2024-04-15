@@ -14,9 +14,15 @@ import { v4 as uuidv4 } from "uuid";
 import { AppDispatch, resetStoreAction } from "store";
 import { signInAction } from "store/ducks/userAccount";
 import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
-import { Routes, LOCAL_STORAGE_DEVICE_ID } from "constants/settings";
+import {
+  Routes,
+  LOCAL_STORAGE_DEVICE_ID,
+  ORG_NAME_INFO_TEXT,
+} from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { InfoTooltip } from "components/InfoTooltip";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const SignIn = () => {
@@ -26,6 +32,7 @@ export const SignIn = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
@@ -85,6 +92,7 @@ export const SignIn = () => {
 
     const headers = {
       "Device-ID": deviceId,
+      "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
     dispatch(signInAction({ email, password, recaptchaToken, headers }));
@@ -131,6 +139,19 @@ export const SignIn = () => {
             <>
               <Input
                 fieldSize="sm"
+                id="si-organization-name"
+                name="si-organization-name"
+                label={
+                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                    Organization name
+                  </InfoTooltip>
+                }
+                onChange={(e) => setOrganizationName(e.target.value)}
+                value={organizationName}
+                type="text"
+              />
+              <Input
+                fieldSize="sm"
                 id="si-email"
                 name="si-email"
                 label="Email address"
@@ -167,7 +188,9 @@ export const SignIn = () => {
               variant="primary"
               size="sm"
               type="submit"
-              disabled={!email || !password || !recaptchaToken}
+              disabled={
+                !organizationName || !email || !password || !recaptchaToken
+              }
               isLoading={userAccount.status === "PENDING"}
               data-callback="onRecaptchaSubmit"
             >

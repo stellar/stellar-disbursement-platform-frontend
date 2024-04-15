@@ -1,5 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/envVariables";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { UserRole } from "types";
 
 export const patchUserRole = async (
@@ -12,6 +13,7 @@ export const patchUserRole = async (
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      "SDP-Tenant-Name": getSdpTenantName(),
     },
     body: JSON.stringify({
       user_id: userId,
