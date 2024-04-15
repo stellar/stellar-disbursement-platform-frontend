@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
@@ -19,8 +19,14 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { LoadingContent } from "components/LoadingContent";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { ReceiverDetails, ReceiverEditFields } from "types";
+import {
+  ReceiverDetails,
+  ReceiverEditFields,
+  ReceiverVerification,
+} from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
+
+type VerificationFieldType = "DATE_OF_BIRTH" | "PIN" | "NATIONAL_ID_NUMBER";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();
@@ -31,6 +37,9 @@ export const ReceiverDetailsEdit = () => {
     useState<ReceiverEditFields>({
       email: "",
       externalId: "",
+      dateOfBirth: "",
+      pin: "",
+      nationalId: "",
     });
 
   const {
@@ -52,17 +61,40 @@ export const ReceiverDetailsEdit = () => {
     reset,
   } = useUpdateReceiverDetails(receiverId);
 
+  const getReadyOnlyValue = useCallback(
+    (field: VerificationFieldType) => {
+      return (
+        receiverDetails?.verifications.find(
+          (v) => v.verificationField === field,
+        )?.value ?? ""
+      );
+    },
+    [receiverDetails?.verifications],
+  );
+
+  const isVerificationFieldConfirmed = (
+    field: VerificationFieldType,
+  ): boolean => {
+    const verification: ReceiverVerification | undefined =
+      receiverDetails?.verifications.find((v) => v.verificationField === field);
+    return !verification ? false : verification.confirmedAt !== null;
+  };
+
   useEffect(() => {
     if (isReceiverDetailsSuccess) {
       setReceiverEditFields({
-        email: receiverDetails?.email || "",
-        externalId: receiverDetails?.orgId || "",
+        email: receiverDetails?.email ?? "",
+        externalId: receiverDetails?.orgId ?? "",
+        dateOfBirth: getReadyOnlyValue("DATE_OF_BIRTH"),
+        pin: getReadyOnlyValue("PIN"),
+        nationalId: getReadyOnlyValue("NATIONAL_ID_NUMBER"),
       });
     }
   }, [
     isReceiverDetailsSuccess,
     receiverDetails?.email,
     receiverDetails?.orgId,
+    getReadyOnlyValue,
   ]);
 
   useEffect(() => {
@@ -81,15 +113,6 @@ export const ReceiverDetailsEdit = () => {
     };
   }, [updateError, reset]);
 
-  const getReadyOnlyValue = (
-    field: "DATE_OF_BIRTH" | "PIN" | "NATIONAL_ID_NUMBER",
-  ) => {
-    return (
-      receiverDetails?.verifications.find((v) => v.verificationField === field)
-        ?.value || ""
-    );
-  };
-
   const emptyValueIfNotChanged = (newValue: string, oldValue: string) => {
     return newValue === oldValue ? "" : newValue;
   };
@@ -99,15 +122,25 @@ export const ReceiverDetailsEdit = () => {
   ) => {
     e.preventDefault();
 
-    const { email, externalId } = receiverEditFields;
+    const { email, externalId, dateOfBirth, pin, nationalId } =
+      receiverEditFields;
 
     if (receiverId) {
       try {
         await mutateAsync({
-          email: emptyValueIfNotChanged(email, receiverDetails?.email || ""),
+          email: emptyValueIfNotChanged(email, receiverDetails?.email ?? ""),
           externalId: emptyValueIfNotChanged(
             externalId,
-            receiverDetails?.orgId || "",
+            receiverDetails?.orgId ?? "",
+          ),
+          dataOfBirth: emptyValueIfNotChanged(
+            dateOfBirth,
+            getReadyOnlyValue("DATE_OF_BIRTH"),
+          ),
+          pin: emptyValueIfNotChanged(pin, getReadyOnlyValue("PIN")),
+          nationalId: emptyValueIfNotChanged(
+            nationalId,
+            getReadyOnlyValue("NATIONAL_ID_NUMBER"),
           ),
         });
       } catch (e) {
@@ -119,8 +152,11 @@ export const ReceiverDetailsEdit = () => {
   const handleReceiverEditCancel = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setReceiverEditFields({
-      email: receiverDetails?.email || "",
-      externalId: receiverDetails?.orgId || "",
+      email: receiverDetails?.email ?? "",
+      externalId: receiverDetails?.orgId ?? "",
+      dateOfBirth: getReadyOnlyValue("DATE_OF_BIRTH"),
+      pin: getReadyOnlyValue("PIN"),
+      nationalId: getReadyOnlyValue("NATIONAL_ID_NUMBER"),
     });
     navigate(`${Routes.RECEIVERS}/${receiverId}`);
   };
@@ -155,7 +191,10 @@ export const ReceiverDetailsEdit = () => {
 
     const isSubmitDisabled =
       receiverEditFields.email === receiverDetails?.email &&
-      receiverEditFields.externalId === receiverDetails.orgId;
+      receiverEditFields.externalId === receiverDetails.orgId &&
+      receiverEditFields.dateOfBirth === getReadyOnlyValue("DATE_OF_BIRTH") &&
+      receiverEditFields.pin === getReadyOnlyValue("PIN") &&
+      receiverEditFields.nationalId === getReadyOnlyValue("NATIONAL_ID_NUMBER");
 
     return (
       <>
@@ -213,28 +252,33 @@ export const ReceiverDetailsEdit = () => {
                       onChange={handleDetailsChange}
                     />
                     <Input
-                      id="personalPIN"
-                      name="personalPIN"
+                      id="pin"
+                      name="pin"
                       label="Personal PIN"
                       fieldSize="sm"
-                      value={getReadyOnlyValue("PIN")}
-                      disabled
+                      value={receiverEditFields.pin}
+                      onChange={handleDetailsChange}
+                      disabled={isVerificationFieldConfirmed("PIN")}
                     />
                     <Input
-                      id="nationalIDNumber"
-                      name="nationalIDNumber"
+                      id="nationalId"
+                      name="nationalId"
                       label="National ID Number"
                       fieldSize="sm"
-                      value={getReadyOnlyValue("NATIONAL_ID_NUMBER")}
-                      disabled
+                      value={receiverEditFields.nationalId}
+                      onChange={handleDetailsChange}
+                      disabled={isVerificationFieldConfirmed(
+                        "NATIONAL_ID_NUMBER",
+                      )}
                     />
                     <Input
                       id="dateOfBirth"
                       name="dateOfBirth"
                       label="Date of Birth"
                       fieldSize="sm"
-                      value={getReadyOnlyValue("DATE_OF_BIRTH")}
-                      disabled
+                      value={receiverEditFields.dateOfBirth}
+                      onChange={handleDetailsChange}
+                      disabled={isVerificationFieldConfirmed("DATE_OF_BIRTH")}
                     />
                   </div>
                 </div>

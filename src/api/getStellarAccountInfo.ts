@@ -1,5 +1,4 @@
 import { HORIZON_URL } from "constants/envVariables";
-import { shortenAccountKey } from "helpers/shortenAccountKey";
 import { ApiStellarAccount } from "types";
 
 export const getStellarAccountInfo = async (
@@ -10,7 +9,7 @@ export const getStellarAccountInfo = async (
   });
 
   if (response.status === 404) {
-    throw `${shortenAccountKey(stellarAddress)} address was not found.`;
+    throw `${stellarAddress} address was not found.`;
   }
 
   return await response.json();

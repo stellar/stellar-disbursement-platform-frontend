@@ -3,7 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Badge, Heading, Link, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useRedux } from "hooks/useRedux";
+import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
 import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
+import BigNumber from "bignumber.js";
 
 import { AppDispatch } from "store";
 import {
@@ -57,6 +59,8 @@ export const DisbursementDraftDetails = () => {
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
 
+  const allBalances = organization.data.assetBalances?.[0].balances;
+
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(
@@ -106,6 +110,8 @@ export const DisbursementDraftDetails = () => {
     disbursementDetails.details.id,
     disbursementDetails.status,
   ]);
+
+  useOrgAccountInfo(organization.data.distributionAccountPublicKey);
 
   useEffect(() => {
     setDraftDetails(disbursementDetails);
@@ -176,6 +182,18 @@ export const DisbursementDraftDetails = () => {
     resetState();
   };
 
+  const handleCalculateFutureBalance = (): number => {
+    const assetBalance = BigNumber(
+      allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)
+        ?.balance || 0,
+    );
+    return assetBalance
+      .minus(BigNumber(draftDetails?.details.stats?.totalAmount || 0))
+      .toNumber();
+  };
+
+  const futureBalance = handleCalculateFutureBalance();
+
   const handleSubmitDisbursement = (
     event: React.FormEvent<HTMLFormElement>,
   ) => {
@@ -231,7 +249,8 @@ export const DisbursementDraftDetails = () => {
         }}
         isDraftDisabled={!isCsvFileUpdated}
         isSubmitDisabled={
-          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit)
+          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) ||
+          futureBalance < 0
         }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
@@ -286,6 +305,7 @@ export const DisbursementDraftDetails = () => {
             <DisbursementDetails
               variant="confirmation"
               details={draftDetails?.details}
+              futureBalance={futureBalance}
               csvFile={csvFile}
             />
             <DisbursementInviteMessage
@@ -326,6 +346,7 @@ export const DisbursementDraftDetails = () => {
           <DisbursementDetails
             variant="preview"
             details={draftDetails?.details}
+            futureBalance={futureBalance}
           />
           <DisbursementInviteMessage
             isEditMessage={false}

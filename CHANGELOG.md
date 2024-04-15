@@ -8,6 +8,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [1.1.2](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.1.1...1.1.2)
+
+Attention, this version is compatible with the backend version
+[1.1.6](https://github.com/stellar/stellar-disbursement-platform-backend/releases/tag/1.1.6).
+
+### Added
+
+- Add the "Future Balance" label in the disbursement detail component to display
+  what will be balance for the asset on the distribution account after the
+  disbursement is completed.
+  [#76](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/76)
+- Add option to update a receiver's verification info from the receiver's detail
+  page.
+  [#78](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/78)
+
+### Changed
+
+- Update the CSV template by adding examples with and without the paymentID
+  (optional) column.
+  [#77](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/77)
+- Display the entire disbursement account address for the tenant when that
+  disbursement account does not exist in the network, making it easier to
+  identify the account that needs to be funded.
+  [#80](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/80)
+
 ## [1.1.1](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.1.0...1.1.1)
 
 ### Fixed
