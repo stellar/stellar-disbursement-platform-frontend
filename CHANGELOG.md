@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [2.0.0.rc1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.0.0-rc1)
+
 ### Added
 
 First Release Candidate of the Stellar Disbursement Platform v2.0.0. This
