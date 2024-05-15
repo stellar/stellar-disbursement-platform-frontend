@@ -141,7 +141,37 @@ module.exports = {
       process: "process/browser",
     }),
     new DefinePlugin({
-      "process.env": JSON.stringify(process.env),
+      "process.env": {
+        REACT_APP_DISABLE_WINDOW_ENV: JSON.stringify(
+          process.env.REACT_APP_DISABLE_WINDOW_ENV || "",
+        ),
+        REACT_APP_API_URL: JSON.stringify(process.env.REACT_APP_API_URL || ""),
+        REACT_APP_STELLAR_EXPERT_URL: JSON.stringify(
+          process.env.REACT_APP_STELLAR_EXPERT_URL || "",
+        ),
+        REACT_APP_HORIZON_URL: JSON.stringify(
+          process.env.REACT_APP_HORIZON_URL || "",
+        ),
+        REACT_APP_RECAPTCHA_SITE_KEY: JSON.stringify(
+          process.env.REACT_APP_RECAPTCHA_SITE_KEY || "",
+        ),
+        REACT_APP_USE_SSO: JSON.stringify(process.env.REACT_APP_USE_SSO || ""),
+        REACT_APP_OIDC_AUTHORITY: JSON.stringify(
+          process.env.REACT_APP_OIDC_AUTHORITY || "",
+        ),
+        REACT_APP_OIDC_CLIENT_ID: JSON.stringify(
+          process.env.REACT_APP_OIDC_CLIENT_ID || "",
+        ),
+        REACT_APP_OIDC_REDIRECT_URI: JSON.stringify(
+          process.env.REACT_APP_OIDC_REDIRECT_URI || "",
+        ),
+        REACT_APP_OIDC_SCOPE: JSON.stringify(
+          process.env.REACT_APP_OIDC_SCOPE || "",
+        ),
+        REACT_APP_OIDC_USERNAME_MAPPING: JSON.stringify(
+          process.env.REACT_APP_OIDC_USERNAME_MAPPING || "",
+        ),
+      },
     }),
     new CopyPlugin({
       patterns: [{ from: "./public", to: "./" }],
