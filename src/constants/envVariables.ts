@@ -6,11 +6,12 @@ export type OidcUsername = keyof Pick<
 >;
 
 declare global {
+  // ATTENTION: when adding a new environment variable, make sure to add it to the `generateEnvConfig` method below and
+  // `new DefinePlugin({"process.env": ...})` in the webpack config ad well.
   interface Window {
     _env_: {
       API_URL: string;
       STELLAR_EXPERT_URL: string;
-      USDC_ASSET_ISSUER: string;
       HORIZON_URL: string;
       RECAPTCHA_SITE_KEY: string;
 
