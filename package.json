@@ -73,6 +73,9 @@
     "typescript": "^5.2.2",
     "url": "^0.11.3"
   },
+  "resolutions": {
+    "asn1.js": "5.4.0"
+  },
   "scripts": {
     "start": "yarn git-info && webpack serve --open --config webpack.dev.js",
     "build": "yarn git-info && NODE_ENV=production webpack --config webpack.prod.js",
