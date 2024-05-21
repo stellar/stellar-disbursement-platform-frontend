@@ -8,6 +8,7 @@ interface WalletCardProps {
   homepageUrl: string;
   enabled: boolean;
   assets: string[];
+  editable: boolean | null;
   onChange: () => void;
 }
 
@@ -17,6 +18,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
   homepageUrl,
   enabled,
   assets,
+  editable = true,
   onChange,
 }: WalletCardProps) => {
   return (
@@ -38,7 +40,12 @@ export const WalletCard: React.FC<WalletCardProps> = ({
               </div>
             </div>
 
-            <Toggle id={walletId} checked={enabled} onChange={onChange} />
+            <Toggle
+              id={walletId}
+              checked={enabled}
+              onChange={onChange}
+              disabled={!editable}
+            />
           </div>
         </div>
 

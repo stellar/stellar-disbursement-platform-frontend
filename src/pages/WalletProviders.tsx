@@ -16,12 +16,16 @@ import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useWallets } from "apiQueries/useWallets";
 import { useUpdateWallet } from "apiQueries/useUpdateWallet";
+import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
 import { ApiWallet } from "types";
 
 export const WalletProviders = () => {
   const [selectedWallet, setSelectedWallet] = useState<
     { id: string; enabled: boolean } | undefined
   >();
+  const { isRoleAccepted: canEditWalletProviders } = useIsUserRoleAccepted([
+    "owner",
+  ]);
 
   const {
     data: wallets,
@@ -70,6 +74,7 @@ export const WalletProviders = () => {
           homepageUrl={item.homepage}
           enabled={item.enabled}
           assets={item.assets?.map((asset) => asset.code)}
+          editable={canEditWalletProviders}
           onChange={() => {
             setSelectedWallet({ id: item.id, enabled: item.enabled });
 
