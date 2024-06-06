@@ -74,7 +74,8 @@
     "url": "^0.11.3"
   },
   "resolutions": {
-    "asn1.js": "5.4.0"
+    "asn1.js": "5.4.0",
+    "browserify-sign": "^4.2.3"
   },
   "scripts": {
     "start": "yarn git-info && webpack serve --open --config webpack.dev.js",
