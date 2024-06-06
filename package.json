@@ -53,7 +53,7 @@
     "lint-staged": "^15.0.2",
     "lodash": "^4.17.21",
     "node-sass": "^9.0.0",
-    "oidc-client-ts": "^2.3.0",
+    "oidc-client-ts": "^2.4.0",
     "os-browserify": "^0.3.0",
     "papaparse": "^5.4.1",
     "path-browserify": "^1.0.1",
