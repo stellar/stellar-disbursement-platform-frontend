@@ -75,7 +75,8 @@
   },
   "resolutions": {
     "asn1.js": "5.4.0",
-    "browserify-sign": "^4.2.3"
+    "browserify-sign": "^4.2.3",
+    "@babel/traverse": "^7.23.2"
   },
   "scripts": {
     "start": "yarn git-info && webpack serve --open --config webpack.dev.js",
