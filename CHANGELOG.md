@@ -8,18 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
-## [2.0.0.rc1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.0.0-rc1)
+## [2.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.0.0)
 
 ### Added
 
-First Release Candidate of the Stellar Disbursement Platform v2.0.0. This
-release introduces multi-tenancy support, allowing multiple tenants
-(organizations) to use the platform simultaneously.
+Release of the Stellar Disbursement Platform v2.0.0. This release introduces
+multi-tenancy support, allowing multiple tenants (organizations) to use the
+platform simultaneously.
 
 Each organization has its own set of users, receivers, disbursements, etc.
 
 > [!Warning] This version is only compatible with the
-> [stellar/stellar-disbursement-platform-backend] version 2.x.x.
+> [stellar/stellar-disbursement-platform-backend] version 2.x.x. In order to
+> migrate from 1.x.x to 2.x.x, please consult the
+> [SDP Migration Guide](https://developers.stellar.org/network/stellar-disbursement-platform/admin-guide/single-tenant-to-multi-tenant-migration).
 
 ### Added
 
