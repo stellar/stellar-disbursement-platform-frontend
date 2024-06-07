@@ -8,9 +8,12 @@ import {
 } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 
+import { ORG_NAME_INFO_TEXT } from "constants/settings";
 import { useResetPassword } from "apiQueries/useResetPassword";
 import { validateNewPassword } from "helpers/validateNewPassword";
 import { validatePasswordMatch } from "helpers/validatePasswordMatch";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { InfoTooltip } from "components/InfoTooltip";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ResetPassword = () => {
@@ -19,6 +22,7 @@ export const ResetPassword = () => {
 
   const navigate = useNavigate();
 
+  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmationToken, setConfirmationToken] = useState("");
@@ -29,7 +33,7 @@ export const ResetPassword = () => {
 
   const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutateAsync({ password, resetToken: confirmationToken });
+    mutateAsync({ organizationName, password, resetToken: confirmationToken });
   };
 
   useEffect(() => {
@@ -57,7 +61,12 @@ export const ResetPassword = () => {
   const allInputsValid = () => {
     if (errorPassword || errorPasswordMatch || errorConfirmationToken) {
       return false;
-    } else if (password && confirmPassword && confirmationToken) {
+    } else if (
+      organizationName &&
+      password &&
+      confirmPassword &&
+      confirmationToken
+    ) {
       return true;
     }
 
@@ -91,12 +100,27 @@ export const ResetPassword = () => {
               <ul>
                 <li>at least 12 characters long,</li>
                 <li>
-                  a combination of uppercase letters, lowercase letters,
-                  numbers, and symbols.
+                  a combination of uppercase letters, lowercase letters and
+                  numbers
                 </li>
+                <li>at least one symbol from: <span className="CodeSnippet">! @ # $ % ^ &amp; *</span></li>
               </ul>
             </div>
           </div>
+
+          <Input
+            fieldSize="sm"
+            id="rp-organization-name"
+            name="rp-organization-name"
+            label={
+              <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                Organization name
+              </InfoTooltip>
+            }
+            onChange={(e) => setOrganizationName(e.target.value)}
+            value={organizationName}
+            type="text"
+          />
 
           <Input
             fieldSize="sm"

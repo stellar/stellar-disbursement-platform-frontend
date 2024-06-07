@@ -5,11 +5,13 @@ import { localStorageSessionToken } from "helpers/localStorageSessionToken";
 import { parseJwt } from "helpers/parseJwt";
 import { normalizeApiError } from "helpers/normalizeApiError";
 import { AnyObject } from "types";
+import { getSdpTenantName } from "./getSdpTenantName";
 
 type FetchApiOptions = {
   withoutAuth?: boolean;
   omitContentType?: boolean;
   customCallback?: (request: Response) => void;
+  organizationName?: string;
 };
 
 export const fetchApi = async (
@@ -42,6 +44,7 @@ export const fetchApi = async (
     config.headers = {
       ...config.headers,
       Authorization: `Bearer ${token}`,
+      "SDP-Tenant-Name": getSdpTenantName(options?.organizationName),
       ...(!options?.omitContentType
         ? {
             "Content-Type":

@@ -29,6 +29,15 @@ jobs:
             exit 1
           fi
 
+      - name: Determine Docker Tags
+        id: docker_tags
+        run: |
+          if [ "${{ github.event.release.prerelease }}" = "false" ]; then
+            echo "TAGS=stellar/stellar-disbursement-platform-frontend:${{ github.event.release.tag_name }},stellar/stellar-disbursement-platform-frontend:latest" >> $GITHUB_OUTPUT
+          else
+            echo "TAGS=stellar/stellar-disbursement-platform-frontend:${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+          fi
+
       - uses: actions/checkout@v3
 
       - name: Login to DockerHub
@@ -43,7 +52,7 @@ jobs:
           push: true
           build-args: |
             GIT_COMMIT=${{ github.event.release.tag_name }}
-          tags: stellar/stellar-disbursement-platform-frontend:${{github.event.release.tag_name}},stellar/stellar-disbursement-platform-frontend:latest
+          tags: ${{ steps.docker_tags.outputs.tags }}
           file: Dockerfile
 
   build_and_push_docker_image_on_dev_push:

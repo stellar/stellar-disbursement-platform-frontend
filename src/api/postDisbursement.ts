@@ -1,5 +1,6 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/envVariables";
+import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { ApiDisbursement, Disbursement } from "types";
 
 export const postDisbursement = async (
@@ -11,6 +12,7 @@ export const postDisbursement = async (
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      "SDP-Tenant-Name": getSdpTenantName(),
     },
     body: JSON.stringify({
       name: disbursement.name,
@@ -18,7 +20,8 @@ export const postDisbursement = async (
       asset_id: disbursement.asset.id,
       country_code: disbursement.country.code,
       verification_field: disbursement.verificationField || "",
-      sms_registration_message_template: disbursement.smsRegistrationMessageTemplate,
+      sms_registration_message_template:
+        disbursement.smsRegistrationMessageTemplate,
     }),
   });
 

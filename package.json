@@ -1,6 +1,6 @@
 {
   "name": "stellar-disbursement-platform-frontend",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "engines": {
     "node": ">=18.x"
@@ -53,7 +53,7 @@
     "lint-staged": "^15.0.2",
     "lodash": "^4.17.21",
     "node-sass": "^9.0.0",
-    "oidc-client-ts": "^2.3.0",
+    "oidc-client-ts": "^2.4.0",
     "os-browserify": "^0.3.0",
     "papaparse": "^5.4.1",
     "path-browserify": "^1.0.1",
@@ -72,6 +72,11 @@
     "stream-http": "^3.2.0",
     "typescript": "^5.2.2",
     "url": "^0.11.3"
+  },
+  "resolutions": {
+    "asn1.js": "5.4.0",
+    "browserify-sign": "^4.2.3",
+    "@babel/traverse": "^7.23.2"
   },
   "scripts": {
     "start": "yarn git-info && webpack serve --open --config webpack.dev.js",
@@ -119,6 +124,6 @@
     "tsconfig-paths-webpack-plugin": "^4.1.0",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^4.15.2"
   }
 }

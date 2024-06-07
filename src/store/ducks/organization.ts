@@ -49,7 +49,7 @@ export const updateOrgInfoAction = createAsyncThunk<
 >(
   "organization/updateOrgInfoAction",
   async (
-    { name, timezone, logo, isApprovalRequired },
+    { name, privacyPolicyLink, timezone, logo, isApprovalRequired },
     { rejectWithValue, getState, dispatch },
   ) => {
     const { token } = getState().userAccount;
@@ -57,6 +57,7 @@ export const updateOrgInfoAction = createAsyncThunk<
     try {
       const orgInfo = await patchOrgInfo(token, {
         name,
+        privacyPolicyLink,
         timezone,
         logo,
         isApprovalRequired,
@@ -79,19 +80,23 @@ export const getOrgLogoAction = createAsyncThunk<
   string,
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->("organization/getOrgLogoAction", async (_, { rejectWithValue, dispatch }) => {
-  try {
-    return await getOrgLogo();
-  } catch (error: unknown) {
-    const apiError = normalizeApiError(error as ApiError);
-    const errorString = apiError.message;
-    endSessionIfTokenInvalid(errorString, dispatch);
+>(
+  "organization/getOrgLogoAction",
+  async (_, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+    try {
+      return await getOrgLogo(token);
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
 
-    return rejectWithValue({
-      errorString: `Error fetching organization logo: ${errorString}`,
-    });
-  }
-});
+      return rejectWithValue({
+        errorString: `Error fetching organization logo: ${errorString}`,
+      });
+    }
+  },
+);
 
 export const getStellarAccountAction = createAsyncThunk<
   StellarAccountInfo,
@@ -123,6 +128,7 @@ export const getStellarAccountAction = createAsyncThunk<
 const initialState: OrganizationInitialState = {
   data: {
     name: "",
+    privacyPolicyLink: "",
     logo: "",
     distributionAccountPublicKey: "",
     timezoneUtcOffset: "",
@@ -160,6 +166,7 @@ const organizationSlice = createSlice({
       state.data = {
         ...state.data,
         name: action.payload.name,
+        privacyPolicyLink: action.payload.privacy_policy_link,
         distributionAccountPublicKey:
           action.payload.distribution_account_public_key,
         timezoneUtcOffset: action.payload.timezone_utc_offset,
