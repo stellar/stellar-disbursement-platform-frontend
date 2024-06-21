@@ -75,6 +75,11 @@ export type OrganizationInitialState = {
     smsResendInterval: number;
     smsRegistrationMessageTemplate?: string;
     paymentCancellationPeriodDays: number;
+    distributionAccount?: {
+      circleWalletId?: string;
+      status: string;
+      type: string;
+    };
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -771,6 +776,11 @@ export type ApiOrgInfo = {
   sms_resend_interval: string;
   sms_registration_message_template?: string;
   payment_cancellation_period_days: string;
+  distribution_account?: {
+    circle_wallet_id?: string;
+    status: string;
+    type: string;
+  };
 };
 
 export type ApiStellarAccountBalance = {

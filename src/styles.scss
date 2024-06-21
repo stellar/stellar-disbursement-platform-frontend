@@ -81,9 +81,21 @@ body {
   color: var(--color-gray-60);
   margin-top: pxToRem(8px);
 
+  &--error {
+    color: var(--color-red-60);
+  }
+
+  &--success {
+    color: var(--color-green-60);
+  }
+
   &--small {
     font-size: pxToRem(12px);
     line-height: pxToRem(20px);
+  }
+
+  &--noMargin {
+    margin-top: 0;
   }
 }
 
@@ -638,6 +650,31 @@ body {
   }
 }
 
+// Circle Distribution Account
+.CircleDistributionAccountPending {
+  .Banner__content {
+    max-width: 100ch;
+  }
+
+  .Banner .Link {
+    --Link-color-default: var(--color-yellow-70);
+    --Link-color-hover: var(--color-yellow-80);
+    --Link-color-disabled: var(--color-yellow-50);
+    font-weight: var(--font-weight-semi-bold);
+  }
+}
+
+.CircleBalances {
+  padding: pxToRem(16px);
+
+  &__title {
+    color: var(--color-gray-70);
+    font-size: pxToRem(12px);
+    line-height: pxToRem(18px);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
 // Not found / 404 page
 .NotFoundPage {
   display: flex;
@@ -685,6 +722,13 @@ body {
 #root {
   --layout-window-width-min: 1200px;
   --layout-window-height-min: auto;
+
+  --sds-gap-xs: #{pxToRem(4px)};
+  --sds-gap-sm: #{pxToRem(8px)};
+  --sds-gap-md: #{pxToRem(12px)};
+  --sds-gap-lg: #{pxToRem(16px)};
+  --sds-gap-xl: #{pxToRem(24px)};
+  --sds-gap-xxl: #{pxToRem(32px)};
 
   .Heading {
     margin-top: 0;

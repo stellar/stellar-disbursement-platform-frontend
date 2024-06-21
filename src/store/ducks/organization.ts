@@ -42,6 +42,32 @@ export const getOrgInfoAction = createAsyncThunk<
   },
 );
 
+export const getOrgCircleInfoAction = createAsyncThunk<
+  ApiOrgInfo,
+  undefined,
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "organization/getOrgCircleInfoAction",
+  async (_, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+
+    try {
+      const orgInfo = await getOrgInfo(token);
+      refreshSessionToken(dispatch);
+
+      return orgInfo;
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error fetching organization info: ${errorString}`,
+      });
+    }
+  },
+);
+
 export const updateOrgInfoAction = createAsyncThunk<
   string,
   OrgUpdateInfo,
@@ -177,11 +203,38 @@ const organizationSlice = createSlice({
         paymentCancellationPeriodDays: Number(
           action.payload.payment_cancellation_period_days || 0,
         ),
+        distributionAccount: {
+          circleWalletId:
+            action.payload.distribution_account?.circle_wallet_id || "",
+          status: action.payload.distribution_account?.status || "",
+          type: action.payload.distribution_account?.type || "",
+        },
       };
       state.status = "SUCCESS";
     });
     builder.addCase(getOrgInfoAction.rejected, (state, action) => {
       state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+      state.errorExtras = action.payload?.errorExtras;
+    });
+    // Get org circle info
+    // Not changing status to avoid losing page status
+    builder.addCase(getOrgCircleInfoAction.pending, (state = initialState) => {
+      state.errorString = undefined;
+      state.errorExtras = undefined;
+    });
+    builder.addCase(getOrgCircleInfoAction.fulfilled, (state, action) => {
+      state.data = {
+        ...state.data,
+        distributionAccount: {
+          circleWalletId:
+            action.payload.distribution_account?.circle_wallet_id || "",
+          status: action.payload.distribution_account?.status || "",
+          type: action.payload.distribution_account?.type || "",
+        },
+      };
+    });
+    builder.addCase(getOrgCircleInfoAction.rejected, (state, action) => {
       state.errorString = action.payload?.errorString;
       state.errorExtras = action.payload?.errorExtras;
     });
