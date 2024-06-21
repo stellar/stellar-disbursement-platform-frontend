@@ -1,21 +1,19 @@
 import { Banner, Icon, Link } from "@stellar/design-system";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { useRedux } from "hooks/useRedux";
 import { Routes } from "constants/settings";
+import { useCircleAccount } from "hooks/useCircleAccount";
 
 export const GlobalBanner = () => {
-  const { organization } = useRedux("organization");
-
   const navigate = useNavigate();
   const location = useLocation();
+  const { isCircleAccount, isCircleAccountPending } = useCircleAccount();
 
   // Show Circle Distribution Account missing info banner
   if (
     !location.pathname.includes("distribution-account") &&
-    organization.data.distributionAccount?.type ===
-      "DISTRIBUTION_ACCOUNT.CIRCLE.DB_VAULT" &&
-    organization.data.distributionAccount?.status === "PENDING_USER_ACTIVATION"
+    isCircleAccount &&
+    isCircleAccountPending
   ) {
     return (
       <div className="CircleDistributionAccountPending">

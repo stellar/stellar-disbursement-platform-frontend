@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { HORIZON_URL } from "constants/envVariables";
 import { fetchStellarApi } from "helpers/fetchStellarApi";
-import { shortenAccountKey } from "helpers/shortenAccountKey";
 import { ApiStellarAccount, AppError } from "types";
 
 export const useStellarAccountInfo = (stellarAddress: string | undefined) => {
@@ -16,9 +15,7 @@ export const useStellarAccountInfo = (stellarAddress: string | undefined) => {
         `${HORIZON_URL}/accounts/${stellarAddress}`,
         undefined,
         {
-          notFoundMessage: `${shortenAccountKey(
-            stellarAddress,
-          )} address was not found.`,
+          notFoundMessage: `${stellarAddress} address was not found.`,
         },
       );
     },

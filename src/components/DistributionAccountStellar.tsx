@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import {
   Card,
   Heading,
@@ -6,7 +5,6 @@ import {
   Title,
   Notification,
 } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
 
 import { InfoTooltip } from "components/InfoTooltip";
 import { SectionHeader } from "components/SectionHeader";
@@ -17,16 +15,14 @@ import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useRedux } from "hooks/useRedux";
 import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
-import { AppDispatch } from "store";
-import { getStellarAccountAction } from "store/ducks/organization";
 
 export const DistributionAccountStellar = () => {
   const { organization } = useRedux("organization");
-  const { assetBalances, distributionAccountPublicKey } = organization.data;
+  const { distributionAccountPublicKey } = organization.data;
 
-  useOrgAccountInfo(distributionAccountPublicKey);
-
-  const dispatch: AppDispatch = useDispatch();
+  const { balances, fetchAccountBalances } = useOrgAccountInfo(
+    distributionAccountPublicKey,
+  );
 
   const renderContent = () => {
     if (organization.status === "PENDING") {
@@ -46,7 +42,7 @@ export const DistributionAccountStellar = () => {
       );
     }
 
-    if (assetBalances?.length === 0) {
+    if (balances?.length === 0) {
       return <div className="Note">There are no distribution accounts</div>;
     }
 
@@ -73,14 +69,7 @@ export const DistributionAccountStellar = () => {
 
         <div className="WalletBalances">
           <Title size="sm">Current balance:</Title>
-
-          <>
-            {assetBalances?.map((a) => (
-              <Fragment key={a.address}>
-                {<AccountBalances accountInfo={a} />}
-              </Fragment>
-            ))}
-          </>
+          <AccountBalances accountBalances={balances} />
         </div>
       </>
     );
@@ -113,9 +102,9 @@ export const DistributionAccountStellar = () => {
 
         {/* TODO: hard-coded to a single wallet, figure out how to handle multiple */}
         <WalletTrustlines
-          balances={assetBalances?.[0].balances || undefined}
+          balances={balances || undefined}
           onSuccess={() => {
-            dispatch(getStellarAccountAction(distributionAccountPublicKey));
+            fetchAccountBalances();
           }}
         />
       </div>

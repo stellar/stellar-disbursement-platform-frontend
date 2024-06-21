@@ -70,7 +70,6 @@ export type OrganizationInitialState = {
     logo: string;
     distributionAccountPublicKey: string;
     timezoneUtcOffset: string;
-    assetBalances?: StellarAccountInfo[];
     isApprovalRequired: boolean | undefined;
     smsResendInterval: number;
     smsRegistrationMessageTemplate?: string;

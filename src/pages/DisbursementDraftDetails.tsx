@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Badge, Heading, Link, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useRedux } from "hooks/useRedux";
-import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
 import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
+import { useAllBalances } from "hooks/useAllBalances";
 import BigNumber from "bignumber.js";
 
 import { AppDispatch } from "store";
@@ -59,14 +59,13 @@ export const DisbursementDraftDetails = () => {
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
 
-  const allBalances = organization.data.assetBalances?.[0].balances;
-
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(
     setCsvFile,
     true,
   );
+  const { allBalances } = useAllBalances();
 
   const apiError = disbursementDrafts.errorString;
   const isLoading = disbursementDetails.status === "PENDING";
@@ -110,8 +109,6 @@ export const DisbursementDraftDetails = () => {
     disbursementDetails.details.id,
     disbursementDetails.status,
   ]);
-
-  useOrgAccountInfo(organization.data.distributionAccountPublicKey);
 
   useEffect(() => {
     setDraftDetails(disbursementDetails);
