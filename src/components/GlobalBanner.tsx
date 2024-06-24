@@ -9,7 +9,7 @@ export const GlobalBanner = () => {
   const location = useLocation();
   const { isCircleAccount, isCircleAccountPending } = useCircleAccount();
 
-  // Show Circle Distribution Account missing info banner
+  // Circle Distribution Account missing info banner
   if (
     !location.pathname.includes("distribution-account") &&
     isCircleAccount &&
