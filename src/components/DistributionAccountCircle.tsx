@@ -45,7 +45,7 @@ export const DistributionAccountCircle = () => {
     error: balanceError,
     isFetching: isBalancesFetching,
     isLoading: isBalancesLoading,
-  } = useCircleBalances(Boolean(distributionAccount?.circleWalletId));
+  } = useCircleBalances(distributionAccount?.circleWalletId || "");
 
   const {
     data: circleConfig,

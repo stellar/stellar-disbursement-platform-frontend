@@ -16,14 +16,17 @@ type BalancesApi = {
   }[];
 };
 
-export const useCircleBalances = (hasAccount: boolean) => {
+export const useCircleBalances = (
+  walletId: string,
+  isActive: boolean = true,
+) => {
   const query = useQuery<BalancesApi, AppError>({
-    queryKey: ["circle", "balances"],
+    queryKey: ["circle", "balances", { walletId }],
     queryFn: async () => {
       return await fetchApi(`${API_URL}/balances`);
     },
     keepPreviousData: true,
-    enabled: hasAccount,
+    enabled: Boolean(isActive && walletId),
   });
 
   return query;

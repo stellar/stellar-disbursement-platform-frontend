@@ -12,7 +12,8 @@ export const useAllBalances = () => {
 
   const { data: circleBalances, isSuccess: isCircleBalancesSuccess } =
     useCircleBalances(
-      Boolean(isCircleAccount && isCircleAccountActive && walletId),
+      walletId || "",
+      Boolean(isCircleAccount && isCircleAccountActive),
     );
   const { isDone, balances: stellarBalances } = useOrgAccountInfo(
     organization.data?.distributionAccountPublicKey,
