@@ -1,18 +1,18 @@
 import { AssetAmount } from "components/AssetAmount";
-import { StellarAccountInfo } from "types";
+import { AccountBalanceItem } from "types";
 
 interface AccountBalancesProps {
-  accountInfo: StellarAccountInfo | undefined;
+  accountBalances: AccountBalanceItem[] | undefined;
 }
 
-export const AccountBalances = ({ accountInfo }: AccountBalancesProps) => {
-  if (accountInfo?.balances?.length === 0) {
+export const AccountBalances = ({ accountBalances }: AccountBalancesProps) => {
+  if (!accountBalances || accountBalances?.length === 0) {
     return <div className="Note">There are no balances on this account</div>;
   }
 
   return (
     <>
-      {accountInfo?.balances.map((b) => (
+      {accountBalances.map((b) => (
         <AssetAmount
           key={`${b.assetCode}-${b.assetIssuer}`}
           amount={b.balance}

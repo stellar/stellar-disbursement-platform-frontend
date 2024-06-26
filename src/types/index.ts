@@ -70,11 +70,15 @@ export type OrganizationInitialState = {
     logo: string;
     distributionAccountPublicKey: string;
     timezoneUtcOffset: string;
-    assetBalances?: StellarAccountInfo[];
     isApprovalRequired: boolean | undefined;
     smsResendInterval: number;
     smsRegistrationMessageTemplate?: string;
     paymentCancellationPeriodDays: number;
+    distributionAccount?: {
+      circleWalletId?: string;
+      status: string;
+      type: string;
+    };
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -147,7 +151,7 @@ export type SortByReceivers = "created_at";
 
 export type SortByPayments = "created_at";
 
-export type StellarAccountBalance = {
+export type AccountBalanceItem = {
   balance: string;
   assetCode: string;
   assetIssuer: string;
@@ -155,7 +159,7 @@ export type StellarAccountBalance = {
 
 export type StellarAccountInfo = {
   address: string;
-  balances: StellarAccountBalance[];
+  balances: AccountBalanceItem[];
 };
 
 // =============================================================================
@@ -179,6 +183,15 @@ export type NewUser = {
   role: UserRole;
   email: string;
 };
+
+// =============================================================================
+// Distribution account
+// =============================================================================
+export type DistributionAccountStatus = "ACTIVE" | "PENDING_USER_ACTIVATION";
+export type DistributionAccountType =
+  | "DISTRIBUTION_ACCOUNT.STELLAR.ENV"
+  | "DISTRIBUTION_ACCOUNT.STELLAR.DB_VAULT"
+  | "DISTRIBUTION_ACCOUNT.CIRCLE.DB_VAULT";
 
 // =============================================================================
 // Disbursement
@@ -771,6 +784,12 @@ export type ApiOrgInfo = {
   sms_resend_interval: string;
   sms_registration_message_template?: string;
   payment_cancellation_period_days: string;
+  distribution_account?: {
+    address?: string;
+    circle_wallet_id?: string;
+    status: DistributionAccountStatus;
+    type: DistributionAccountType;
+  };
 };
 
 export type ApiStellarAccountBalance = {
