@@ -25,7 +25,7 @@ import { useCircleBalances } from "apiQueries/useCircleBalances";
 import { useUpdateCircleConfig } from "apiQueries/useUpdateCircleConfig";
 
 export const DistributionAccountCircle = () => {
-  const CIRCLE_API_MASKED_VALUE = "xxxx";
+  const CIRCLE_API_MASKED_VALUE = "**************";
 
   const { organization } = useRedux("organization");
   const { distributionAccount } = organization.data;

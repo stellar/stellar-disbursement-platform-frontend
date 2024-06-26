@@ -3,7 +3,7 @@ import { useCircleAccount } from "hooks/useCircleAccount";
 import { useRedux } from "hooks/useRedux";
 import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
 import { useCircleBalances } from "apiQueries/useCircleBalances";
-import { StellarAccountBalance } from "types";
+import { AccountBalanceItem } from "types";
 
 export const useAllBalances = () => {
   const { organization } = useRedux("organization");
@@ -20,7 +20,7 @@ export const useAllBalances = () => {
   );
 
   const [allBalances, setAllBalances] = useState<
-    StellarAccountBalance[] | undefined
+    AccountBalanceItem[] | undefined
   >(undefined);
 
   useEffect(() => {

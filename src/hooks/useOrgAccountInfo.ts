@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useStellarAccountInfo } from "apiQueries/useStellarAccountInfo";
-import { StellarAccountBalance } from "types";
+import { AccountBalanceItem } from "types";
 
 export const useOrgAccountInfo = (
   distributionAccountPublicKey: string | undefined,
 ): {
   address: string;
-  balances: StellarAccountBalance[];
+  balances: AccountBalanceItem[];
   fetchAccountBalances: () => void;
   isDone: boolean;
 } => {
-  const [balances, setBalances] = useState<StellarAccountBalance[]>([]);
+  const [balances, setBalances] = useState<AccountBalanceItem[]>([]);
   const [isDone, setIsDone] = useState(false);
 
   const {

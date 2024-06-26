@@ -18,12 +18,12 @@ import { useAssetsAdd } from "apiQueries/useAssetsAdd";
 import { useAssetsDelete } from "apiQueries/useAssetsDelete";
 import { parseApiError } from "helpers/parseApiError";
 
-import { ApiError, StellarAccountBalance } from "types";
+import { ApiError, AccountBalanceItem } from "types";
 
 import "./styles.scss";
 
 interface WalletTrustlinesProps {
-  balances?: StellarAccountBalance[];
+  balances?: AccountBalanceItem[];
   onSuccess: () => void;
 }
 

@@ -1,8 +1,8 @@
 import { AssetAmount } from "components/AssetAmount";
-import { StellarAccountBalance } from "types";
+import { AccountBalanceItem } from "types";
 
 interface AccountBalancesProps {
-  accountBalances: StellarAccountBalance[] | undefined;
+  accountBalances: AccountBalanceItem[] | undefined;
 }
 
 export const AccountBalances = ({ accountBalances }: AccountBalancesProps) => {
