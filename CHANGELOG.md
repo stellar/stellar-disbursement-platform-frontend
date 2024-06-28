@@ -37,10 +37,10 @@ Each organization has its own set of users, receivers, disbursements, etc.
 - Ability for users to add/update verification info for receivers.
   [#78](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/78)
 
-## [1.1.2](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.1.1...1.1.2)
+## [1.1.2](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.1.1...1.1.2)
 
 Attention, this version is compatible with the backend version
-[1.1.6](https://github.com/stellar/stellar-disbursement-platform-backend/releases/tag/1.1.6).
+[1.1.6](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/1.1.6).
 
 ### Added
 
@@ -62,14 +62,14 @@ Attention, this version is compatible with the backend version
   identify the account that needs to be funded.
   [#80](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/80)
 
-## [1.1.1](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.1.0...1.1.1)
+## [1.1.1](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.1.0...1.1.1)
 
 ### Fixed
 
 - Retry payment button was not showing up on failed payments
   [#72](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/72).
 
-## [1.1.0](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.1...1.1.0)
+## [1.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.0.1...1.1.0)
 
 ### Added
 
@@ -126,7 +126,7 @@ Attention, this version is compatible with the backend version
 - Fix table overflow crop
   [#55](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/55)
 
-## [1.0.0](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0-rc2...1.0.0)
+## [1.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.0.0-rc2...1.0.0)
 
 ### Added
 
@@ -155,7 +155,7 @@ Attention, this version is compatible with the backend version
 - Add warning message about Distribution account funds
   [#11](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/11)
 
-## [1.0.0.rc2](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0-rc1...1.0.0-rc2)
+## [1.0.0.rc2](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.0.0-rc1...1.0.0-rc2)
 
 ### Added
 
