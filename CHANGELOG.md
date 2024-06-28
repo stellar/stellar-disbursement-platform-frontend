@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [2.1.0-rc.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.1.0-rc.1) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.0.0...2.1.0-rc.1))
+
+Release of the Stellar Disbursement Platform v2.0.0. This release introduces the
+option to set different distribution account signers per tenant, as well as
+Circle support, so the tenant can choose to run their payments through the
+Circle API rather than directly on the Stellar network.
+
+This version is only compatible with the
+[stellar/stellar-disbursement-platform-backend] version `2.1.0-rc.1`.
+
+### Added
+
+- Implement support for Circle distribution accounts
+  [#114](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/114).
+  - When the account is of type Circle and it's status is not Active, a banner
+    id displayed to direct the user through the Circle setup.
+  - A new flow was added to allow the user to set up the Circle account.
+  - When the account is of type Circle, balances are fetched from the SDP
+    backend rather than the Stellar network.
+
 ## [2.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.0.0)
 
 ### Added
