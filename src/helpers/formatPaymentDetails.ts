@@ -13,6 +13,7 @@ export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
     totalAmount: payment.amount,
     assetCode: payment.asset.code,
     externalPaymentId: payment?.external_payment_id,
+    circleTransferRequestId: payment?.circle_transfer_request_id,
     status: payment.status,
     statusHistory: payment?.status_history
       .sort(
