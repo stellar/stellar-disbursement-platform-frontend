@@ -334,6 +334,7 @@ export type PaymentDetails = {
   status: PaymentStatus;
   statusHistory: PaymentDetailsStatusHistoryItem[];
   externalPaymentId?: string;
+  circleTransferRequestId?: string;
 };
 
 // =============================================================================
@@ -628,6 +629,7 @@ export type ApiPayment = {
   created_at: string;
   updated_at: string;
   external_payment_id?: string;
+  circle_transfer_request_id?: string;
 };
 
 export type ApiPayments = {
