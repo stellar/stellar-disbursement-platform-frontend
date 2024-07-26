@@ -16,8 +16,8 @@ export const NewDisbursementButton = ({
     navigate(Routes.DISBURSEMENT_NEW);
   };
 
-  const inActiveCircleAccount = isCircleAccount && isCircleAccountPending;
-  const disableMessage = inActiveCircleAccount
+  const inactiveCircleAccount = isCircleAccount && isCircleAccountPending;
+  const disableMessage = inactiveCircleAccount
     ? "Circle Account is not active"
     : "";
 
@@ -29,7 +29,7 @@ export const NewDisbursementButton = ({
         icon={<Icon.Add />}
         iconPosition="right"
         onClick={goToNewDisbursement}
-        disabled={inActiveCircleAccount}
+        disabled={inactiveCircleAccount}
         title={disableMessage}
       >
         New disbursement
