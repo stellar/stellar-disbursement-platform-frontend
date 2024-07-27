@@ -106,6 +106,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 
   const typeLabels: Record<DisbursementVerificationField | string, string> = {
     DATE_OF_BIRTH: "Date of Birth",
+    YEAR_MONTH: "Year & Month",
     PIN: "PIN",
     NATIONAL_ID_NUMBER: "National ID Number",
   };

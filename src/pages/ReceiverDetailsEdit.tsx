@@ -26,7 +26,11 @@ import {
 } from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
 
-type VerificationFieldType = "DATE_OF_BIRTH" | "PIN" | "NATIONAL_ID_NUMBER";
+type VerificationFieldType =
+  | "DATE_OF_BIRTH"
+  | "YEAR_MONTH"
+  | "PIN"
+  | "NATIONAL_ID_NUMBER";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();
@@ -38,6 +42,7 @@ export const ReceiverDetailsEdit = () => {
       email: "",
       externalId: "",
       dateOfBirth: "",
+      yearMonth: "",
       pin: "",
       nationalId: "",
     });
@@ -85,6 +90,7 @@ export const ReceiverDetailsEdit = () => {
       setReceiverEditFields({
         email: receiverDetails?.email ?? "",
         externalId: receiverDetails?.orgId ?? "",
+        yearMonth: getReadyOnlyValue("YEAR_MONTH"),
         dateOfBirth: getReadyOnlyValue("DATE_OF_BIRTH"),
         pin: getReadyOnlyValue("PIN"),
         nationalId: getReadyOnlyValue("NATIONAL_ID_NUMBER"),
@@ -122,7 +128,7 @@ export const ReceiverDetailsEdit = () => {
   ) => {
     e.preventDefault();
 
-    const { email, externalId, dateOfBirth, pin, nationalId } =
+    const { email, externalId, dateOfBirth, yearMonth, pin, nationalId } =
       receiverEditFields;
 
     if (receiverId) {
@@ -136,6 +142,10 @@ export const ReceiverDetailsEdit = () => {
           dataOfBirth: emptyValueIfNotChanged(
             dateOfBirth,
             getReadyOnlyValue("DATE_OF_BIRTH"),
+          ),
+          yearMonth: emptyValueIfNotChanged(
+            yearMonth,
+            getReadyOnlyValue("YEAR_MONTH"),
           ),
           pin: emptyValueIfNotChanged(pin, getReadyOnlyValue("PIN")),
           nationalId: emptyValueIfNotChanged(
@@ -155,6 +165,7 @@ export const ReceiverDetailsEdit = () => {
       email: receiverDetails?.email ?? "",
       externalId: receiverDetails?.orgId ?? "",
       dateOfBirth: getReadyOnlyValue("DATE_OF_BIRTH"),
+      yearMonth: getReadyOnlyValue("YEAR_MONTH"),
       pin: getReadyOnlyValue("PIN"),
       nationalId: getReadyOnlyValue("NATIONAL_ID_NUMBER"),
     });
@@ -193,6 +204,7 @@ export const ReceiverDetailsEdit = () => {
       receiverEditFields.email === receiverDetails?.email &&
       receiverEditFields.externalId === receiverDetails.orgId &&
       receiverEditFields.dateOfBirth === getReadyOnlyValue("DATE_OF_BIRTH") &&
+      receiverEditFields.yearMonth === getReadyOnlyValue("YEAR_MONTH") &&
       receiverEditFields.pin === getReadyOnlyValue("PIN") &&
       receiverEditFields.nationalId === getReadyOnlyValue("NATIONAL_ID_NUMBER");
 
@@ -270,6 +282,15 @@ export const ReceiverDetailsEdit = () => {
                       disabled={isVerificationFieldConfirmed(
                         "NATIONAL_ID_NUMBER",
                       )}
+                    />
+                    <Input
+                      id="yerMonth"
+                      name="yearMonth"
+                      label="Year & Month"
+                      fieldSize="sm"
+                      value={receiverEditFields.yearMonth}
+                      onChange={handleDetailsChange}
+                      disabled={isVerificationFieldConfirmed("YEAR_MONTH")}
                     />
                     <Input
                       id="dateOfBirth"
