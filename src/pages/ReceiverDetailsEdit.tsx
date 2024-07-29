@@ -284,7 +284,7 @@ export const ReceiverDetailsEdit = () => {
                       )}
                     />
                     <Input
-                      id="yerMonth"
+                      id="yearMonth"
                       name="yearMonth"
                       label="Year & Month"
                       fieldSize="sm"
