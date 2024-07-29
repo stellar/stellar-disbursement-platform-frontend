@@ -286,7 +286,7 @@ export const ReceiverDetailsEdit = () => {
                     <Input
                       id="yearMonth"
                       name="yearMonth"
-                      label="Year & Month"
+                      label="Date of Birth (Year & Month only)"
                       fieldSize="sm"
                       value={receiverEditFields.yearMonth}
                       onChange={handleDetailsChange}
