@@ -8,6 +8,7 @@ interface ReceiverDetailsUpdate {
   email: string;
   externalId: string;
   dataOfBirth: string;
+  yearMonth: string;
   pin: string;
   nationalId: string;
 }
@@ -19,6 +20,7 @@ export const useUpdateReceiverDetails = (receiverId: string | undefined) => {
         email: fields.email,
         external_id: fields.externalId,
         date_of_birth: fields.dataOfBirth,
+        year_month: fields.yearMonth,
         pin: fields.pin,
         national_id: fields.nationalId,
       });

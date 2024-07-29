@@ -205,6 +205,7 @@ export type DisbursementStatus =
 
 export type DisbursementVerificationField =
   | "DATE_OF_BIRTH"
+  | "YEAR_MONTH"
   | "PIN"
   | "NATIONAL_ID_NUMBER";
 
@@ -334,6 +335,7 @@ export type PaymentDetails = {
   status: PaymentStatus;
   statusHistory: PaymentDetailsStatusHistoryItem[];
   externalPaymentId?: string;
+  circleTransferRequestId?: string;
 };
 
 // =============================================================================
@@ -371,8 +373,8 @@ export type ReceiverWallet = {
   smsLastSentAt: string;
   totalPaymentsCount: number;
   totalAmountReceived: string;
-  withdrawnAmount: string;
-  assetCode: string;
+  withdrawnAmount?: string;
+  assetCode?: string;
 };
 
 export type ReceiverVerification = {
@@ -422,6 +424,7 @@ export type ReceiverDetails = {
 export type ReceiverEditFields = {
   email: string;
   externalId: string;
+  yearMonth: string;
   dateOfBirth: string;
   pin: string;
   nationalId: string;
@@ -628,6 +631,7 @@ export type ApiPayment = {
   created_at: string;
   updated_at: string;
   external_payment_id?: string;
+  circle_transfer_request_id?: string;
 };
 
 export type ApiPayments = {
