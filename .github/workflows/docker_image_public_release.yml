@@ -38,16 +38,16 @@ jobs:
             echo "TAGS=stellar/stellar-disbursement-platform-frontend:${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
           fi
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Login to DockerHub
-        uses: docker/login-action@v2.2.0
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push to DockerHub (release prd)
-        uses: docker/build-push-action@v4.1.1
+        uses: docker/build-push-action@v6.5.0
         with:
           push: true
           build-args: |
@@ -62,10 +62,10 @@ jobs:
     needs:
       - test-build
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Login to DockerHub
-        uses: docker/login-action@v2.2.0
+        uses: docker/login-action@v3.3.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -82,7 +82,7 @@ jobs:
           $GITHUB_OUTPUT
 
       - name: Build and push to DockerHub (develop branch)
-        uses: docker/build-push-action@v4.1.1
+        uses: docker/build-push-action@v6.5.0
         with:
           push: true
           build-args: |
