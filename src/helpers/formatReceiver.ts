@@ -6,8 +6,8 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
   email: receiver.email,
   orgId: receiver.external_id,
   // TODO: how to handle multiple
-  assetCode: receiver.received_amounts?.[0].asset_code,
-  totalReceived: receiver.received_amounts?.[0].received_amount,
+  assetCode: receiver.received_amounts?.[0]?.asset_code,
+  totalReceived: receiver.received_amounts?.[0]?.received_amount,
   stats: {
     paymentsTotalCount: Number(receiver.total_payments),
     paymentsSuccessfulCount: Number(receiver.successful_payments),
@@ -24,8 +24,8 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
     smsLastSentAt: w.last_sms_sent,
     totalPaymentsCount: Number(w.payments_received),
     // TODO: how to handle multiple
-    assetCode: w.received_amounts[0].asset_code,
-    totalAmountReceived: w.received_amounts[0].received_amount,
+    assetCode: w.received_amounts?.[0]?.asset_code,
+    totalAmountReceived: w.received_amounts?.[0]?.received_amount,
     // TODO: withdrawn amount
     withdrawnAmount: "",
   })),

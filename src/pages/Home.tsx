@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Heading, Icon } from "@stellar/design-system";
+import { Button, Heading } from "@stellar/design-system";
 
 import { AppDispatch } from "store";
 import { getDisbursementsAction } from "store/ducks/disbursements";
@@ -15,6 +15,7 @@ import { ShowForRoles } from "components/ShowForRoles";
 import { DisbursementsTable } from "components/DisbursementsTable";
 import { DashboardAnalytics } from "components/DashboardAnalytics";
 import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
+import { NewDisbursementButton } from "components/NewDisbursementButton";
 
 export const Home = () => {
   const { disbursements, userAccount } = useRedux(
@@ -59,13 +60,6 @@ export const Home = () => {
     navigate(Routes.DISBURSEMENTS);
   };
 
-  const goToNewDisbursement = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    event.preventDefault();
-    navigate(Routes.DISBURSEMENT_NEW);
-  };
-
   return (
     <>
       <SectionHeader>
@@ -102,14 +96,7 @@ export const Home = () => {
                 View all
               </Button>
               <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
-                <Button
-                  size="xs"
-                  variant="primary"
-                  icon={<Icon.Add />}
-                  onClick={goToNewDisbursement}
-                >
-                  New disbursement
-                </Button>
+                <NewDisbursementButton size="xs" />
               </ShowForRoles>
             </SectionHeader.Content>
           </SectionHeader.Row>

@@ -10,6 +10,7 @@ import { Routes } from "constants/settings";
 import { PrivateRoute } from "components/PrivateRoute";
 import { InnerPage } from "components/InnerPage";
 import { UserSession } from "components/UserSession";
+import { GlobalBanner } from "components/GlobalBanner";
 
 import { SignIn } from "pages/SignIn";
 import { MFAuth } from "pages/MFAuth";
@@ -60,6 +61,7 @@ export const App = () => {
       <QueryClientProvider client={queryClient}>
         <UserSession />
         <BrowserRouter>
+          <GlobalBanner />
           <RouterRoutes>
             {/* Sign in */}
             <Route

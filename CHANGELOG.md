@@ -8,6 +8,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [2.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.0.0...2.1.0))
+
+Release of the Stellar Disbursement Platform v2.1.0. This release introduces the
+option to set different distribution account signers per tenant, as well as
+Circle support, so the tenant can choose to run their payments through the
+Circle API rather than directly on the Stellar network.
+
+> [!Warning] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `2.1.0`.
+
+### Added
+
+- Implement support for Circle distribution accounts
+  [#114](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/114),
+  [#119](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/119).
+  - When the account is of type Circle and it's status is not Active, a banner
+    is displayed to direct the user through the Circle setup.
+  - A new flow was added to allow the user to set up the Circle account.
+  - When the account is of type Circle, balances are fetched from the SDP
+    backend rather than the Stellar network.
+  - The payment details page now shows the Circle transaction ID, when
+    available.
+- Support the new verification type `YEAR_MONTH`
+  [#121](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/121)
+- Added dependabot extra features
+  [#118](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/118)
+
+### Fix
+
+- Update some fields usage to optional, since they may not be present on the
+  payload comming from the backend
+  [#120](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/120)
+
+### Security
+
+- Update the `ws` and `braces` dependencies to fix security vulnerabilities.
+  [#117](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/117)
+
 ## [2.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.0.0)
 
 ### Added
@@ -37,10 +75,10 @@ Each organization has its own set of users, receivers, disbursements, etc.
 - Ability for users to add/update verification info for receivers.
   [#78](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/78)
 
-## [1.1.2](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.1.1...1.1.2)
+## [1.1.2](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.1.1...1.1.2)
 
 Attention, this version is compatible with the backend version
-[1.1.6](https://github.com/stellar/stellar-disbursement-platform-backend/releases/tag/1.1.6).
+[1.1.6](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/1.1.6).
 
 ### Added
 
@@ -62,14 +100,14 @@ Attention, this version is compatible with the backend version
   identify the account that needs to be funded.
   [#80](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/80)
 
-## [1.1.1](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.1.0...1.1.1)
+## [1.1.1](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.1.0...1.1.1)
 
 ### Fixed
 
 - Retry payment button was not showing up on failed payments
   [#72](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/72).
 
-## [1.1.0](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.1...1.1.0)
+## [1.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.0.1...1.1.0)
 
 ### Added
 
@@ -126,7 +164,7 @@ Attention, this version is compatible with the backend version
 - Fix table overflow crop
   [#55](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/55)
 
-## [1.0.0](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0-rc2...1.0.0)
+## [1.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.0.0-rc2...1.0.0)
 
 ### Added
 
@@ -155,7 +193,7 @@ Attention, this version is compatible with the backend version
 - Add warning message about Distribution account funds
   [#11](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/11)
 
-## [1.0.0.rc2](https://github.com/stellar/stellar-disbursement-platform-backend/compare/1.0.0-rc1...1.0.0-rc2)
+## [1.0.0.rc2](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/1.0.0-rc1...1.0.0-rc2)
 
 ### Added
 

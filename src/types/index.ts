@@ -70,11 +70,15 @@ export type OrganizationInitialState = {
     logo: string;
     distributionAccountPublicKey: string;
     timezoneUtcOffset: string;
-    assetBalances?: StellarAccountInfo[];
     isApprovalRequired: boolean | undefined;
     smsResendInterval: number;
     smsRegistrationMessageTemplate?: string;
     paymentCancellationPeriodDays: number;
+    distributionAccount?: {
+      circleWalletId?: string;
+      status: string;
+      type: string;
+    };
   };
   updateMessage?: string;
   status: ActionStatus | undefined;
@@ -147,7 +151,7 @@ export type SortByReceivers = "created_at";
 
 export type SortByPayments = "created_at";
 
-export type StellarAccountBalance = {
+export type AccountBalanceItem = {
   balance: string;
   assetCode: string;
   assetIssuer: string;
@@ -155,7 +159,7 @@ export type StellarAccountBalance = {
 
 export type StellarAccountInfo = {
   address: string;
-  balances: StellarAccountBalance[];
+  balances: AccountBalanceItem[];
 };
 
 // =============================================================================
@@ -181,6 +185,15 @@ export type NewUser = {
 };
 
 // =============================================================================
+// Distribution account
+// =============================================================================
+export type DistributionAccountStatus = "ACTIVE" | "PENDING_USER_ACTIVATION";
+export type DistributionAccountType =
+  | "DISTRIBUTION_ACCOUNT.STELLAR.ENV"
+  | "DISTRIBUTION_ACCOUNT.STELLAR.DB_VAULT"
+  | "DISTRIBUTION_ACCOUNT.CIRCLE.DB_VAULT";
+
+// =============================================================================
 // Disbursement
 // =============================================================================
 export type DisbursementStatus =
@@ -192,6 +205,7 @@ export type DisbursementStatus =
 
 export type DisbursementVerificationField =
   | "DATE_OF_BIRTH"
+  | "YEAR_MONTH"
   | "PIN"
   | "NATIONAL_ID_NUMBER";
 
@@ -321,6 +335,7 @@ export type PaymentDetails = {
   status: PaymentStatus;
   statusHistory: PaymentDetailsStatusHistoryItem[];
   externalPaymentId?: string;
+  circleTransferRequestId?: string;
 };
 
 // =============================================================================
@@ -358,8 +373,8 @@ export type ReceiverWallet = {
   smsLastSentAt: string;
   totalPaymentsCount: number;
   totalAmountReceived: string;
-  withdrawnAmount: string;
-  assetCode: string;
+  withdrawnAmount?: string;
+  assetCode?: string;
 };
 
 export type ReceiverVerification = {
@@ -409,6 +424,7 @@ export type ReceiverDetails = {
 export type ReceiverEditFields = {
   email: string;
   externalId: string;
+  yearMonth: string;
   dateOfBirth: string;
   pin: string;
   nationalId: string;
@@ -615,6 +631,7 @@ export type ApiPayment = {
   created_at: string;
   updated_at: string;
   external_payment_id?: string;
+  circle_transfer_request_id?: string;
 };
 
 export type ApiPayments = {
@@ -771,6 +788,12 @@ export type ApiOrgInfo = {
   sms_resend_interval: string;
   sms_registration_message_template?: string;
   payment_cancellation_period_days: string;
+  distribution_account?: {
+    address?: string;
+    circle_wallet_id?: string;
+    status: DistributionAccountStatus;
+    type: DistributionAccountType;
+  };
 };
 
 export type ApiStellarAccountBalance = {

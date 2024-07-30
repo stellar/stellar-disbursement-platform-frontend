@@ -18,7 +18,7 @@ import {
   submitDisbursementNewDraftAction,
 } from "store/ducks/disbursementDrafts";
 import { useRedux } from "hooks/useRedux";
-import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
+import { useAllBalances } from "hooks/useAllBalances";
 import { Routes } from "constants/settings";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
@@ -40,8 +40,6 @@ export const DisbursementsNew = () => {
     "disbursementDrafts",
     "organization",
   );
-  const { assetBalances, distributionAccountPublicKey } = organization.data;
-  const allBalances = assetBalances?.[0].balances;
 
   const [draftDetails, setDraftDetails] = useState<Disbursement>();
   const [customMessage, setCustomMessage] = useState("");
@@ -89,7 +87,7 @@ export const DisbursementsNew = () => {
     disbursementDrafts.status,
   ]);
 
-  useOrgAccountInfo(distributionAccountPublicKey);
+  const { allBalances } = useAllBalances();
 
   const resetState = () => {
     setCurrentStep("edit");
@@ -317,7 +315,7 @@ export const DisbursementsNew = () => {
               <Title size="md">Current balance</Title>
             </InfoTooltip>
             <div className="DisbursementForm__balances">
-              <AccountBalances accountInfo={assetBalances?.[0]} />
+              <AccountBalances accountBalances={allBalances} />
             </div>
           </Card>
 
