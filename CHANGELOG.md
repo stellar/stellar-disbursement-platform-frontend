@@ -8,25 +8,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
-## [2.1.0-rc.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.1.0-rc.1) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.0.0...2.1.0-rc.1))
+## [2.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.0.0...2.1.0))
 
-Release of the Stellar Disbursement Platform v2.0.0. This release introduces the
+Release of the Stellar Disbursement Platform v2.1.0. This release introduces the
 option to set different distribution account signers per tenant, as well as
 Circle support, so the tenant can choose to run their payments through the
 Circle API rather than directly on the Stellar network.
 
-This version is only compatible with the
-[stellar/stellar-disbursement-platform-backend] version `2.1.0-rc.1`.
+> [!Warning] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `2.1.0`.
 
 ### Added
 
 - Implement support for Circle distribution accounts
-  [#114](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/114).
+  [#114](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/114),
+  [#119](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/119).
   - When the account is of type Circle and it's status is not Active, a banner
-    id displayed to direct the user through the Circle setup.
+    is displayed to direct the user through the Circle setup.
   - A new flow was added to allow the user to set up the Circle account.
   - When the account is of type Circle, balances are fetched from the SDP
     backend rather than the Stellar network.
+  - The payment details page now shows the Circle transaction ID, when
+    available.
+- Support the new verification type `YEAR_MONTH`
+  [#121](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/121)
+- Added dependabot extra features
+  [#118](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/118)
+
+### Fix
+
+- Update some fields usage to optional, since they may not be present on the
+  payload comming from the backend
+  [#120](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/120)
+
+### Security
+
+- Update the `ws` and `braces` dependencies to fix security vulnerabilities.
+  [#117](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/117)
 
 ## [2.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.0.0)
 
