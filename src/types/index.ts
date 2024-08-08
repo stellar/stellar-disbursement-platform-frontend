@@ -573,6 +573,7 @@ export type ApiDisbursement = {
   total_payments_sent: number;
   total_payments_failed: number;
   total_payments_canceled: number;
+  total_payments_draft: number;
   total_payments_remaining: number;
   amount_disbursed: string;
   total_amount: string;
