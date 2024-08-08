@@ -437,6 +437,7 @@ export type HomeStatistics = {
   paymentsSuccessfulCounts: number;
   paymentsFailedCount: number;
   paymentsCanceledCount: number;
+  paymentsDraftCount: number;
   paymentsRemainingCount: number;
   paymentsTotalCount: number;
   walletsTotalCount: number;

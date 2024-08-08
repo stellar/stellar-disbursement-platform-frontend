@@ -19,8 +19,8 @@ export const DashboardAnalytics = () => {
   } = useStatistics(userAccount.isAuthenticated);
 
   const calculateRate = () => {
-    if (stats?.paymentsSuccessfulCounts && stats?.paymentsTotalCount) {
-      return Number(stats.paymentsSuccessfulCounts / stats.paymentsTotalCount);
+    if (stats?.paymentsSuccessfulCounts && stats?.paymentsTotalCount && stats?.paymentsDraftCount) {
+      return Number(stats.paymentsSuccessfulCounts / (stats.paymentsTotalCount - stats.paymentsDraftCount));
     }
 
     return 0;
