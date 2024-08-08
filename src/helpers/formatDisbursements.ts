@@ -24,7 +24,6 @@ export const formatDisbursement = (
     paymentsSuccessfulCount: disbursement.total_payments_sent,
     paymentsFailedCount: disbursement.total_payments_failed,
     paymentsCanceledCount: disbursement.total_payments_canceled,
-    paymentsDraftCount: disbursement.total_payments_draft,
     paymentsRemainingCount: disbursement.total_payments_remaining,
     paymentsTotalCount: disbursement.total_payments,
     totalAmount: disbursement.total_amount,
