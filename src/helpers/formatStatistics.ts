@@ -5,6 +5,7 @@ export const formatStatistics = (statistics: ApiStatistics): HomeStatistics => {
     paymentsSuccessfulCounts: statistics.payment_counters.success,
     paymentsFailedCount: statistics.payment_counters.failed,
     paymentsCanceledCount: statistics.payment_counters.canceled,
+    paymentsDraftCount: statistics.payment_counters.draft,
     paymentsRemainingCount: Number(
       statistics.payment_counters.total -
         statistics.payment_counters.success -
