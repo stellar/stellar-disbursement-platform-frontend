@@ -14,6 +14,7 @@ import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { AssetAmount } from "components/AssetAmount";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
+import { useAllBalances } from "hooks/useAllBalances";
 import {
   ApiAsset,
   ApiCountry,
@@ -96,6 +97,9 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     error: verificationTypesError,
     isFetching: isVerificationTypesFetching,
   } = useVerificationTypes();
+
+  // Get balances for distribution account
+  const { allBalances } = useAllBalances();
 
   const apiErrors = [
     countriesError?.message,
@@ -324,12 +328,24 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           value={details.asset.id}
           disabled={isWalletAssetsFetching || !details.wallet.id}
         >
-          {renderDropdownDefault(isWalletAssetsFetching)}
-          {walletAssets?.map((asset: ApiAsset) => (
-            <option key={asset.id} value={asset.id}>
-              {asset.code}
-            </option>
-          ))}
+          {walletAssets
+            ?.filter((wa: ApiAsset) => {
+              // Check for the default native asset
+              if (wa.code == "XLM") {
+                return wa;
+              }
+              // Check that the asset is non-native asset that has a distribution account balance
+              return allBalances?.find(
+                (balance) =>
+                  balance.assetCode === wa.code &&
+                  balance.assetIssuer === wa.issuer,
+              );
+            })
+            ?.map((wa: ApiAsset) => (
+              <option key={wa.id} value={wa.id}>
+                {wa.code}
+              </option>
+            ))}
         </Select>
 
         <Select
