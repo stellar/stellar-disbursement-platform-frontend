@@ -155,6 +155,9 @@ module.exports = {
         REACT_APP_RECAPTCHA_SITE_KEY: JSON.stringify(
           process.env.REACT_APP_RECAPTCHA_SITE_KEY || "",
         ),
+        REACT_APP_SINGLE_TENANT_MODE: JSON.stringify(
+          process.env.REACT_APP_SINGLE_TENANT_MODE || "",
+        ),
         REACT_APP_USE_SSO: JSON.stringify(process.env.REACT_APP_USE_SSO || ""),
         REACT_APP_OIDC_AUTHORITY: JSON.stringify(
           process.env.REACT_APP_OIDC_AUTHORITY || "",
