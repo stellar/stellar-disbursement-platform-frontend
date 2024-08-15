@@ -8,6 +8,7 @@ import {
 } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 
+import { SINGLE_TENANT_MODE } from "constants/envVariables";
 import { ORG_NAME_INFO_TEXT } from "constants/settings";
 import { useResetPassword } from "apiQueries/useResetPassword";
 import { validateNewPassword } from "helpers/validateNewPassword";
@@ -103,7 +104,10 @@ export const ResetPassword = () => {
                   a combination of uppercase letters, lowercase letters and
                   numbers
                 </li>
-                <li>at least one symbol from: <span className="CodeSnippet">! @ # $ % ^ &amp; *</span></li>
+                <li>
+                  at least one symbol from:{" "}
+                  <span className="CodeSnippet">! @ # $ % ^ &amp; *</span>
+                </li>
               </ul>
             </div>
           </div>
@@ -120,6 +124,7 @@ export const ResetPassword = () => {
             onChange={(e) => setOrganizationName(e.target.value)}
             value={organizationName}
             type="text"
+            disabled={SINGLE_TENANT_MODE}
           />
 
           <Input
