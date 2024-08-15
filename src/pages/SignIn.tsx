@@ -13,7 +13,11 @@ import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
 import { signInAction } from "store/ducks/userAccount";
-import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import {
+  USE_SSO,
+  RECAPTCHA_SITE_KEY,
+  SINGLE_TENANT_MODE,
+} from "constants/envVariables";
 import {
   Routes,
   LOCAL_STORAGE_DEVICE_ID,
@@ -149,6 +153,7 @@ export const SignIn = () => {
                 onChange={(e) => setOrganizationName(e.target.value)}
                 value={organizationName}
                 type="text"
+                disabled={SINGLE_TENANT_MODE}
               />
               <Input
                 fieldSize="sm"
