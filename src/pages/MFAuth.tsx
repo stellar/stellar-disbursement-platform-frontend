@@ -13,7 +13,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
-import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import {
+  USE_SSO,
+  RECAPTCHA_SITE_KEY,
+  SINGLE_TENANT_MODE,
+} from "constants/envVariables";
 import {
   Routes,
   LOCAL_STORAGE_DEVICE_ID,
@@ -134,20 +138,21 @@ export const MFAuth = () => {
 
           {!USE_SSO && (
             <>
-              <Input
-                fieldSize="sm"
-                id="2fa-organization-name"
-                name="2fa-organization-name"
-                label={
-                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                    Organization name
-                  </InfoTooltip>
-                }
-                onChange={(e) => setOrganizationName(e.target.value)}
-                value={organizationName}
-                type="text"
-              />
-
+              {SINGLE_TENANT_MODE ? null : (
+                <Input
+                  fieldSize="sm"
+                  id="2fa-organization-name"
+                  name="2fa-organization-name"
+                  label={
+                    <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                      Organization name
+                    </InfoTooltip>
+                  }
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  value={organizationName}
+                  type="text"
+                />
+              )}
               <Input
                 fieldSize="sm"
                 id="2fa-verification-code"

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
 import { ORG_NAME_INFO_TEXT } from "constants/settings";
-import { RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import { RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "constants/envVariables";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { InfoTooltip } from "components/InfoTooltip";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
@@ -84,19 +84,21 @@ export const ForgotPassword = () => {
             Forgot password
           </Heading>
 
-          <Input
-            fieldSize="sm"
-            id="fp-organization-name"
-            name="fp-organization-name"
-            label={
-              <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                Organization name
-              </InfoTooltip>
-            }
-            onChange={(e) => setOrganizationName(e.target.value)}
-            value={organizationName}
-            type="text"
-          />
+          {SINGLE_TENANT_MODE ? null : (
+            <Input
+              fieldSize="sm"
+              id="fp-organization-name"
+              name="fp-organization-name"
+              label={
+                <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                  Organization name
+                </InfoTooltip>
+              }
+              onChange={(e) => setOrganizationName(e.target.value)}
+              value={organizationName}
+              type="text"
+            />
+          )}
           <Input
             fieldSize="sm"
             id="fp-email"

@@ -13,7 +13,11 @@ import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
 import { signInAction } from "store/ducks/userAccount";
-import { USE_SSO, RECAPTCHA_SITE_KEY } from "constants/envVariables";
+import {
+  USE_SSO,
+  RECAPTCHA_SITE_KEY,
+  SINGLE_TENANT_MODE,
+} from "constants/envVariables";
 import {
   Routes,
   LOCAL_STORAGE_DEVICE_ID,
@@ -137,19 +141,21 @@ export const SignIn = () => {
           </Heading>
           {!USE_SSO && (
             <>
-              <Input
-                fieldSize="sm"
-                id="si-organization-name"
-                name="si-organization-name"
-                label={
-                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                    Organization name
-                  </InfoTooltip>
-                }
-                onChange={(e) => setOrganizationName(e.target.value)}
-                value={organizationName}
-                type="text"
-              />
+              {SINGLE_TENANT_MODE ? null : (
+                <Input
+                  fieldSize="sm"
+                  id="si-organization-name"
+                  name="si-organization-name"
+                  label={
+                    <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                      Organization name
+                    </InfoTooltip>
+                  }
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  value={organizationName}
+                  type="text"
+                />
+              )}
               <Input
                 fieldSize="sm"
                 id="si-email"
