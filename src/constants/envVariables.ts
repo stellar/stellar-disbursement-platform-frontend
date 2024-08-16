@@ -47,11 +47,11 @@ const generateEnvConfig = async () => {
     RECAPTCHA_SITE_KEY:
       process?.env?.REACT_APP_RECAPTCHA_SITE_KEY ||
       window._env_.RECAPTCHA_SITE_KEY,
-    SINGLE_TENANT_MODE:
-      process?.env?.REACT_APP_SINGLE_TENANT_MODE === "true" ||
-      window._env_.SINGLE_TENANT_MODE,
-    USE_SSO:
-      process?.env?.REACT_APP_USE_SSO === "true" || window?._env_?.USE_SSO,
+    SINGLE_TENANT_MODE: Boolean(
+      process?.env?.REACT_APP_SINGLE_TENANT_MODE ||
+        window._env_.SINGLE_TENANT_MODE,
+    ),
+    USE_SSO: Boolean(process?.env?.REACT_APP_USE_SSO || window?._env_?.USE_SSO),
     OIDC_AUTHORITY:
       process?.env?.REACT_APP_OIDC_AUTHORITY || window?._env_?.OIDC_AUTHORITY,
     OIDC_CLIENT_ID:

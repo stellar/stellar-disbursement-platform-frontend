@@ -141,20 +141,21 @@ export const SignIn = () => {
           </Heading>
           {!USE_SSO && (
             <>
-              <Input
-                fieldSize="sm"
-                id="si-organization-name"
-                name="si-organization-name"
-                label={
-                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                    Organization name
-                  </InfoTooltip>
-                }
-                onChange={(e) => setOrganizationName(e.target.value)}
-                value={organizationName}
-                type="text"
-                disabled={SINGLE_TENANT_MODE}
-              />
+              {SINGLE_TENANT_MODE ? null : (
+                <Input
+                  fieldSize="sm"
+                  id="si-organization-name"
+                  name="si-organization-name"
+                  label={
+                    <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                      Organization name
+                    </InfoTooltip>
+                  }
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  value={organizationName}
+                  type="text"
+                />
+              )}
               <Input
                 fieldSize="sm"
                 id="si-email"

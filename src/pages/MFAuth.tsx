@@ -138,21 +138,21 @@ export const MFAuth = () => {
 
           {!USE_SSO && (
             <>
-              <Input
-                fieldSize="sm"
-                id="2fa-organization-name"
-                name="2fa-organization-name"
-                label={
-                  <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                    Organization name
-                  </InfoTooltip>
-                }
-                onChange={(e) => setOrganizationName(e.target.value)}
-                value={organizationName}
-                type="text"
-                disabled={SINGLE_TENANT_MODE}
-              />
-
+              {SINGLE_TENANT_MODE ? null : (
+                <Input
+                  fieldSize="sm"
+                  id="2fa-organization-name"
+                  name="2fa-organization-name"
+                  label={
+                    <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                      Organization name
+                    </InfoTooltip>
+                  }
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  value={organizationName}
+                  type="text"
+                />
+              )}
               <Input
                 fieldSize="sm"
                 id="2fa-verification-code"
