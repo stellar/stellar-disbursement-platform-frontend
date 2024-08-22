@@ -158,7 +158,7 @@ export const MFAuth = () => {
                 id="2fa-verification-code"
                 name="2fa-verification-code"
                 label="Verification Code"
-                placeholder="000-000"
+                placeholder="000000"
                 onChange={(e) => setMfaCode(e.target.value)}
                 type="text"
               />
