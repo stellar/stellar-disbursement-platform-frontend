@@ -328,6 +328,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           value={details.asset.id}
           disabled={isWalletAssetsFetching || !details.wallet.id}
         >
+          {renderDropdownDefault(isWalletAssetsFetching)}
           {walletAssets
             ?.filter((wa: ApiAsset) => {
               // Check for the default native asset
