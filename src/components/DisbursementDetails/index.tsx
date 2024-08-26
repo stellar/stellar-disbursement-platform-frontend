@@ -332,11 +332,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           {walletAssets
             ?.filter((wa: ApiAsset) => {
               // Check for the default native asset
-              if (wa.code == "XLM") {
-                return wa;
+              if (wa.code == "XLM" && wa.issuer == "") {
+                return true;
               }
-              // Check that the asset is non-native asset that has a distribution account balance
-              return allBalances?.find(
+              // Check that the asset is a non-native asset that has a distribution account balance
+              return !!allBalances?.find(
                 (balance) =>
                   balance.assetCode === wa.code &&
                   balance.assetIssuer === wa.issuer,
