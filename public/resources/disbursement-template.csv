@@ -1,5 +1,5 @@
-phone,id,amount,verification,paymentID
+phone,email,id,amount,verification,paymentID
 "--- Below are EXAMPLE rows for each Verification.","Please DELETE these rows before uploading your actual data ---",,,
-+1234567890,RECEIVER_01,0.2,1980-01-01,PAY_01
-+1234567891,RECEIVER_11,0.35,55066,PAY_06
-+1234567892,RECEIVER_33,1.15,9D0000024,
++1234567890,foo@test.com,RECEIVER_01,0.2,1980-01-01,PAY_01
+,bar@test.com,RECEIVER_11,0.35,55066,PAY_06
++1234567892,,RECEIVER_33,1.15,9D0000024,
