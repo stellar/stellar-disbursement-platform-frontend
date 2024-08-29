@@ -165,19 +165,15 @@ export const DisbursementsNew = () => {
       const reader = new FileReader();
       reader.readAsText(file);
       const handleLoadFile = () => {
-        const totalAmount = reader.result
-          ?.toString()
-          .split("\n")
-          .slice(1)
-          .reduce(
-            (accumulator, line) =>
-              !line
-                ? accumulator
-                : BigNumber(accumulator)
-                    .plus(BigNumber(line.split(",")[2]))
-                    .toNumber(),
-            0,
-          );
+        const csvRows = reader.result?.toString().split("\n");
+        const totalAmount = csvRows?.slice(1).reduce((accumulator, line) => {
+          const amountColumn = csvRows[0].split(",").indexOf("amount");
+          return !line
+            ? accumulator
+            : BigNumber(accumulator)
+                .plus(BigNumber(line.split(",")[amountColumn]))
+                .toNumber();
+        }, 0);
 
         setDraftDetails({
           ...draftDetails,
