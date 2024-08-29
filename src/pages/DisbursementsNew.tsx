@@ -161,43 +161,42 @@ export const DisbursementsNew = () => {
   };
 
   const calculateDisbursementTotalAmountFromFile = (file?: File) => {
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsText(file);
-      const handleLoadFile = () => {
-        const totalAmount = reader.result
-          ?.toString()
-          .split("\n")
-          .slice(1)
-          .reduce(
-            (accumulator, line) =>
-              !line
-                ? accumulator
-                : BigNumber(accumulator)
-                    .plus(BigNumber(line.split(",")[2]))
-                    .toNumber(),
-            0,
-          );
+    if (!file) return;
 
-        setDraftDetails({
-          ...draftDetails,
-          stats: {
-            ...draftDetails?.stats,
-            totalAmount: totalAmount?.toString() ?? "0",
-          },
-        } as Disbursement);
+    const reader = new FileReader();
+    reader.readAsText(file);
 
-        // update future balance
-        const assetBalance = allBalances?.find(
-          (a) => a.assetCode === draftDetails?.asset.code,
-        )?.balance;
+    reader.onload = () => {
+      const csvRows = reader.result?.toString();
+      if (!csvRows) return;
 
-        if (totalAmount) {
-          setFutureBalance(Number(assetBalance) - totalAmount);
-        }
-      };
-      reader.addEventListener("load", handleLoadFile, false);
-    }
+      const [header, ...rows] = csvRows.split("\n");
+      const amountIndex = header.split(",").indexOf("amount");
+      if (amountIndex === -1) return;
+
+      const totalAmount = rows.reduce((accumulator, line) => {
+        return !line
+          ? accumulator
+          : accumulator.plus(BigNumber(line.split(",")[amountIndex]));
+      }, BigNumber(0));
+
+      setDraftDetails({
+        ...draftDetails,
+        stats: {
+          ...draftDetails?.stats,
+          totalAmount: totalAmount?.toString() ?? "0",
+        },
+      } as Disbursement);
+
+      // update future balance
+      const assetBalance =
+        allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)
+          ?.balance ?? "0";
+
+      if (totalAmount) {
+        setFutureBalance(Number(assetBalance) - totalAmount.toNumber());
+      }
+    };
   };
 
   const handleViewDetails = () => {
