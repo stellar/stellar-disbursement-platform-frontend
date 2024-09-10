@@ -20,7 +20,7 @@ export const postDisbursement = async (
       asset_id: disbursement.asset.id,
       country_code: disbursement.country.code,
       verification_field: disbursement.verificationField || "",
-      sms_registration_message_template:
+      receiver_registration_message_template:
         disbursement.smsRegistrationMessageTemplate,
     }),
   });

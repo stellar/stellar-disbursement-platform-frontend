@@ -168,8 +168,10 @@ const organizationSlice = createSlice({
         timezoneUtcOffset: action.payload.timezone_utc_offset,
         isApprovalRequired: action.payload.is_approval_required,
         smsRegistrationMessageTemplate:
-          action.payload.sms_registration_message_template,
-        smsResendInterval: Number(action.payload.sms_resend_interval || 0),
+          action.payload.receiver_registration_message_template,
+        smsResendInterval: Number(
+          action.payload.receiver_invitation_resend_interval_days || 0,
+        ),
         paymentCancellationPeriodDays: Number(
           action.payload.payment_cancellation_period_days || 0,
         ),

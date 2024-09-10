@@ -557,7 +557,7 @@ export type ApiDisbursement = {
   status: DisbursementStatus;
   verification_field: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
-  sms_registration_message_template: string;
+  receiver_registration_message_template: string;
   created_at: string;
   updated_at: string;
   created_by?: {
@@ -786,8 +786,8 @@ export type ApiOrgInfo = {
   distribution_account_public_key: string;
   timezone_utc_offset: string;
   is_approval_required: boolean;
-  sms_resend_interval: string;
-  sms_registration_message_template?: string;
+  receiver_invitation_resend_interval_days: string;
+  receiver_registration_message_template?: string;
   payment_cancellation_period_days: string;
   distribution_account?: {
     address?: string;

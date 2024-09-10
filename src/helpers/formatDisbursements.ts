@@ -56,5 +56,5 @@ export const formatDisbursement = (
       userId: h.user_id,
     })),
   smsRegistrationMessageTemplate:
-    disbursement.sms_registration_message_template,
+    disbursement.receiver_registration_message_template,
 });

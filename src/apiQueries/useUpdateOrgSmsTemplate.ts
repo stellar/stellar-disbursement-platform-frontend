@@ -10,7 +10,7 @@ export const useUpdateSmsTemplate = () => {
 
       formData.append(
         "data",
-        `{"sms_registration_message_template": "${template}"}`,
+        `{"receiver_registration_message_template": "${template}"}`,
       );
 
       return fetchApi(
