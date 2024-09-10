@@ -8,7 +8,10 @@ export const useUpdateOrgSmsRetryInterval = () => {
     mutationFn: (retryInterval: number) => {
       const formData = new FormData();
 
-      formData.append("data", `{"sms_resend_interval": ${retryInterval}}`);
+      formData.append(
+        "data",
+        `{"receiver_invitation_resend_interval_days": ${retryInterval}}`,
+      );
 
       return fetchApi(
         `${API_URL}/organization`,
