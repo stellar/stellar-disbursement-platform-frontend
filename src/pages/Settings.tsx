@@ -3,7 +3,7 @@ import { Heading } from "@stellar/design-system";
 import { SectionHeader } from "components/SectionHeader";
 import { SettingsTeamMembers } from "components/SettingsTeamMembers";
 import { ReceiverInviteMessage } from "components/ReceiverInviteMessage";
-import { SettingsEnableSmsRetry } from "components/SettingsEnableSmsRetry";
+import { SettingsEnableReceiverInvitationRetry } from "components/SettingsEnableReceiverInvitationRetry";
 import { SettingsEnablePaymentCancellation } from "components/SettingsEnablePaymentCancellation";
 
 export const Settings = () => {
@@ -23,8 +23,8 @@ export const Settings = () => {
         {/* Enable automatic ready payments cancellation */}
         <SettingsEnablePaymentCancellation />
 
-        {/* Enable SMS retry */}
-        <SettingsEnableSmsRetry />
+        {/* Enable Receiver Invitation retry */}
+        <SettingsEnableReceiverInvitationRetry />
 
         {/* Customize receiver wallet invite */}
         <ReceiverInviteMessage />

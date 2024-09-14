@@ -21,7 +21,7 @@ export const postDisbursement = async (
       country_code: disbursement.country.code,
       verification_field: disbursement.verificationField || "",
       receiver_registration_message_template:
-        disbursement.smsRegistrationMessageTemplate,
+        disbursement.receiverRegistrationMessageTemplate,
     }),
   });
 

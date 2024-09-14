@@ -37,7 +37,8 @@ export const ReceiverInviteMessage = () => {
   const [customMessageInput, setCustomMessageInput] = useState("");
 
   const customMessage =
-    organization.data.smsRegistrationMessageTemplate ?? PLACEHOLDER_MESSAGE;
+    organization.data.receiverRegistrationMessageTemplate ??
+    PLACEHOLDER_MESSAGE;
 
   const { isLoading, data, isError, isSuccess, error, mutateAsync, reset } =
     useUpdateSmsTemplate();
@@ -45,12 +46,12 @@ export const ReceiverInviteMessage = () => {
   // Pre-select option when page loads
   useEffect(() => {
     setSelectedOption(
-      organization.data.smsRegistrationMessageTemplate
+      organization.data.receiverRegistrationMessageTemplate
         ? radioValue.CUSTOM
         : radioValue.STANDARD,
     );
   }, [
-    organization.data.smsRegistrationMessageTemplate,
+    organization.data.receiverRegistrationMessageTemplate,
     radioValue.CUSTOM,
     radioValue.STANDARD,
   ]);
@@ -84,7 +85,7 @@ export const ReceiverInviteMessage = () => {
     // Adding little delay to make sure reset is done
     const t = setTimeout(() => {
       if (event.target.value === radioValue.STANDARD) {
-        if (organization.data.smsRegistrationMessageTemplate) {
+        if (organization.data.receiverRegistrationMessageTemplate) {
           mutateAsync("");
         }
 

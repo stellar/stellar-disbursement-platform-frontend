@@ -55,6 +55,6 @@ export const formatDisbursement = (
       timestamp: h.timestamp,
       userId: h.user_id,
     })),
-  smsRegistrationMessageTemplate:
+  receiverRegistrationMessageTemplate:
     disbursement.receiver_registration_message_template,
 });

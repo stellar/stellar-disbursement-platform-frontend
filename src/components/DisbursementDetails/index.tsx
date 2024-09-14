@@ -54,7 +54,7 @@ const initDetails: Disbursement = {
   createdAt: "",
   status: "DRAFT",
   statusHistory: [],
-  smsRegistrationMessageTemplate: "",
+  receiverRegistrationMessageTemplate: "",
   stats: undefined,
 };
 

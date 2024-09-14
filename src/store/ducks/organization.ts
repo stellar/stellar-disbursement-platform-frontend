@@ -130,7 +130,7 @@ const initialState: OrganizationInitialState = {
     distributionAccountPublicKey: "",
     timezoneUtcOffset: "",
     isApprovalRequired: undefined,
-    smsResendInterval: 0,
+    receiverInvitationResendInterval: 0,
     paymentCancellationPeriodDays: 0,
   },
   updateMessage: undefined,
@@ -167,9 +167,9 @@ const organizationSlice = createSlice({
           action.payload.distribution_account_public_key,
         timezoneUtcOffset: action.payload.timezone_utc_offset,
         isApprovalRequired: action.payload.is_approval_required,
-        smsRegistrationMessageTemplate:
+        receiverRegistrationMessageTemplate:
           action.payload.receiver_registration_message_template,
-        smsResendInterval: Number(
+        receiverInvitationResendInterval: Number(
           action.payload.receiver_invitation_resend_interval_days || 0,
         ),
         paymentCancellationPeriodDays: Number(

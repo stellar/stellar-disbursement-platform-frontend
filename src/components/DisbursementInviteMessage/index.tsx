@@ -113,10 +113,10 @@ export const DisbursementInviteMessage = ({
                 rows={5}
                 value={
                   isEditMessage
-                    ? organization.data.smsRegistrationMessageTemplate ??
+                    ? organization.data.receiverRegistrationMessageTemplate ??
                       standardOrgMessage
                     : draftMessage ??
-                      organization.data.smsRegistrationMessageTemplate ??
+                      organization.data.receiverRegistrationMessageTemplate ??
                       standardOrgMessage
                 }
               ></Textarea>
