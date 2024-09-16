@@ -79,7 +79,7 @@ export const SettingsEnableReceiverInvitationRetry = () => {
               className="SdpSettings__label"
               htmlFor="receiver-invitation-retry"
             >
-              Enable automatic Message retry
+              Enable automatic message retry
             </label>
             <div className="Toggle__wrapper">
               {isLoading ? <Loader size="1rem" /> : null}
