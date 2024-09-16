@@ -218,7 +218,7 @@ export const DisbursementDetails = () => {
             <div className="StatCards__card__column">
               <div className="StatCards__card__item StatCards__card__item--inline">
                 <label className="StatCards__card__item__label">
-                  Receivers SMS was sent to
+                  Receivers invitation was sent to
                 </label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(

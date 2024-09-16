@@ -308,7 +308,7 @@ export const DisbursementDraftDetails = () => {
             <DisbursementInviteMessage
               isEditMessage={false}
               draftMessage={
-                draftDetails?.details.smsRegistrationMessageTemplate
+                draftDetails?.details.receiverRegistrationMessageTemplate
               }
             />
 
@@ -347,7 +347,9 @@ export const DisbursementDraftDetails = () => {
           />
           <DisbursementInviteMessage
             isEditMessage={false}
-            draftMessage={draftDetails?.details.smsRegistrationMessageTemplate}
+            draftMessage={
+              draftDetails?.details.receiverRegistrationMessageTemplate
+            }
           />
           <DisbursementInstructions
             variant={"preview"}

@@ -112,7 +112,7 @@ export const DisbursementsNew = () => {
         saveDisbursementDraftAction({
           details: {
             ...draftDetails,
-            smsRegistrationMessageTemplate: customMessage,
+            receiverRegistrationMessageTemplate: customMessage,
           },
           file: csvFile,
         }),
@@ -140,7 +140,7 @@ export const DisbursementsNew = () => {
         submitDisbursementNewDraftAction({
           details: {
             ...draftDetails,
-            smsRegistrationMessageTemplate: customMessage,
+            receiverRegistrationMessageTemplate: customMessage,
           },
           file: csvFile,
         }),

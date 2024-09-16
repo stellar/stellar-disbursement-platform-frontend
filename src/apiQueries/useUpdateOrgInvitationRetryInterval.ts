@@ -3,7 +3,7 @@ import { API_URL } from "constants/envVariables";
 import { fetchApi } from "helpers/fetchApi";
 import { AppError } from "types";
 
-export const useUpdateOrgSmsRetryInterval = () => {
+export const useUpdateOrgInvitationRetryInterval = () => {
   const mutation = useMutation({
     mutationFn: (retryInterval: number) => {
       const formData = new FormData();

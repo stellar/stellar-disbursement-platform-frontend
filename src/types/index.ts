@@ -71,8 +71,8 @@ export type OrganizationInitialState = {
     distributionAccountPublicKey: string;
     timezoneUtcOffset: string;
     isApprovalRequired: boolean | undefined;
-    smsResendInterval: number;
-    smsRegistrationMessageTemplate?: string;
+    receiverInvitationResendInterval: number;
+    receiverRegistrationMessageTemplate?: string;
     paymentCancellationPeriodDays: number;
     distributionAccount?: {
       circleWalletId?: string;
@@ -253,7 +253,7 @@ export type Disbursement = {
     timestamp: string;
     userId: string | null;
   }[];
-  smsRegistrationMessageTemplate: string;
+  receiverRegistrationMessageTemplate: string;
 };
 
 export type DisbursementsSearchParams = CommonFilters &
@@ -469,7 +469,7 @@ export type OrgUpdateInfo = {
   timezone?: string;
   logo?: File;
   isApprovalRequired?: boolean;
-  smsRegistrationMessageTemplate?: string;
+  receiverRegistrationMessageTemplate?: string;
 };
 
 // =============================================================================

@@ -51,11 +51,11 @@ export const ReceiverDetails = () => {
   });
 
   const {
-    isSuccess: isSmsRetrySuccess,
-    isFetching: isSmsRetryFetching,
-    isError: isSmsRetryError,
-    error: smsRetryError,
-    refetch: retrySmsInvite,
+    isSuccess: isInvitationRetrySuccess,
+    isFetching: isInvitationRetryFetching,
+    isError: isInvitationRetryError,
+    error: invitationRetryError,
+    refetch: retryReceiverInvitation,
   } = useReceiverWalletInviteSmsRetry(selectedWallet?.id);
 
   const [selectedWalletId, setSelectedWalletId] = useState<string | undefined>(
@@ -68,7 +68,7 @@ export const ReceiverDetails = () => {
   const stats = receiverDetails?.stats;
   const defaultWalletId = receiverDetails?.wallets?.[0]?.id;
 
-  const resetSmsRetry = () => {
+  const resetInvitationRetry = () => {
     queryClient.resetQueries({
       queryKey: ["receivers", "wallets", "sms", "retry"],
     });
@@ -92,13 +92,13 @@ export const ReceiverDetails = () => {
 
   useEffect(() => {
     return () => {
-      if (isSmsRetrySuccess || isSmsRetryError) {
-        resetSmsRetry();
+      if (isInvitationRetrySuccess || isInvitationRetryError) {
+        resetInvitationRetry();
       }
     };
     // Don't need to include queryClient.resetQueries
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSmsRetryError, isSmsRetrySuccess]);
+  }, [isInvitationRetryError, isInvitationRetrySuccess]);
 
   const calculateRate = () => {
     if (stats?.paymentsSuccessfulCount && stats?.paymentsTotalCount) {
@@ -244,15 +244,15 @@ export const ReceiverDetails = () => {
 
     return (
       <div className="ReceiverDetails__wallets">
-        {isSmsRetrySuccess && (
+        {isInvitationRetrySuccess && (
           <NotificationWithButtons
             variant="success"
-            title="SMS invitation sent successfully!"
+            title="Receiver invitation sent successfully!"
             buttons={[
               {
                 label: "Dismiss",
                 onClick: () => {
-                  resetSmsRetry();
+                  resetInvitationRetry();
                 },
               },
             ]}
@@ -260,7 +260,7 @@ export const ReceiverDetails = () => {
             {" "}
           </NotificationWithButtons>
         )}
-        {smsRetryError && (
+        {invitationRetryError && (
           <NotificationWithButtons
             variant="error"
             title="Error"
@@ -268,12 +268,12 @@ export const ReceiverDetails = () => {
               {
                 label: "Dismiss",
                 onClick: () => {
-                  resetSmsRetry();
+                  resetInvitationRetry();
                 },
               },
             ]}
           >
-            <ErrorWithExtras appError={smsRetryError} />
+            <ErrorWithExtras appError={invitationRetryError} />
           </NotificationWithButtons>
         )}
         <div className="ReceiverDetails__wallets__row">
@@ -308,15 +308,15 @@ export const ReceiverDetails = () => {
               size="xs"
               onClick={(e) => {
                 e.preventDefault();
-                retrySmsInvite();
+                retryReceiverInvitation();
               }}
-              isLoading={isSmsRetryFetching}
+              isLoading={isInvitationRetryFetching}
               disabled={Boolean(selectedWallet?.stellarAddress)}
               {...(selectedWallet?.stellarAddress
                 ? { title: "This wallet has already been registered" }
                 : {})}
             >
-              Retry invitation SMS
+              Retry invitation message
             </Button>
           </div>
         </div>
@@ -392,7 +392,7 @@ export const ReceiverDetails = () => {
 
                   <div className="StatCards__card__item StatCards__card__item--inline">
                     <label className="StatCards__card__item__label">
-                      SMS last sent
+                      Invitation last sent
                     </label>
                     <div className="StatCards__card__item__value">
                       {formatDateTime(selectedWallet.smsLastSentAt)}
