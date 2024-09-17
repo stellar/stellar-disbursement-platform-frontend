@@ -1,5 +1,9 @@
 import { Card, Link, Notification } from "@stellar/design-system";
 import { formatDateTime } from "helpers/formatIntlDateTime";
+import {
+  getReceiverContactInfoTitle,
+  renderReceiverContactInfoItems,
+} from "helpers/receiverContactInfo";
 import { useSort } from "hooks/useSort";
 import { MultipleAmounts } from "components/MultipleAmounts";
 import { Table } from "components/Table";
@@ -83,7 +87,7 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
             {/* <Table.HeaderCell width="1rem">
             <Checkbox id="receivers-select-all" fieldSize="xs" />
           </Table.HeaderCell> */}
-            <Table.HeaderCell width="7.5rem">Phone number</Table.HeaderCell>
+            <Table.HeaderCell width="7.5rem">Contact info</Table.HeaderCell>
             <Table.HeaderCell width="12rem">
               Wallet provider(s)
             </Table.HeaderCell>
@@ -113,9 +117,12 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
                 {/* <Table.BodyCell width="1rem">
                 <Checkbox id={`receiver-${d.id}`} fieldSize="xs" />
               </Table.BodyCell> */}
-                <Table.BodyCell title={d.phoneNumber} width="7.5rem">
+                <Table.BodyCell
+                  title={getReceiverContactInfoTitle(d.phoneNumber, d.email)}
+                  width="7.5rem"
+                >
                   <Link onClick={(event) => onReceiverClicked(event, d.id)}>
-                    {d.phoneNumber}
+                    {renderReceiverContactInfoItems(d.phoneNumber, d.email)}
                   </Link>
                 </Table.BodyCell>
                 <Table.BodyCell

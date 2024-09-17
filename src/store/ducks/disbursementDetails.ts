@@ -258,6 +258,7 @@ const formatDisbursementReceivers = (
   items.map((r) => ({
     id: r.id,
     phoneNumber: r.phone_number,
+    email: r.email,
     provider: r.receiver_wallet.wallet.name,
     amount: r.payment.amount,
     assetCode: r.payment.asset.code,

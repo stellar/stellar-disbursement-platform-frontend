@@ -26,6 +26,10 @@ import {
 } from "helpers/formatIntlDateTime";
 import { shortenString } from "helpers/shortenString";
 import { formatPaymentDetails } from "helpers/formatPaymentDetails";
+import {
+  getReceiverContactInfoTitle,
+  renderReceiverContactInfoItems,
+} from "helpers/receiverContactInfo";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
 import { SectionHeader } from "components/SectionHeader";
@@ -335,7 +339,7 @@ export const PaymentDetails = () => {
                   fieldSize="xs"
                 />
               </Table.HeaderCell> */}
-                  <Table.HeaderCell>Phone number</Table.HeaderCell>
+                  <Table.HeaderCell>Contact info</Table.HeaderCell>
                   <Table.HeaderCell>Wallet address</Table.HeaderCell>
                   <Table.HeaderCell>Wallet provider</Table.HeaderCell>
                   <Table.HeaderCell width="5.5rem" textAlign="right">
@@ -362,15 +366,21 @@ export const PaymentDetails = () => {
                 </Table.BodyCell> */}
                     <Table.BodyCell
                       width="7.5rem"
-                      title={receiver?.phoneNumber}
+                      title={getReceiverContactInfoTitle(
+                        receiver?.phoneNumber,
+                        receiver?.email,
+                      )}
                     >
-                      {receiver?.phoneNumber ? (
+                      {receiver?.phoneNumber || receiver?.email ? (
                         <Link
                           onClick={(event) =>
                             goToReceiverDetails(event, receiver.id)
                           }
                         >
-                          {receiver.phoneNumber}
+                          {renderReceiverContactInfoItems(
+                            receiver?.phoneNumber,
+                            receiver?.email,
+                          )}
                         </Link>
                       ) : (
                         "-"

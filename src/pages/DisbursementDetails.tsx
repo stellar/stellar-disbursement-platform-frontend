@@ -37,6 +37,10 @@ import { PaymentStatus } from "components/PaymentStatus";
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { number } from "helpers/formatIntlNumber";
 import { saveFile } from "helpers/saveFile";
+import {
+  getReceiverContactInfoTitle,
+  renderReceiverContactInfoItems,
+} from "helpers/receiverContactInfo";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();
@@ -337,7 +341,7 @@ export const DisbursementDetails = () => {
               {/* <Table.HeaderCell>
               <Checkbox id="disbursement-receivers-select-all" fieldSize="xs" />
             </Table.HeaderCell> */}
-              <Table.HeaderCell>Phone number</Table.HeaderCell>
+              <Table.HeaderCell>Contact info</Table.HeaderCell>
               <Table.HeaderCell>Wallet provider</Table.HeaderCell>
               <Table.HeaderCell textAlign="right">Amount</Table.HeaderCell>
               <Table.HeaderCell>Completed at</Table.HeaderCell>
@@ -355,9 +359,15 @@ export const DisbursementDetails = () => {
                   {/* <Table.BodyCell width="1rem">
                   <Checkbox id={`receiver-${r.id}`} fieldSize="xs" />
                 </Table.BodyCell> */}
-                  <Table.BodyCell title={r.phoneNumber} width="7.25rem">
+                  <Table.BodyCell
+                    title={getReceiverContactInfoTitle(
+                      r?.phoneNumber,
+                      r?.email,
+                    )}
+                    width="7.25rem"
+                  >
                     <Link onClick={(event) => goToReceiver(event, r.id)}>
-                      {r.phoneNumber}
+                      {renderReceiverContactInfoItems(r?.phoneNumber, r?.email)}
                     </Link>
                   </Table.BodyCell>
                   <Table.BodyCell width="8rem">{r.provider}</Table.BodyCell>

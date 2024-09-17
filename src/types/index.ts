@@ -277,7 +277,8 @@ export type DisbursementDetailsStats = {
 
 export type DisbursementReceiver = {
   id: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  email?: string;
   provider: string;
   assetCode: string;
   amount: string;
@@ -311,7 +312,8 @@ export type PaymentDetailsStatusHistoryItem = {
 
 export type PaymentDetailsReceiver = {
   id: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  email?: string;
   walletAddress: string;
   provider: string;
   totalPaymentsCount: number;
@@ -355,7 +357,8 @@ export type AmountReceived = {
 
 export type Receiver = {
   id: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  email?: string;
   walletProvider: string[];
   walletsRegisteredCount: number;
   totalPaymentsCount: number;
@@ -405,7 +408,7 @@ export type ReceiverWalletPayment = {
 
 export type ReceiverDetails = {
   id: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   email?: string;
   assetCode?: string;
   totalReceived?: string;
@@ -680,7 +683,8 @@ export type ApiStatistics = {
 
 export type ApiDisbursementReceiver = {
   id: string;
-  phone_number: string;
+  phone_number?: string;
+  email?: string;
   external_id: string;
   receiver_wallet: {
     id: string;
@@ -747,7 +751,7 @@ export type ApiReceiverVerification = {
 export type ApiReceiver = {
   created_at: string;
   id: string;
-  phone_number: string;
+  phone_number?: string;
   email?: string;
   external_id: string;
   total_payments: string | number;
