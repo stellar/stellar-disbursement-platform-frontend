@@ -11,6 +11,7 @@ export const formatPaymentReceiver = (
   return {
     id: receiver.id,
     phoneNumber: receiver.phone_number,
+    email: receiver.email,
     walletAddress: paymentWallet?.stellar_address || "",
     provider: paymentWallet?.wallet.name || "",
     totalPaymentsCount: Number(receiver.total_payments),

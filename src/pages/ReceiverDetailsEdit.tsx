@@ -215,10 +215,10 @@ export const ReceiverDetailsEdit = () => {
             <SectionHeader.Content>
               <Heading as="h2" size="sm">
                 <CopyWithIcon
-                  textToCopy={receiverDetails.phoneNumber}
+                  textToCopy={receiverDetails?.phoneNumber || ""}
                   iconSizeRem="1.5"
                 >
-                  {receiverDetails.phoneNumber}
+                  {receiverDetails.phoneNumber || ""}
                 </CopyWithIcon>
               </Heading>
             </SectionHeader.Content>

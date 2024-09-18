@@ -489,12 +489,23 @@ export const ReceiverDetails = () => {
             <SectionHeader.Row>
               <SectionHeader.Content>
                 <Heading as="h2" size="sm">
-                  <CopyWithIcon
-                    textToCopy={receiverDetails.phoneNumber}
-                    iconSizeRem="1.5"
-                  >
-                    {receiverDetails.phoneNumber}
-                  </CopyWithIcon>
+                  {receiverDetails?.phoneNumber ? (
+                    <CopyWithIcon
+                      textToCopy={receiverDetails.phoneNumber}
+                      iconSizeRem="1.5"
+                    >
+                      {receiverDetails.phoneNumber}
+                    </CopyWithIcon>
+                  ) : null}
+
+                  {receiverDetails?.email ? (
+                    <CopyWithIcon
+                      textToCopy={receiverDetails.email}
+                      iconSizeRem="1.5"
+                    >
+                      {receiverDetails.email}
+                    </CopyWithIcon>
+                  ) : null}
                 </Heading>
               </SectionHeader.Content>
               <Button
