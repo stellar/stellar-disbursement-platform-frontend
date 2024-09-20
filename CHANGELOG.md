@@ -8,6 +8,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [3.0.0-rc.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.0.0-rc.1) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.1.0...3.0.0-rc.1))
+
+Release of the Stellar Disbursement Platform v3.0.0-rc.1. This release
+introduces the option to register receivers using email addresses, in addition
+to phone numbers.
+
+> [!Warning] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `3.0.0-rc.1`.
+
+### Added
+
+- Display the user email on the "Team Members" section
+  [#131](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/131)
+- Add the ability to register receivers using email addresses
+  - Receiver contact info: support phone number and email
+    [#150](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/150)
+  - Add email column to the CSV template
+    [#141](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/141)
+  - Rename fields for receiver invitation template and interval to be channel
+    agnostic
+    [#147](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/147)
+  - Update Organization SMS Retry configuration to reflect both Email and SMS
+    [#148](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/148)
+
+### Changed
+
+- Remove draft payments from remaining payments count when calculating
+  percentage of successful payments
+  [#132](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/132)
+- Do not allow selection of an asset that does not have a trustline or balance
+  [#134](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/134)
+- Disable "Org Name" input when in single tenant mode
+  [#135](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/135)
+
+### Security and Dependencies
+
+- bump the all-docker group
+  [#122](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/122)
+- bump the all-actions group
+  [#123](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/123)
+- bump docker/build-push-action from 6.5.0 to 6.7.0 in the all-actions group
+  [#136](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/136)
+- bump elliptic from 6.5.4 to 6.5.7 in the npm_and_yarn group
+  [#142](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/142)
+
 ## [2.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.0.0...2.1.0))
 
 Release of the Stellar Disbursement Platform v2.1.0. This release introduces the
