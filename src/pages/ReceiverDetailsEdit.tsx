@@ -40,6 +40,7 @@ export const ReceiverDetailsEdit = () => {
   const [receiverEditFields, setReceiverEditFields] =
     useState<ReceiverEditFields>({
       email: "",
+      phoneNumber: "",
       externalId: "",
       dateOfBirth: "",
       yearMonth: "",
@@ -89,6 +90,7 @@ export const ReceiverDetailsEdit = () => {
     if (isReceiverDetailsSuccess) {
       setReceiverEditFields({
         email: receiverDetails?.email ?? "",
+        phoneNumber: receiverDetails?.phoneNumber ?? "",
         externalId: receiverDetails?.orgId ?? "",
         yearMonth: getReadyOnlyValue("YEAR_MONTH"),
         dateOfBirth: getReadyOnlyValue("DATE_OF_BIRTH"),
@@ -99,6 +101,7 @@ export const ReceiverDetailsEdit = () => {
   }, [
     isReceiverDetailsSuccess,
     receiverDetails?.email,
+    receiverDetails?.phoneNumber,
     receiverDetails?.orgId,
     getReadyOnlyValue,
   ]);
@@ -128,13 +131,24 @@ export const ReceiverDetailsEdit = () => {
   ) => {
     e.preventDefault();
 
-    const { email, externalId, dateOfBirth, yearMonth, pin, nationalId } =
-      receiverEditFields;
+    const {
+      email,
+      phoneNumber,
+      externalId,
+      dateOfBirth,
+      yearMonth,
+      pin,
+      nationalId,
+    } = receiverEditFields;
 
     if (receiverId) {
       try {
         await mutateAsync({
           email: emptyValueIfNotChanged(email, receiverDetails?.email ?? ""),
+          phoneNumber: emptyValueIfNotChanged(
+            phoneNumber,
+            receiverDetails?.phoneNumber ?? "",
+          ),
           externalId: emptyValueIfNotChanged(
             externalId,
             receiverDetails?.orgId ?? "",
@@ -163,6 +177,7 @@ export const ReceiverDetailsEdit = () => {
     e.preventDefault();
     setReceiverEditFields({
       email: receiverDetails?.email ?? "",
+      phoneNumber: receiverDetails?.phoneNumber ?? "",
       externalId: receiverDetails?.orgId ?? "",
       dateOfBirth: getReadyOnlyValue("DATE_OF_BIRTH"),
       yearMonth: getReadyOnlyValue("YEAR_MONTH"),
@@ -202,6 +217,7 @@ export const ReceiverDetailsEdit = () => {
 
     const isSubmitDisabled =
       receiverEditFields.email === receiverDetails?.email &&
+      receiverEditFields.phoneNumber === receiverDetails?.phoneNumber &&
       receiverEditFields.externalId === receiverDetails.orgId &&
       receiverEditFields.dateOfBirth === getReadyOnlyValue("DATE_OF_BIRTH") &&
       receiverEditFields.yearMonth === getReadyOnlyValue("YEAR_MONTH") &&
@@ -214,12 +230,22 @@ export const ReceiverDetailsEdit = () => {
           <SectionHeader.Row>
             <SectionHeader.Content>
               <Heading as="h2" size="sm">
-                <CopyWithIcon
-                  textToCopy={receiverDetails?.phoneNumber || ""}
-                  iconSizeRem="1.5"
-                >
-                  {receiverDetails.phoneNumber || ""}
-                </CopyWithIcon>
+                {receiverDetails?.phoneNumber ? (
+                  <CopyWithIcon
+                    textToCopy={receiverDetails.phoneNumber}
+                    iconSizeRem="1.5"
+                  >
+                    {receiverDetails.phoneNumber}
+                  </CopyWithIcon>
+                ) : null}
+                {receiverDetails?.email ? (
+                  <CopyWithIcon
+                    textToCopy={receiverDetails.email}
+                    iconSizeRem="1.5"
+                  >
+                    {receiverDetails.email}
+                  </CopyWithIcon>
+                ) : null}
               </Heading>
             </SectionHeader.Content>
           </SectionHeader.Row>
@@ -240,7 +266,7 @@ export const ReceiverDetailsEdit = () => {
             <Card>
               <div className="CardStack__card">
                 <div className="CardStack__title">
-                  <InfoTooltip infoText="Information unique to this individual, such as their email address, the ID you use to track them, and verification information">
+                  <InfoTooltip infoText="Information unique to this individual, such as their email addressm phone number, the ID you use to track them, and verification information">
                     Receiver info
                   </InfoTooltip>
                 </div>
@@ -253,6 +279,14 @@ export const ReceiverDetailsEdit = () => {
                       label="Email"
                       fieldSize="sm"
                       value={receiverEditFields.email}
+                      onChange={handleDetailsChange}
+                    />
+                    <Input
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      label="Phone Number"
+                      fieldSize="sm"
+                      value={receiverEditFields.phoneNumber}
                       onChange={handleDetailsChange}
                     />
                     <Input
