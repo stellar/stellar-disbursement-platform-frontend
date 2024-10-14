@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GitInfo from "generated/gitInfo";
 
-import { store } from "store";
+import { AppDispatch, store } from "store";
 import { Routes } from "constants/settings";
 import { PrivateRoute } from "components/PrivateRoute";
 import { InnerPage } from "components/InnerPage";
@@ -39,6 +39,7 @@ import { Unauthorized } from "pages/Unauthorized";
 import { SigninOidc } from "pages/Redirect";
 
 import "styles.scss";
+import { refreshSessionToken } from "helpers/refreshSessionToken";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +51,17 @@ const queryClient = new QueryClient({
 });
 
 export const App = () => {
+  const dispatch: AppDispatch = useDispatch();
+  useEffect(() => {
+    // Function to call refreshSessionToken every minute
+    const ticker = setInterval(() => {
+      refreshSessionToken(dispatch);
+    }, 10000); // 60,000ms = 1 minute
+
+    // Cleanup function to clear the interval when component unmounts
+    return () => clearInterval(ticker);
+  }, [dispatch]);
+
   useEffect(() => {
     // Git commit hash
     console.log("current commit hash: ", GitInfo.commitHash);
