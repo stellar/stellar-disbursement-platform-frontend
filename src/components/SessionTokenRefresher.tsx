@@ -4,14 +4,14 @@ import { AppDispatch } from "store";
 
 import { refreshSessionToken } from "helpers/refreshSessionToken";
 
-const TOKEN_REFRESH_INTERVAL = 60000; // 60,000ms = 1 minute
+const TOKEN_REFRESH_INTERVAL = 2 * 60_000; // 60,000ms = 1 minute
 
 export const SessionTokenRefresher: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     // Function to call refreshSessionToken every minute
-    const ticker = setInterval(() => {
+    const tickerId = setInterval(() => {
       try {
         refreshSessionToken(dispatch);
       } catch (error) {
@@ -20,8 +20,8 @@ export const SessionTokenRefresher: React.FC = () => {
     }, TOKEN_REFRESH_INTERVAL);
 
     // Cleanup function to clear the interval when component unmounts
-    return () => clearInterval(ticker);
+    return () => clearInterval(tickerId);
   }, [dispatch]);
 
-  return <></>;
+  return null;
 };
