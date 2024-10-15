@@ -11,7 +11,7 @@ import { PrivateRoute } from "components/PrivateRoute";
 import { InnerPage } from "components/InnerPage";
 import { UserSession } from "components/UserSession";
 import { GlobalBanner } from "components/GlobalBanner";
-import { SessionTicker } from "components/SessionTicker";
+import { SessionTokenRefresher } from "components/SessionTokenRefresher";
 
 import { SignIn } from "pages/SignIn";
 import { MFAuth } from "pages/MFAuth";
@@ -59,7 +59,7 @@ export const App = () => {
 
   return (
     <Provider store={store}>
-      <SessionTicker />
+      <SessionTokenRefresher />
       <QueryClientProvider client={queryClient}>
         <UserSession />
         <BrowserRouter>
