@@ -4,6 +4,8 @@ import { SESSION_EXPIRED } from "constants/settings";
 import { parseJwt } from "helpers/parseJwt";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 
+const MIN_MINUTES_FOR_REFRESH = 5;
+
 export const refreshToken = async (token: string): Promise<string> => {
   const jwt = parseJwt(token);
   // JWT session is 15 min
@@ -11,7 +13,7 @@ export const refreshToken = async (token: string): Promise<string> => {
 
   if (minRemaining <= 0) {
     throw SESSION_EXPIRED;
-  } else if (minRemaining < 5) {
+  } else if (minRemaining < MIN_MINUTES_FOR_REFRESH) {
     const response = await fetch(`${API_URL}/refresh-token`, {
       method: "POST",
       headers: {
