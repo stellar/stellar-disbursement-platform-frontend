@@ -4,7 +4,7 @@ import { AppDispatch } from "store";
 
 import { refreshSessionToken } from "helpers/refreshSessionToken";
 
-const TOKEN_REFRESH_INTERVAL = 2 * 60_000; // 60,000ms = 1 minute
+const TOKEN_REFRESH_INTERVAL = 2 * 60_000; // 2 x 60,000ms = 2 minutes
 
 export const SessionTokenRefresher: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
