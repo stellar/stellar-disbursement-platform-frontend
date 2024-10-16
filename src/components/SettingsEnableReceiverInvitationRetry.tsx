@@ -116,11 +116,13 @@ export const SettingsEnableReceiverInvitationRetry = () => {
                   type="number"
                   value={receiverInvitationRetryInterval ?? ""}
                   onChange={(e) => {
-                    e.target.value !== ""
-                      ? setReceiverInvitationRetryInterval(
-                          Number(e.target.value),
-                        )
-                      : setReceiverInvitationRetryInterval(null);
+                    if (e.target.value !== "") {
+                      setReceiverInvitationRetryInterval(
+                        Number(e.target.value),
+                      );
+                    } else {
+                      setReceiverInvitationRetryInterval(null);
+                    }
                   }}
                   disabled={!isEditMode}
                   error={
