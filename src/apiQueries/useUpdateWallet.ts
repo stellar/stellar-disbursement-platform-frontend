@@ -28,7 +28,7 @@ export const useUpdateWallet = () => {
     mutateAsync: async ({ walletId, enabled }: WalletUpdateProps) => {
       try {
         await mutation.mutateAsync({ walletId, enabled });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

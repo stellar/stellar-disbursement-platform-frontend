@@ -26,7 +26,7 @@ export const useCreateNewUser = () => {
     mutateAsync: async (newUser: NewUser) => {
       try {
         await mutation.mutateAsync(newUser);
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },
