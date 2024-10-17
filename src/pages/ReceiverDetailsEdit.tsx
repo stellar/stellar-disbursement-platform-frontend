@@ -153,7 +153,7 @@ export const ReceiverDetailsEdit = () => {
             getReadyOnlyValue("NATIONAL_ID_NUMBER"),
           ),
         });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     }

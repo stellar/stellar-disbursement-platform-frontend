@@ -32,7 +32,7 @@ export const useUpdateOrgPaymentCancellationPeriodDays = () => {
     mutateAsync: async (cancellationPeriod: number) => {
       try {
         await mutation.mutateAsync(cancellationPeriod);
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

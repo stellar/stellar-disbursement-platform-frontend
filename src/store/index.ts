@@ -5,7 +5,7 @@ import {
   CombinedState,
 } from "@reduxjs/toolkit";
 import { combineReducers, Action } from "redux";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 import { RESET_STORE_ACTION_TYPE } from "constants/settings";
 

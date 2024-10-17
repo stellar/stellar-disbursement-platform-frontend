@@ -32,7 +32,7 @@ export const useUpdateOrgInvitationRetryInterval = () => {
     mutateAsync: async (retryInterval: number) => {
       try {
         await mutation.mutateAsync(retryInterval);
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

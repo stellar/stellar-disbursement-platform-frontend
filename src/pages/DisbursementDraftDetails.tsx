@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useRedux } from "hooks/useRedux";
 import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
 import { useAllBalances } from "hooks/useAllBalances";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 import { AppDispatch } from "store";
 import {

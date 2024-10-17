@@ -48,7 +48,7 @@ export const useForgotPasswordLink = () => {
     }: ForgotPasswordLinkProps) => {
       try {
         await mutation.mutateAsync({ organizationName, email, recaptchaToken });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

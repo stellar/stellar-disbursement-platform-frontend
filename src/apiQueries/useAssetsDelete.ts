@@ -25,7 +25,7 @@ export const useAssetsDelete = ({
     mutateAsync: async (assetId: string) => {
       try {
         await mutation.mutateAsync(assetId);
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

@@ -41,7 +41,7 @@ export const useNewPassword = () => {
     }: NewPasswordFields) => {
       try {
         await mutation.mutateAsync({ currentPassword, newPassword });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

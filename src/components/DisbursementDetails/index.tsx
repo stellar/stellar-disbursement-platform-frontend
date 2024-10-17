@@ -5,7 +5,7 @@ import {
   Title,
   Notification,
 } from "@stellar/design-system";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 import { useWallets } from "apiQueries/useWallets";
 import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";

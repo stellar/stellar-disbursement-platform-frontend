@@ -114,9 +114,11 @@ export const SettingsEnablePaymentCancellation = () => {
                   type="number"
                   value={paymentCancellationPeriodDays ?? ""}
                   onChange={(e) => {
-                    e.target.value !== ""
-                      ? setPaymentCancellationPeriodDays(Number(e.target.value))
-                      : setPaymentCancellationPeriodDays(null);
+                    if (e.target.value !== "") {
+                      setPaymentCancellationPeriodDays(Number(e.target.value));
+                    } else {
+                      setPaymentCancellationPeriodDays(null);
+                    }
                   }}
                   disabled={!isEditMode}
                   error={
