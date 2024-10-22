@@ -50,6 +50,12 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
         test: /\.tsx?$/,
         exclude: /node_modules/,
         use: {
@@ -115,6 +121,10 @@ module.exports = {
     ],
   },
   resolve: {
+    alias: {
+      "react/jsx-dev-runtime.js": "react/jsx-dev-runtime",
+      "react/jsx-runtime.js": "react/jsx-runtime",
+    },
     extensions: [".tsx", ".ts", ".js"],
     plugins: [
       // This handles aliases and resolves Design System CSS font paths properly
