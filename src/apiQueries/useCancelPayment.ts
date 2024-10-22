@@ -14,7 +14,6 @@ export const useCancelPayment = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {

@@ -18,7 +18,7 @@ export const useReceivers = (searchParams?: ReceiversSearchParams) => {
     queryFn: async () => {
       return await fetchApi(`${API_URL}/receivers/${params}`);
     },
-    keepPreviousData: true,
+    placeholderData: (prev) => prev,
   });
 
   return {

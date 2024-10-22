@@ -28,7 +28,6 @@ export const useNewPassword = () => {
         body: JSON.stringify(fieldsToSubmit),
       });
     },
-    cacheTime: 0,
   });
 
   return {

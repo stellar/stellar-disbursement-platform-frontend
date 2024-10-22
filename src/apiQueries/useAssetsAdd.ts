@@ -23,7 +23,6 @@ export const useAssetsAdd = ({
         }),
       });
     },
-    cacheTime: 0,
     onSuccess,
   });
 

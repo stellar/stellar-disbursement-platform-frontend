@@ -16,7 +16,6 @@ export const useCreateNewUser = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {

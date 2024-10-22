@@ -18,7 +18,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ResetPassword = () => {
-  const { isSuccess, isLoading, error, mutateAsync, reset } =
+  const { isSuccess, isPending, error, mutateAsync, reset } =
     useResetPassword();
 
   const navigate = useNavigate();
@@ -189,7 +189,7 @@ export const ResetPassword = () => {
             size="sm"
             type="submit"
             disabled={!allInputsValid()}
-            isLoading={isLoading}
+            isLoading={isPending}
           >
             Reset password
           </Button>

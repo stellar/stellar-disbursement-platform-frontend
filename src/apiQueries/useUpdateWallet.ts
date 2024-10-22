@@ -18,7 +18,6 @@ export const useUpdateWallet = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {

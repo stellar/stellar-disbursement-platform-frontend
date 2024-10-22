@@ -14,7 +14,6 @@ export const useAssetsDelete = ({
         method: "DELETE",
       });
     },
-    cacheTime: 0,
     onSuccess,
   });
 

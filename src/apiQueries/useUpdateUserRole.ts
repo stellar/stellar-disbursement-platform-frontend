@@ -19,7 +19,6 @@ export const useUpdateUserRole = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {

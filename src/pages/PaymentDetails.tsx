@@ -61,7 +61,7 @@ export const PaymentDetails = () => {
     error: cancelPaymentError,
     isSuccess: isCancelPaymentSuccess,
     isError: isCancelPaymentError,
-    isLoading: isCancelPaymentLoading,
+    isPending: isCancelPaymentPending,
     mutateAsync: cancelPayment,
   } = useCancelPayment();
 
@@ -468,7 +468,7 @@ export const PaymentDetails = () => {
             size="sm"
             variant="secondary"
             onClick={hideModal}
-            isLoading={isCancelPaymentLoading}
+            isLoading={isCancelPaymentPending}
           >
             Not now
           </Button>
@@ -476,7 +476,7 @@ export const PaymentDetails = () => {
             size="sm"
             variant="error"
             onClick={(event) => handleCancelPayment(event)}
-            isLoading={isCancelPaymentLoading}
+            isLoading={isCancelPaymentPending}
           >
             Confirm
           </Button>
