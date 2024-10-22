@@ -426,6 +426,7 @@ export type ReceiverDetails = {
 
 export type ReceiverEditFields = {
   email: string;
+  phoneNumber: string;
   externalId: string;
   yearMonth: string;
   dateOfBirth: string;
