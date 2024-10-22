@@ -84,7 +84,7 @@
     "prod:build": "docker image build -t disbursement-platform-frontend:localbuild .",
     "prod:serve": "docker run -p 8000:80 disbursement-platform-frontend:localbuild",
     "production": "yarn prod:build && yarn prod:serve",
-    "prepare": "husky install",
+    "prepare": "husky",
     "pre-commit": "concurrently 'pretty-quick --staged' 'lint-staged' 'tsc --noEmit'",
     "git-info": "rm -rf src/generated/ && mkdir src/generated/ && echo export default \"{\\\"commitHash\\\": \\\"$(git rev-parse --short HEAD)\\\", \\\"version\\\": \\\"$(git describe --tags --always)\\\"};\" > src/generated/gitInfo.ts"
   },
