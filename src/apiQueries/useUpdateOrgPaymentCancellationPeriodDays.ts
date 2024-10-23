@@ -22,7 +22,6 @@ export const useUpdateOrgPaymentCancellationPeriodDays = () => {
         { omitContentType: true },
       );
     },
-    cacheTime: 0,
   });
 
   return {

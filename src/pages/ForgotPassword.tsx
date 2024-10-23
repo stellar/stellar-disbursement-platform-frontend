@@ -19,7 +19,7 @@ import { getSdpTenantName } from "helpers/getSdpTenantName";
 export const ForgotPassword = () => {
   const {
     isSuccess,
-    isLoading,
+    isPending,
     isError,
     error,
     data,
@@ -120,7 +120,7 @@ export const ForgotPassword = () => {
             size="sm"
             type="submit"
             disabled={!organizationName || !email || !recaptchaToken}
-            isLoading={isLoading}
+            isLoading={isPending}
             data-callback="onRecaptchaSubmit"
           >
             Submit

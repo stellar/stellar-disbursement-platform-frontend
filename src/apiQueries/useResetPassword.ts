@@ -48,7 +48,6 @@ export const useResetPassword = () => {
         },
       );
     },
-    cacheTime: 0,
   });
 
   return {

@@ -34,7 +34,6 @@ export const useForgotPasswordLink = () => {
         },
       );
     },
-    cacheTime: 0,
   });
 
   return {

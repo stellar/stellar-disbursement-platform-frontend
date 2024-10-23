@@ -1,10 +1,5 @@
-import {
-  configureStore,
-  isPlain,
-  createAction,
-  CombinedState,
-} from "@reduxjs/toolkit";
-import { combineReducers, Action } from "redux";
+import { configureStore, isPlain, createAction } from "@reduxjs/toolkit";
+import { combineReducers, Action, Reducer } from "redux";
 import { BigNumber } from "bignumber.js";
 
 import { RESET_STORE_ACTION_TYPE } from "constants/settings";
@@ -22,6 +17,7 @@ export type AppDispatch = typeof store.dispatch;
 const isSerializable = (value: any) =>
   BigNumber.isBigNumber(value) || isPlain(value);
 
+// Combine reducers to let TypeScript infer the global state
 const reducers = combineReducers({
   disbursementDetails,
   disbursementDrafts,
@@ -31,19 +27,24 @@ const reducers = combineReducers({
   userAccount,
 });
 
+// Create a reset action
 export const resetStoreAction = createAction(RESET_STORE_ACTION_TYPE);
 
-const rootReducer = (state: CombinedState<any>, action: Action) => {
-  // When resetting state for expired session, we need to make sure we keep
-  // isSessionExpired flag set
+// Define rootReducer without explicitly typing GlobalStates
+const rootReducer: Reducer<ReturnType<typeof reducers>, Action> = (
+  state,
+  action: Action,
+) => {
+  // When resetting state for expired session, keep the isSessionExpired flag set
   const resetState = state?.userAccount?.isSessionExpired
     ? { userAccount: { isSessionExpired: true } }
     : undefined;
 
   const newState = action.type === RESET_STORE_ACTION_TYPE ? resetState : state;
-  return reducers(newState, action);
+  return reducers(newState as ReturnType<typeof reducers> | undefined, action);
 };
 
+// Configure store
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>

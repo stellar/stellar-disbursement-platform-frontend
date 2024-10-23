@@ -22,7 +22,7 @@ import { ErrorWithExtras } from "components/ErrorWithExtras";
 export const SetNewPassword = () => {
   const {
     isSuccess,
-    isLoading,
+    isPending,
     error,
     mutateAsync: submitNewPassword,
   } = useNewPassword();
@@ -177,7 +177,7 @@ export const SetNewPassword = () => {
             size="sm"
             type="submit"
             disabled={!allInputsValid()}
-            isLoading={isLoading}
+            isLoading={isPending}
           >
             Reset password
           </Button>

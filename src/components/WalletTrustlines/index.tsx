@@ -60,13 +60,13 @@ export const WalletTrustlines = ({
 
   const {
     isFetching: isTrustlinesFetching,
-    isLoading: isTrustlinesLoading,
+    isPending: isTrustlinesPending,
     data: trustlines,
     error: trustlinesError,
   } = useBalanceTrustline(balances);
 
   const {
-    isLoading: isTrustlineAddLoading,
+    isPending: isTrustlineAddPending,
     isError: isTrustlineAddError,
     error: trustlineAddError,
     mutateAsync: trustlineAdd,
@@ -86,7 +86,7 @@ export const WalletTrustlines = ({
 
   const {
     mutateAsync: trustlineRemove,
-    isLoading: trustlineRemoveIsLoading,
+    isPending: trustlineRemoveIsPending,
     isError: trustlineRemoveIsError,
     error: trustlineRemoveError,
     reset: trustlineRemoveReset,
@@ -160,7 +160,7 @@ export const WalletTrustlines = ({
   };
 
   const renderContent = () => {
-    if (isTrustlinesLoading || isTrustlinesFetching) {
+    if (isTrustlinesPending || isTrustlinesFetching) {
       return <div className="Note">Loading…</div>;
     }
 
@@ -337,7 +337,7 @@ export const WalletTrustlines = ({
               size="sm"
               variant="secondary"
               type="reset"
-              isLoading={isTrustlineAddLoading}
+              isLoading={isTrustlineAddPending}
             >
               Cancel
             </Button>
@@ -346,7 +346,7 @@ export const WalletTrustlines = ({
               variant="primary"
               type="submit"
               disabled={!canSubmit}
-              isLoading={isTrustlineAddLoading}
+              isLoading={isTrustlineAddPending}
             >
               Add trustline
             </Button>
@@ -384,7 +384,7 @@ export const WalletTrustlines = ({
               size="sm"
               variant="secondary"
               type="reset"
-              isLoading={trustlineRemoveIsLoading}
+              isLoading={trustlineRemoveIsPending}
             >
               Cancel
             </Button>
@@ -392,7 +392,7 @@ export const WalletTrustlines = ({
               size="sm"
               variant="destructive"
               type="submit"
-              isLoading={trustlineRemoveIsLoading}
+              isLoading={trustlineRemoveIsPending}
             >
               Remove trustline
             </Button>

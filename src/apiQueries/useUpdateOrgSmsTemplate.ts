@@ -22,7 +22,6 @@ export const useUpdateSmsTemplate = () => {
         { omitContentType: true },
       );
     },
-    cacheTime: 0,
   });
 
   return {

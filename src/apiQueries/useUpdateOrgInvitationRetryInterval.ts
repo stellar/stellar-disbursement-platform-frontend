@@ -22,7 +22,6 @@ export const useUpdateOrgInvitationRetryInterval = () => {
         { omitContentType: true },
       );
     },
-    cacheTime: 0,
   });
 
   return {

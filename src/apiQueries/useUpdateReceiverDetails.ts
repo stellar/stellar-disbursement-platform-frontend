@@ -45,7 +45,6 @@ export const useUpdateReceiverDetails = (receiverId: string | undefined) => {
         { omitContentType: true },
       );
     },
-    cacheTime: 0,
   });
 
   return {

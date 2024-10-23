@@ -61,7 +61,7 @@ export const ReceiverDetailsEdit = () => {
 
   const {
     isSuccess: isUpdateSuccess,
-    isLoading: isUpdateLoading,
+    isPending: isUpdatePending,
     error: updateError,
     mutateAsync,
     reset,
@@ -345,7 +345,7 @@ export const ReceiverDetailsEdit = () => {
                 size="xs"
                 type="reset"
                 icon={<Icon.DeleteForever />}
-                isLoading={isUpdateLoading}
+                isLoading={isUpdatePending}
               >
                 Discard changes
               </Button>
@@ -353,7 +353,7 @@ export const ReceiverDetailsEdit = () => {
                 variant="primary"
                 size="xs"
                 type="submit"
-                isLoading={isUpdateLoading}
+                isLoading={isUpdatePending}
                 disabled={isSubmitDisabled}
               >
                 Save receiver info

@@ -19,7 +19,6 @@ export const useUpdateUserStatus = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {
