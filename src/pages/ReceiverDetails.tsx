@@ -101,7 +101,7 @@ export const ReceiverDetails = () => {
   }, [isInvitationRetryError, isInvitationRetrySuccess]);
 
   const calculateRate = () => {
-    if (stats?.paymentsSuccessfulCount && stats?.paymentsTotalCount) {
+    if (stats?.paymentsTotalCount) {
       return Number(stats.paymentsSuccessfulCount / stats.paymentsTotalCount);
     }
 
