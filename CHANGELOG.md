@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [3.0.0-rc.2](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.0.0-rc.2) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.0.0-rc.1...3.0.0-rc.2))
+
+Release of the Stellar Disbursement Platform v3.0.0-rc.2. This release includes
+one fix to the dashboard.
+
+### Fix
+
+- Fix the calculation for the success payments percentage in the home page.
+  [#167](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/167)
+
 ## [3.0.0-rc.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.0.0-rc.1) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.1.0...3.0.0-rc.1))
 
 Release of the Stellar Disbursement Platform v3.0.0-rc.1. This release
