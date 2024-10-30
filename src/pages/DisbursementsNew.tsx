@@ -8,7 +8,7 @@ import {
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 import { AppDispatch } from "store";
 import {

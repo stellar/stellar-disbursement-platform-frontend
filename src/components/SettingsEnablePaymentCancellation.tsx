@@ -27,7 +27,7 @@ export const SettingsEnablePaymentCancellation = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isLoading, error, isSuccess } =
+  const { mutateAsync, isPending, error, isSuccess } =
     useUpdateOrgPaymentCancellationPeriodDays();
 
   useEffect(() => {
@@ -80,14 +80,14 @@ export const SettingsEnablePaymentCancellation = () => {
               Enable automatic payments cancellation
             </label>
             <div className="Toggle__wrapper">
-              {isLoading ? <Loader size="1rem" /> : null}
+              {isPending ? <Loader size="1rem" /> : null}
               <Toggle
                 id="payment-cancellation"
                 checked={Boolean(
                   organization.data.paymentCancellationPeriodDays,
                 )}
                 onChange={handleToggleChange}
-                disabled={isLoading}
+                disabled={isPending}
               />
             </div>
           </div>
@@ -114,9 +114,11 @@ export const SettingsEnablePaymentCancellation = () => {
                   type="number"
                   value={paymentCancellationPeriodDays ?? ""}
                   onChange={(e) => {
-                    e.target.value !== ""
-                      ? setPaymentCancellationPeriodDays(Number(e.target.value))
-                      : setPaymentCancellationPeriodDays(null);
+                    if (e.target.value !== "") {
+                      setPaymentCancellationPeriodDays(Number(e.target.value));
+                    } else {
+                      setPaymentCancellationPeriodDays(null);
+                    }
                   }}
                   disabled={!isEditMode}
                   error={
@@ -139,7 +141,7 @@ export const SettingsEnablePaymentCancellation = () => {
                     variant="secondary"
                     size="xs"
                     type="reset"
-                    isLoading={isLoading}
+                    isLoading={isPending}
                   >
                     Cancel
                   </Button>
@@ -147,7 +149,7 @@ export const SettingsEnablePaymentCancellation = () => {
                     variant="primary"
                     size="xs"
                     type="submit"
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     disabled={
                       !paymentCancellationPeriodDays ||
                       paymentCancellationPeriodDays ===

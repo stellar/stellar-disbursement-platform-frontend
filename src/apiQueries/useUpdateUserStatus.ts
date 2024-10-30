@@ -19,7 +19,6 @@ export const useUpdateUserStatus = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {
@@ -29,7 +28,7 @@ export const useUpdateUserStatus = () => {
     mutateAsync: async ({ userId, isActive }: UserActivationProps) => {
       try {
         await mutation.mutateAsync({ userId, isActive });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

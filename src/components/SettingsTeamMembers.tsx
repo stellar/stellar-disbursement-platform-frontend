@@ -48,7 +48,7 @@ export const SettingsTeamMembers = () => {
 
   const {
     error: roleError,
-    isLoading: isRoleLoading,
+    isPending: isRolePending,
     isSuccess: isRoleSuccess,
     isError: isRoleError,
     mutateAsync: updateRole,
@@ -57,7 +57,7 @@ export const SettingsTeamMembers = () => {
 
   const {
     error: statusError,
-    isLoading: isStatusLoading,
+    isPending: isStatusPending,
     isSuccess: isStatusSuccess,
     isError: isStatusError,
     mutateAsync: updateStatus,
@@ -67,7 +67,7 @@ export const SettingsTeamMembers = () => {
   const {
     data: newUser,
     error: newUserError,
-    isLoading: isNewUserLoading,
+    isPending: isNewUserPending,
     isSuccess: isNewUserSuccess,
     isError: isNewUserError,
     mutateAsync: createNewUser,
@@ -340,7 +340,7 @@ export const SettingsTeamMembers = () => {
             size="sm"
             variant="secondary"
             onClick={hideModal}
-            isLoading={isStatusLoading}
+            isLoading={isStatusPending}
           >
             Cancel
           </Button>
@@ -359,7 +359,7 @@ export const SettingsTeamMembers = () => {
                 });
               }
             }}
-            isLoading={isStatusLoading}
+            isLoading={isStatusPending}
           >
             Confirm
           </Button>
@@ -384,7 +384,7 @@ export const SettingsTeamMembers = () => {
             size="sm"
             variant="secondary"
             onClick={hideModal}
-            isLoading={isRoleLoading}
+            isLoading={isRolePending}
           >
             Cancel
           </Button>
@@ -400,7 +400,7 @@ export const SettingsTeamMembers = () => {
                 });
               }
             }}
-            isLoading={isRoleLoading}
+            isLoading={isRolePending}
           >
             Confirm
           </Button>
@@ -430,7 +430,7 @@ export const SettingsTeamMembers = () => {
         onResetQuery={() => {
           resetNewUser();
         }}
-        isLoading={isNewUserLoading}
+        isLoading={isNewUserPending}
         errorMessage={newUserError?.message}
       />
     </>

@@ -191,7 +191,9 @@ body {
       margin-top: pxToRem(8px);
     }
 
-    --StatCard-template-rows: 3;
+    & {
+      --StatCard-template-rows: 3; // Wrap the custom property in `& {}`
+    }
 
     &__column {
       display: grid;

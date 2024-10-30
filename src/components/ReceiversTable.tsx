@@ -87,7 +87,7 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
             {/* <Table.HeaderCell width="1rem">
             <Checkbox id="receivers-select-all" fieldSize="xs" />
           </Table.HeaderCell> */}
-            <Table.HeaderCell width="7.5rem">Contact info</Table.HeaderCell>
+            <Table.HeaderCell width="9.5rem">Contact info</Table.HeaderCell>
             <Table.HeaderCell width="12rem">
               Wallet provider(s)
             </Table.HeaderCell>
@@ -119,7 +119,7 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
               </Table.BodyCell> */}
                 <Table.BodyCell
                   title={getReceiverContactInfoTitle(d.phoneNumber, d.email)}
-                  width="7.5rem"
+                  width="9.5rem"
                 >
                   <Link onClick={(event) => onReceiverClicked(event, d.id)}>
                     {renderReceiverContactInfoItems(d.phoneNumber, d.email)}

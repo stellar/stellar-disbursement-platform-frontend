@@ -47,17 +47,21 @@ export const UserSession = () => {
   useEffect(() => {
     if (userAccount.isTokenRefresh) {
       // Update refresh token, other info won't change
-      userAccount.token
-        ? localStorageSessionToken.set(userAccount.token)
-        : localStorageSessionToken.remove();
+      if (userAccount.token) {
+        localStorageSessionToken.set(userAccount.token);
+      } else {
+        localStorageSessionToken.remove();
+      }
     } else {
       // Set user info on login or page refresh only once
       if (userAccount.token && !userAccount.email) {
         const parsedToken = parseJwt(userAccount.token);
         dispatch(setUserInfoAction(parsedToken.user));
-        userAccount.token
-          ? localStorageSessionToken.set(userAccount.token)
-          : localStorageSessionToken.remove();
+        if (userAccount.token) {
+          localStorageSessionToken.set(userAccount.token);
+        } else {
+          localStorageSessionToken.remove();
+        }
       } else if (
         // Clear user info on logout
         !userAccount.token &&

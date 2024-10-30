@@ -27,7 +27,7 @@ export const SettingsEnableReceiverInvitationRetry = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isLoading, error, isSuccess } =
+  const { mutateAsync, isPending, error, isSuccess } =
     useUpdateOrgInvitationRetryInterval();
 
   useEffect(() => {
@@ -82,14 +82,14 @@ export const SettingsEnableReceiverInvitationRetry = () => {
               Enable automatic message retry
             </label>
             <div className="Toggle__wrapper">
-              {isLoading ? <Loader size="1rem" /> : null}
+              {isPending ? <Loader size="1rem" /> : null}
               <Toggle
                 id="receiver-invitation-retry"
                 checked={Boolean(
                   organization.data.receiverInvitationResendInterval,
                 )}
                 onChange={handleToggleChange}
-                disabled={isLoading}
+                disabled={isPending}
               />
             </div>
           </div>
@@ -116,11 +116,13 @@ export const SettingsEnableReceiverInvitationRetry = () => {
                   type="number"
                   value={receiverInvitationRetryInterval ?? ""}
                   onChange={(e) => {
-                    e.target.value !== ""
-                      ? setReceiverInvitationRetryInterval(
-                          Number(e.target.value),
-                        )
-                      : setReceiverInvitationRetryInterval(null);
+                    if (e.target.value !== "") {
+                      setReceiverInvitationRetryInterval(
+                        Number(e.target.value),
+                      );
+                    } else {
+                      setReceiverInvitationRetryInterval(null);
+                    }
                   }}
                   disabled={!isEditMode}
                   error={
@@ -143,7 +145,7 @@ export const SettingsEnableReceiverInvitationRetry = () => {
                     variant="secondary"
                     size="xs"
                     type="reset"
-                    isLoading={isLoading}
+                    isLoading={isPending}
                   >
                     Cancel
                   </Button>
@@ -151,7 +153,7 @@ export const SettingsEnableReceiverInvitationRetry = () => {
                     variant="primary"
                     size="xs"
                     type="submit"
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     disabled={
                       !receiverInvitationRetryInterval ||
                       receiverInvitationRetryInterval ===

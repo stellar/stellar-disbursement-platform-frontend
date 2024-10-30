@@ -40,7 +40,7 @@ export const ReceiverInviteMessage = () => {
     organization.data.receiverRegistrationMessageTemplate ??
     PLACEHOLDER_MESSAGE;
 
-  const { isLoading, data, isError, isSuccess, error, mutateAsync, reset } =
+  const { isPending, data, isError, isSuccess, error, mutateAsync, reset } =
     useUpdateSmsTemplate();
 
   // Pre-select option when page loads
@@ -74,7 +74,7 @@ export const ReceiverInviteMessage = () => {
   }, [dispatch, isSuccess]);
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (isLoading) {
+    if (isPending) {
       return;
     }
 
@@ -129,14 +129,14 @@ export const ReceiverInviteMessage = () => {
 
               setCustomMessageInput(event.target.value);
             }}
-            disabled={isLoading}
+            disabled={isPending}
           ></Textarea>
           <div className="ReceiverInviteMessage__form__buttons">
             <Button
               variant="secondary"
               size="xs"
               type="reset"
-              isLoading={isLoading}
+              isLoading={isPending}
             >
               Cancel
             </Button>
@@ -144,7 +144,7 @@ export const ReceiverInviteMessage = () => {
               variant="primary"
               size="xs"
               type="submit"
-              isLoading={isLoading}
+              isLoading={isPending}
               disabled={customMessageInput === customMessage}
             >
               Confirm
@@ -225,7 +225,7 @@ export const ReceiverInviteMessage = () => {
               label={
                 <Fragment key="msg-std-label">
                   {"Standard message"}{" "}
-                  {selectedOption === radioValue.STANDARD && isLoading ? (
+                  {selectedOption === radioValue.STANDARD && isPending ? (
                     <Loader size="1.25rem" />
                   ) : null}
                 </Fragment>
@@ -234,7 +234,7 @@ export const ReceiverInviteMessage = () => {
               value={radioValue.STANDARD}
               onChange={handleOptionChange}
               checked={selectedOption === radioValue.STANDARD}
-              disabled={isLoading}
+              disabled={isPending}
             />
             <RadioButton
               id="msg-cst"
@@ -244,7 +244,7 @@ export const ReceiverInviteMessage = () => {
               value={radioValue.CUSTOM}
               onChange={handleOptionChange}
               checked={selectedOption === radioValue.CUSTOM}
-              disabled={isLoading}
+              disabled={isPending}
             />
           </div>
 

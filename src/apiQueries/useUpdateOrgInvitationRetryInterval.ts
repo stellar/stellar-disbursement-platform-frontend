@@ -22,7 +22,6 @@ export const useUpdateOrgInvitationRetryInterval = () => {
         { omitContentType: true },
       );
     },
-    cacheTime: 0,
   });
 
   return {
@@ -32,7 +31,7 @@ export const useUpdateOrgInvitationRetryInterval = () => {
     mutateAsync: async (retryInterval: number) => {
       try {
         await mutation.mutateAsync(retryInterval);
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },
