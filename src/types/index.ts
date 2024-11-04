@@ -231,10 +231,7 @@ export type Disbursement = {
     pagination?: Pagination;
     searchParams?: ReceiversSearchParams;
   };
-  country: {
-    name: string;
-    code: string;
-  };
+  registrationContactType?: RegistrationContactType;
   asset: {
     id: string;
     code: string;
@@ -482,12 +479,11 @@ export type ApiError = {
   extras?: AnyObject;
 };
 
-export type ApiCountry = {
-  code: string;
-  name: string;
-  created_at: string;
-  updated_at: string;
-};
+export type RegistrationContactType =
+  | "EMAIL"
+  | "EMAIL_AND_WALLET_ADDRESS"
+  | "PHONE_NUMBER"
+  | "PHONE_NUMBER_AND_WALLET_ADDRESS";
 
 export type ApiAsset = {
   id: string;
@@ -519,14 +515,6 @@ export type ApiDisbursementUser = {
   name: string;
 };
 
-export type ApiDisbursementCountry = {
-  code: string;
-  name: string;
-  language: string;
-  created_at: string;
-  updated_at: string;
-};
-
 export type ApiDisbursementWallet = {
   id: string;
   name: string;
@@ -553,7 +541,7 @@ export type ApiDisbursementHistory = {
 export type ApiDisbursement = {
   id: string;
   name: string;
-  country: ApiDisbursementCountry;
+  registrationContactType: RegistrationContactType;
   wallet: ApiDisbursementWallet;
   asset: ApiDisbursementAsset;
   status: DisbursementStatus;

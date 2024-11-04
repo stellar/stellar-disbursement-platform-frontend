@@ -11,6 +11,7 @@ import {
 
 import { Routes } from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
+import { formatWithTitleCase } from "helpers/formatWithTitleCase";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import {
@@ -71,7 +72,9 @@ export const DisbursementsDrafts = () => {
               <Table>
                 <Table.Header>
                   <Table.HeaderCell>Disbursement name</Table.HeaderCell>
-                  <Table.HeaderCell>Country</Table.HeaderCell>
+                  <Table.HeaderCell>
+                    Registration Contact Type B
+                  </Table.HeaderCell>
                   <Table.HeaderCell>Asset</Table.HeaderCell>
                   <Table.HeaderCell>Created at</Table.HeaderCell>
                   <Table.HeaderCell> </Table.HeaderCell>
@@ -95,9 +98,11 @@ export const DisbursementsDrafts = () => {
                         </Table.BodyCell>
                         <Table.BodyCell
                           width="5rem"
-                          title={item.details.country.name}
+                          title={item.details.registrationContactType}
                         >
-                          {item.details.country.name}
+                          {formatWithTitleCase(
+                            item.details.registrationContactType,
+                          )}
                         </Table.BodyCell>
                         <Table.BodyCell
                           width="3.5rem"
