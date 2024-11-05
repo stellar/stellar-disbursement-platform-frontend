@@ -7,7 +7,7 @@
   },
   "lint-staged": {
     "src/**/*.ts?(x)": [
-      "eslint --fix --max-warnings 0"
+      "eslint --fix --max-warnings 0 --config eslint.config.mjs"
     ]
   },
   "private": true,
@@ -115,12 +115,14 @@
     "eslint-webpack-plugin": "^4.2.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
+    "globals": "^15.12.0",
     "html-webpack-plugin": "^5.6.3",
     "mini-css-extract-plugin": "^2.9.2",
     "react-hot-loader": "^4.13.1",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
+    "typescript-eslint": "^8.13.0",
     "webpack": "^5.96.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.1.0"

@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Button, Icon, ThemeSwitch } from "@stellar/design-system";
 import { PROJECT_NAME, Routes } from "constants/settings";
 import { DropdownMenu } from "components/DropdownMenu";
