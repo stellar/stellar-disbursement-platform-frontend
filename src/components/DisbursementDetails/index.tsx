@@ -160,7 +160,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 
     switch (id) {
       case FieldId.REGISTRATION_CONTACT_TYPE: {
-        // eslint-disable-next-line no-case-declarations
         const registrationContactType = registrationContactTypes?.find(
           (rct: RegistrationContactType) => rct === value,
         );
