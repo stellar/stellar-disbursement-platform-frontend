@@ -301,7 +301,12 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.wallet.id}
-          disabled={isWalletsLoading}
+          disabled={
+            isWalletsLoading ||
+            !registrationContactTypes ||
+            !details.registrationContactType ||
+            details.registrationContactType?.endsWith("WALLET_ADDRESS")
+          }
         >
           {renderDropdownDefault(isWalletsLoading)}
           {wallets &&
@@ -349,7 +354,12 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.verificationField}
-          disabled={isVerificationTypesFetching}
+          disabled={
+            isVerificationTypesFetching ||
+            !registrationContactTypes ||
+            !details.registrationContactType ||
+            details.registrationContactType?.endsWith("WALLET_ADDRESS")
+          }
         >
           {renderDropdownDefault(isVerificationTypesFetching)}
           {verificationTypes?.map((type: DisbursementVerificationField) => (
