@@ -72,9 +72,7 @@ export const DisbursementsDrafts = () => {
               <Table>
                 <Table.Header>
                   <Table.HeaderCell>Disbursement name</Table.HeaderCell>
-                  <Table.HeaderCell>
-                    Registration Contact Type B
-                  </Table.HeaderCell>
+                  <Table.HeaderCell>Registration Contact Type</Table.HeaderCell>
                   <Table.HeaderCell>Asset</Table.HeaderCell>
                   <Table.HeaderCell>Created at</Table.HeaderCell>
                   <Table.HeaderCell> </Table.HeaderCell>

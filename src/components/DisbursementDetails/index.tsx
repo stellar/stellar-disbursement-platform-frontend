@@ -276,7 +276,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       <>
         <Select
           id={FieldId.REGISTRATION_CONTACT_TYPE}
-          label="Registration Contact Type A"
+          label="Registration Contact Type"
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.registrationContactType}
