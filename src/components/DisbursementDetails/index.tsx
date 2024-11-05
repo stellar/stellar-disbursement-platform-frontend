@@ -120,12 +120,16 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       missingFields.push(FieldId.NAME);
     } else if (!inputs.registrationContactType) {
       missingFields.push(FieldId.REGISTRATION_CONTACT_TYPE);
-    } else if (!inputs.wallet.id) {
-      missingFields.push(FieldId.WALLET_ID);
     } else if (!inputs.asset.code) {
       missingFields.push(FieldId.ASSET_CODE);
-    } else if (!inputs.verificationField) {
-      missingFields.push(FieldId.VERIFICATION_FIELD);
+    }
+
+    if (!hasWallet(inputs.registrationContactType)) {
+      if (!inputs.wallet.id) {
+        missingFields.push(FieldId.WALLET_ID);
+      } else if (!inputs.verificationField) {
+        missingFields.push(FieldId.VERIFICATION_FIELD);
+      }
     }
 
     const isValid = missingFields.length === 0;
