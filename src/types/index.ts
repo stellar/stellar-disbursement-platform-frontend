@@ -554,7 +554,7 @@ export type ApiDisbursement = {
   wallet: ApiDisbursementWallet;
   asset: ApiDisbursementAsset;
   status: DisbursementStatus;
-  verification_field: DisbursementVerificationField;
+  verification_field?: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
   receiver_registration_message_template: string;
   registration_contact_type: RegistrationContactType;
