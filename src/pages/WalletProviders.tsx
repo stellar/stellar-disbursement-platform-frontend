@@ -75,6 +75,7 @@ export const WalletProviders = () => {
           enabled={item.enabled}
           assets={item.assets?.map((asset) => asset.code)}
           editable={canEditWalletProviders}
+          userManaged={item.user_managed}
           onChange={() => {
             setSelectedWallet({ id: item.id, enabled: item.enabled });
 

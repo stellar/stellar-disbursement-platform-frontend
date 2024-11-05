@@ -513,6 +513,7 @@ export type ApiWallet = {
   assets: ApiAsset[];
   created_at: string;
   updated_at: string;
+  user_managed?: boolean;
 };
 
 export type ApiDisbursements = {
