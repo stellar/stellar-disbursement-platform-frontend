@@ -23,6 +23,7 @@ import {
   DisbursementStep,
   DisbursementVerificationField,
   RegistrationContactType,
+  VerificationFieldMap,
 } from "types";
 
 import "./styles.scss";
@@ -105,13 +106,6 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     walletError?.message,
     verificationTypesError?.message,
   ];
-
-  const typeLabels: Record<DisbursementVerificationField | string, string> = {
-    DATE_OF_BIRTH: "Date of Birth",
-    YEAR_MONTH: "Date of Birth (Year & Month only)",
-    PIN: "PIN",
-    NATIONAL_ID_NUMBER: "National ID Number",
-  };
 
   const sanitizedApiErrors = apiErrors.filter((e) => Boolean(e));
 
@@ -237,7 +231,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           <div>
             <label className="Label Label--sm">Verification Type</label>
             <div className="DisbursementDetailsFields__value">
-              {typeLabels[details.verificationField ?? ""] ||
+              {VerificationFieldMap[details.verificationField ?? ""] ||
                 details.verificationField}
             </div>
           </div>
@@ -360,7 +354,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           {renderDropdownDefault(isVerificationTypesFetching)}
           {verificationTypes?.map((type: DisbursementVerificationField) => (
             <option key={type} value={type}>
-              {typeLabels[type] || type}
+              {VerificationFieldMap[type] || type}
             </option>
           ))}
         </Select>

@@ -36,11 +36,13 @@ import { PaymentStatus } from "components/PaymentStatus";
 
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { number } from "helpers/formatIntlNumber";
+import { formatWithTitleCase } from "helpers/formatWithTitleCase";
 import { saveFile } from "helpers/saveFile";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
 } from "helpers/receiverContactInfo";
+import { VerificationFieldMap } from "types";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();
@@ -198,6 +200,31 @@ export const DisbursementDetails = () => {
                 </CopyWithIcon>
               </div>
             </div>
+
+            <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">
+                Registration Contact Type
+              </label>
+              <div className="StatCards__card__item__value">
+                {formatWithTitleCase(
+                  disbursementDetails.details.registrationContactType,
+                )}
+              </div>
+            </div>
+            {disbursementDetails.details.verificationField ? (
+              <div className="StatCards__card__item">
+                <label className="StatCards__card__item__label">
+                  Verification Field
+                </label>
+                <div className="StatCards__card__item__value">
+                  {
+                    VerificationFieldMap[
+                      disbursementDetails.details.verificationField
+                    ]
+                  }
+                </div>
+              </div>
+            ) : null}
 
             <div className="StatCards__card__item">
               <label className="StatCards__card__item__label">Created by</label>

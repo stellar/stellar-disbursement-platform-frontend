@@ -11,13 +11,3 @@ export const formatWithTitleCase = (
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
     .join(" ");
 };
-
-// const formatWithTitleCase = (str: string) => {
-//   return str
-//     .toLowerCase()
-//     .replace("_", " ")
-//     .replace("-", " ")
-//     .split(" ")
-//     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-//     .join(" ");
-// };

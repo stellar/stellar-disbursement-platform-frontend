@@ -207,6 +207,16 @@ export type DisbursementVerificationField =
   | "PIN"
   | "NATIONAL_ID_NUMBER";
 
+export const VerificationFieldMap: Record<
+  DisbursementVerificationField | string,
+  string
+> = {
+  DATE_OF_BIRTH: "Date of Birth",
+  YEAR_MONTH: "Date of Birth (Year & Month only)",
+  PIN: "PIN",
+  NATIONAL_ID_NUMBER: "National ID Number",
+};
+
 export type DisbursementDraftAction = "save" | "submit";
 
 export interface DisbursementInstructions {
@@ -541,13 +551,13 @@ export type ApiDisbursementHistory = {
 export type ApiDisbursement = {
   id: string;
   name: string;
-  registrationContactType: RegistrationContactType;
   wallet: ApiDisbursementWallet;
   asset: ApiDisbursementAsset;
   status: DisbursementStatus;
   verification_field: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
   receiver_registration_message_template: string;
+  registration_contact_type: RegistrationContactType;
   created_at: string;
   updated_at: string;
   created_by?: {
