@@ -9,6 +9,7 @@ interface WalletCardProps {
   enabled: boolean;
   assets: string[];
   editable: boolean | null;
+  userManaged: boolean | undefined;
   onChange: () => void;
 }
 
@@ -19,6 +20,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
   enabled,
   assets,
   editable = true,
+  userManaged,
   onChange,
 }: WalletCardProps) => {
   return (
@@ -55,6 +57,14 @@ export const WalletCard: React.FC<WalletCardProps> = ({
               <Icon.Assets /> Supported assets
             </label>
             <div className="WalletCard__item__value">{assets?.join(", ")}</div>
+          </div>
+          <div className="WalletCard--flexCols">
+            <label className="WalletCard__item__label">
+              <Icon.Assets /> User Managed?
+            </label>
+            <div className="WalletCard__item__value">
+              {userManaged ? "Yes" : "No"}
+            </div>
           </div>
         </div>
       </div>

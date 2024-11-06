@@ -134,10 +134,7 @@ const initialState: DisbursementDetailsInitialState = {
       code: "",
       id: "",
     },
-    country: {
-      code: "",
-      name: "",
-    },
+    registrationContactType: undefined,
     wallet: {
       id: "",
       name: "",

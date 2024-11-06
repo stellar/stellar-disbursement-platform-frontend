@@ -207,6 +207,16 @@ export type DisbursementVerificationField =
   | "PIN"
   | "NATIONAL_ID_NUMBER";
 
+export const VerificationFieldMap: Record<
+  DisbursementVerificationField | string,
+  string
+> = {
+  DATE_OF_BIRTH: "Date of Birth",
+  YEAR_MONTH: "Date of Birth (Year & Month only)",
+  PIN: "PIN",
+  NATIONAL_ID_NUMBER: "National ID Number",
+};
+
 export type DisbursementDraftAction = "save" | "submit";
 
 export interface DisbursementInstructions {
@@ -231,10 +241,7 @@ export type Disbursement = {
     pagination?: Pagination;
     searchParams?: ReceiversSearchParams;
   };
-  country: {
-    name: string;
-    code: string;
-  };
+  registrationContactType?: RegistrationContactType;
   asset: {
     id: string;
     code: string;
@@ -482,12 +489,11 @@ export type ApiError = {
   extras?: AnyObject;
 };
 
-export type ApiCountry = {
-  code: string;
-  name: string;
-  created_at: string;
-  updated_at: string;
-};
+export type RegistrationContactType =
+  | "EMAIL"
+  | "EMAIL_AND_WALLET_ADDRESS"
+  | "PHONE_NUMBER"
+  | "PHONE_NUMBER_AND_WALLET_ADDRESS";
 
 export type ApiAsset = {
   id: string;
@@ -507,6 +513,7 @@ export type ApiWallet = {
   assets: ApiAsset[];
   created_at: string;
   updated_at: string;
+  user_managed?: boolean;
 };
 
 export type ApiDisbursements = {
@@ -517,14 +524,6 @@ export type ApiDisbursements = {
 export type ApiDisbursementUser = {
   id: string;
   name: string;
-};
-
-export type ApiDisbursementCountry = {
-  code: string;
-  name: string;
-  language: string;
-  created_at: string;
-  updated_at: string;
 };
 
 export type ApiDisbursementWallet = {
@@ -553,13 +552,13 @@ export type ApiDisbursementHistory = {
 export type ApiDisbursement = {
   id: string;
   name: string;
-  country: ApiDisbursementCountry;
   wallet: ApiDisbursementWallet;
   asset: ApiDisbursementAsset;
   status: DisbursementStatus;
-  verification_field: DisbursementVerificationField;
+  verification_field?: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
   receiver_registration_message_template: string;
+  registration_contact_type: RegistrationContactType;
   created_at: string;
   updated_at: string;
   created_by?: {

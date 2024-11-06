@@ -9,19 +9,21 @@ import { BigNumber } from "bignumber.js";
 
 import { useWallets } from "apiQueries/useWallets";
 import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
-import { useCountries } from "apiQueries/useCountries";
+import { useRegistrationContactTypes } from "apiQueries/useRegistrationContactTypes";
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { AssetAmount } from "components/AssetAmount";
 import { InfoTooltip } from "components/InfoTooltip";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
+import { formatWithTitleCase } from "helpers/formatWithTitleCase";
 import { useAllBalances } from "hooks/useAllBalances";
 import {
   ApiAsset,
-  ApiCountry,
   ApiWallet,
   Disbursement,
   DisbursementStep,
   DisbursementVerificationField,
+  RegistrationContactType,
+  VerificationFieldMap,
 } from "types";
 
 import "./styles.scss";
@@ -38,10 +40,7 @@ interface DisbursementDetailsProps {
 const initDetails: Disbursement = {
   id: "",
   name: "",
-  country: {
-    name: "",
-    code: "",
-  },
+  registrationContactType: undefined,
   asset: {
     id: "",
     code: "",
@@ -68,7 +67,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 }: DisbursementDetailsProps) => {
   enum FieldId {
     NAME = "name",
-    COUNTRY_CODE = "country_code",
+    REGISTRATION_CONTACT_TYPE = "registration_contact_type",
     ASSET_CODE = "asset_code",
     WALLET_ID = "wallet_id",
     VERIFICATION_FIELD = "verification_field",
@@ -81,10 +80,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   } = useWallets();
 
   const {
-    data: countries,
-    error: countriesError,
-    isLoading: isCountriesLoading,
-  } = useCountries();
+    data: registrationContactTypes,
+    error: registrationContactTypesError,
+    isLoading: areRegistrationContactTypesLoading,
+  } = useRegistrationContactTypes();
 
   const {
     data: walletAssets,
@@ -102,18 +101,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   const { allBalances } = useAllBalances();
 
   const apiErrors = [
-    countriesError?.message,
+    registrationContactTypesError?.message,
     walletsError?.message,
     walletError?.message,
     verificationTypesError?.message,
   ];
-
-  const typeLabels: Record<DisbursementVerificationField | string, string> = {
-    DATE_OF_BIRTH: "Date of Birth",
-    YEAR_MONTH: "Date of Birth (Year & Month only)",
-    PIN: "PIN",
-    NATIONAL_ID_NUMBER: "National ID Number",
-  };
 
   const sanitizedApiErrors = apiErrors.filter((e) => Boolean(e));
 
@@ -122,8 +114,8 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 
     if (!inputs.name) {
       missingFields.push(FieldId.NAME);
-    } else if (!inputs.country.code) {
-      missingFields.push(FieldId.COUNTRY_CODE);
+    } else if (!inputs.registrationContactType) {
+      missingFields.push(FieldId.REGISTRATION_CONTACT_TYPE);
     } else if (!inputs.wallet.id) {
       missingFields.push(FieldId.WALLET_ID);
     } else if (!inputs.asset.code) {
@@ -159,16 +151,13 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     const { id, value } = event.target;
 
     switch (id) {
-      case FieldId.COUNTRY_CODE:
+      case FieldId.REGISTRATION_CONTACT_TYPE:
         // eslint-disable-next-line no-case-declarations
-        const country = countries?.find((c: ApiCountry) => c.code === value);
+        const registrationContactType = registrationContactTypes?.find(
+          (rct: RegistrationContactType) => rct === value,
+        );
 
-        updateState({
-          country: {
-            name: country?.name || "",
-            code: country?.code || "",
-          },
-        });
+        updateState({ registrationContactType });
 
         break;
       case FieldId.WALLET_ID:
@@ -219,9 +208,9 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       return (
         <>
           <div>
-            <label className="Label Label--sm">Country</label>
+            <label className="Label Label--sm">Registration Contact Type</label>
             <div className="DisbursementDetailsFields__value">
-              {details.country.name}
+              {formatWithTitleCase(details.registrationContactType)}
             </div>
           </div>
 
@@ -242,7 +231,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           <div>
             <label className="Label Label--sm">Verification Type</label>
             <div className="DisbursementDetailsFields__value">
-              {typeLabels[details.verificationField ?? ""] ||
+              {VerificationFieldMap[details.verificationField ?? ""] ||
                 details.verificationField}
             </div>
           </div>
@@ -286,19 +275,24 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     return (
       <>
         <Select
-          id={FieldId.COUNTRY_CODE}
-          label="Country"
+          id={FieldId.REGISTRATION_CONTACT_TYPE}
+          label="Registration Contact Type"
           fieldSize="sm"
           onChange={updateDraftDetails}
-          value={details.country.code}
-          disabled={isCountriesLoading}
+          value={details.registrationContactType}
+          disabled={areRegistrationContactTypesLoading}
         >
-          {renderDropdownDefault(isCountriesLoading)}
-          {countries?.map((country: ApiCountry) => (
-            <option key={country.code} value={country.code}>
-              {country.name}
-            </option>
-          ))}
+          {renderDropdownDefault(areRegistrationContactTypesLoading)}
+          {registrationContactTypes?.map(
+            (registrationContactType: RegistrationContactType) => (
+              <option
+                key={registrationContactType}
+                value={registrationContactType}
+              >
+                {formatWithTitleCase(registrationContactType)}
+              </option>
+            ),
+          )}
         </Select>
 
         <Select
@@ -360,7 +354,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           {renderDropdownDefault(isVerificationTypesFetching)}
           {verificationTypes?.map((type: DisbursementVerificationField) => (
             <option key={type} value={type}>
-              {typeLabels[type] || type}
+              {VerificationFieldMap[type] || type}
             </option>
           ))}
         </Select>
