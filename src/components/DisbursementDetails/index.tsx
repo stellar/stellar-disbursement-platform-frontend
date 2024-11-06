@@ -78,7 +78,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     data: wallets,
     error: walletsError,
     isLoading: isWalletsLoading,
-  } = useWallets();
+  } = useWallets({ userManaged: false });
 
   const {
     data: registrationContactTypes,
