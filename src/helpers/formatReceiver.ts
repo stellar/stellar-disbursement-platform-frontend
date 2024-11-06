@@ -29,9 +29,10 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
     // TODO: withdrawn amount
     withdrawnAmount: "",
   })),
-  verifications: receiver.verifications.map((v) => ({
-    verificationField: v.verification_field,
-    value: v.hashed_value,
-    confirmedAt: v.confirmed_at,
-  })),
+  verifications:
+    receiver.verifications?.map((v) => ({
+      verificationField: v.verification_field,
+      value: v.hashed_value,
+      confirmedAt: v.confirmed_at,
+    })) || [],
 });
