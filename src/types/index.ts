@@ -495,6 +495,9 @@ export type RegistrationContactType =
   | "PHONE_NUMBER"
   | "PHONE_NUMBER_AND_WALLET_ADDRESS";
 
+export const hasWallet = (rct: RegistrationContactType | undefined): boolean =>
+  Boolean(rct?.endsWith("WALLET_ADDRESS"));
+
 export type ApiAsset = {
   id: string;
   code: string;

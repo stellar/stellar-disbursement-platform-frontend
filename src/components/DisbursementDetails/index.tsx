@@ -22,6 +22,7 @@ import {
   Disbursement,
   DisbursementStep,
   DisbursementVerificationField,
+  hasWallet,
   RegistrationContactType,
   VerificationFieldMap,
 } from "types";
@@ -89,7 +90,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     data: walletAssets,
     error: walletError,
     isFetching: isWalletAssetsFetching,
-  } = useAssetsByWallet(details.wallet.id);
+  } = useAssetsByWallet({
+    walletId: details.wallet.id,
+    registrationContactType: details.registrationContactType,
+  });
 
   const {
     data: verificationTypes,
@@ -116,12 +120,16 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       missingFields.push(FieldId.NAME);
     } else if (!inputs.registrationContactType) {
       missingFields.push(FieldId.REGISTRATION_CONTACT_TYPE);
-    } else if (!inputs.wallet.id) {
-      missingFields.push(FieldId.WALLET_ID);
     } else if (!inputs.asset.code) {
       missingFields.push(FieldId.ASSET_CODE);
-    } else if (!inputs.verificationField) {
-      missingFields.push(FieldId.VERIFICATION_FIELD);
+    }
+
+    if (!hasWallet(inputs.registrationContactType)) {
+      if (!inputs.wallet.id) {
+        missingFields.push(FieldId.WALLET_ID);
+      } else if (!inputs.verificationField) {
+        missingFields.push(FieldId.VERIFICATION_FIELD);
+      }
     }
 
     const isValid = missingFields.length === 0;
@@ -151,15 +159,36 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     const { id, value } = event.target;
 
     switch (id) {
-      case FieldId.REGISTRATION_CONTACT_TYPE:
-        // eslint-disable-next-line no-case-declarations
+      case FieldId.REGISTRATION_CONTACT_TYPE: {
         const registrationContactType = registrationContactTypes?.find(
           (rct: RegistrationContactType) => rct === value,
         );
 
-        updateState({ registrationContactType });
+        const newState = {
+          registrationContactType,
+          wallet: details.wallet,
+          verificationField: details.verificationField,
+          asset: details.asset,
+        };
+        if (!registrationContactType || hasWallet(registrationContactType)) {
+          // registrationContactType was erased or changed to a wallet type
+          newState.wallet = { id: "", name: "" };
+          newState.verificationField = "";
+        }
 
+        if (
+          !registrationContactType ||
+          hasWallet(registrationContactType) !==
+            hasWallet(details.registrationContactType)
+        ) {
+          // registrationContactType was erased or changed to a different type
+          newState.asset = { id: "", code: "" };
+        }
+
+        updateState({ ...newState });
         break;
+      }
+
       case FieldId.WALLET_ID:
         // eslint-disable-next-line no-case-declarations
         const wallet = wallets?.find((w: ApiWallet) => w.id === value);
@@ -170,8 +199,8 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             name: wallet?.name || "",
           },
         });
-
         break;
+
       case FieldId.ASSET_CODE:
         // eslint-disable-next-line no-case-declarations
         const asset = walletAssets?.find((a: ApiAsset) => a.id === value);
@@ -182,18 +211,20 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             code: asset?.code || "",
           },
         });
-
         break;
+
       case FieldId.NAME:
         updateState({
           name: value,
         });
         break;
+
       case FieldId.VERIFICATION_FIELD:
         updateState({
           verificationField: value,
         });
         break;
+
       default:
       // do nothing
     }
@@ -301,7 +332,12 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.wallet.id}
-          disabled={isWalletsLoading}
+          disabled={
+            isWalletsLoading ||
+            !registrationContactTypes ||
+            !details.registrationContactType ||
+            hasWallet(details.registrationContactType)
+          }
         >
           {renderDropdownDefault(isWalletsLoading)}
           {wallets &&
@@ -320,7 +356,12 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.asset.id}
-          disabled={isWalletAssetsFetching || !details.wallet.id}
+          disabled={
+            isWalletAssetsFetching ||
+            (!details.wallet.id &&
+              (!hasWallet(details.registrationContactType) ||
+                !details.registrationContactType))
+          }
         >
           {renderDropdownDefault(isWalletAssetsFetching)}
           {walletAssets
@@ -349,7 +390,12 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.verificationField}
-          disabled={isVerificationTypesFetching}
+          disabled={
+            isVerificationTypesFetching ||
+            !registrationContactTypes ||
+            !details.registrationContactType ||
+            hasWallet(details.registrationContactType)
+          }
         >
           {renderDropdownDefault(isVerificationTypesFetching)}
           {verificationTypes?.map((type: DisbursementVerificationField) => (
