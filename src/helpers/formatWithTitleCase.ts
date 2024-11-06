@@ -1,8 +1,6 @@
-export const formatWithTitleCase = (
-  input: string | undefined,
-): string | undefined => {
-  if (input === undefined) {
-    return undefined;
+export const formatWithTitleCase = (input: string | undefined): string => {
+  if (!input) {
+    return "";
   }
 
   return input
