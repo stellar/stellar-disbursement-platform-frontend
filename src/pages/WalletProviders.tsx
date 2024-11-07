@@ -33,7 +33,7 @@ export const WalletProviders = () => {
     isPending: isWalletsPending,
     isFetching: isWalletsFetching,
     refetch: refetchWallets,
-  } = useWallets();
+  } = useWallets({});
 
   const {
     error: walletUpdateError,
