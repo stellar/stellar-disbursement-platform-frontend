@@ -167,6 +167,8 @@ module.exports = {
         ),
         REACT_APP_SINGLE_TENANT_MODE:
           process.env.REACT_APP_SINGLE_TENANT_MODE?.toLowerCase() === "true",
+        REACT_APP_IS_PUBNET:
+          process.env.REACT_APP_IS_PUBNET?.toLowerCase() === "true",
         REACT_APP_USE_SSO:
           process.env.REACT_APP_USE_SSO?.toLowerCase() === "true",
         REACT_APP_OIDC_AUTHORITY: JSON.stringify(

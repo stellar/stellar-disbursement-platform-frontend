@@ -58,6 +58,7 @@ window._env_ = {
   HORIZON_URL: "https://horizon-testnet.stellar.org",
   RECAPTCHA_SITE_KEY: "6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn",
   SINGLE_TENANT_MODE: false,
+  IS_PUBLIC: false,
 };
 ```
 
