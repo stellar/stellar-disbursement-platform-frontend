@@ -5,6 +5,7 @@ import { CsvUpload } from "components/CsvUpload";
 import { CsvUploadButton } from "components/CsvUploadButton";
 import { CsvPreview } from "components/CsvPreview";
 import { InfoTooltip } from "components/InfoTooltip";
+import { RegistrationContactType } from "types";
 import "./styles.scss";
 
 interface DisbursementInstructionsProps {
@@ -12,6 +13,8 @@ interface DisbursementInstructionsProps {
   csvFile?: File;
   onChange: (file: File | undefined) => void;
   isDisabled?: boolean;
+  registrationContactType: RegistrationContactType | undefined;
+  verificationField: string | undefined;
 }
 
 export const DisbursementInstructions: React.FC<
@@ -21,14 +24,37 @@ export const DisbursementInstructions: React.FC<
   csvFile,
   onChange,
   isDisabled,
+  registrationContactType,
+  verificationField,
 }: DisbursementInstructionsProps) => {
+  const getCsvTemplateName = () => {
+    switch (registrationContactType) {
+      case "EMAIL":
+      case "PHONE_NUMBER":
+        return verificationField
+          ? `${registrationContactType}_${verificationField}`
+          : "";
+      case "EMAIL_AND_WALLET_ADDRESS":
+      case "PHONE_NUMBER_AND_WALLET_ADDRESS":
+        return `${registrationContactType}`;
+      default:
+        return "";
+    }
+  };
+
+  const csvTemplateName = getCsvTemplateName();
+
   const handleDownloadTemplate = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
     saveFile({
-      fileUrl: "/resources/disbursement-template.csv",
-      suggestedFileName: "disbursement-template.csv",
+      fileUrl: csvTemplateName
+        ? `/resources/disbursementTemplates/${csvTemplateName}.csv`
+        : "/resources/disbursement-template.csv",
+      suggestedFileName: csvTemplateName
+        ? `DISBURSEMENT_TEMPLATE_${csvTemplateName}.csv`
+        : "disbursement-template.csv",
     });
   };
 
@@ -64,6 +90,22 @@ export const DisbursementInstructions: React.FC<
     );
   };
 
+  const getButtonTitleText = () => {
+    if (csvTemplateName) {
+      return "";
+    }
+
+    if (!registrationContactType) {
+      return "Please select Registration Contact Type";
+    }
+
+    if (["EMAIL", "PHONE_NUMEBR"].includes(registrationContactType)) {
+      return "Please select Verification type";
+    }
+
+    return "";
+  };
+
   return (
     <Card>
       <div className="DisbursementInstructions__titleWrapper">
@@ -76,6 +118,8 @@ export const DisbursementInstructions: React.FC<
             size="xs"
             variant="secondary"
             onClick={handleDownloadTemplate}
+            disabled={!csvTemplateName}
+            title={getButtonTitleText()}
           >
             Download CSV template
           </Button>

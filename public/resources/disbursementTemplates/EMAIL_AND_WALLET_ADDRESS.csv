@@ -1,0 +1,3 @@
+email,walletAddress,id,amount,paymentID
+"--- Below are EXAMPLE rows.","Please DELETE these rows before uploading your actual data ---",,
+foo@test.com,GCBGRAR...X23U,4ba1,520,PAY_01

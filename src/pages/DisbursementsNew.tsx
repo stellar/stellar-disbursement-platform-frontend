@@ -254,6 +254,8 @@ export const DisbursementsNew = () => {
             variant="preview"
             csvFile={csvFile}
             onChange={handleCsvFileChange}
+            registrationContactType={draftDetails?.registrationContactType}
+            verificationField={draftDetails?.verificationField}
           />
 
           {renderButtons("preview")}
@@ -340,12 +342,13 @@ export const DisbursementsNew = () => {
               setCustomMessage(updatedDisbursementInviteMessage);
             }}
           />
-
           <DisbursementInstructions
             variant="upload"
             csvFile={csvFile}
             onChange={handleCsvFileChange}
             isDisabled={!isDraftEnabled}
+            registrationContactType={draftDetails?.registrationContactType}
+            verificationField={draftDetails?.verificationField}
           />
 
           {renderButtons("edit")}
