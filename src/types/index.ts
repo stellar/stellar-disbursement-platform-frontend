@@ -529,6 +529,16 @@ export type ApiWallet = {
   user_managed?: boolean;
 };
 
+export const isUserManagedWalletEnabled = (
+  wallets: ApiWallet[] | undefined,
+): boolean => {
+  if (!wallets) {
+    return false;
+  }
+
+  return wallets.some((w) => Boolean(w.user_managed) && w.enabled);
+};
+
 export type ApiDisbursements = {
   data: ApiDisbursement[];
   pagination: Pagination;

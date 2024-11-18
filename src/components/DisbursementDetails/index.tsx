@@ -12,7 +12,7 @@ import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
 import { useRegistrationContactTypes } from "apiQueries/useRegistrationContactTypes";
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { AssetAmount } from "components/AssetAmount";
-import { InfoTooltip } from "components/InfoTooltip";
+import { InfoTooltip, OptionalInfoTooltip } from "components/InfoTooltip";
 import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
 import { useAllBalances } from "hooks/useAllBalances";
@@ -23,6 +23,7 @@ import {
   DisbursementStep,
   DisbursementVerificationField,
   hasWallet,
+  isUserManagedWalletEnabled,
   RegistrationContactType,
   VerificationFieldMap,
 } from "types";
@@ -78,7 +79,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     data: wallets,
     error: walletsError,
     isLoading: isWalletsLoading,
-  } = useWallets({ userManaged: false });
+  } = useWallets({});
 
   const {
     data: registrationContactTypes,
@@ -302,30 +303,42 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       );
     }
 
+    const isWalletRegistrationEnabled = isUserManagedWalletEnabled(wallets);
+
     // "edit" variant by default
     return (
       <>
         <Select
           id={FieldId.REGISTRATION_CONTACT_TYPE}
-          label="Registration Contact Type"
+          label={
+            <OptionalInfoTooltip
+              showTooltip={!isWalletRegistrationEnabled}
+              infoText="Registering receivers wallet directly is disabled. It can be enabled in the 'Wallet Providers' section."
+            >
+              Registration Contact Type
+            </OptionalInfoTooltip>
+          }
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.registrationContactType}
           disabled={areRegistrationContactTypesLoading}
         >
           {renderDropdownDefault(areRegistrationContactTypesLoading)}
-          {registrationContactTypes?.map(
-            (registrationContactType: RegistrationContactType) => (
+          {registrationContactTypes
+            ?.filter(
+              (registrationContactType) =>
+                !hasWallet(registrationContactType) ||
+                isWalletRegistrationEnabled,
+            )
+            .map((registrationContactType: RegistrationContactType) => (
               <option
                 key={registrationContactType}
                 value={registrationContactType}
               >
                 {formatRegistrationContactType(registrationContactType)}
               </option>
-            ),
-          )}
+            ))}
         </Select>
-
         <Select
           id={FieldId.WALLET_ID}
           label="Wallet provider"
@@ -343,6 +356,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           {wallets &&
             wallets
               .filter((wallet) => wallet.enabled)
+              .filter((wallet) => !wallet.user_managed)
               .map((wallet: ApiWallet) => (
                 <option key={wallet.id} value={wallet.id}>
                   {wallet.name}
