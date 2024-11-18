@@ -21,7 +21,6 @@ import {
   ApiWallet,
   Disbursement,
   DisbursementStep,
-  DisbursementVerificationField,
   hasWallet,
   isUserManagedWalletEnabled,
   RegistrationContactType,
@@ -411,7 +410,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           label="Verification type"
           fieldSize="sm"
           onChange={updateDraftDetails}
-          value={details.verificationField}
+          value={
+            hasWallet(details.registrationContactType)
+              ? "None"
+              : details.verificationField
+          }
           disabled={
             isVerificationTypesFetching ||
             !registrationContactTypes ||
@@ -420,7 +423,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           }
         >
           {renderDropdownDefault(isVerificationTypesFetching)}
-          {verificationTypes?.map((type: DisbursementVerificationField) => (
+          {[
+            ...(verificationTypes ?? []),
+            ...(hasWallet(details.registrationContactType) ? ["None"] : []),
+          ].map((type: string) => (
             <option key={type} value={type}>
               {VerificationFieldMap[type] || type}
             </option>
