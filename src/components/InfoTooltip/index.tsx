@@ -28,3 +28,24 @@ export const InfoTooltip = ({
     </div>
   );
 };
+
+interface OptionalInfoTooltipProps extends InfoTooltipProps {
+  showTooltip?: boolean;
+}
+
+export const OptionalInfoTooltip = ({
+  children,
+  infoText,
+  placement = "right",
+  showTooltip = true,
+}: OptionalInfoTooltipProps) => {
+  if (!showTooltip) {
+    return <>{children}</>;
+  }
+
+  return (
+    <InfoTooltip infoText={infoText} placement={placement}>
+      {children}
+    </InfoTooltip>
+  );
+};

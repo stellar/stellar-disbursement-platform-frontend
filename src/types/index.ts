@@ -506,7 +506,7 @@ export const RegistrationContactTypeMap: Record<
 };
 
 export const hasWallet = (rct: RegistrationContactType | undefined): boolean =>
-  Boolean(rct?.endsWith("WALLET_ADDRESS"));
+  Boolean(rct?.includes("WALLET_ADDRESS"));
 
 export type ApiAsset = {
   id: string;

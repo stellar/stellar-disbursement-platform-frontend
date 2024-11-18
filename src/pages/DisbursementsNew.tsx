@@ -33,7 +33,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { AccountBalances } from "components/AccountBalances";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { Disbursement, DisbursementStep } from "types";
+import { Disbursement, DisbursementStep, hasWallet } from "types";
 
 export const DisbursementsNew = () => {
   const { disbursementDrafts, organization } = useRedux(
@@ -263,6 +263,14 @@ export const DisbursementsNew = () => {
       );
     }
 
+    const successMessageArray: string[] = [
+      "Payments will begin automatically",
+      hasWallet(draftDetails?.registrationContactType)
+        ? ""
+        : " to receivers who have registered their wallet",
+      ". Click 'View' to track your disbursement in real-time.",
+    ];
+
     // Confirmation
     if (currentStep === "confirmation") {
       return (
@@ -284,8 +292,7 @@ export const DisbursementsNew = () => {
                 },
               ]}
             >
-              Payments will begin automatically to receivers who have registered
-              their wallet.
+              {successMessageArray.join("")}
             </NotificationWithButtons>
           ) : null}
 
@@ -341,6 +348,11 @@ export const DisbursementsNew = () => {
             onChange={(updatedDisbursementInviteMessage) => {
               setCustomMessage(updatedDisbursementInviteMessage);
             }}
+            disabledReasonForTooltip={
+              hasWallet(draftDetails?.registrationContactType)
+                ? "No invitation message will be sent because you're registering receivers with wallets addresses."
+                : undefined
+            }
           />
           <DisbursementInstructions
             variant="upload"
