@@ -344,7 +344,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           label="Wallet provider"
           fieldSize="sm"
           onChange={updateDraftDetails}
-          value={details.wallet.id}
+          value={
+            hasWallet(details.registrationContactType) // in case of a WALLET_ADDRESS registration type, pre-populate the WALLET provider
+              ? wallets?.find((w) => w.enabled && w.user_managed)?.id
+              : details.wallet.id
+          }
           disabled={
             isWalletsLoading ||
             !registrationContactTypes ||
@@ -356,7 +360,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           {wallets &&
             wallets
               .filter((wallet) => wallet.enabled)
-              .filter((wallet) => !wallet.user_managed)
+              .filter((wallet) =>
+                hasWallet(details.registrationContactType) // This allows to pre-populate the WALLET provider in case of a WALLET_ADDRESS registration type
+                  ? true
+                  : !wallet.user_managed,
+              )
               .map((wallet: ApiWallet) => (
                 <option key={wallet.id} value={wallet.id}>
                   {wallet.name}
