@@ -234,6 +234,33 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     return <option>{isLoading ? "Loading…" : ""}</option>;
   };
 
+  const renderWalletProviderText = (): string => {
+    if (details.wallet.name) {
+      return details.wallet.name;
+    }
+
+    if (hasWallet(details.registrationContactType)) {
+      return wallets?.find((w) => w.enabled && w.user_managed)?.name || "-";
+    }
+
+    return "-";
+  };
+
+  const renderVerificationTypeText = (): string => {
+    if (details.verificationField) {
+      return (
+        VerificationFieldMap[details.verificationField] ||
+        details.verificationField
+      );
+    }
+
+    if (hasWallet(details.registrationContactType)) {
+      return "None";
+    }
+
+    return "-";
+  };
+
   const renderContent = () => {
     if (variant === "preview" || variant === "confirmation") {
       return (
@@ -248,7 +275,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           <div>
             <label className="Label Label--sm">Wallet provider</label>
             <div className="DisbursementDetailsFields__value">
-              {details.wallet.name}
+              {renderWalletProviderText()}
             </div>
           </div>
 
@@ -262,8 +289,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           <div>
             <label className="Label Label--sm">Verification Type</label>
             <div className="DisbursementDetailsFields__value">
-              {VerificationFieldMap[details.verificationField ?? ""] ||
-                details.verificationField}
+              {renderVerificationTypeText()}
             </div>
           </div>
 

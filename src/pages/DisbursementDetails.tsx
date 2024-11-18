@@ -211,20 +211,18 @@ export const DisbursementDetails = () => {
                 )}
               </div>
             </div>
-            {disbursementDetails.details.verificationField ? (
-              <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Verification Field
-                </label>
-                <div className="StatCards__card__item__value">
-                  {
-                    VerificationFieldMap[
+            <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">
+                Verification Type
+              </label>
+              <div className="StatCards__card__item__value">
+                {disbursementDetails.details.verificationField
+                  ? VerificationFieldMap[
                       disbursementDetails.details.verificationField
                     ]
-                  }
-                </div>
+                  : "None"}
               </div>
-            ) : null}
+            </div>
 
             <div className="StatCards__card__item">
               <label className="StatCards__card__item__label">Created by</label>
