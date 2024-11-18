@@ -495,6 +495,16 @@ export type RegistrationContactType =
   | "PHONE_NUMBER"
   | "PHONE_NUMBER_AND_WALLET_ADDRESS";
 
+export const RegistrationContactTypeMap: Record<
+  RegistrationContactType | string,
+  string
+> = {
+  EMAIL: "Email",
+  EMAIL_AND_WALLET_ADDRESS: "Wallet Address and Email",
+  PHONE_NUMBER: "Phone Number",
+  PHONE_NUMBER_AND_WALLET_ADDRESS: "Wallet Address and Phone Number",
+};
+
 export const hasWallet = (rct: RegistrationContactType | undefined): boolean =>
   Boolean(rct?.endsWith("WALLET_ADDRESS"));
 

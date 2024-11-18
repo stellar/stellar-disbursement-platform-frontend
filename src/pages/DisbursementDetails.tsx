@@ -36,7 +36,7 @@ import { PaymentStatus } from "components/PaymentStatus";
 
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { number } from "helpers/formatIntlNumber";
-import { formatWithTitleCase } from "helpers/formatWithTitleCase";
+import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { saveFile } from "helpers/saveFile";
 import {
   getReceiverContactInfoTitle,
@@ -206,7 +206,7 @@ export const DisbursementDetails = () => {
                 Registration Contact Type
               </label>
               <div className="StatCards__card__item__value">
-                {formatWithTitleCase(
+                {formatRegistrationContactType(
                   disbursementDetails.details.registrationContactType,
                 )}
               </div>

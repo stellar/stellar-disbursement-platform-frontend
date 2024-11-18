@@ -11,7 +11,7 @@ import {
 
 import { Routes } from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
-import { formatWithTitleCase } from "helpers/formatWithTitleCase";
+import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import {
@@ -98,7 +98,7 @@ export const DisbursementsDrafts = () => {
                           width="5rem"
                           title={item.details.registrationContactType}
                         >
-                          {formatWithTitleCase(
+                          {formatRegistrationContactType(
                             item.details.registrationContactType,
                           )}
                         </Table.BodyCell>

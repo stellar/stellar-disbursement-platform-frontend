@@ -13,8 +13,8 @@ import { useRegistrationContactTypes } from "apiQueries/useRegistrationContactTy
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { AssetAmount } from "components/AssetAmount";
 import { InfoTooltip } from "components/InfoTooltip";
+import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { formatWithTitleCase } from "helpers/formatWithTitleCase";
 import { useAllBalances } from "hooks/useAllBalances";
 import {
   ApiAsset,
@@ -241,7 +241,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           <div>
             <label className="Label Label--sm">Registration Contact Type</label>
             <div className="DisbursementDetailsFields__value">
-              {formatWithTitleCase(details.registrationContactType)}
+              {formatRegistrationContactType(details.registrationContactType)}
             </div>
           </div>
 
@@ -320,7 +320,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
                 key={registrationContactType}
                 value={registrationContactType}
               >
-                {formatWithTitleCase(registrationContactType)}
+                {formatRegistrationContactType(registrationContactType)}
               </option>
             ),
           )}
