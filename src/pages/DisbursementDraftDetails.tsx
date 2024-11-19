@@ -362,6 +362,10 @@ export const DisbursementDraftDetails = () => {
               setIsCsvFileUpdated(true);
               dispatch(clearCsvUpdatedAction());
             }}
+            registrationContactType={
+              draftDetails?.details.registrationContactType
+            }
+            verificationField={draftDetails?.details.verificationField}
           />
 
           {renderButtons("preview")}
