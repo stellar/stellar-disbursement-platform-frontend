@@ -273,7 +273,7 @@ export const DisbursementDraftDetails = () => {
         ? ""
         : " to receivers who have registered their wallet",
       ". Click 'View' to track your disbursement in real-time.",
-    ];
+    ].filter((m) => Boolean(m));
 
     // Confirmation
     if (currentStep === "confirmation") {
