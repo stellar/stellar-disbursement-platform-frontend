@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { Card, RadioButton, Textarea } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
+import { OptionalInfoTooltip } from "components/InfoTooltip";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import { getOrgInfoAction } from "store/ducks/organization";
 
 import "../ReceiverInviteMessage/styles.scss";
-import { OptionalInfoTooltip } from "components/InfoTooltip";
 
 interface DisbursementInviteMessageProps {
   draftMessage?: string;
