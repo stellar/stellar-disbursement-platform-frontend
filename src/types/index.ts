@@ -495,8 +495,18 @@ export type RegistrationContactType =
   | "PHONE_NUMBER"
   | "PHONE_NUMBER_AND_WALLET_ADDRESS";
 
+export const RegistrationContactTypeMap: Record<
+  RegistrationContactType | string,
+  string
+> = {
+  EMAIL: "Email",
+  EMAIL_AND_WALLET_ADDRESS: "Wallet Address and Email",
+  PHONE_NUMBER: "Phone Number",
+  PHONE_NUMBER_AND_WALLET_ADDRESS: "Wallet Address and Phone Number",
+};
+
 export const hasWallet = (rct: RegistrationContactType | undefined): boolean =>
-  Boolean(rct?.endsWith("WALLET_ADDRESS"));
+  Boolean(rct?.includes("WALLET_ADDRESS"));
 
 export type ApiAsset = {
   id: string;
@@ -517,6 +527,16 @@ export type ApiWallet = {
   created_at: string;
   updated_at: string;
   user_managed?: boolean;
+};
+
+export const isUserManagedWalletEnabled = (
+  wallets: ApiWallet[] | undefined,
+): boolean => {
+  if (!wallets) {
+    return false;
+  }
+
+  return wallets.some((w) => Boolean(w.user_managed) && w.enabled);
 };
 
 export type ApiDisbursements = {

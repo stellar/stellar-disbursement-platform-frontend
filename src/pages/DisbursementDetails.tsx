@@ -36,7 +36,7 @@ import { PaymentStatus } from "components/PaymentStatus";
 
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { number } from "helpers/formatIntlNumber";
-import { formatWithTitleCase } from "helpers/formatWithTitleCase";
+import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { saveFile } from "helpers/saveFile";
 import {
   getReceiverContactInfoTitle,
@@ -206,25 +206,23 @@ export const DisbursementDetails = () => {
                 Registration Contact Type
               </label>
               <div className="StatCards__card__item__value">
-                {formatWithTitleCase(
+                {formatRegistrationContactType(
                   disbursementDetails.details.registrationContactType,
                 )}
               </div>
             </div>
-            {disbursementDetails.details.verificationField ? (
-              <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Verification Field
-                </label>
-                <div className="StatCards__card__item__value">
-                  {
-                    VerificationFieldMap[
+            <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">
+                Verification Type
+              </label>
+              <div className="StatCards__card__item__value">
+                {disbursementDetails.details.verificationField
+                  ? VerificationFieldMap[
                       disbursementDetails.details.verificationField
                     ]
-                  }
-                </div>
+                  : "None"}
               </div>
-            ) : null}
+            </div>
 
             <div className="StatCards__card__item">
               <label className="StatCards__card__item__label">Created by</label>

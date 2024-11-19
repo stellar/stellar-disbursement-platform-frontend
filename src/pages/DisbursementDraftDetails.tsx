@@ -31,7 +31,7 @@ import { DisbursementInstructions } from "components/DisbursementInstructions";
 import { DisbursementButtons } from "components/DisbursementButtons";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { DisbursementDraft, DisbursementStep } from "types";
+import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
 
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
@@ -267,6 +267,14 @@ export const DisbursementDraftDetails = () => {
       );
     }
 
+    const successMessageArray: string[] = [
+      "Payments will begin automatically",
+      hasWallet(draftDetails?.details.registrationContactType)
+        ? ""
+        : " to receivers who have registered their wallet",
+      ". Click 'View' to track your disbursement in real-time.",
+    ].filter((m) => Boolean(m));
+
     // Confirmation
     if (currentStep === "confirmation") {
       return (
@@ -276,11 +284,7 @@ export const DisbursementDraftDetails = () => {
               variant="success"
               title="New disbursement was successfully created"
             >
-              <div>
-                Payments will begin automatically to receivers who have
-                registered their wallet. Click View to track your disbursement
-                in real-time.
-              </div>
+              <div>{successMessageArray.join("")}</div>
 
               <div className="Notification__buttons">
                 <Link role="button" onClick={handleViewDetails}>
