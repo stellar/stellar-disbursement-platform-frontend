@@ -12,7 +12,7 @@ import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
 import { useRegistrationContactTypes } from "apiQueries/useRegistrationContactTypes";
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { AssetAmount } from "components/AssetAmount";
-import { InfoTooltip, OptionalInfoTooltip } from "components/InfoTooltip";
+import { InfoTooltip } from "components/InfoTooltip";
 import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
 import { useAllBalances } from "hooks/useAllBalances";
@@ -336,12 +336,12 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
         <Select
           id={FieldId.REGISTRATION_CONTACT_TYPE}
           label={
-            <OptionalInfoTooltip
-              showTooltip={!isWalletRegistrationEnabled}
+            <InfoTooltip
+              hideTooltip={isWalletRegistrationEnabled}
               infoText="Registering receivers wallet directly is disabled. It can be enabled in the 'Wallet Providers' section."
             >
               Registration Contact Type
-            </OptionalInfoTooltip>
+            </InfoTooltip>
           }
           fieldSize="sm"
           onChange={updateDraftDetails}

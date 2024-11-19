@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, RadioButton, Textarea } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { OptionalInfoTooltip } from "components/InfoTooltip";
+import { InfoTooltip } from "components/InfoTooltip";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import { getOrgInfoAction } from "store/ducks/organization";
@@ -63,12 +63,12 @@ export const DisbursementInviteMessage = ({
     <>
       <Card>
         <div className="CardStack__card ReceiverInviteMessage">
-          <OptionalInfoTooltip
+          <InfoTooltip
             infoText={disabledReasonForTooltip}
-            showTooltip={!!disabledReasonForTooltip}
+            hideTooltip={!disabledReasonForTooltip}
           >
             <div className="CardStack__title">Customize Invite</div>
-          </OptionalInfoTooltip>
+          </InfoTooltip>
 
           <div className="Note">
             You can use the organization default message or customized text to
