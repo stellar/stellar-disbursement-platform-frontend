@@ -39,10 +39,10 @@ import { DisbursementInviteMessage } from "components/DisbursementInviteMessage"
 import { DisbursementInstructions } from "components/DisbursementInstructions";
 import { DisbursementButtons } from "components/DisbursementButtons";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
-
-import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
 import { csvTotalAmount } from "helpers/csvTotalAmount";
 import { scrollTo } from "helpers/scrollTo";
+
+import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
 
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
