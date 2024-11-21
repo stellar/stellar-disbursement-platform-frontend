@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Badge, Heading, Link, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
@@ -30,6 +30,7 @@ import { DisbursementInviteMessage } from "components/DisbursementInviteMessage"
 import { DisbursementInstructions } from "components/DisbursementInstructions";
 import { DisbursementButtons } from "components/DisbursementButtons";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { scrollTo } from "helpers/scrollTo";
 
 import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
 
@@ -69,6 +70,26 @@ export const DisbursementDraftDetails = () => {
 
   const apiError = disbursementDrafts.errorString;
   const isLoading = disbursementDetails.status === "PENDING";
+
+  useEffect(() => {
+    if (!apiError && !isCsvUpdatedSuccess && !isResponseSuccess) return;
+
+    scrollTo("top");
+  }, [apiError, isCsvUpdatedSuccess, isResponseSuccess]);
+
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (!csvFile) return;
+
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    setTimeout(() => {
+      scrollTo("bottom");
+    }, 100);
+  }, [csvFile]);
 
   const fetchedDisbursementDraft = disbursementDrafts.items.find(
     (p) => p.details.id === draftId,
@@ -332,12 +353,7 @@ export const DisbursementDraftDetails = () => {
             </div>
 
             <div className="Notification__buttons">
-              <Link
-                role="button"
-                onClick={() => {
-                  setIsCsvUpdatedSuccess(false);
-                }}
-              >
+              <Link role="button" onClick={() => setIsCsvUpdatedSuccess(false)}>
                 Dismiss
               </Link>
             </div>
@@ -359,6 +375,7 @@ export const DisbursementDraftDetails = () => {
             variant={"preview"}
             csvFile={csvFile}
             onChange={(file) => {
+              setIsCsvUpdatedSuccess(false);
               if (apiError) {
                 dispatch(clearDisbursementDraftsErrorAction());
               }

@@ -32,6 +32,7 @@ import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { InfoTooltip } from "components/InfoTooltip";
 import { AccountBalances } from "components/AccountBalances";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { scrollTo } from "helpers/scrollTo";
 
 import { Disbursement, DisbursementStep, hasWallet } from "types";
 
@@ -61,6 +62,12 @@ export const DisbursementsNew = () => {
 
   const apiError =
     disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
+
+  useEffect(() => {
+    if (!apiError && !isSavedDraftMessageVisible && !isResponseSuccess) return;
+
+    scrollTo("top");
+  }, [isSavedDraftMessageVisible, apiError, isResponseSuccess]);
 
   useEffect(() => {
     if (
