@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Badge,
@@ -42,6 +42,7 @@ import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
 import { csvTotalAmount } from "helpers/csvTotalAmount";
+import { scrollTo } from "helpers/scrollTo";
 
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
@@ -82,6 +83,26 @@ export const DisbursementDraftDetails = () => {
 
   const apiError = disbursementDrafts.errorString;
   const isLoading = disbursementDetails.status === "PENDING";
+
+  useEffect(() => {
+    if (!apiError && !isCsvUpdatedSuccess && !isResponseSuccess) return;
+
+    scrollTo("top");
+  }, [apiError, isCsvUpdatedSuccess, isResponseSuccess]);
+
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (!csvFile) return;
+
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    setTimeout(() => {
+      scrollTo("bottom");
+    }, 100);
+  }, [csvFile]);
 
   const fetchedDisbursementDraft = disbursementDrafts.items.find(
     (p) => p.details.id === draftId,
@@ -208,6 +229,7 @@ export const DisbursementDraftDetails = () => {
   };
 
   const handleCsvFileChange = (file?: File) => {
+    setIsCsvUpdatedSuccess(false);
     if (apiError) {
       dispatch(clearDisbursementDraftsErrorAction());
     }
@@ -405,12 +427,7 @@ export const DisbursementDraftDetails = () => {
             </div>
 
             <div className="Notification__buttons">
-              <Link
-                role="button"
-                onClick={() => {
-                  setIsCsvUpdatedSuccess(false);
-                }}
-              >
+              <Link role="button" onClick={() => setIsCsvUpdatedSuccess(false)}>
                 Dismiss
               </Link>
             </div>
