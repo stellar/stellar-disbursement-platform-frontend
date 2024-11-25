@@ -20,6 +20,7 @@ import {
 import { useRedux } from "hooks/useRedux";
 import { useAllBalances } from "hooks/useAllBalances";
 import { Routes } from "constants/settings";
+import { csvTotalAmount } from "helpers/csvTotalAmount";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
 import { SectionHeader } from "components/SectionHeader";
@@ -160,25 +161,9 @@ export const DisbursementsNew = () => {
     setCsvFile(file);
   };
 
-  const calculateDisbursementTotalAmountFromFile = (file?: File) => {
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.readAsText(file);
-
-    reader.onload = () => {
-      const csvRows = reader.result?.toString();
-      if (!csvRows) return;
-
-      const [header, ...rows] = csvRows.split("\n");
-      const amountIndex = header.split(",").indexOf("amount");
-      if (amountIndex === -1) return;
-
-      const totalAmount = rows.reduce((accumulator, line) => {
-        return !line
-          ? accumulator
-          : accumulator.plus(BigNumber(line.split(",")[amountIndex]));
-      }, BigNumber(0));
+  const calculateDisbursementTotalAmountFromFile = (csvFile?: File) => {
+    csvTotalAmount({ csvFile }).then((totalAmount) => {
+      if (!totalAmount) return;
 
       setDraftDetails({
         ...draftDetails,
@@ -196,7 +181,7 @@ export const DisbursementsNew = () => {
       if (totalAmount) {
         setFutureBalance(Number(assetBalance) - totalAmount.toNumber());
       }
-    };
+    });
   };
 
   const handleViewDetails = () => {
