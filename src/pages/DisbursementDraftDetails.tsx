@@ -32,6 +32,7 @@ import { DisbursementButtons } from "components/DisbursementButtons";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
+import { csvTotalAmount } from "helpers/csvTotalAmount";
 
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
@@ -58,6 +59,7 @@ export const DisbursementDraftDetails = () => {
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("preview");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
+  const [futureBalance, setFutureBalance] = useState<number>(0);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -158,6 +160,26 @@ export const DisbursementDraftDetails = () => {
     draftId,
   ]);
 
+  // Update future balance when total amount changes
+  useEffect(() => {
+    const totalAmount = draftDetails?.details.stats?.totalAmount;
+    if (!totalAmount) return;
+
+    const assetBalance =
+      allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)
+        ?.balance ?? "0";
+
+    if (totalAmount) {
+      setFutureBalance(
+        Number(assetBalance) - BigNumber(totalAmount).toNumber(),
+      );
+    }
+  }, [
+    draftDetails?.details.stats?.totalAmount,
+    draftDetails?.details.asset.code,
+    allBalances,
+  ]);
+
   const resetState = () => {
     setCurrentStep("edit");
     setDraftDetails(undefined);
@@ -174,22 +196,37 @@ export const DisbursementDraftDetails = () => {
     }
   };
 
+  const handleCsvFileChange = (file?: File) => {
+    if (apiError) {
+      dispatch(clearDisbursementDraftsErrorAction());
+    }
+    updateTotalAmount(file);
+    setCsvFile(file);
+    setIsCsvFileUpdated(true);
+    dispatch(clearCsvUpdatedAction());
+  };
+
+  const updateTotalAmount = (csvFile?: File) => {
+    csvTotalAmount({ csvFile }).then((totalAmount) => {
+      if (!totalAmount || !draftDetails) return;
+
+      setDraftDetails({
+        ...draftDetails,
+        details: {
+          ...draftDetails.details,
+          stats: {
+            ...draftDetails.details.stats!,
+            totalAmount: totalAmount.toString(),
+          },
+        },
+      });
+    });
+  };
+
   const handleGoBackToDrafts = () => {
     navigate(-1);
     resetState();
   };
-
-  const handleCalculateFutureBalance = (): number => {
-    const assetBalance = BigNumber(
-      allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)
-        ?.balance || 0,
-    );
-    return assetBalance
-      .minus(BigNumber(draftDetails?.details.stats?.totalAmount || 0))
-      .toNumber();
-  };
-
-  const futureBalance = handleCalculateFutureBalance();
 
   const handleSubmitDisbursement = (
     event: React.FormEvent<HTMLFormElement>,
@@ -358,14 +395,7 @@ export const DisbursementDraftDetails = () => {
           <DisbursementInstructions
             variant={"preview"}
             csvFile={csvFile}
-            onChange={(file) => {
-              if (apiError) {
-                dispatch(clearDisbursementDraftsErrorAction());
-              }
-              setCsvFile(file);
-              setIsCsvFileUpdated(true);
-              dispatch(clearCsvUpdatedAction());
-            }}
+            onChange={handleCsvFileChange}
             registrationContactType={
               draftDetails?.details.registrationContactType
             }
