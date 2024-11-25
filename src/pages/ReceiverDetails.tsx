@@ -101,11 +101,13 @@ export const ReceiverDetails = () => {
   }, [isInvitationRetryError, isInvitationRetrySuccess]);
 
   const calculateRate = () => {
-    if (stats?.paymentsTotalCount) {
-      return Number(stats.paymentsSuccessfulCount / stats.paymentsTotalCount);
-    }
+    if (!stats) return 0;
 
-    return 0;
+    const numerator = stats.paymentsSuccessfulCount;
+    const denominator = stats.paymentsTotalCount;
+    if (!denominator) return 0;
+
+    return Number(numerator / denominator);
   };
 
   const setCardTemplateRows = (rows: number) => {
