@@ -21,8 +21,8 @@ export const DashboardAnalytics = () => {
   const calculateRate = () => {
     if (!stats) return 0;
 
-    const numerator = stats?.paymentsSuccessfulCounts;
-    const denominator = stats?.paymentsTotalCount - stats?.paymentsDraftCount;
+    const numerator = stats.paymentsSuccessfulCounts;
+    const denominator = stats.paymentsTotalCount - stats.paymentsDraftCount;
     if (!denominator) return 0;
     return Number(numerator / denominator);
   };

@@ -103,8 +103,8 @@ export const ReceiverDetails = () => {
   const calculateRate = () => {
     if (!stats) return 0;
 
-    const numerator = stats?.paymentsSuccessfulCount;
-    const denominator = stats?.paymentsTotalCount;
+    const numerator = stats.paymentsSuccessfulCount;
+    const denominator = stats.paymentsTotalCount;
     if (!denominator) return 0;
 
     return Number(numerator / denominator);
