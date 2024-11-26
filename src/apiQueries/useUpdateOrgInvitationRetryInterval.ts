@@ -3,12 +3,15 @@ import { API_URL } from "constants/envVariables";
 import { fetchApi } from "helpers/fetchApi";
 import { AppError } from "types";
 
-export const useUpdateOrgSmsRetryInterval = () => {
+export const useUpdateOrgInvitationRetryInterval = () => {
   const mutation = useMutation({
     mutationFn: (retryInterval: number) => {
       const formData = new FormData();
 
-      formData.append("data", `{"sms_resend_interval": ${retryInterval}}`);
+      formData.append(
+        "data",
+        `{"receiver_invitation_resend_interval_days": ${retryInterval}}`,
+      );
 
       return fetchApi(
         `${API_URL}/organization`,
@@ -19,7 +22,6 @@ export const useUpdateOrgSmsRetryInterval = () => {
         { omitContentType: true },
       );
     },
-    cacheTime: 0,
   });
 
   return {
@@ -29,7 +31,7 @@ export const useUpdateOrgSmsRetryInterval = () => {
     mutateAsync: async (retryInterval: number) => {
       try {
         await mutation.mutateAsync(retryInterval);
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

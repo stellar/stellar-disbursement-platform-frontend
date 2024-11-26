@@ -31,10 +31,7 @@ export const formatDisbursement = (
     averagePaymentAmount: disbursement.average_amount,
   },
   status: disbursement.status,
-  country: {
-    name: disbursement.country.name,
-    code: disbursement.country.code,
-  },
+  registrationContactType: disbursement.registration_contact_type,
   asset: {
     id: disbursement.asset.id,
     code: disbursement.asset.code,
@@ -55,6 +52,6 @@ export const formatDisbursement = (
       timestamp: h.timestamp,
       userId: h.user_id,
     })),
-  smsRegistrationMessageTemplate:
-    disbursement.sms_registration_message_template,
+  receiverRegistrationMessageTemplate:
+    disbursement.receiver_registration_message_template,
 });

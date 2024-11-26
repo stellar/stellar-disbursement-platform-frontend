@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, RadioButton, Textarea } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
+import { InfoTooltip } from "components/InfoTooltip";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import { getOrgInfoAction } from "store/ducks/organization";
@@ -10,6 +11,7 @@ import "../ReceiverInviteMessage/styles.scss";
 
 interface DisbursementInviteMessageProps {
   draftMessage?: string;
+  disabledReasonForTooltip?: string;
   isEditMessage: boolean;
   onChange?: (message: string) => void;
 }
@@ -17,6 +19,7 @@ interface DisbursementInviteMessageProps {
 export const DisbursementInviteMessage = ({
   draftMessage,
   isEditMessage,
+  disabledReasonForTooltip,
   onChange,
 }: DisbursementInviteMessageProps) => {
   enum radioValue {
@@ -60,7 +63,12 @@ export const DisbursementInviteMessage = ({
     <>
       <Card>
         <div className="CardStack__card ReceiverInviteMessage">
-          <div className="CardStack__title">Customize invite</div>
+          <InfoTooltip
+            infoText={disabledReasonForTooltip}
+            hideTooltip={!disabledReasonForTooltip}
+          >
+            <div className="CardStack__title">Customize Invite</div>
+          </InfoTooltip>
 
           <div className="Note">
             You can use the organization default message or customized text to
@@ -78,6 +86,7 @@ export const DisbursementInviteMessage = ({
                 fieldSize="xs"
                 value={radioValue.ORGANIZATION}
                 onChange={handleOptionChange}
+                disabled={!!disabledReasonForTooltip}
                 checked={selectedOption === radioValue.ORGANIZATION}
               />
               <RadioButton
@@ -87,6 +96,7 @@ export const DisbursementInviteMessage = ({
                 fieldSize="xs"
                 value={radioValue.CUSTOM}
                 onChange={handleOptionChange}
+                disabled={!!disabledReasonForTooltip}
                 checked={selectedOption === radioValue.CUSTOM}
               />
             </div>
@@ -99,6 +109,7 @@ export const DisbursementInviteMessage = ({
                 rows={5}
                 placeholder={customMessagePlaceholder}
                 value={customMessageInput}
+                disabled={!!disabledReasonForTooltip}
                 onChange={(event) => {
                   updateMessage(event.target.value);
                 }}
@@ -113,11 +124,11 @@ export const DisbursementInviteMessage = ({
                 rows={5}
                 value={
                   isEditMessage
-                    ? organization.data.smsRegistrationMessageTemplate ??
-                      standardOrgMessage
-                    : draftMessage ??
-                      organization.data.smsRegistrationMessageTemplate ??
-                      standardOrgMessage
+                    ? (organization.data.receiverRegistrationMessageTemplate ??
+                      standardOrgMessage)
+                    : (draftMessage ??
+                      organization.data.receiverRegistrationMessageTemplate ??
+                      standardOrgMessage)
                 }
               ></Textarea>
             </div>

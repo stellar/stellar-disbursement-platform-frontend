@@ -19,7 +19,6 @@ export const useUpdateUserRole = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {
@@ -29,7 +28,7 @@ export const useUpdateUserRole = () => {
     mutateAsync: async ({ userId, role }: UserRoleProps) => {
       try {
         await mutation.mutateAsync({ userId, role });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

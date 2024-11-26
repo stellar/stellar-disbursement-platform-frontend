@@ -14,7 +14,6 @@ export const useCancelPayment = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {
@@ -24,7 +23,7 @@ export const useCancelPayment = () => {
     mutateAsync: async ({ paymentId }: { paymentId: string }) => {
       try {
         await mutation.mutateAsync({ paymentId });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

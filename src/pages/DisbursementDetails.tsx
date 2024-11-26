@@ -36,7 +36,13 @@ import { PaymentStatus } from "components/PaymentStatus";
 
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { number } from "helpers/formatIntlNumber";
+import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { saveFile } from "helpers/saveFile";
+import {
+  getReceiverContactInfoTitle,
+  renderReceiverContactInfoItems,
+} from "helpers/receiverContactInfo";
+import { VerificationFieldMap } from "types";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();
@@ -196,6 +202,29 @@ export const DisbursementDetails = () => {
             </div>
 
             <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">
+                Registration Contact Type
+              </label>
+              <div className="StatCards__card__item__value">
+                {formatRegistrationContactType(
+                  disbursementDetails.details.registrationContactType,
+                )}
+              </div>
+            </div>
+            <div className="StatCards__card__item">
+              <label className="StatCards__card__item__label">
+                Verification Type
+              </label>
+              <div className="StatCards__card__item__value">
+                {disbursementDetails.details.verificationField
+                  ? VerificationFieldMap[
+                      disbursementDetails.details.verificationField
+                    ]
+                  : "None"}
+              </div>
+            </div>
+
+            <div className="StatCards__card__item">
               <label className="StatCards__card__item__label">Created by</label>
               <div className="StatCards__card__item__value">
                 {disbursementDetails.details.createdBy ?? ""}
@@ -218,7 +247,7 @@ export const DisbursementDetails = () => {
             <div className="StatCards__card__column">
               <div className="StatCards__card__item StatCards__card__item--inline">
                 <label className="StatCards__card__item__label">
-                  Receivers SMS was sent to
+                  Receivers invitation was sent to
                 </label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(
@@ -337,7 +366,7 @@ export const DisbursementDetails = () => {
               {/* <Table.HeaderCell>
               <Checkbox id="disbursement-receivers-select-all" fieldSize="xs" />
             </Table.HeaderCell> */}
-              <Table.HeaderCell>Phone number</Table.HeaderCell>
+              <Table.HeaderCell>Contact info</Table.HeaderCell>
               <Table.HeaderCell>Wallet provider</Table.HeaderCell>
               <Table.HeaderCell textAlign="right">Amount</Table.HeaderCell>
               <Table.HeaderCell>Completed at</Table.HeaderCell>
@@ -355,9 +384,15 @@ export const DisbursementDetails = () => {
                   {/* <Table.BodyCell width="1rem">
                   <Checkbox id={`receiver-${r.id}`} fieldSize="xs" />
                 </Table.BodyCell> */}
-                  <Table.BodyCell title={r.phoneNumber} width="7.25rem">
+                  <Table.BodyCell
+                    title={getReceiverContactInfoTitle(
+                      r?.phoneNumber,
+                      r?.email,
+                    )}
+                    width="7.25rem"
+                  >
                     <Link onClick={(event) => goToReceiver(event, r.id)}>
-                      {r.phoneNumber}
+                      {renderReceiverContactInfoItems(r?.phoneNumber, r?.email)}
                     </Link>
                   </Table.BodyCell>
                   <Table.BodyCell width="8rem">{r.provider}</Table.BodyCell>

@@ -8,7 +8,7 @@ import {
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 import { AppDispatch } from "store";
 import {
@@ -20,6 +20,7 @@ import {
 import { useRedux } from "hooks/useRedux";
 import { useAllBalances } from "hooks/useAllBalances";
 import { Routes } from "constants/settings";
+import { csvTotalAmount } from "helpers/csvTotalAmount";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
 import { SectionHeader } from "components/SectionHeader";
@@ -33,7 +34,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { AccountBalances } from "components/AccountBalances";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { Disbursement, DisbursementStep } from "types";
+import { Disbursement, DisbursementStep, hasWallet } from "types";
 
 export const DisbursementsNew = () => {
   const { disbursementDrafts, organization } = useRedux(
@@ -112,7 +113,7 @@ export const DisbursementsNew = () => {
         saveDisbursementDraftAction({
           details: {
             ...draftDetails,
-            smsRegistrationMessageTemplate: customMessage,
+            receiverRegistrationMessageTemplate: customMessage,
           },
           file: csvFile,
         }),
@@ -140,7 +141,7 @@ export const DisbursementsNew = () => {
         submitDisbursementNewDraftAction({
           details: {
             ...draftDetails,
-            smsRegistrationMessageTemplate: customMessage,
+            receiverRegistrationMessageTemplate: customMessage,
           },
           file: csvFile,
         }),
@@ -160,44 +161,27 @@ export const DisbursementsNew = () => {
     setCsvFile(file);
   };
 
-  const calculateDisbursementTotalAmountFromFile = (file?: File) => {
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsText(file);
-      const handleLoadFile = () => {
-        const totalAmount = reader.result
-          ?.toString()
-          .split("\n")
-          .slice(1)
-          .reduce(
-            (accumulator, line) =>
-              !line
-                ? accumulator
-                : BigNumber(accumulator)
-                    .plus(BigNumber(line.split(",")[2]))
-                    .toNumber(),
-            0,
-          );
+  const calculateDisbursementTotalAmountFromFile = (csvFile?: File) => {
+    csvTotalAmount({ csvFile }).then((totalAmount) => {
+      if (!totalAmount) return;
 
-        setDraftDetails({
-          ...draftDetails,
-          stats: {
-            ...draftDetails?.stats,
-            totalAmount: totalAmount?.toString() ?? "0",
-          },
-        } as Disbursement);
+      setDraftDetails({
+        ...draftDetails,
+        stats: {
+          ...draftDetails?.stats,
+          totalAmount: totalAmount?.toString() ?? "0",
+        },
+      } as Disbursement);
 
-        // update future balance
-        const assetBalance = allBalances?.find(
-          (a) => a.assetCode === draftDetails?.asset.code,
-        )?.balance;
+      // update future balance
+      const assetBalance =
+        allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)
+          ?.balance ?? "0";
 
-        if (totalAmount) {
-          setFutureBalance(Number(assetBalance) - totalAmount);
-        }
-      };
-      reader.addEventListener("load", handleLoadFile, false);
-    }
+      if (totalAmount) {
+        setFutureBalance(Number(assetBalance) - totalAmount.toNumber());
+      }
+    });
   };
 
   const handleViewDetails = () => {
@@ -255,12 +239,22 @@ export const DisbursementsNew = () => {
             variant="preview"
             csvFile={csvFile}
             onChange={handleCsvFileChange}
+            registrationContactType={draftDetails?.registrationContactType}
+            verificationField={draftDetails?.verificationField}
           />
 
           {renderButtons("preview")}
         </form>
       );
     }
+
+    const successMessageArray: string[] = [
+      "Payments will begin automatically",
+      hasWallet(draftDetails?.registrationContactType)
+        ? ""
+        : " to receivers who have registered their wallet",
+      ". Click 'View' to track your disbursement in real-time.",
+    ].filter((m) => Boolean(m));
 
     // Confirmation
     if (currentStep === "confirmation") {
@@ -283,8 +277,7 @@ export const DisbursementsNew = () => {
                 },
               ]}
             >
-              Payments will begin automatically to receivers who have registered
-              their wallet.
+              {successMessageArray.join("")}
             </NotificationWithButtons>
           ) : null}
 
@@ -340,13 +333,19 @@ export const DisbursementsNew = () => {
             onChange={(updatedDisbursementInviteMessage) => {
               setCustomMessage(updatedDisbursementInviteMessage);
             }}
+            disabledReasonForTooltip={
+              hasWallet(draftDetails?.registrationContactType)
+                ? "No invitation message will be sent because you're registering receivers with wallets addresses."
+                : undefined
+            }
           />
-
           <DisbursementInstructions
             variant="upload"
             csvFile={csvFile}
             onChange={handleCsvFileChange}
             isDisabled={!isDraftEnabled}
+            registrationContactType={draftDetails?.registrationContactType}
+            verificationField={draftDetails?.verificationField}
           />
 
           {renderButtons("edit")}

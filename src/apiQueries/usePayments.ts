@@ -17,7 +17,7 @@ export const usePayments = (searchParams?: PaymentsSearchParams) => {
     queryFn: async () => {
       return await fetchApi(`${API_URL}/payments/${params}`);
     },
-    keepPreviousData: true,
+    placeholderData: (prev) => prev,
   });
 
   return query;

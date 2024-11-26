@@ -30,16 +30,16 @@ export const WalletProviders = () => {
   const {
     data: wallets,
     error: walletsError,
-    isLoading: isWalletsLoading,
+    isPending: isWalletsPending,
     isFetching: isWalletsFetching,
     refetch: refetchWallets,
-  } = useWallets();
+  } = useWallets({});
 
   const {
     error: walletUpdateError,
     isSuccess: isWalletUpdateSuccess,
     isError: isWalletUpdateError,
-    isLoading: isWalletUpdateLoading,
+    isPending: isWalletUpdatePending,
     mutateAsync: updateWallet,
     reset: resetUpdateWallet,
   } = useUpdateWallet();
@@ -75,6 +75,7 @@ export const WalletProviders = () => {
           enabled={item.enabled}
           assets={item.assets?.map((asset) => asset.code)}
           editable={canEditWalletProviders}
+          userManaged={item.user_managed}
           onChange={() => {
             setSelectedWallet({ id: item.id, enabled: item.enabled });
 
@@ -103,12 +104,12 @@ export const WalletProviders = () => {
             <Heading as="h2" size="sm">
               Wallet Providers
             </Heading>
-            {isWalletsFetching && !isWalletsLoading ? <Loader /> : null}
+            {isWalletsFetching && !isWalletsPending ? <Loader /> : null}
           </SectionHeader.Content>
         </SectionHeader.Row>
       </SectionHeader>
 
-      {isWalletsLoading ? <LoadingContent /> : null}
+      {isWalletsPending ? <LoadingContent /> : null}
 
       <div className="CardStack">
         {walletsError || walletUpdateError ? (
@@ -196,7 +197,7 @@ export const WalletProviders = () => {
               size="sm"
               variant="secondary"
               type="reset"
-              isLoading={isWalletUpdateLoading}
+              isLoading={isWalletUpdatePending}
             >
               Cancel
             </Button>
@@ -204,7 +205,7 @@ export const WalletProviders = () => {
               size="sm"
               variant={selectedWallet?.enabled ? "destructive" : "primary"}
               type="submit"
-              isLoading={isWalletUpdateLoading}
+              isLoading={isWalletUpdatePending}
             >
               Turn {selectedWallet?.enabled ? "off" : "on"}
             </Button>

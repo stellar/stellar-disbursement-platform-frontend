@@ -8,6 +8,81 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [3.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.1.0...3.0.0))
+
+Release of the Stellar Disbursement Platform `v3.0.0`. In this release, receiver
+registration does not need to be done exclusively through SMS as it now supports
+new types. The options are `PHONE_NUMBER`, `EMAIL`, `EMAIL_AND_WALLET_ADDRESS`,
+and `PHONE_NUMBER_AND_WALLET_ADDRESS`. If a receiver is registered with a wallet
+address, they can receive the payment right away without having to go through
+the SEP-24 registration flow.
+
+> [!Warning] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `3.0.0`.
+
+### Added
+
+- Display the user email in the "Team Members" section
+  [#131](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/131)
+- Ability to register receivers using email addresses:
+  - Support receiver contact info for both phone number and email
+    [#150](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/150)
+  - Add email column to the CSV template
+    [#141](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/141)
+  - Rename fields for receiver invitation templates and intervals to be channel
+    agnostic
+    [#147](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/147)
+  - Update organization SMS retry configuration to reflect both email and SMS
+    [#148](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/148)
+- Ability to register receivers with a Stellar wallet address directly by
+  providing contact info and a wallet address. Options include
+  `PHONE_NUMBER_AND_WALLET_ADDRESS` and `EMAIL_AND_WALLET_ADDRESS`:
+  - Support multiple registration types for receivers: `PHONE_NUMBER`, `EMAIL`,
+    `PHONE_NUMBER_AND_WALLET_ADDRESS`, `EMAIL_AND_WALLET_ADDRESS`
+    [#176](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/176)
+  - Make receiver verifications optional
+    [#178](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/178)
+  - Update `GET /wallets` with the `?user_managed={boolean}` query param
+    [#179](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/179)
+  - Update the "Download template CSV" button to return a template based on the
+    receiver registration and verification types selected during disbursement
+    creation
+    [#185](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/185)
+  - Polish flow when creating a disbursement targeting wallet addresses
+    [#186](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/186)
+
+### Changed
+
+- Dropdowns in disbursement creation now follow inter-dependency logic based on
+  registration types
+  [#177](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/177)
+
+### Fixed
+
+- Remove draft payments from remaining payments count when calculating the
+  percentage of successful payments
+  [#132](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/132)
+- Prevent selection of an asset without a trustline or balance
+  [#134](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/134)
+- Disable "Org Name" input when in single-tenant mode
+  [#135](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/135)
+- Correct calculation for success payments percentage on the home page
+  [#167](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/167)
+- Calculate balance after CSV re-upload on the draft disbursement screen
+  [#190](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/190)
+
+### Security and Dependencies
+
+- Bump the all-docker group
+  [#122](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/122)
+- Bump the all-actions group
+  [#123](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/123)
+- Update `docker/build-push-action` from `6.5.0` to `6.7.0` in the all-actions
+  group
+  [#136](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/136)
+- Upgrade `elliptic` from `6.5.4` to `6.5.7` in the npm_and_yarn group
+  [#142](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/142)
+
 ## [2.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/2.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.0.0...2.1.0))
 
 Release of the Stellar Disbursement Platform v2.1.0. This release introduces the

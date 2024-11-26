@@ -6,6 +6,7 @@ import { AppError } from "types";
 
 interface ReceiverDetailsUpdate {
   email: string;
+  phoneNumber: string;
   externalId: string;
   dataOfBirth: string;
   yearMonth: string;
@@ -18,6 +19,7 @@ export const useUpdateReceiverDetails = (receiverId: string | undefined) => {
     mutationFn: (fields: ReceiverDetailsUpdate) => {
       const fieldsToSubmit = sanitizeObject({
         email: fields.email,
+        phone_number: fields.phoneNumber,
         external_id: fields.externalId,
         date_of_birth: fields.dataOfBirth,
         year_month: fields.yearMonth,
@@ -43,7 +45,6 @@ export const useUpdateReceiverDetails = (receiverId: string | undefined) => {
         { omitContentType: true },
       );
     },
-    cacheTime: 0,
   });
 
   return {

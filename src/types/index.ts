@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 // =============================================================================
 // Store
 // =============================================================================
@@ -71,8 +69,8 @@ export type OrganizationInitialState = {
     distributionAccountPublicKey: string;
     timezoneUtcOffset: string;
     isApprovalRequired: boolean | undefined;
-    smsResendInterval: number;
-    smsRegistrationMessageTemplate?: string;
+    receiverInvitationResendInterval: number;
+    receiverRegistrationMessageTemplate?: string;
     paymentCancellationPeriodDays: number;
     distributionAccount?: {
       circleWalletId?: string;
@@ -209,6 +207,16 @@ export type DisbursementVerificationField =
   | "PIN"
   | "NATIONAL_ID_NUMBER";
 
+export const VerificationFieldMap: Record<
+  DisbursementVerificationField | string,
+  string
+> = {
+  DATE_OF_BIRTH: "Date of Birth",
+  YEAR_MONTH: "Date of Birth (Year & Month only)",
+  PIN: "PIN",
+  NATIONAL_ID_NUMBER: "National ID Number",
+};
+
 export type DisbursementDraftAction = "save" | "submit";
 
 export interface DisbursementInstructions {
@@ -233,10 +241,7 @@ export type Disbursement = {
     pagination?: Pagination;
     searchParams?: ReceiversSearchParams;
   };
-  country: {
-    name: string;
-    code: string;
-  };
+  registrationContactType?: RegistrationContactType;
   asset: {
     id: string;
     code: string;
@@ -253,7 +258,7 @@ export type Disbursement = {
     timestamp: string;
     userId: string | null;
   }[];
-  smsRegistrationMessageTemplate: string;
+  receiverRegistrationMessageTemplate: string;
 };
 
 export type DisbursementsSearchParams = CommonFilters &
@@ -277,7 +282,8 @@ export type DisbursementDetailsStats = {
 
 export type DisbursementReceiver = {
   id: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  email?: string;
   provider: string;
   assetCode: string;
   amount: string;
@@ -311,7 +317,8 @@ export type PaymentDetailsStatusHistoryItem = {
 
 export type PaymentDetailsReceiver = {
   id: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  email?: string;
   walletAddress: string;
   provider: string;
   totalPaymentsCount: number;
@@ -355,7 +362,8 @@ export type AmountReceived = {
 
 export type Receiver = {
   id: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  email?: string;
   walletProvider: string[];
   walletsRegisteredCount: number;
   totalPaymentsCount: number;
@@ -405,7 +413,7 @@ export type ReceiverWalletPayment = {
 
 export type ReceiverDetails = {
   id: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   email?: string;
   assetCode?: string;
   totalReceived?: string;
@@ -423,6 +431,7 @@ export type ReceiverDetails = {
 
 export type ReceiverEditFields = {
   email: string;
+  phoneNumber: string;
   externalId: string;
   yearMonth: string;
   dateOfBirth: string;
@@ -437,6 +446,7 @@ export type HomeStatistics = {
   paymentsSuccessfulCounts: number;
   paymentsFailedCount: number;
   paymentsCanceledCount: number;
+  paymentsDraftCount: number;
   paymentsRemainingCount: number;
   paymentsTotalCount: number;
   walletsTotalCount: number;
@@ -468,7 +478,7 @@ export type OrgUpdateInfo = {
   timezone?: string;
   logo?: File;
   isApprovalRequired?: boolean;
-  smsRegistrationMessageTemplate?: string;
+  receiverRegistrationMessageTemplate?: string;
 };
 
 // =============================================================================
@@ -479,12 +489,24 @@ export type ApiError = {
   extras?: AnyObject;
 };
 
-export type ApiCountry = {
-  code: string;
-  name: string;
-  created_at: string;
-  updated_at: string;
+export type RegistrationContactType =
+  | "EMAIL"
+  | "EMAIL_AND_WALLET_ADDRESS"
+  | "PHONE_NUMBER"
+  | "PHONE_NUMBER_AND_WALLET_ADDRESS";
+
+export const RegistrationContactTypeMap: Record<
+  RegistrationContactType | string,
+  string
+> = {
+  EMAIL: "Email",
+  EMAIL_AND_WALLET_ADDRESS: "Wallet Address and Email",
+  PHONE_NUMBER: "Phone Number",
+  PHONE_NUMBER_AND_WALLET_ADDRESS: "Wallet Address and Phone Number",
 };
+
+export const hasWallet = (rct: RegistrationContactType | undefined): boolean =>
+  Boolean(rct?.includes("WALLET_ADDRESS"));
 
 export type ApiAsset = {
   id: string;
@@ -504,6 +526,17 @@ export type ApiWallet = {
   assets: ApiAsset[];
   created_at: string;
   updated_at: string;
+  user_managed?: boolean;
+};
+
+export const isUserManagedWalletEnabled = (
+  wallets: ApiWallet[] | undefined,
+): boolean => {
+  if (!wallets) {
+    return false;
+  }
+
+  return wallets.some((w) => Boolean(w.user_managed) && w.enabled);
 };
 
 export type ApiDisbursements = {
@@ -514,14 +547,6 @@ export type ApiDisbursements = {
 export type ApiDisbursementUser = {
   id: string;
   name: string;
-};
-
-export type ApiDisbursementCountry = {
-  code: string;
-  name: string;
-  language: string;
-  created_at: string;
-  updated_at: string;
 };
 
 export type ApiDisbursementWallet = {
@@ -550,13 +575,13 @@ export type ApiDisbursementHistory = {
 export type ApiDisbursement = {
   id: string;
   name: string;
-  country: ApiDisbursementCountry;
   wallet: ApiDisbursementWallet;
   asset: ApiDisbursementAsset;
   status: DisbursementStatus;
-  verification_field: DisbursementVerificationField;
+  verification_field?: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
-  sms_registration_message_template: string;
+  receiver_registration_message_template: string;
+  registration_contact_type: RegistrationContactType;
   created_at: string;
   updated_at: string;
   created_by?: {
@@ -679,7 +704,8 @@ export type ApiStatistics = {
 
 export type ApiDisbursementReceiver = {
   id: string;
-  phone_number: string;
+  phone_number?: string;
+  email?: string;
   external_id: string;
   receiver_wallet: {
     id: string;
@@ -746,7 +772,7 @@ export type ApiReceiverVerification = {
 export type ApiReceiver = {
   created_at: string;
   id: string;
-  phone_number: string;
+  phone_number?: string;
   email?: string;
   external_id: string;
   total_payments: string | number;
@@ -785,8 +811,8 @@ export type ApiOrgInfo = {
   distribution_account_public_key: string;
   timezone_utc_offset: string;
   is_approval_required: boolean;
-  sms_resend_interval: string;
-  sms_registration_message_template?: string;
+  receiver_invitation_resend_interval_days: string;
+  receiver_registration_message_template?: string;
   payment_cancellation_period_days: string;
   distribution_account?: {
     address?: string;

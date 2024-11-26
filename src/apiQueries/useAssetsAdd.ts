@@ -23,7 +23,6 @@ export const useAssetsAdd = ({
         }),
       });
     },
-    cacheTime: 0,
     onSuccess,
   });
 
@@ -34,7 +33,7 @@ export const useAssetsAdd = ({
     mutateAsync: async ({ assetCode, assetIssuer }: Asset) => {
       try {
         await mutation.mutateAsync({ assetCode, assetIssuer });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

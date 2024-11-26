@@ -48,7 +48,7 @@ export const SettingsTeamMembers = () => {
 
   const {
     error: roleError,
-    isLoading: isRoleLoading,
+    isPending: isRolePending,
     isSuccess: isRoleSuccess,
     isError: isRoleError,
     mutateAsync: updateRole,
@@ -57,7 +57,7 @@ export const SettingsTeamMembers = () => {
 
   const {
     error: statusError,
-    isLoading: isStatusLoading,
+    isPending: isStatusPending,
     isSuccess: isStatusSuccess,
     isError: isStatusError,
     mutateAsync: updateStatus,
@@ -67,7 +67,7 @@ export const SettingsTeamMembers = () => {
   const {
     data: newUser,
     error: newUserError,
-    isLoading: isNewUserLoading,
+    isPending: isNewUserPending,
     isSuccess: isNewUserSuccess,
     isError: isNewUserError,
     mutateAsync: createNewUser,
@@ -194,8 +194,9 @@ export const SettingsTeamMembers = () => {
       <div className="UsersTable">
         <Table>
           <Table.Header>
-            <Table.HeaderCell width="12rem">Member</Table.HeaderCell>
-            <Table.HeaderCell width="9rem">Role</Table.HeaderCell>
+            <Table.HeaderCell>Member</Table.HeaderCell>
+            <Table.HeaderCell width="12rem">Email</Table.HeaderCell>
+            <Table.HeaderCell>Role</Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell> </Table.HeaderCell>
           </Table.Header>
@@ -203,14 +204,13 @@ export const SettingsTeamMembers = () => {
           <Table.Body>
             {usersData.map((u) => (
               <Table.BodyRow key={u.id}>
-                <Table.BodyCell width="12rem">
+                <Table.BodyCell>
                   {u.first_name || u.last_name
                     ? `${u.first_name} ${u.last_name}`
                     : u.email}
                 </Table.BodyCell>
-                <Table.BodyCell width="9rem">
-                  {userRoleText(u.roles?.[0])}
-                </Table.BodyCell>
+                <Table.BodyCell width="12rem">{u.email}</Table.BodyCell>
+                <Table.BodyCell>{userRoleText(u.roles?.[0])}</Table.BodyCell>
                 <Table.BodyCell>
                   {u.is_active ? "Active" : "Inactive"}
                 </Table.BodyCell>
@@ -340,7 +340,7 @@ export const SettingsTeamMembers = () => {
             size="sm"
             variant="secondary"
             onClick={hideModal}
-            isLoading={isStatusLoading}
+            isLoading={isStatusPending}
           >
             Cancel
           </Button>
@@ -359,7 +359,7 @@ export const SettingsTeamMembers = () => {
                 });
               }
             }}
-            isLoading={isStatusLoading}
+            isLoading={isStatusPending}
           >
             Confirm
           </Button>
@@ -384,7 +384,7 @@ export const SettingsTeamMembers = () => {
             size="sm"
             variant="secondary"
             onClick={hideModal}
-            isLoading={isRoleLoading}
+            isLoading={isRolePending}
           >
             Cancel
           </Button>
@@ -400,7 +400,7 @@ export const SettingsTeamMembers = () => {
                 });
               }
             }}
-            isLoading={isRoleLoading}
+            isLoading={isRolePending}
           >
             Confirm
           </Button>
@@ -430,7 +430,7 @@ export const SettingsTeamMembers = () => {
         onResetQuery={() => {
           resetNewUser();
         }}
-        isLoading={isNewUserLoading}
+        isLoading={isNewUserPending}
         errorMessage={newUserError?.message}
       />
     </>

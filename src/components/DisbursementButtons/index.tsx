@@ -139,7 +139,7 @@ export const DisbursementButtons = ({
               Save as a draft
             </Button>
             <Button
-              variant="secondary"
+              variant="primary"
               size="xs"
               icon={<Icon.ArrowRight />}
               iconPosition="right"

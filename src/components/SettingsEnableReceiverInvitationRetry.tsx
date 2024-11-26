@@ -13,25 +13,28 @@ import { DropdownMenu } from "components/DropdownMenu";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { useUpdateOrgSmsRetryInterval } from "apiQueries/useUpdateOrgSmsRetryInterval";
+import { useUpdateOrgInvitationRetryInterval } from "apiQueries/useUpdateOrgInvitationRetryInterval";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import { getOrgInfoAction } from "store/ducks/organization";
 
-export const SettingsEnableSmsRetry = () => {
+export const SettingsEnableReceiverInvitationRetry = () => {
   const { organization } = useRedux("organization");
 
-  const [smsRetryInterval, setSmsRetryInterval] = useState<number | null>(null);
+  const [receiverInvitationRetryInterval, setReceiverInvitationRetryInterval] =
+    useState<number | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isLoading, error, isSuccess } =
-    useUpdateOrgSmsRetryInterval();
+  const { mutateAsync, isPending, error, isSuccess } =
+    useUpdateOrgInvitationRetryInterval();
 
   useEffect(() => {
-    setSmsRetryInterval(organization.data.smsResendInterval);
-  }, [organization.data.smsResendInterval]);
+    setReceiverInvitationRetryInterval(
+      organization.data.receiverInvitationResendInterval,
+    );
+  }, [organization.data.receiverInvitationResendInterval]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -42,21 +45,29 @@ export const SettingsEnableSmsRetry = () => {
 
   const handleToggleChange = () => {
     // Default interval is 2 days
-    mutateAsync(organization.data.smsResendInterval === 0 ? 2 : 0);
+    mutateAsync(
+      organization.data.receiverInvitationResendInterval === 0 ? 2 : 0,
+    );
   };
 
-  const handleSmsRetrySubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleInvitationRetrySubmit = (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
 
-    if (smsRetryInterval) {
-      mutateAsync(smsRetryInterval);
+    if (receiverInvitationRetryInterval) {
+      mutateAsync(receiverInvitationRetryInterval);
     }
   };
 
-  const handleSmsRetryReset = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleInvitationRetryReset = (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
     setIsEditMode(false);
-    setSmsRetryInterval(organization.data.smsResendInterval);
+    setReceiverInvitationRetryInterval(
+      organization.data.receiverInvitationResendInterval,
+    );
   };
 
   const renderContent = () => {
@@ -64,49 +75,60 @@ export const SettingsEnableSmsRetry = () => {
       <div className="SdpSettings">
         <div className="SdpSettings__row">
           <div className="SdpSettings__item">
-            <label className="SdpSettings__label" htmlFor="sms-retry">
-              Enable automatic SMS retry
+            <label
+              className="SdpSettings__label"
+              htmlFor="receiver-invitation-retry"
+            >
+              Enable automatic message retry
             </label>
             <div className="Toggle__wrapper">
-              {isLoading ? <Loader size="1rem" /> : null}
+              {isPending ? <Loader size="1rem" /> : null}
               <Toggle
-                id="sms-retry"
-                checked={Boolean(organization.data.smsResendInterval)}
+                id="receiver-invitation-retry"
+                checked={Boolean(
+                  organization.data.receiverInvitationResendInterval,
+                )}
                 onChange={handleToggleChange}
-                disabled={isLoading}
+                disabled={isPending}
               />
             </div>
           </div>
           <div className="Note">
-            Select this option to automatically re-send the SMS invitation to
-            unregistered receivers after a certain time period. They will
+            Select this option to automatically re-send the invitation message
+            to unregistered receivers after a certain time period. They will
             receive the same message again. The message will only go to
             receivers who have not registered their wallet.
           </div>
         </div>
 
-        {organization.data.smsResendInterval ? (
+        {organization.data.receiverInvitationResendInterval ? (
           <div className="SdpSettings__row">
             <form
               className="SdpSettings__form"
-              onSubmit={handleSmsRetrySubmit}
-              onReset={handleSmsRetryReset}
+              onSubmit={handleInvitationRetrySubmit}
+              onReset={handleInvitationRetryReset}
             >
               <div className="SdpSettings__form__row">
                 <Input
                   fieldSize="sm"
-                  id="sms-retry-interval"
-                  label="SMS retry interval (days)"
+                  id="receiver-invitation-retry-interval"
+                  label="Receiver invitation retry interval (days)"
                   type="number"
-                  value={smsRetryInterval ?? ""}
+                  value={receiverInvitationRetryInterval ?? ""}
                   onChange={(e) => {
-                    e.target.value !== ""
-                      ? setSmsRetryInterval(Number(e.target.value))
-                      : setSmsRetryInterval(null);
+                    if (e.target.value !== "") {
+                      setReceiverInvitationRetryInterval(
+                        Number(e.target.value),
+                      );
+                    } else {
+                      setReceiverInvitationRetryInterval(null);
+                    }
                   }}
                   disabled={!isEditMode}
                   error={
-                    smsRetryInterval == 0 ? "Retry interval cannot be 0" : ""
+                    receiverInvitationRetryInterval == 0
+                      ? "Retry interval cannot be 0"
+                      : ""
                   }
                 />
                 {!isEditMode ? (
@@ -123,7 +145,7 @@ export const SettingsEnableSmsRetry = () => {
                     variant="secondary"
                     size="xs"
                     type="reset"
-                    isLoading={isLoading}
+                    isLoading={isPending}
                   >
                     Cancel
                   </Button>
@@ -131,10 +153,11 @@ export const SettingsEnableSmsRetry = () => {
                     variant="primary"
                     size="xs"
                     type="submit"
-                    isLoading={isLoading}
+                    isLoading={isPending}
                     disabled={
-                      !smsRetryInterval ||
-                      smsRetryInterval === organization.data.smsResendInterval
+                      !receiverInvitationRetryInterval ||
+                      receiverInvitationRetryInterval ===
+                        organization.data.receiverInvitationResendInterval
                     }
                   >
                     Update

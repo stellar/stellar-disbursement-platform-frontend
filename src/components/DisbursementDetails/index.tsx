@@ -5,22 +5,26 @@ import {
   Title,
   Notification,
 } from "@stellar/design-system";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 import { useWallets } from "apiQueries/useWallets";
 import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
-import { useCountries } from "apiQueries/useCountries";
+import { useRegistrationContactTypes } from "apiQueries/useRegistrationContactTypes";
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { AssetAmount } from "components/AssetAmount";
 import { InfoTooltip } from "components/InfoTooltip";
+import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
+import { useAllBalances } from "hooks/useAllBalances";
 import {
   ApiAsset,
-  ApiCountry,
   ApiWallet,
   Disbursement,
   DisbursementStep,
-  DisbursementVerificationField,
+  hasWallet,
+  isUserManagedWalletEnabled,
+  RegistrationContactType,
+  VerificationFieldMap,
 } from "types";
 
 import "./styles.scss";
@@ -37,10 +41,7 @@ interface DisbursementDetailsProps {
 const initDetails: Disbursement = {
   id: "",
   name: "",
-  country: {
-    name: "",
-    code: "",
-  },
+  registrationContactType: undefined,
   asset: {
     id: "",
     code: "",
@@ -53,7 +54,7 @@ const initDetails: Disbursement = {
   createdAt: "",
   status: "DRAFT",
   statusHistory: [],
-  smsRegistrationMessageTemplate: "",
+  receiverRegistrationMessageTemplate: "",
   stats: undefined,
 };
 
@@ -67,7 +68,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 }: DisbursementDetailsProps) => {
   enum FieldId {
     NAME = "name",
-    COUNTRY_CODE = "country_code",
+    REGISTRATION_CONTACT_TYPE = "registration_contact_type",
     ASSET_CODE = "asset_code",
     WALLET_ID = "wallet_id",
     VERIFICATION_FIELD = "verification_field",
@@ -77,19 +78,22 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     data: wallets,
     error: walletsError,
     isLoading: isWalletsLoading,
-  } = useWallets();
+  } = useWallets({});
 
   const {
-    data: countries,
-    error: countriesError,
-    isLoading: isCountriesLoading,
-  } = useCountries();
+    data: registrationContactTypes,
+    error: registrationContactTypesError,
+    isLoading: areRegistrationContactTypesLoading,
+  } = useRegistrationContactTypes();
 
   const {
     data: walletAssets,
     error: walletError,
     isFetching: isWalletAssetsFetching,
-  } = useAssetsByWallet(details.wallet.id);
+  } = useAssetsByWallet({
+    walletId: details.wallet.id,
+    registrationContactType: details.registrationContactType,
+  });
 
   const {
     data: verificationTypes,
@@ -97,19 +101,15 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     isFetching: isVerificationTypesFetching,
   } = useVerificationTypes();
 
+  // Get balances for distribution account
+  const { allBalances } = useAllBalances();
+
   const apiErrors = [
-    countriesError?.message,
+    registrationContactTypesError?.message,
     walletsError?.message,
     walletError?.message,
     verificationTypesError?.message,
   ];
-
-  const typeLabels: Record<DisbursementVerificationField | string, string> = {
-    DATE_OF_BIRTH: "Date of Birth",
-    YEAR_MONTH: "Date of Birth (Year & Month only)",
-    PIN: "PIN",
-    NATIONAL_ID_NUMBER: "National ID Number",
-  };
 
   const sanitizedApiErrors = apiErrors.filter((e) => Boolean(e));
 
@@ -118,14 +118,18 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 
     if (!inputs.name) {
       missingFields.push(FieldId.NAME);
-    } else if (!inputs.country.code) {
-      missingFields.push(FieldId.COUNTRY_CODE);
-    } else if (!inputs.wallet.id) {
-      missingFields.push(FieldId.WALLET_ID);
+    } else if (!inputs.registrationContactType) {
+      missingFields.push(FieldId.REGISTRATION_CONTACT_TYPE);
     } else if (!inputs.asset.code) {
       missingFields.push(FieldId.ASSET_CODE);
-    } else if (!inputs.verificationField) {
-      missingFields.push(FieldId.VERIFICATION_FIELD);
+    }
+
+    if (!hasWallet(inputs.registrationContactType)) {
+      if (!inputs.wallet.id) {
+        missingFields.push(FieldId.WALLET_ID);
+      } else if (!inputs.verificationField) {
+        missingFields.push(FieldId.VERIFICATION_FIELD);
+      }
     }
 
     const isValid = missingFields.length === 0;
@@ -155,18 +159,36 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     const { id, value } = event.target;
 
     switch (id) {
-      case FieldId.COUNTRY_CODE:
-        // eslint-disable-next-line no-case-declarations
-        const country = countries?.find((c: ApiCountry) => c.code === value);
+      case FieldId.REGISTRATION_CONTACT_TYPE: {
+        const registrationContactType = registrationContactTypes?.find(
+          (rct: RegistrationContactType) => rct === value,
+        );
 
-        updateState({
-          country: {
-            name: country?.name || "",
-            code: country?.code || "",
-          },
-        });
+        const newState = {
+          registrationContactType,
+          wallet: details.wallet,
+          verificationField: details.verificationField,
+          asset: details.asset,
+        };
+        if (!registrationContactType || hasWallet(registrationContactType)) {
+          // registrationContactType was erased or changed to a wallet type
+          newState.wallet = { id: "", name: "" };
+          newState.verificationField = "";
+        }
 
+        if (
+          !registrationContactType ||
+          hasWallet(registrationContactType) !==
+            hasWallet(details.registrationContactType)
+        ) {
+          // registrationContactType was erased or changed to a different type
+          newState.asset = { id: "", code: "" };
+        }
+
+        updateState({ ...newState });
         break;
+      }
+
       case FieldId.WALLET_ID:
         // eslint-disable-next-line no-case-declarations
         const wallet = wallets?.find((w: ApiWallet) => w.id === value);
@@ -177,8 +199,8 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             name: wallet?.name || "",
           },
         });
-
         break;
+
       case FieldId.ASSET_CODE:
         // eslint-disable-next-line no-case-declarations
         const asset = walletAssets?.find((a: ApiAsset) => a.id === value);
@@ -189,18 +211,20 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
             code: asset?.code || "",
           },
         });
-
         break;
+
       case FieldId.NAME:
         updateState({
           name: value,
         });
         break;
+
       case FieldId.VERIFICATION_FIELD:
         updateState({
           verificationField: value,
         });
         break;
+
       default:
       // do nothing
     }
@@ -210,21 +234,48 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     return <option>{isLoading ? "Loading…" : ""}</option>;
   };
 
+  const renderWalletProviderText = (): string => {
+    if (details.wallet.name) {
+      return details.wallet.name;
+    }
+
+    if (hasWallet(details.registrationContactType)) {
+      return wallets?.find((w) => w.enabled && w.user_managed)?.name || "-";
+    }
+
+    return "-";
+  };
+
+  const renderVerificationTypeText = (): string => {
+    if (details.verificationField) {
+      return (
+        VerificationFieldMap[details.verificationField] ||
+        details.verificationField
+      );
+    }
+
+    if (hasWallet(details.registrationContactType)) {
+      return "None";
+    }
+
+    return "-";
+  };
+
   const renderContent = () => {
     if (variant === "preview" || variant === "confirmation") {
       return (
         <>
           <div>
-            <label className="Label Label--sm">Country</label>
+            <label className="Label Label--sm">Registration Contact Type</label>
             <div className="DisbursementDetailsFields__value">
-              {details.country.name}
+              {formatRegistrationContactType(details.registrationContactType)}
             </div>
           </div>
 
           <div>
             <label className="Label Label--sm">Wallet provider</label>
             <div className="DisbursementDetailsFields__value">
-              {details.wallet.name}
+              {renderWalletProviderText()}
             </div>
           </div>
 
@@ -238,8 +289,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           <div>
             <label className="Label Label--sm">Verification Type</label>
             <div className="DisbursementDetailsFields__value">
-              {typeLabels[details.verificationField ?? ""] ||
-                details.verificationField}
+              {renderVerificationTypeText()}
             </div>
           </div>
 
@@ -278,37 +328,68 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       );
     }
 
+    const isWalletRegistrationEnabled = isUserManagedWalletEnabled(wallets);
+
     // "edit" variant by default
     return (
       <>
         <Select
-          id={FieldId.COUNTRY_CODE}
-          label="Country"
+          id={FieldId.REGISTRATION_CONTACT_TYPE}
+          label={
+            <InfoTooltip
+              hideTooltip={isWalletRegistrationEnabled}
+              infoText="Registering receivers wallet directly is disabled. It can be enabled in the 'Wallet Providers' section."
+            >
+              Registration Contact Type
+            </InfoTooltip>
+          }
           fieldSize="sm"
           onChange={updateDraftDetails}
-          value={details.country.code}
-          disabled={isCountriesLoading}
+          value={details.registrationContactType}
+          disabled={areRegistrationContactTypesLoading}
         >
-          {renderDropdownDefault(isCountriesLoading)}
-          {countries?.map((country: ApiCountry) => (
-            <option key={country.code} value={country.code}>
-              {country.name}
-            </option>
-          ))}
+          {renderDropdownDefault(areRegistrationContactTypesLoading)}
+          {registrationContactTypes
+            ?.filter(
+              (registrationContactType) =>
+                !hasWallet(registrationContactType) ||
+                isWalletRegistrationEnabled,
+            )
+            .map((registrationContactType: RegistrationContactType) => (
+              <option
+                key={registrationContactType}
+                value={registrationContactType}
+              >
+                {formatRegistrationContactType(registrationContactType)}
+              </option>
+            ))}
         </Select>
-
         <Select
           id={FieldId.WALLET_ID}
           label="Wallet provider"
           fieldSize="sm"
           onChange={updateDraftDetails}
-          value={details.wallet.id}
-          disabled={isWalletsLoading}
+          value={
+            hasWallet(details.registrationContactType) // in case of a WALLET_ADDRESS registration type, pre-populate the WALLET provider
+              ? wallets?.find((w) => w.enabled && w.user_managed)?.id
+              : details.wallet.id
+          }
+          disabled={
+            isWalletsLoading ||
+            !registrationContactTypes ||
+            !details.registrationContactType ||
+            hasWallet(details.registrationContactType)
+          }
         >
           {renderDropdownDefault(isWalletsLoading)}
           {wallets &&
             wallets
               .filter((wallet) => wallet.enabled)
+              .filter((wallet) =>
+                hasWallet(details.registrationContactType) // This allows to pre-populate the WALLET provider in case of a WALLET_ADDRESS registration type
+                  ? true
+                  : !wallet.user_managed,
+              )
               .map((wallet: ApiWallet) => (
                 <option key={wallet.id} value={wallet.id}>
                   {wallet.name}
@@ -322,14 +403,32 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           fieldSize="sm"
           onChange={updateDraftDetails}
           value={details.asset.id}
-          disabled={isWalletAssetsFetching || !details.wallet.id}
+          disabled={
+            isWalletAssetsFetching ||
+            (!details.wallet.id &&
+              (!hasWallet(details.registrationContactType) ||
+                !details.registrationContactType))
+          }
         >
           {renderDropdownDefault(isWalletAssetsFetching)}
-          {walletAssets?.map((asset: ApiAsset) => (
-            <option key={asset.id} value={asset.id}>
-              {asset.code}
-            </option>
-          ))}
+          {walletAssets
+            ?.filter((wa: ApiAsset) => {
+              // Check for the default native asset
+              if (wa.code === "XLM" && wa.issuer === "") {
+                return true;
+              }
+              // Check that the asset is a non-native asset that has a distribution account balance
+              return !!allBalances?.find(
+                (balance) =>
+                  balance.assetCode === wa.code &&
+                  balance.assetIssuer === wa.issuer,
+              );
+            })
+            ?.map((wa: ApiAsset) => (
+              <option key={wa.id} value={wa.id}>
+                {wa.code}
+              </option>
+            ))}
         </Select>
 
         <Select
@@ -337,13 +436,25 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           label="Verification type"
           fieldSize="sm"
           onChange={updateDraftDetails}
-          value={details.verificationField}
-          disabled={isVerificationTypesFetching}
+          value={
+            hasWallet(details.registrationContactType)
+              ? "None"
+              : details.verificationField
+          }
+          disabled={
+            isVerificationTypesFetching ||
+            !registrationContactTypes ||
+            !details.registrationContactType ||
+            hasWallet(details.registrationContactType)
+          }
         >
           {renderDropdownDefault(isVerificationTypesFetching)}
-          {verificationTypes?.map((type: DisbursementVerificationField) => (
+          {[
+            ...(verificationTypes ?? []),
+            ...(hasWallet(details.registrationContactType) ? ["None"] : []),
+          ].map((type: string) => (
             <option key={type} value={type}>
-              {typeLabels[type] || type}
+              {VerificationFieldMap[type] || type}
             </option>
           ))}
         </Select>

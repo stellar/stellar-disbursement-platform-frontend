@@ -18,10 +18,10 @@ export const postDisbursement = async (
       name: disbursement.name,
       wallet_id: disbursement.wallet.id,
       asset_id: disbursement.asset.id,
-      country_code: disbursement.country.code,
+      registration_contact_type: disbursement.registrationContactType,
       verification_field: disbursement.verificationField || "",
-      sms_registration_message_template:
-        disbursement.smsRegistrationMessageTemplate,
+      receiver_registration_message_template:
+        disbursement.receiverRegistrationMessageTemplate,
     }),
   });
 

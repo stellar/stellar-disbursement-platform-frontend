@@ -28,7 +28,6 @@ export const useNewPassword = () => {
         body: JSON.stringify(fieldsToSubmit),
       });
     },
-    cacheTime: 0,
   });
 
   return {
@@ -41,7 +40,7 @@ export const useNewPassword = () => {
     }: NewPasswordFields) => {
       try {
         await mutation.mutateAsync({ currentPassword, newPassword });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

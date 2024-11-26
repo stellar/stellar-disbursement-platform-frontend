@@ -50,6 +50,12 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
         test: /\.tsx?$/,
         exclude: /node_modules/,
         use: {
@@ -115,6 +121,10 @@ module.exports = {
     ],
   },
   resolve: {
+    alias: {
+      "react/jsx-dev-runtime.js": "react/jsx-dev-runtime",
+      "react/jsx-runtime.js": "react/jsx-runtime",
+    },
     extensions: [".tsx", ".ts", ".js"],
     plugins: [
       // This handles aliases and resolves Design System CSS font paths properly
@@ -155,7 +165,10 @@ module.exports = {
         REACT_APP_RECAPTCHA_SITE_KEY: JSON.stringify(
           process.env.REACT_APP_RECAPTCHA_SITE_KEY || "",
         ),
-        REACT_APP_USE_SSO: JSON.stringify(process.env.REACT_APP_USE_SSO || ""),
+        REACT_APP_SINGLE_TENANT_MODE:
+          process.env.REACT_APP_SINGLE_TENANT_MODE?.toLowerCase() === "true",
+        REACT_APP_USE_SSO:
+          process.env.REACT_APP_USE_SSO?.toLowerCase() === "true",
         REACT_APP_OIDC_AUTHORITY: JSON.stringify(
           process.env.REACT_APP_OIDC_AUTHORITY || "",
         ),
@@ -188,6 +201,7 @@ module.exports = {
     new ESLintPlugin({
       extensions: [".tsx", ".ts", ".js"],
       exclude: "node_modules",
+      configType: "flat",
     }),
   ],
 };

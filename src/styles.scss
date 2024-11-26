@@ -131,7 +131,7 @@ body {
   }
 
   &--disbursementDetails {
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 2fr 3fr;
   }
 
   &--paymentDetails {
@@ -191,7 +191,9 @@ body {
       margin-top: pxToRem(8px);
     }
 
-    --StatCard-template-rows: 3;
+    & {
+      --StatCard-template-rows: 3; // Wrap the custom property in `& {}`
+    }
 
     &__column {
       display: grid;
@@ -421,6 +423,15 @@ body {
     border-bottom-left-radius: pxToRem(8px);
     border-bottom-right-radius: pxToRem(8px);
     color: var(--color-gray-70) !important;
+  }
+}
+
+.ReceiverContactInfo {
+  &__item {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

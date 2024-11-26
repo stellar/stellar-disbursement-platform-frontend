@@ -8,6 +8,7 @@ import {
 } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 
+import { SINGLE_TENANT_MODE } from "constants/envVariables";
 import { ORG_NAME_INFO_TEXT } from "constants/settings";
 import { useResetPassword } from "apiQueries/useResetPassword";
 import { validateNewPassword } from "helpers/validateNewPassword";
@@ -17,7 +18,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ResetPassword = () => {
-  const { isSuccess, isLoading, error, mutateAsync, reset } =
+  const { isSuccess, isPending, error, mutateAsync, reset } =
     useResetPassword();
 
   const navigate = useNavigate();
@@ -103,24 +104,29 @@ export const ResetPassword = () => {
                   a combination of uppercase letters, lowercase letters and
                   numbers
                 </li>
-                <li>at least one symbol from: <span className="CodeSnippet">! @ # $ % ^ &amp; *</span></li>
+                <li>
+                  at least one symbol from:{" "}
+                  <span className="CodeSnippet">! @ # $ % ^ &amp; *</span>
+                </li>
               </ul>
             </div>
           </div>
 
-          <Input
-            fieldSize="sm"
-            id="rp-organization-name"
-            name="rp-organization-name"
-            label={
-              <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                Organization name
-              </InfoTooltip>
-            }
-            onChange={(e) => setOrganizationName(e.target.value)}
-            value={organizationName}
-            type="text"
-          />
+          {SINGLE_TENANT_MODE ? null : (
+            <Input
+              fieldSize="sm"
+              id="rp-organization-name"
+              name="rp-organization-name"
+              label={
+                <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
+                  Organization name
+                </InfoTooltip>
+              }
+              onChange={(e) => setOrganizationName(e.target.value)}
+              value={organizationName}
+              type="text"
+            />
+          )}
 
           <Input
             fieldSize="sm"
@@ -183,7 +189,7 @@ export const ResetPassword = () => {
             size="sm"
             type="submit"
             disabled={!allInputsValid()}
-            isLoading={isLoading}
+            isLoading={isPending}
           >
             Reset password
           </Button>

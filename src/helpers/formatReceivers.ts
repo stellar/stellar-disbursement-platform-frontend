@@ -4,6 +4,7 @@ export const formatReceivers = (receivers: ApiReceiver[]): Receiver[] => {
   return receivers.map((r) => ({
     id: r.id,
     phoneNumber: r.phone_number,
+    email: r.email,
     walletProvider: r.wallets.map((w) => w.wallet.name),
     walletsRegisteredCount: Number(r.registered_wallets),
     totalPaymentsCount: Number(r.total_payments),

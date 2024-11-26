@@ -16,7 +16,6 @@ export const useCreateNewUser = () => {
         }),
       });
     },
-    cacheTime: 0,
   });
 
   return {
@@ -26,7 +25,7 @@ export const useCreateNewUser = () => {
     mutateAsync: async (newUser: NewUser) => {
       try {
         await mutation.mutateAsync(newUser);
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

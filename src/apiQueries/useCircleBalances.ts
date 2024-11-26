@@ -25,7 +25,7 @@ export const useCircleBalances = (
     queryFn: async () => {
       return await fetchApi(`${API_URL}/balances`);
     },
-    keepPreviousData: true,
+    placeholderData: (prev) => prev,
     enabled: Boolean(isActive && walletId),
   });
 

@@ -132,7 +132,7 @@ export const Receivers = () => {
             <div className="FiltersWithSearch__search">
               <SearchInput
                 id="receivers-search"
-                placeholder="Search by phone number"
+                placeholder="Search by contact info"
                 onSubmit={handleSearchChange}
                 onClear={handleSearchChange}
                 isLoading={isSearchInProgress}

@@ -134,10 +134,7 @@ const initialState: DisbursementDetailsInitialState = {
       code: "",
       id: "",
     },
-    country: {
-      code: "",
-      name: "",
-    },
+    registrationContactType: undefined,
     wallet: {
       id: "",
       name: "",
@@ -150,7 +147,7 @@ const initialState: DisbursementDetailsInitialState = {
     status: "DRAFT",
     fileName: undefined,
     statusHistory: [],
-    smsRegistrationMessageTemplate: "",
+    receiverRegistrationMessageTemplate: "",
   },
   instructions: {
     csvName: undefined,
@@ -258,6 +255,7 @@ const formatDisbursementReceivers = (
   items.map((r) => ({
     id: r.id,
     phoneNumber: r.phone_number,
+    email: r.email,
     provider: r.receiver_wallet.wallet.name,
     amount: r.payment.amount,
     assetCode: r.payment.asset.code,

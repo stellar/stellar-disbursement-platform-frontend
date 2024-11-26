@@ -48,7 +48,6 @@ export const useResetPassword = () => {
         },
       );
     },
-    cacheTime: 0,
   });
 
   return {
@@ -62,7 +61,7 @@ export const useResetPassword = () => {
     }: ResetPasswordProps) => {
       try {
         await mutation.mutateAsync({ organizationName, password, resetToken });
-      } catch (e) {
+      } catch {
         // do nothing
       }
     },

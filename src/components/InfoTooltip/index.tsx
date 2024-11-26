@@ -5,13 +5,19 @@ interface InfoTooltipProps {
   children: React.ReactNode;
   infoText: React.ReactNode;
   placement?: FloaterPlacement;
+  hideTooltip?: boolean;
 }
 
 export const InfoTooltip = ({
   children,
   infoText,
   placement = "right",
+  hideTooltip = false,
 }: InfoTooltipProps) => {
+  if (hideTooltip) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="InfoTooltip">
       {children}
