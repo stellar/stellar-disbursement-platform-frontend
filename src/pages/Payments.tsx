@@ -136,6 +136,7 @@ export const Payments = () => {
                   <option value="PAUSED">Paused</option>
                   <option value="SUCCESS">Success</option>
                   <option value="FAILED">Failed</option>
+                  <option value="CANCELED">Canceled</option>
                 </Select>
               </div>
 
