@@ -124,6 +124,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
             >
               Created at
             </Table.HeaderCell>
+            <Table.HeaderCell>Status</Table.HeaderCell>
             <Table.HeaderCell textAlign="right" width="7.9rem">
               Total amount
             </Table.HeaderCell>
@@ -166,6 +167,8 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                     {formatDateTime(d.createdAt)}
                   </span>
                 </Table.BodyCell>
+
+                <Table.BodyCell textAlign="right">{d.status}</Table.BodyCell>
 
                 <Table.BodyCell textAlign="right" width="7.9rem">
                   <AssetAmount
