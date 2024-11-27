@@ -106,12 +106,13 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
             <Checkbox id="disbursements-select-all" fieldSize="xs" />
           </Table.HeaderCell> */}
             <Table.HeaderCell
+              width="9rem"
               sortDirection={sortBy === "name" ? sortDir : defaultSortDirection}
               onSort={() => handleSort("name")}
             >
               Disbursement name
             </Table.HeaderCell>
-            <Table.HeaderCell>Total payments</Table.HeaderCell>
+            <Table.HeaderCell width="5.7rem">Total payments</Table.HeaderCell>
             <Table.HeaderCell>Successful</Table.HeaderCell>
             <Table.HeaderCell>Failed</Table.HeaderCell>
             <Table.HeaderCell>Canceled</Table.HeaderCell>
@@ -125,10 +126,10 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
               Created at
             </Table.HeaderCell>
             <Table.HeaderCell>Status</Table.HeaderCell>
-            <Table.HeaderCell textAlign="right" width="7.9rem">
+            <Table.HeaderCell textAlign="right" width="4.8rem">
               Total amount
             </Table.HeaderCell>
-            <Table.HeaderCell textAlign="right" width="7.9rem">
+            <Table.HeaderCell textAlign="right" width="8.1rem">
               Amount disbursed
             </Table.HeaderCell>
           </Table.Header>
@@ -147,22 +148,22 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                     {d.name}
                   </Link>
                 </Table.BodyCell>
-                <Table.BodyCell width="5.5rem" textAlign="right">
+                <Table.BodyCell textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsTotalCount)}
                 </Table.BodyCell>
-                <Table.BodyCell width="4rem" textAlign="right">
+                <Table.BodyCell textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsSuccessfulCount)}
                 </Table.BodyCell>
-                <Table.BodyCell width="2.25rem" textAlign="right">
+                <Table.BodyCell textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsFailedCount)}
                 </Table.BodyCell>
-                <Table.BodyCell width="3.4rem" textAlign="right">
+                <Table.BodyCell textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsCanceledCount)}
                 </Table.BodyCell>
-                <Table.BodyCell width="3.75rem" textAlign="right">
+                <Table.BodyCell textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsRemainingCount)}
                 </Table.BodyCell>
-                <Table.BodyCell width="9.375rem">
+                <Table.BodyCell width="9.5rem">
                   <span className="Table-v2__cell--secondary">
                     {formatDateTime(d.createdAt)}
                   </span>
@@ -170,14 +171,14 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
 
                 <Table.BodyCell textAlign="right">{d.status}</Table.BodyCell>
 
-                <Table.BodyCell textAlign="right" width="7.9rem">
+                <Table.BodyCell textAlign="right">
                   <AssetAmount
                     amount={d.stats?.totalAmount}
                     assetCode={d.asset.code}
                     fallback="-"
                   />
                 </Table.BodyCell>
-                <Table.BodyCell textAlign="right" width="7.9rem">
+                <Table.BodyCell textAlign="right">
                   <AssetAmount
                     amount={d.stats?.disbursedAmount}
                     assetCode={d.asset.code}
