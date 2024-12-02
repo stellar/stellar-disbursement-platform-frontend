@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=18.x"
+    "node": ">=20.x"
   },
   "lint-staged": {
     "src/**/*.ts?(x)": [
