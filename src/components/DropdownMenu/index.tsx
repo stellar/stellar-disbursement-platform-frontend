@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 import "./styles.scss";
 
 interface DropdownMenuProps {
-  triggerEl: JSX.Element;
-  children: JSX.Element | JSX.Element[];
+  triggerEl: React.ReactElement;
+  children: React.ReactElement | React.ReactElement[];
 }
 
 interface DropdownMenuComponent {
