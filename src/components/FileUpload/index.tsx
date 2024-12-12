@@ -1,8 +1,13 @@
 import { useState, useRef, useEffect, cloneElement } from "react";
 import "./styles.scss";
 
+type CustomButtonProps = {
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
+};
+
 interface FileUploadProps {
-  uploadButton?: React.ReactElement;
+  uploadButton?: React.ReactElement<CustomButtonProps>;
   onChange: (file?: File) => void;
   acceptedType: string[];
   infoMessage: string;
