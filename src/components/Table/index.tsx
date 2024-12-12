@@ -3,7 +3,7 @@ import { SortDirection } from "types";
 import "./styles.scss";
 
 interface HeaderProps {
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactElement | React.ReactElement[];
 }
 
 const Header: React.FC<HeaderProps> = ({ children }: HeaderProps) => {
@@ -72,7 +72,7 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
 };
 
 interface BodyProps {
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactElement | React.ReactElement[];
 }
 
 const Body: React.FC<BodyProps> = ({ children }: BodyProps) => {
@@ -80,7 +80,7 @@ const Body: React.FC<BodyProps> = ({ children }: BodyProps) => {
 };
 
 interface BodyRowProps {
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactElement | React.ReactElement[];
   isHighlighted?: boolean;
 }
 
@@ -139,7 +139,7 @@ interface TableComponent {
 }
 
 interface TableProps extends React.HtmlHTMLAttributes<HTMLTableElement> {
-  children: JSX.Element[];
+  children: React.ReactElement[];
   isLoading?: boolean;
 }
 

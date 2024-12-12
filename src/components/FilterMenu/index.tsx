@@ -3,7 +3,7 @@ import { Button, Icon, Floater } from "@stellar/design-system";
 import "./styles.scss";
 
 interface FilterMenuProps {
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactElement | React.ReactElement[];
   onSubmit: () => void;
   onReset: () => void;
   isSubmitDisabled: boolean;
