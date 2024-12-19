@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
 import { getDisbursements } from "api/getDisbursements";
+import { getDisbursementsExport } from "api/getDisbursementsExport";
 import { formatDisbursements } from "helpers/formatDisbursements";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
@@ -69,6 +70,31 @@ export const getDisbursementsWithParamsAction = createAsyncThunk<
 
       return rejectWithValue({
         errorString: `Error fetching paginated disbursements: ${errorString}`,
+      });
+    }
+  },
+);
+
+export const exportDisbursementsAction = createAsyncThunk<
+  undefined,
+  undefined,
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "disbursements/exportDisbursementsAction",
+  async (_, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+    const { searchParams } = getState().disbursements;
+    try {
+      await getDisbursementsExport(token, searchParams);
+      refreshSessionToken(dispatch);
+      return;
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error exporting disbursements: ${errorString}`,
       });
     }
   },

@@ -22,6 +22,7 @@ import { AppDispatch } from "store";
 import {
   getDisbursementsAction,
   getDisbursementsWithParamsAction,
+  exportDisbursementsAction,
 } from "store/ducks/disbursements";
 import { resetDisbursementDetailsAction } from "store/ducks/disbursementDetails";
 import { setDraftIdAction } from "store/ducks/disbursementDrafts";
@@ -145,7 +146,12 @@ export const Disbursements = () => {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    alert("TODO: handle export");
+
+    if (disbursements.status === "PENDING") {
+      return;
+    }
+
+    dispatch(exportDisbursementsAction());
   };
 
   const handlePageLimitChange = (
@@ -257,7 +263,7 @@ export const Disbursements = () => {
               size="sm"
               icon={<Icon.Download />}
               onClick={handleExport}
-              disabled={true}
+              isLoading={disbursements.status === "PENDING"}
             >
               Export
             </Button>
