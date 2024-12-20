@@ -22,8 +22,8 @@ import { AppDispatch } from "store";
 import {
   getDisbursementsAction,
   getDisbursementsWithParamsAction,
-  exportDisbursementsAction,
 } from "store/ducks/disbursements";
+import { exportDataAction } from "store/ducks/dataExport";
 import { resetDisbursementDetailsAction } from "store/ducks/disbursementDetails";
 import { setDraftIdAction } from "store/ducks/disbursementDrafts";
 import { CommonFilters, SortByDisbursements, SortDirection } from "types";
@@ -151,7 +151,12 @@ export const Disbursements = () => {
       return;
     }
 
-    dispatch(exportDisbursementsAction());
+    dispatch(
+      exportDataAction({
+        exportType: "disbursements",
+        searchParams: disbursements.searchParams,
+      }),
+    );
   };
 
   const handlePageLimitChange = (

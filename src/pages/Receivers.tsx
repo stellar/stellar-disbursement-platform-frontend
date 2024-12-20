@@ -8,6 +8,10 @@ import { SectionHeader } from "components/SectionHeader";
 import { Pagination } from "components/Pagination";
 import { ReceiversTable } from "components/ReceiversTable";
 
+import { exportDataAction } from "store/ducks/dataExport";
+import { AppDispatch } from "store";
+import { useDispatch } from "react-redux";
+
 import { useReceivers } from "apiQueries/useReceivers";
 import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
 import { number } from "helpers/formatIntlNumber";
@@ -88,11 +92,22 @@ export const Receivers = () => {
     setQueryFilters(isDefaultSort ? filters : { ...filters, sort, direction });
   };
 
+  const dispatch: AppDispatch = useDispatch();
+
   const handleExport = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    alert("TODO: handle export");
+    if (isLoading || isFetching) {
+      return;
+    }
+
+    dispatch(
+      exportDataAction({
+        exportType: "receivers",
+        searchParams: filters,
+      }),
+    );
   };
 
   const handlePageLimitChange = (
@@ -191,7 +206,7 @@ export const Receivers = () => {
               size="sm"
               icon={<Icon.Download />}
               onClick={handleExport}
-              disabled={true}
+              disabled={isLoading || isFetching}
             >
               Export
             </Button>
