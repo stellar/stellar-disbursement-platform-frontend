@@ -12,6 +12,10 @@ import { PAGE_LIMIT_OPTIONS } from "constants/settings";
 import { number } from "helpers/formatIntlNumber";
 import { CommonFilters } from "types";
 
+import { exportDataAction } from "store/ducks/dataExport";
+import { AppDispatch } from "store";
+import { useDispatch } from "react-redux";
+
 export const Payments = () => {
   const [isSearchInProgress] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,11 +76,22 @@ export const Payments = () => {
     setQueryFilters(initFilters);
   };
 
+  const dispatch: AppDispatch = useDispatch();
+
   const handleExport = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    alert("TODO: handle export");
+    if (isLoading || isFetching) {
+      return;
+    }
+
+    dispatch(
+      exportDataAction({
+        exportType: "payments",
+        searchParams: filters,
+      }),
+    );
   };
 
   const handlePageLimitChange = (
@@ -168,7 +183,7 @@ export const Payments = () => {
               size="sm"
               icon={<Icon.Download />}
               onClick={handleExport}
-              disabled={true}
+              disabled={isLoading || isFetching}
             >
               Export
             </Button>
