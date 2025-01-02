@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+import { useDispatch } from "react-redux";
+
+import { AppDispatch } from "store";
+import { exportDataAction } from "store/ducks/dataExport";
 
 import { FilterMenu } from "components/FilterMenu";
 import { SearchInput } from "components/SearchInput";
@@ -88,11 +92,22 @@ export const Receivers = () => {
     setQueryFilters(isDefaultSort ? filters : { ...filters, sort, direction });
   };
 
+  const dispatch: AppDispatch = useDispatch();
+
   const handleExport = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    alert("TODO: handle export");
+    if (isLoading || isFetching) {
+      return;
+    }
+
+    dispatch(
+      exportDataAction({
+        exportType: "receivers",
+        searchParams: filters,
+      }),
+    );
   };
 
   const handlePageLimitChange = (
@@ -191,7 +206,7 @@ export const Receivers = () => {
               size="sm"
               icon={<Icon.Download />}
               onClick={handleExport}
-              disabled={true}
+              disabled={isLoading || isFetching}
             >
               Export
             </Button>

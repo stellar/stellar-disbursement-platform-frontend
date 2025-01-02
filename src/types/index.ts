@@ -160,6 +160,8 @@ export type StellarAccountInfo = {
   balances: AccountBalanceItem[];
 };
 
+export type Export = "disbursements" | "receivers" | "payments";
+
 // =============================================================================
 // User
 // =============================================================================
