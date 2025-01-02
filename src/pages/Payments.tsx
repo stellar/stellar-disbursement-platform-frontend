@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+import { useDispatch } from "react-redux";
+
+import { AppDispatch } from "store";
+import { exportDataAction } from "store/ducks/dataExport";
 
 import { FilterMenu } from "components/FilterMenu";
 import { Pagination } from "components/Pagination";
@@ -11,10 +15,6 @@ import { usePayments } from "apiQueries/usePayments";
 import { PAGE_LIMIT_OPTIONS } from "constants/settings";
 import { number } from "helpers/formatIntlNumber";
 import { CommonFilters } from "types";
-
-import { exportDataAction } from "store/ducks/dataExport";
-import { AppDispatch } from "store";
-import { useDispatch } from "react-redux";
 
 export const Payments = () => {
   const [isSearchInProgress] = useState(false);
