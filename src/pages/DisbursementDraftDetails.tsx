@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Badge, Heading, Link, Notification } from "@stellar/design-system";
+import {
+  Badge,
+  Heading,
+  Link,
+  Notification,
+  Button,
+  Icon,
+  Modal,
+} from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useRedux } from "hooks/useRedux";
 import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
@@ -15,6 +23,7 @@ import {
 import {
   clearCsvUpdatedAction,
   clearDisbursementDraftsErrorAction,
+  deleteDisbursementDraftAction,
   resetDisbursementDraftsAction,
   saveNewCsvFileAction,
   setDraftIdAction,
@@ -60,6 +69,8 @@ export const DisbursementDraftDetails = () => {
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
   const [futureBalance, setFutureBalance] = useState<number>(0);
+
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -259,6 +270,31 @@ export const DisbursementDraftDetails = () => {
     );
   };
 
+  const handleDeleteDraft = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.preventDefault();
+    if (draftId) {
+      dispatch(deleteDisbursementDraftAction(draftId));
+      setIsDeleteModalVisible(false);
+      navigate(Routes.DISBURSEMENT_DRAFTS);
+    }
+  };
+
+  const showDeleteModal = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.preventDefault();
+    setIsDeleteModalVisible(true);
+  };
+
+  const hideDeleteModal = (
+    event?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event?.preventDefault();
+    setIsDeleteModalVisible(false);
+  };
+
   const renderButtons = (variant: DisbursementStep) => {
     const canUserSubmit = organization.data.isApprovalRequired
       ? // If approval is required, a different user must submit the draft
@@ -437,6 +473,15 @@ export const DisbursementDraftDetails = () => {
             >
               <Badge variant="pending">Changes saved</Badge>
             </Toast>
+            <Button
+              variant="error"
+              size="sm"
+              icon={<Icon.Delete />}
+              onClick={showDeleteModal}
+              isLoading={disbursementDrafts.status === "PENDING"}
+            >
+              Delete Draft
+            </Button>
           </SectionHeader.Content>
         </SectionHeader.Row>
       </SectionHeader>
@@ -460,6 +505,34 @@ export const DisbursementDraftDetails = () => {
       ) : null}
 
       {renderContent()}
+
+      <Modal visible={isDeleteModalVisible} onClose={hideDeleteModal}>
+        <Modal.Heading>Delete draft permanently?</Modal.Heading>
+        <Modal.Body>
+          <div>
+            Clicking 'Delete draft' will permanently remove this draft and
+            cannot be undone.
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={hideDeleteModal}
+            isLoading={disbursementDrafts.status === "PENDING"}
+          >
+            Not now
+          </Button>
+          <Button
+            size="sm"
+            variant="error"
+            onClick={(event) => handleDeleteDraft(event)}
+            isLoading={disbursementDrafts.status === "PENDING"}
+          >
+            Delete draft
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

@@ -1,5 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
+import { deleteDisbursementDraft } from "api/deleteDisbursementDraft";
 import { getDisbursementDrafts } from "api/getDisbursementDrafts";
 import { postDisbursement } from "api/postDisbursement";
 import { postDisbursementFile } from "api/postDisbursementFile";
@@ -223,6 +224,31 @@ export const submitDisbursementSavedDraftAction = createAsyncThunk<
   },
 );
 
+export const deleteDisbursementDraftAction = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "disbursementDrafts/deleteDisbursementDraftAction",
+  async (draftId, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+
+    try {
+      await deleteDisbursementDraft(token, draftId);
+      refreshSessionToken(dispatch);
+      return;
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error deleting draft: ${errorString}`,
+      });
+    }
+  },
+);
+
 const initialState: DisbursementDraftsInitialState = {
   items: [],
   status: undefined,
@@ -357,6 +383,20 @@ const disbursementDraftsSlice = createSlice({
         state.newDraftId = action.payload?.newDraftId;
       },
     );
+    // Delete disbursement draft
+    builder.addCase(deleteDisbursementDraftAction.pending, (state) => {
+      state.status = "PENDING";
+      state.actionType = "delete";
+    });
+    builder.addCase(deleteDisbursementDraftAction.fulfilled, (state) => {
+      state.status = "SUCCESS";
+      state.actionType = "delete";
+    });
+    builder.addCase(deleteDisbursementDraftAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.actionType = "delete";
+      state.errorString = action.payload?.errorString;
+    });
   },
 });
 

@@ -219,7 +219,7 @@ export const VerificationFieldMap: Record<
   NATIONAL_ID_NUMBER: "National ID Number",
 };
 
-export type DisbursementDraftAction = "save" | "submit";
+export type DisbursementDraftAction = "save" | "submit" | "delete";
 
 export interface DisbursementInstructions {
   csvName?: string;
