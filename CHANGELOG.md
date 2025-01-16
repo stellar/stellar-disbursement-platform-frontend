@@ -8,6 +8,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [3.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.0.0...3.1.0))
+
+Release of the Stellar Disbursement Platform `v3.1.0`. This release introduces
+key updates, including the migration to Circle's Payouts API, aligning with
+Circle's latest recommendations. It also enhances platform functionality by
+enabling data export through dedicated endpoints, allowing users to export
+disbursements, payments, and receivers with filters. Additionally, users now
+have the ability to delete disbursements in `DRAFT` or `READY` status,
+streamlining data management workflows.
+
+> [!WARNING]  
+> This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `3.1.0`.
+
+### Added
+
+- Export functionality, allowing users to export:
+  - Disbursements with filters.
+    [#202](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/202)
+  - Payments and Receivers with filters.
+    [#203](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/203)
+- Option to delete a disbursement in `DRAFT` or `READY` status.
+  [#205](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/205)
+
+### Changed
+
+- Update the Disbursements table by adding the status column.
+  [#194](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/194)
+
+### Security and Dependencies
+
+- Bump `react-router-dom` from 6.28.0 to 7.0.1.
+  [#197](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/197)
+- Bump the minor-and-patch.
+  [#198](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/198),
+  [#200](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/200)
+- Bump docker/build-push-action from 6.9.0 to 6.11.0 in the all-actions group.
+  [#195](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/195),
+  [#207](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/207)
+
 ## [3.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/2.1.0...3.0.0))
 
 Release of the Stellar Disbursement Platform `v3.0.0`. In this release, receiver
@@ -17,7 +57,8 @@ and `PHONE_NUMBER_AND_WALLET_ADDRESS`. If a receiver is registered with a wallet
 address, they can receive the payment right away without having to go through
 the SEP-24 registration flow.
 
-> [!Warning] This version is only compatible with the
+> [!WARNING]  
+> This version is only compatible with the
 > [stellar/stellar-disbursement-platform-backend] version `3.0.0`.
 
 ### Added
@@ -90,7 +131,8 @@ option to set different distribution account signers per tenant, as well as
 Circle support, so the tenant can choose to run their payments through the
 Circle API rather than directly on the Stellar network.
 
-> [!Warning] This version is only compatible with the
+> [!WARNING]  
+> This version is only compatible with the
 > [stellar/stellar-disbursement-platform-backend] version `2.1.0`.
 
 ### Added
@@ -131,7 +173,8 @@ platform simultaneously.
 
 Each organization has its own set of users, receivers, disbursements, etc.
 
-> [!Warning] This version is only compatible with the
+> [!WARNING]  
+> This version is only compatible with the
 > [stellar/stellar-disbursement-platform-backend] version 2.x.x. In order to
 > migrate from 1.x.x to 2.x.x, please consult the
 > [SDP Migration Guide](https://developers.stellar.org/network/stellar-disbursement-platform/admin-guide/single-tenant-to-multi-tenant-migration).

@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+import { useDispatch } from "react-redux";
+
+import { AppDispatch } from "store";
+import { exportDataAction } from "store/ducks/dataExport";
 
 import { FilterMenu } from "components/FilterMenu";
 import { Pagination } from "components/Pagination";
@@ -72,11 +76,22 @@ export const Payments = () => {
     setQueryFilters(initFilters);
   };
 
+  const dispatch: AppDispatch = useDispatch();
+
   const handleExport = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
-    alert("TODO: handle export");
+    if (isLoading || isFetching) {
+      return;
+    }
+
+    dispatch(
+      exportDataAction({
+        exportType: "payments",
+        searchParams: filters,
+      }),
+    );
   };
 
   const handlePageLimitChange = (
@@ -136,6 +151,7 @@ export const Payments = () => {
                   <option value="PAUSED">Paused</option>
                   <option value="SUCCESS">Success</option>
                   <option value="FAILED">Failed</option>
+                  <option value="CANCELED">Canceled</option>
                 </Select>
               </div>
 
@@ -167,7 +183,7 @@ export const Payments = () => {
               size="sm"
               icon={<Icon.Download />}
               onClick={handleExport}
-              disabled={true}
+              disabled={isLoading || isFetching}
             >
               Export
             </Button>
