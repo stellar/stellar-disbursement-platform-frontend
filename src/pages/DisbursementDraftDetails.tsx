@@ -39,7 +39,6 @@ import { DisbursementInstructions } from "components/DisbursementInstructions";
 import { DisbursementButtons } from "components/DisbursementButtons";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { csvTotalAmount } from "helpers/csvTotalAmount";
-import { scrollTo } from "helpers/scrollTo";
 
 import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
@@ -90,20 +89,6 @@ export const DisbursementDraftDetails = () => {
 
     notificationRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [apiError, isCsvUpdatedSuccess, isResponseSuccess]);
-
-  const isFirstRender = useRef(true);
-  useEffect(() => {
-    if (!csvFile) return;
-
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    setTimeout(() => {
-      scrollTo("bottom");
-    }, 100);
-  }, [csvFile]);
 
   const fetchedDisbursementDraft = disbursementDrafts.items.find(
     (p) => p.details.id === draftId,
