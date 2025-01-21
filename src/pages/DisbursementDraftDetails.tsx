@@ -4,7 +4,6 @@ import {
   Badge,
   Heading,
   Link,
-  Notification,
   Button,
   Icon,
   Modal,
@@ -43,6 +42,7 @@ import { csvTotalAmount } from "helpers/csvTotalAmount";
 import { scrollTo } from "helpers/scrollTo";
 
 import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
+import { NotificationWithButtons } from "components/NotificationWithButtons";
 
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
@@ -81,13 +81,14 @@ export const DisbursementDraftDetails = () => {
   );
   const { allBalances } = useAllBalances();
 
+  const notificationRef = useRef<HTMLDivElement | null>(null);
   const apiError = disbursementDrafts.errorString;
   const isLoading = disbursementDetails.status === "PENDING";
 
   useEffect(() => {
     if (!apiError && !isCsvUpdatedSuccess && !isResponseSuccess) return;
 
-    scrollTo("top");
+    notificationRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [apiError, isCsvUpdatedSuccess, isResponseSuccess]);
 
   const isFirstRender = useRef(true);
@@ -375,7 +376,8 @@ export const DisbursementDraftDetails = () => {
       return (
         <>
           {isResponseSuccess ? (
-            <Notification
+            <NotificationWithButtons
+              ref={notificationRef}
               variant="success"
               title="New disbursement was successfully created"
             >
@@ -394,7 +396,7 @@ export const DisbursementDraftDetails = () => {
                   Dismiss
                 </Link>
               </div>
-            </Notification>
+            </NotificationWithButtons>
           ) : null}
 
           <form className="DisbursementForm">
@@ -420,7 +422,11 @@ export const DisbursementDraftDetails = () => {
     return (
       <>
         {isCsvUpdatedSuccess ? (
-          <Notification variant="success" title="CSV updated">
+          <NotificationWithButtons
+            ref={notificationRef}
+            variant="success"
+            title="CSV updated"
+          >
             <div>
               Your file was updated successfully. Make sure to confirm your
               disbursement to start it.
@@ -431,7 +437,7 @@ export const DisbursementDraftDetails = () => {
                 Dismiss
               </Link>
             </div>
-          </Notification>
+          </NotificationWithButtons>
         ) : null}
         <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
           <DisbursementDetails
@@ -504,7 +510,8 @@ export const DisbursementDraftDetails = () => {
       </SectionHeader>
 
       {apiError ? (
-        <Notification
+        <NotificationWithButtons
+          ref={notificationRef}
           variant="error"
           title={
             disbursementDrafts.actionType === "submit"
@@ -518,7 +525,7 @@ export const DisbursementDraftDetails = () => {
               extras: disbursementDrafts.errorExtras,
             }}
           />
-        </Notification>
+        </NotificationWithButtons>
       ) : null}
 
       {renderContent()}

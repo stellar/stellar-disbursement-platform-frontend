@@ -47,6 +47,7 @@ export const DisbursementsNew = () => {
   const [isSavedDraftMessageVisible, setIsSavedDraftMessageVisible] =
     useState(false);
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
+  const notificationRef = useRef<HTMLDivElement | null>(null);
 
   const isDraftEnabled = isDetailsValid;
   const isReviewEnabled = isDraftEnabled && Boolean(csvFile);
@@ -57,7 +58,6 @@ export const DisbursementsNew = () => {
   const apiError =
     disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
 
-  const notificationRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (!apiError && !isSavedDraftMessageVisible && !isResponseSuccess) return;
 
