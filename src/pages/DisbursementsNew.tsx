@@ -1,11 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-  Badge,
-  Card,
-  Heading,
-  Notification,
-  Title,
-} from "@stellar/design-system";
+import { useEffect, useRef, useState } from "react";
+import { Badge, Card, Heading, Title } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { BigNumber } from "bignumber.js";
@@ -33,7 +27,6 @@ import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { InfoTooltip } from "components/InfoTooltip";
 import { AccountBalances } from "components/AccountBalances";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { scrollTo } from "helpers/scrollTo";
 
 import { Disbursement, DisbursementStep, hasWallet } from "types";
 
@@ -64,10 +57,11 @@ export const DisbursementsNew = () => {
   const apiError =
     disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
 
+  const notificationRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (!apiError && !isSavedDraftMessageVisible && !isResponseSuccess) return;
 
-    scrollTo("top");
+    notificationRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [isSavedDraftMessageVisible, apiError, isResponseSuccess]);
 
   useEffect(() => {
@@ -269,6 +263,7 @@ export const DisbursementsNew = () => {
         <>
           {isResponseSuccess ? (
             <NotificationWithButtons
+              ref={notificationRef}
               variant="success"
               title="New disbursement was successfully created"
               buttons={[
@@ -396,6 +391,7 @@ export const DisbursementsNew = () => {
 
       {isSavedDraftMessageVisible ? (
         <NotificationWithButtons
+          ref={notificationRef}
           variant="success"
           title="Draft saved"
           buttons={[
@@ -416,7 +412,8 @@ export const DisbursementsNew = () => {
       ) : null}
 
       {apiError ? (
-        <Notification
+        <NotificationWithButtons
+          ref={notificationRef}
           variant="error"
           title={
             disbursementDrafts.actionType === "submit"
@@ -430,7 +427,7 @@ export const DisbursementsNew = () => {
               extras: disbursementDrafts.errorExtras,
             }}
           />
-        </Notification>
+        </NotificationWithButtons>
       ) : null}
 
       {renderCurrentStep()}
