@@ -13,11 +13,12 @@ import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
 import { CopyWithIcon } from "components/CopyWithIcon";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { InfoTooltip } from "components/InfoTooltip";
 import { LoadingContent } from "components/LoadingContent";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { SectionHeader } from "components/SectionHeader";
 
 import {
   DisbursementVerificationField,
@@ -27,7 +28,6 @@ import {
   VerificationFieldMap,
 } from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();
