@@ -218,6 +218,8 @@ export const ReceiverDetailsEdit = () => {
       receiverEditFields.pin === getReadyOnlyValue("PIN") &&
       receiverEditFields.nationalId === getReadyOnlyValue("NATIONAL_ID_NUMBER");
 
+    const alreadyConfirmedText =
+      "This field was already confirmed by the user.";
     return (
       <>
         <SectionHeader>
@@ -318,7 +320,7 @@ export const ReceiverDetailsEdit = () => {
                       label={
                         <InfoTooltip
                           hideTooltip={!isVerificationFieldConfirmed("PIN")}
-                          infoText="This field was already confirmed"
+                          infoText={alreadyConfirmedText}
                         >
                           Personal PIN
                         </InfoTooltip>
@@ -335,7 +337,7 @@ export const ReceiverDetailsEdit = () => {
                           hideTooltip={
                             !isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
                           }
-                          infoText="This field was already confirmed"
+                          infoText={alreadyConfirmedText}
                         >
                           {VerificationFieldMap["NATIONAL_ID_NUMBER"]}
                         </InfoTooltip>
@@ -352,7 +354,7 @@ export const ReceiverDetailsEdit = () => {
                           hideTooltip={
                             !isVerificationFieldConfirmed("YEAR_MONTH")
                           }
-                          infoText="This field was already confirmed"
+                          infoText={alreadyConfirmedText}
                         >
                           Date of Birth (Year & Month only)
                         </InfoTooltip>
@@ -369,7 +371,7 @@ export const ReceiverDetailsEdit = () => {
                           hideTooltip={
                             !isVerificationFieldConfirmed("DATE_OF_BIRTH")
                           }
-                          infoText="This field was already confirmed"
+                          infoText={alreadyConfirmedText}
                         >
                           {VerificationFieldMap["DATE_OF_BIRTH"]}
                         </InfoTooltip>
