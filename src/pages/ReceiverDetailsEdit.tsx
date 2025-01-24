@@ -19,7 +19,12 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { LoadingContent } from "components/LoadingContent";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { ReceiverDetails, ReceiverEditFields } from "types";
+import {
+  ReceiverDetails,
+  ReceiverEditFields,
+  ReceiverVerification,
+  VerificationFieldMap,
+} from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 
@@ -74,6 +79,14 @@ export const ReceiverDetailsEdit = () => {
     },
     [receiverDetails?.verifications],
   );
+
+  const isVerificationFieldConfirmed = (
+    field: VerificationFieldType,
+  ): boolean => {
+    const verification: ReceiverVerification | undefined =
+      receiverDetails?.verifications.find((v) => v.verificationField === field);
+    return !verification ? false : verification.confirmedAt !== null;
+  };
 
   useEffect(() => {
     if (isReceiverDetailsSuccess) {
@@ -307,7 +320,14 @@ export const ReceiverDetailsEdit = () => {
                     <Input
                       id="pin"
                       name="pin"
-                      label="Personal PIN"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={!isVerificationFieldConfirmed("PIN")}
+                          infoText="This field was already confirmed"
+                        >
+                          Personal PIN
+                        </InfoTooltip>
+                      }
                       fieldSize="sm"
                       value={receiverEditFields.pin}
                       onChange={handleDetailsChange}
@@ -315,7 +335,16 @@ export const ReceiverDetailsEdit = () => {
                     <Input
                       id="nationalId"
                       name="nationalId"
-                      label="National ID Number"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={
+                            !isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
+                          }
+                          infoText="This field was already confirmed"
+                        >
+                          {VerificationFieldMap["NATIONAL_ID_NUMBER"]}
+                        </InfoTooltip>
+                      }
                       fieldSize="sm"
                       value={receiverEditFields.nationalId}
                       onChange={handleDetailsChange}
@@ -323,7 +352,16 @@ export const ReceiverDetailsEdit = () => {
                     <Input
                       id="yearMonth"
                       name="yearMonth"
-                      label="Date of Birth (Year & Month only)"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={
+                            !isVerificationFieldConfirmed("YEAR_MONTH")
+                          }
+                          infoText="This field was already confirmed"
+                        >
+                          Date of Birth (Year & Month only)
+                        </InfoTooltip>
+                      }
                       fieldSize="sm"
                       value={receiverEditFields.yearMonth}
                       onChange={handleDetailsChange}
@@ -331,7 +369,16 @@ export const ReceiverDetailsEdit = () => {
                     <Input
                       id="dateOfBirth"
                       name="dateOfBirth"
-                      label="Date of Birth"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={
+                            !isVerificationFieldConfirmed("DATE_OF_BIRTH")
+                          }
+                          infoText="This field was already confirmed"
+                        >
+                          {VerificationFieldMap["DATE_OF_BIRTH"]}
+                        </InfoTooltip>
+                      }
                       fieldSize="sm"
                       value={receiverEditFields.dateOfBirth}
                       onChange={handleDetailsChange}
