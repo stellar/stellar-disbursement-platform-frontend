@@ -20,6 +20,7 @@ import { LoadingContent } from "components/LoadingContent";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import {
+  DisbursementVerificationField,
   ReceiverDetails,
   ReceiverEditFields,
   ReceiverVerification,
@@ -27,12 +28,6 @@ import {
 } from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
-
-type VerificationFieldType =
-  | "DATE_OF_BIRTH"
-  | "YEAR_MONTH"
-  | "PIN"
-  | "NATIONAL_ID_NUMBER";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();
@@ -70,7 +65,7 @@ export const ReceiverDetailsEdit = () => {
   } = useUpdateReceiverDetails(receiverId);
 
   const getReadyOnlyValue = useCallback(
-    (field: VerificationFieldType) => {
+    (field: DisbursementVerificationField) => {
       return (
         receiverDetails?.verifications.find(
           (v) => v.verificationField === field,
@@ -81,7 +76,7 @@ export const ReceiverDetailsEdit = () => {
   );
 
   const isVerificationFieldConfirmed = (
-    field: VerificationFieldType,
+    field: DisbursementVerificationField,
   ): boolean => {
     const verification: ReceiverVerification | undefined =
       receiverDetails?.verifications.find((v) => v.verificationField === field);
