@@ -19,11 +19,7 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { LoadingContent } from "components/LoadingContent";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import {
-  ReceiverDetails,
-  ReceiverEditFields,
-  ReceiverVerification,
-} from "types";
+import { ReceiverDetails, ReceiverEditFields } from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
 
 type VerificationFieldType =
@@ -77,14 +73,6 @@ export const ReceiverDetailsEdit = () => {
     },
     [receiverDetails?.verifications],
   );
-
-  const isVerificationFieldConfirmed = (
-    field: VerificationFieldType,
-  ): boolean => {
-    const verification: ReceiverVerification | undefined =
-      receiverDetails?.verifications.find((v) => v.verificationField === field);
-    return !verification ? false : verification.confirmedAt !== null;
-  };
 
   useEffect(() => {
     if (isReceiverDetailsSuccess) {
@@ -304,7 +292,6 @@ export const ReceiverDetailsEdit = () => {
                       fieldSize="sm"
                       value={receiverEditFields.pin}
                       onChange={handleDetailsChange}
-                      disabled={isVerificationFieldConfirmed("PIN")}
                     />
                     <Input
                       id="nationalId"
@@ -313,9 +300,6 @@ export const ReceiverDetailsEdit = () => {
                       fieldSize="sm"
                       value={receiverEditFields.nationalId}
                       onChange={handleDetailsChange}
-                      disabled={isVerificationFieldConfirmed(
-                        "NATIONAL_ID_NUMBER",
-                      )}
                     />
                     <Input
                       id="yearMonth"
@@ -324,7 +308,6 @@ export const ReceiverDetailsEdit = () => {
                       fieldSize="sm"
                       value={receiverEditFields.yearMonth}
                       onChange={handleDetailsChange}
-                      disabled={isVerificationFieldConfirmed("YEAR_MONTH")}
                     />
                     <Input
                       id="dateOfBirth"
@@ -333,7 +316,6 @@ export const ReceiverDetailsEdit = () => {
                       fieldSize="sm"
                       value={receiverEditFields.dateOfBirth}
                       onChange={handleDetailsChange}
-                      disabled={isVerificationFieldConfirmed("DATE_OF_BIRTH")}
                     />
                   </div>
                 </div>
