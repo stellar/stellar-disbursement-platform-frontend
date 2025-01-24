@@ -21,6 +21,7 @@ import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { ReceiverDetails, ReceiverEditFields } from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
+import { NotificationWithButtons } from "components/NotificationWithButtons";
 
 type VerificationFieldType =
   | "DATE_OF_BIRTH"
@@ -60,7 +61,7 @@ export const ReceiverDetailsEdit = () => {
     isPending: isUpdatePending,
     error: updateError,
     mutateAsync,
-    reset,
+    reset: resetUpdateState,
   } = useUpdateReceiverDetails(receiverId);
 
   const getReadyOnlyValue = useCallback(
@@ -96,19 +97,16 @@ export const ReceiverDetailsEdit = () => {
 
   useEffect(() => {
     if (isUpdateSuccess && receiverId) {
-      reset();
       refetch();
-      navigate(`${Routes.RECEIVERS}/${receiverId}`);
     }
-  }, [isUpdateSuccess, receiverId, navigate, reset, refetch]);
-
+  }, [isUpdateSuccess, receiverId, resetUpdateState, refetch]);
   useEffect(() => {
     return () => {
       if (updateError) {
-        reset();
+        resetUpdateState();
       }
     };
-  }, [updateError, reset]);
+  }, [updateError, resetUpdateState]);
 
   const emptyValueIfNotChanged = (newValue: string, oldValue: string) => {
     return newValue === oldValue ? "" : newValue;
@@ -177,7 +175,7 @@ export const ReceiverDetailsEdit = () => {
 
   const handleDetailsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (updateError) {
-      reset();
+      resetUpdateState();
     }
 
     setReceiverEditFields({
@@ -244,6 +242,27 @@ export const ReceiverDetailsEdit = () => {
             <Notification variant="error" title="Error">
               <ErrorWithExtras appError={updateError} />
             </Notification>
+          ) : null}
+
+          {isUpdateSuccess ? (
+            <NotificationWithButtons
+              variant="success"
+              title="Success"
+              buttons={[
+                {
+                  label: "Dismiss",
+                  onClick: resetUpdateState,
+                },
+                {
+                  label: "Return to receiver details",
+                  onClick: () => {
+                    navigate(`${Routes.RECEIVERS}/${receiverId}`);
+                  },
+                },
+              ]}
+            >
+              Receiver details updated successfully
+            </NotificationWithButtons>
           ) : null}
 
           <form
