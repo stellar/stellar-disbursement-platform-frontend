@@ -13,24 +13,21 @@ import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
 import { CopyWithIcon } from "components/CopyWithIcon";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { InfoTooltip } from "components/InfoTooltip";
 import { LoadingContent } from "components/LoadingContent";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { SectionHeader } from "components/SectionHeader";
 
 import {
+  DisbursementVerificationField,
   ReceiverDetails,
   ReceiverEditFields,
   ReceiverVerification,
+  VerificationFieldMap,
 } from "types";
 import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
-
-type VerificationFieldType =
-  | "DATE_OF_BIRTH"
-  | "YEAR_MONTH"
-  | "PIN"
-  | "NATIONAL_ID_NUMBER";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();
@@ -64,11 +61,11 @@ export const ReceiverDetailsEdit = () => {
     isPending: isUpdatePending,
     error: updateError,
     mutateAsync,
-    reset,
+    reset: resetUpdateState,
   } = useUpdateReceiverDetails(receiverId);
 
   const getReadyOnlyValue = useCallback(
-    (field: VerificationFieldType) => {
+    (field: DisbursementVerificationField) => {
       return (
         receiverDetails?.verifications.find(
           (v) => v.verificationField === field,
@@ -79,7 +76,7 @@ export const ReceiverDetailsEdit = () => {
   );
 
   const isVerificationFieldConfirmed = (
-    field: VerificationFieldType,
+    field: DisbursementVerificationField,
   ): boolean => {
     const verification: ReceiverVerification | undefined =
       receiverDetails?.verifications.find((v) => v.verificationField === field);
@@ -108,19 +105,16 @@ export const ReceiverDetailsEdit = () => {
 
   useEffect(() => {
     if (isUpdateSuccess && receiverId) {
-      reset();
       refetch();
-      navigate(`${Routes.RECEIVERS}/${receiverId}`);
     }
-  }, [isUpdateSuccess, receiverId, navigate, reset, refetch]);
-
+  }, [isUpdateSuccess, receiverId, resetUpdateState, refetch]);
   useEffect(() => {
     return () => {
       if (updateError) {
-        reset();
+        resetUpdateState();
       }
     };
-  }, [updateError, reset]);
+  }, [updateError, resetUpdateState]);
 
   const emptyValueIfNotChanged = (newValue: string, oldValue: string) => {
     return newValue === oldValue ? "" : newValue;
@@ -189,7 +183,7 @@ export const ReceiverDetailsEdit = () => {
 
   const handleDetailsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (updateError) {
-      reset();
+      resetUpdateState();
     }
 
     setReceiverEditFields({
@@ -224,6 +218,8 @@ export const ReceiverDetailsEdit = () => {
       receiverEditFields.pin === getReadyOnlyValue("PIN") &&
       receiverEditFields.nationalId === getReadyOnlyValue("NATIONAL_ID_NUMBER");
 
+    const alreadyConfirmedText =
+      "This field was already confirmed by the user.";
     return (
       <>
         <SectionHeader>
@@ -256,6 +252,27 @@ export const ReceiverDetailsEdit = () => {
             <Notification variant="error" title="Error">
               <ErrorWithExtras appError={updateError} />
             </Notification>
+          ) : null}
+
+          {isUpdateSuccess ? (
+            <NotificationWithButtons
+              variant="success"
+              title="Success"
+              buttons={[
+                {
+                  label: "Dismiss",
+                  onClick: resetUpdateState,
+                },
+                {
+                  label: "Return to receiver details",
+                  onClick: () => {
+                    navigate(`${Routes.RECEIVERS}/${receiverId}`);
+                  },
+                },
+              ]}
+            >
+              Receiver details updated successfully
+            </NotificationWithButtons>
           ) : null}
 
           <form
@@ -300,40 +317,68 @@ export const ReceiverDetailsEdit = () => {
                     <Input
                       id="pin"
                       name="pin"
-                      label="Personal PIN"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={!isVerificationFieldConfirmed("PIN")}
+                          infoText={alreadyConfirmedText}
+                        >
+                          Personal PIN
+                        </InfoTooltip>
+                      }
                       fieldSize="sm"
                       value={receiverEditFields.pin}
                       onChange={handleDetailsChange}
-                      disabled={isVerificationFieldConfirmed("PIN")}
                     />
                     <Input
                       id="nationalId"
                       name="nationalId"
-                      label="National ID Number"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={
+                            !isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
+                          }
+                          infoText={alreadyConfirmedText}
+                        >
+                          {VerificationFieldMap["NATIONAL_ID_NUMBER"]}
+                        </InfoTooltip>
+                      }
                       fieldSize="sm"
                       value={receiverEditFields.nationalId}
                       onChange={handleDetailsChange}
-                      disabled={isVerificationFieldConfirmed(
-                        "NATIONAL_ID_NUMBER",
-                      )}
                     />
                     <Input
                       id="yearMonth"
                       name="yearMonth"
-                      label="Date of Birth (Year & Month only)"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={
+                            !isVerificationFieldConfirmed("YEAR_MONTH")
+                          }
+                          infoText={alreadyConfirmedText}
+                        >
+                          Date of Birth (Year & Month only)
+                        </InfoTooltip>
+                      }
                       fieldSize="sm"
                       value={receiverEditFields.yearMonth}
                       onChange={handleDetailsChange}
-                      disabled={isVerificationFieldConfirmed("YEAR_MONTH")}
                     />
                     <Input
                       id="dateOfBirth"
                       name="dateOfBirth"
-                      label="Date of Birth"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={
+                            !isVerificationFieldConfirmed("DATE_OF_BIRTH")
+                          }
+                          infoText={alreadyConfirmedText}
+                        >
+                          {VerificationFieldMap["DATE_OF_BIRTH"]}
+                        </InfoTooltip>
+                      }
                       fieldSize="sm"
                       value={receiverEditFields.dateOfBirth}
                       onChange={handleDetailsChange}
-                      disabled={isVerificationFieldConfirmed("DATE_OF_BIRTH")}
                     />
                   </div>
                 </div>
