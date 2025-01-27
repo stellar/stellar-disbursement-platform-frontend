@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [3.2.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.2.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.1.0...3.2.0))
+
+> [!WARNING] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `3.2.0`.
+
+### Changed
+
+- Enabled patching of already confirmed verification fields for receivers,
+  addressing scenarios where users might get locked out of a partner’s system.
+  [#213](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/213)
+- Display the `external_payment_id` field in the Payments tarble. It used to be
+  displayed only in the Payment Details page.
+  [#214](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/214)
+
 ## [3.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.0.0...3.1.0))
 
 Release of the Stellar Disbursement Platform `v3.1.0`. This release introduces
@@ -18,8 +32,7 @@ disbursements, payments, and receivers with filters. Additionally, users now
 have the ability to delete disbursements in `DRAFT` or `READY` status,
 streamlining data management workflows.
 
-> [!WARNING]  
-> This version is only compatible with the
+> [!WARNING] This version is only compatible with the
 > [stellar/stellar-disbursement-platform-backend] version `3.1.0`.
 
 ### Added
