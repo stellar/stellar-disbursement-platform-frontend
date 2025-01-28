@@ -98,9 +98,14 @@ export const PaymentsTable = ({
                 {/* <Table.BodyCell width="1rem">
                 <Checkbox id={`payment-${p.id}`} fieldSize="xs" />
               </Table.BodyCell> */}
-                <Table.BodyCell width="7.5rem" title={p.id}>
+                <Table.BodyCell width="14rem" title={p.id}>
                   <Link onClick={(event) => handlePaymentClicked(event, p.id)}>
-                    {p.id}
+                    <span className="PaymentIDs__item">{p.id}</span>
+                    {p.external_payment_id ? (
+                      <span className="PaymentIDs__item">
+                        {p.external_payment_id}
+                      </span>
+                    ) : null}
                   </Link>
                 </Table.BodyCell>
                 <Table.BodyCell width="7.5rem" allowOverflow>

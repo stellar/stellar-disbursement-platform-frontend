@@ -363,6 +363,16 @@ body {
   }
 }
 
+// Payments
+.PaymentIDs {
+  &__item {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 // Payment details
 .PaymentDetails {
   &__wrapper {
