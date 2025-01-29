@@ -1,5 +1,5 @@
 import { DISABLE_TENANT_PREFIL_FROM_DOMAIN } from "constants/envVariables";
-import { localStorageTenantName } from "./localStorageTenantName";
+import { localStorageTenantName } from "helpers/localStorageTenantName";
 
 export const getSdpTenantName = (organizationName?: string): string => {
   if (DISABLE_TENANT_PREFIL_FROM_DOMAIN === "true") {
