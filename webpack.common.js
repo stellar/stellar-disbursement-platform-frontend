@@ -155,6 +155,9 @@ module.exports = {
         REACT_APP_DISABLE_WINDOW_ENV: JSON.stringify(
           process.env.REACT_APP_DISABLE_WINDOW_ENV || "",
         ),
+        REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN: JSON.stringify(
+          process.env.REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN || "",
+        ),
         REACT_APP_API_URL: JSON.stringify(process.env.REACT_APP_API_URL || ""),
         REACT_APP_STELLAR_EXPERT_URL: JSON.stringify(
           process.env.REACT_APP_STELLAR_EXPERT_URL || "",

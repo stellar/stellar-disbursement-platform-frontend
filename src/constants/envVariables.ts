@@ -10,6 +10,7 @@ declare global {
   // `new DefinePlugin({"process.env": ...})` in the webpack config ad well.
   interface Window {
     _env_: {
+      DISABLE_TENANT_PREFIL_FROM_DOMAIN: string;
       API_URL: string;
       STELLAR_EXPERT_URL: string;
       HORIZON_URL: string;
@@ -39,6 +40,9 @@ const generateEnvConfig = async () => {
 
   return {
     API_URL: process?.env?.REACT_APP_API_URL || window._env_.API_URL,
+    DISABLE_TENANT_PREFIL_FROM_DOMAIN:
+      process?.env?.REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN ||
+      window._env_.DISABLE_TENANT_PREFIL_FROM_DOMAIN,
     STELLAR_EXPERT_URL:
       process?.env?.REACT_APP_STELLAR_EXPERT_URL ||
       window._env_.STELLAR_EXPERT_URL,
@@ -67,6 +71,7 @@ const generateEnvConfig = async () => {
 };
 
 export const {
+  DISABLE_TENANT_PREFIL_FROM_DOMAIN,
   API_URL,
   STELLAR_EXPERT_URL,
   HORIZON_URL,
