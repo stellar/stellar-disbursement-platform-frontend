@@ -73,10 +73,15 @@ Set the value to true to avoid fetching the file if the Window ENV is not used.
 > Set `REACT_APP_DISABLE_WINDOW_ENV=true` to avoid fetching the
 > `public/settings/env-config.js` file if the `window._env_` is not used.
 
+<!-- prettier-ignore -->
+> [!NOTE]
+> Set `REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN=true` to skip prefilling the hostname from the domain.
+
 For example:
 
 ```
 REACT_APP_DISABLE_WINDOW_ENV=true
+REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN=false
 REACT_APP_API_URL=https://localhost:8000
 REACT_APP_STELLAR_EXPERT_URL=https://stellar.expert/explorer/testnet
 REACT_APP_HORIZON_URL=https://horizon-testnet.stellar.org
