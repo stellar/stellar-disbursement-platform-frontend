@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [3.3.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.3.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.2.0...3.3.0))
+
+> [!WARNING] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `3.3.0`.
+
+### Added
+
+- Feature that scrolls the screen to top when a notification is displayed.
+  [#187](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/187)
+- Feature where the tenant name is fetched from the local storage first and then
+  it's only inferred from the domain if `DISABLE_TENANT_PREFIL_FROM_DOMAIN` is
+  NOT set to true.
+  [#221](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/221)
+
 ## [3.2.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.2.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.1.0...3.2.0))
 
 > [!WARNING] This version is only compatible with the
