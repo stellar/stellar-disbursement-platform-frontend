@@ -26,6 +26,7 @@ import {
 import { useRedux } from "hooks/useRedux";
 import { signInRedirect } from "helpers/singleSingOn";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { localStorageTenantName } from "helpers/localStorageTenantName";
 import { InfoTooltip } from "components/InfoTooltip";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
@@ -36,13 +37,17 @@ export const SignIn = () => {
   const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
-  const [organizationName, setOrganizationName] = useState(getSdpTenantName());
+  const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [deviceId, setDeviceId] = useState("");
 
   const isSessionExpired = userAccount.isSessionExpired;
+
+  useEffect(() => {
+    setOrganizationName(getSdpTenantName());
+  }, []);
 
   useEffect(() => {
     const storedDeviceId = localStorage.getItem(LOCAL_STORAGE_DEVICE_ID);
@@ -100,6 +105,7 @@ export const SignIn = () => {
     };
 
     dispatch(signInAction({ email, password, recaptchaToken, headers }));
+    localStorageTenantName.set(organizationName);
     recaptchaRef.current?.reset();
   };
 
