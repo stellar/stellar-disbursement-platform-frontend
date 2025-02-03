@@ -31,6 +31,7 @@ export const Payments = () => {
   // Using extra param to trigger API call when we want, not on every filter
   // state change
   const [queryFilters, setQueryFilters] = useState<CommonFilters>({});
+  const [searchQuery, setSearchQuery] = useState<{ q: string } | undefined>();
 
   const {
     data: payments,
@@ -41,6 +42,7 @@ export const Payments = () => {
     page: currentPage.toString(),
     page_limit: pageLimit.toString(),
     ...queryFilters,
+    ...searchQuery,
   });
 
   const isFiltersSelected =
@@ -48,12 +50,9 @@ export const Payments = () => {
 
   const maxPages = payments?.pagination?.pages || 1;
 
-  const handleSearchSubmit = () => {
-    alert("TODO: search submit");
-  };
-
-  const handleSearchClear = () => {
-    alert("TODO: search clear");
+  const handleSearchChange = (searchText?: string) => {
+    setCurrentPage(1);
+    setSearchQuery(searchText ? { q: searchText } : undefined);
   };
 
   const handleFilterChange = (
@@ -121,11 +120,10 @@ export const Payments = () => {
             <div className="FiltersWithSearch__search">
               <SearchInput
                 id="payments-search"
-                placeholder="Search by payment ID"
-                onSubmit={handleSearchSubmit}
-                onClear={handleSearchClear}
+                placeholder="Search payment info"
+                onSubmit={handleSearchChange}
+                onClear={handleSearchChange}
                 isLoading={isSearchInProgress}
-                disabled
               />
             </div>
 
