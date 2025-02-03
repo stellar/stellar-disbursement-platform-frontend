@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
+## [3.4.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.4.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.3.0...3.4.0))
+
+> [!WARNING] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `3.4.0`.
+
+### Added
+
+- Support for the `q` query param in the Payments page.
+  [#225](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/225)
+
+### Security and Dependencies
+
+- Bump webpack-dev.
+  [#226](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/226)
+- Bump docker/build-push-action.
+  [#215](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/215)
+
 ## [3.3.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.3.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.2.0...3.3.0))
 
 > [!WARNING] This version is only compatible with the
