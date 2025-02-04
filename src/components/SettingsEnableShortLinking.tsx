@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { API_URL } from "constants/envVariables";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useUpdateOrgShortLinkEnabled } from "apiQueries/useUpdateOrgShortLinkEnabled";
@@ -51,7 +50,8 @@ export const SettingsEnableShortLinking = () => {
           </div>
           <div className="Note">
             Select this option to use shorter links when inviting receivers. The
-            short link format will look like <code>{API_URL}/r/abcd1234</code>.
+            short link format will look like{" "}
+            <code>{organization.data.baseUrl}/r/abcd1234</code>.
           </div>
         </div>
       </div>

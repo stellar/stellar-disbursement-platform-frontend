@@ -133,6 +133,7 @@ const initialState: OrganizationInitialState = {
     receiverInvitationResendInterval: 0,
     paymentCancellationPeriodDays: 0,
     isLinkShortenerEnabled: false,
+    baseUrl: "",
   },
   updateMessage: undefined,
   status: undefined,
@@ -171,6 +172,7 @@ const organizationSlice = createSlice({
         receiverRegistrationMessageTemplate:
           action.payload.receiver_registration_message_template,
         isLinkShortenerEnabled: action.payload.is_link_shortener_enabled,
+        baseUrl: action.payload.base_url,
         receiverInvitationResendInterval: Number(
           action.payload.receiver_invitation_resend_interval_days || 0,
         ),
