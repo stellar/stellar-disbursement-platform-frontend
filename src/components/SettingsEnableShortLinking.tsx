@@ -49,7 +49,7 @@ export const SettingsEnableShortLinking = () => {
             </div>
           </div>
           <div className="Note">
-            Select this option to use short links when inviting receivers. The
+            Select this option to use shorter links when inviting receivers. The
             short link format will look like{" "}
             <code>https://[your_domain]/r/abcd1234</code>.
           </div>
