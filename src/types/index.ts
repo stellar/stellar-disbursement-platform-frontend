@@ -71,6 +71,8 @@ export type OrganizationInitialState = {
     isApprovalRequired: boolean | undefined;
     receiverInvitationResendInterval: number;
     receiverRegistrationMessageTemplate?: string;
+    isLinkShortenerEnabled: boolean;
+    baseUrl: string;
     paymentCancellationPeriodDays: number;
     distributionAccount?: {
       circleWalletId?: string;
@@ -815,6 +817,8 @@ export type ApiOrgInfo = {
   is_approval_required: boolean;
   receiver_invitation_resend_interval_days: string;
   receiver_registration_message_template?: string;
+  is_link_shortener_enabled: boolean;
+  base_url: string;
   payment_cancellation_period_days: string;
   distribution_account?: {
     address?: string;
