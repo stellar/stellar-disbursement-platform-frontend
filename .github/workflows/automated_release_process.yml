@@ -10,7 +10,7 @@ on:
 
 env:
   REPO_ORG: marcelosalloum
-  REPO_NAME: stellar-disbursement-platform-backend
+  REPO_NAME: stellar-disbursement-platform-frontend
   REVIEWER: marcelosalloum
 
 jobs:
