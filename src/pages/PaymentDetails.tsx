@@ -330,7 +330,7 @@ export const PaymentDetails = () => {
             </Heading>
 
             <Card noPadding>
-              <Table>
+              <Table isScrollable={true}>
                 <Table.Header>
                   {/* TODO: put back once ready */}
                   {/* <Table.HeaderCell>
@@ -365,7 +365,7 @@ export const PaymentDetails = () => {
                   />
                 </Table.BodyCell> */}
                     <Table.BodyCell
-                      width="7.5rem"
+                      wrap={true}
                       title={getReceiverContactInfoTitle(
                         receiver?.phoneNumber,
                         receiver?.email,
@@ -408,7 +408,7 @@ export const PaymentDetails = () => {
                     <Table.BodyCell width="5.5rem" textAlign="right">
                       {receiver?.successfulPaymentsCount || "-"}
                     </Table.BodyCell>
-                    <Table.BodyCell width="9.375rem">
+                    <Table.BodyCell width="10rem">
                       <span className="Table-v2__cell--secondary">
                         {receiver?.createdAt
                           ? formatDateTime(receiver.createdAt)

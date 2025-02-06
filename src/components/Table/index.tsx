@@ -100,6 +100,7 @@ interface BodyCellProps extends React.HTMLAttributes<HTMLTableCellElement> {
   width?: string;
   textAlign?: "left" | "right" | "center";
   allowOverflow?: boolean;
+  wrap?: boolean;
 }
 
 const BodyCell: React.FC<BodyCellProps> = ({
@@ -107,11 +108,13 @@ const BodyCell: React.FC<BodyCellProps> = ({
   width,
   textAlign = "left",
   allowOverflow,
+  wrap,
   ...props
 }: BodyCellProps) => {
   return (
     <td
       {...(textAlign !== "left" ? { "data-text-align": textAlign } : {})}
+      data-wrap={wrap}
       {...props}
     >
       {width ? (
@@ -141,11 +144,13 @@ interface TableComponent {
 interface TableProps extends React.HtmlHTMLAttributes<HTMLTableElement> {
   children: JSX.Element[];
   isLoading?: boolean;
+  isScrollable?: boolean;
 }
 
 export const Table: React.FC<TableProps> & TableComponent = ({
   children,
   isLoading,
+  isScrollable,
 }: TableProps) => {
   return (
     <div
@@ -154,7 +159,7 @@ export const Table: React.FC<TableProps> & TableComponent = ({
         isLoading ? "Table-v2__container--loading" : "",
       ].join(" ")}
     >
-      <div className="Table-v2__wrapper">
+      <div className="Table-v2__wrapper" data-scrollable={isScrollable}>
         <table className="Table-v2">{children}</table>
       </div>
       {isLoading ? <Loader /> : null}
