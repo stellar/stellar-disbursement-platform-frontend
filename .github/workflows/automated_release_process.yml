@@ -9,9 +9,9 @@ on:
         type: string
 
 env:
-  REPO_ORG: stellar
+  REPO_ORG: marcelosalloum
   REPO_NAME: stellar-disbursement-platform-frontend
-  REVIEWER: stellar/sdp-backend
+  REVIEWER: marcelosalloum
 
 jobs:
   create-release:
