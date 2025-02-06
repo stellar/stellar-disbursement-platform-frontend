@@ -8,12 +8,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 > Place unreleased changes here.
 
-## [3.5.0 UNRELEASED](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.4.0...3.5.0))
+## [3.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.4.0...3.5.0))
+
+> [!WARNING] This version is only compatible with the
+> [stellar/stellar-disbursement-platform-backend] version `3.5.0`.
 
 ### Added
 
 - Added option to enable short linking in the Settings page.
   [#230](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/230)
+
+### Changes
+
+- Make wide tables responsive and wrap disbursement name.
+  [#232](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/232)
+- Automate the Release Process 🤖.
+  [#231](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/231)
 
 ## [3.4.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.4.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.3.0...3.4.0))
 
