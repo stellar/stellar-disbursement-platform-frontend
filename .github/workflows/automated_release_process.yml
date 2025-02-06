@@ -16,7 +16,7 @@ on:
 env:
   REPO_ORG: stellar
   REPO_NAME: stellar-disbursement-platform-frontend
-  REVIEWER: stellar/sdp-backend
+  REVIEWER: team/sdp-backend
 
 jobs:
   create-release:
