@@ -99,24 +99,23 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
   return (
     <div className="FiltersWithSearch">
       <Card noPadding>
-        <Table>
+        <Table isScrollable={true}>
           <Table.Header>
             {/* TODO: put back once ready */}
             {/* <Table.HeaderCell width="1rem">
             <Checkbox id="disbursements-select-all" fieldSize="xs" />
           </Table.HeaderCell> */}
             <Table.HeaderCell
-              width="9rem"
               sortDirection={sortBy === "name" ? sortDir : defaultSortDirection}
               onSort={() => handleSort("name")}
             >
               Disbursement name
             </Table.HeaderCell>
             <Table.HeaderCell width="5.7rem">Total payments</Table.HeaderCell>
-            <Table.HeaderCell>Successful</Table.HeaderCell>
-            <Table.HeaderCell>Failed</Table.HeaderCell>
-            <Table.HeaderCell>Canceled</Table.HeaderCell>
-            <Table.HeaderCell>Remaining</Table.HeaderCell>
+            <Table.HeaderCell textAlign="right">Successful</Table.HeaderCell>
+            <Table.HeaderCell textAlign="right">Failed</Table.HeaderCell>
+            <Table.HeaderCell textAlign="right">Canceled</Table.HeaderCell>
+            <Table.HeaderCell textAlign="right">Remaining</Table.HeaderCell>
             <Table.HeaderCell
               sortDirection={
                 sortBy === "created_at" ? sortDir : defaultSortDirection
@@ -125,7 +124,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
             >
               Created at
             </Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell textAlign="right">Status</Table.HeaderCell>
             <Table.HeaderCell textAlign="right" width="4.8rem">
               Total amount
             </Table.HeaderCell>
@@ -141,7 +140,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                 {/* <Table.BodyCell width="1rem">
                 <Checkbox id={`disbursement-${d.id}`} fieldSize="xs" />
               </Table.BodyCell> */}
-                <Table.BodyCell title={d.name} width="7.25rem">
+                <Table.BodyCell title={d.name} wrap={true}>
                   <Link
                     onClick={(event) => handleDisbursementClicked(event, d)}
                   >

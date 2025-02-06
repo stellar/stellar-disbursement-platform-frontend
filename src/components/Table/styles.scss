@@ -26,6 +26,10 @@
 .Table-v2__wrapper {
   opacity: 1;
   transition: opacity var(--anim-transition-default);
+
+  &[data-scrollable="true"] {
+    overflow-x: auto;
+  }
 }
 
 table.Table-v2 {
@@ -65,6 +69,7 @@ table.Table-v2 {
     font-weight: var(--font-weight-medium);
     color: var(--color-gray-60);
     text-align: left;
+    white-space: nowrap;
 
     .Table-v2__header__cell {
       display: flex;
@@ -73,7 +78,8 @@ table.Table-v2 {
 
       &[role="button"] {
         cursor: pointer;
-        transition: color var(--anim-transition-default),
+        transition:
+          color var(--anim-transition-default),
           fill var(--anim-transition-default);
 
         @media (hover: hover) {
@@ -156,6 +162,14 @@ table.Table-v2 {
 
     &[data-text-align="right"] {
       text-align: right;
+    }
+
+    &[data-wrap="true"] {
+      word-break: break-all;
+
+      .Link {
+        flex-wrap: wrap;
+      }
     }
 
     .Table-v2__cell--fixedWidth,

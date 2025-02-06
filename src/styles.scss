@@ -124,7 +124,6 @@ body {
   display: grid;
   gap: pxToRem(12px);
   margin-bottom: pxToRem(32px);
-  width: pxToRem(1134px);
 
   &--home {
     grid-template-columns: 1fr 1fr 1fr;
@@ -439,9 +438,7 @@ body {
 .ReceiverContactInfo {
   &__item {
     display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    width: 100%;
   }
 }
 

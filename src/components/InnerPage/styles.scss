@@ -39,7 +39,8 @@
   &__content {
     padding: pxToRem(32px);
     color: var(--color-gray-90);
-    width: calc(pxToRem(1134px) + pxToRem(32px) * 2);
+    width: 100%;
+    max-width: pxToRem(2000px);
     margin-left: auto;
     margin-right: auto;
 
