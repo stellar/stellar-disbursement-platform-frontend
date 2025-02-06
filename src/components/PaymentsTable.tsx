@@ -71,7 +71,7 @@ export const PaymentsTable = ({
   return (
     <div className="FiltersWithSearch">
       <Card noPadding>
-        <Table isLoading={isLoading}>
+        <Table isLoading={isLoading} isScrollable={true}>
           <Table.Header>
             {/* TODO: put back once ready */}
             {/* <Table.HeaderCell>

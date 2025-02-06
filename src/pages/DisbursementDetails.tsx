@@ -360,19 +360,23 @@ export const DisbursementDetails = () => {
     return (
       <div className="FiltersWithSearch">
         <Card noPadding>
-          <Table>
+          <Table isScrollable={true}>
             <Table.Header>
               {/* TODO: put back once ready */}
               {/* <Table.HeaderCell>
               <Checkbox id="disbursement-receivers-select-all" fieldSize="xs" />
             </Table.HeaderCell> */}
               <Table.HeaderCell>Contact info</Table.HeaderCell>
-              <Table.HeaderCell>Wallet provider</Table.HeaderCell>
-              <Table.HeaderCell textAlign="right">Amount</Table.HeaderCell>
-              <Table.HeaderCell>Completed at</Table.HeaderCell>
-              <Table.HeaderCell>Blockchain ID</Table.HeaderCell>
-              <Table.HeaderCell textAlign="right">Org ID</Table.HeaderCell>
-              <Table.HeaderCell textAlign="right">
+              <Table.HeaderCell width="8rem">Wallet provider</Table.HeaderCell>
+              <Table.HeaderCell textAlign="right" width="7.5rem">
+                Amount
+              </Table.HeaderCell>
+              <Table.HeaderCell width="9.375rem">Completed at</Table.HeaderCell>
+              <Table.HeaderCell width="7.5rem">Blockchain ID</Table.HeaderCell>
+              <Table.HeaderCell textAlign="right" width="7.5rem">
+                Org ID
+              </Table.HeaderCell>
+              <Table.HeaderCell textAlign="right" width="8.5rem">
                 Payment status
               </Table.HeaderCell>
             </Table.Header>
@@ -389,38 +393,36 @@ export const DisbursementDetails = () => {
                       r?.phoneNumber,
                       r?.email,
                     )}
-                    width="7.25rem"
+                    wrap={true}
                   >
                     <Link onClick={(event) => goToReceiver(event, r.id)}>
                       {renderReceiverContactInfoItems(r?.phoneNumber, r?.email)}
                     </Link>
                   </Table.BodyCell>
-                  <Table.BodyCell width="8rem">{r.provider}</Table.BodyCell>
-                  <Table.BodyCell textAlign="right" width="7.5rem">
+                  <Table.BodyCell>{r.provider}</Table.BodyCell>
+                  <Table.BodyCell textAlign="right">
                     <AssetAmount
                       amount={r.amount}
                       assetCode={r.assetCode}
                       fallback="-"
                     />
                   </Table.BodyCell>
-                  <Table.BodyCell width="9.375rem">
+                  <Table.BodyCell>
                     {r.completedAt ? (
                       <span className="Table-v2__cell--secondary">
                         {formatDateTime(r.completedAt)}
                       </span>
                     ) : null}
                   </Table.BodyCell>
-                  <Table.BodyCell textAlign="right" width="7.5rem">
+                  <Table.BodyCell textAlign="right">
                     {r.blockchainId ? (
                       <Link href={`${STELLAR_EXPERT_URL}/tx/${r.blockchainId}`}>
                         {r.blockchainId}
                       </Link>
                     ) : null}
                   </Table.BodyCell>
-                  <Table.BodyCell textAlign="right" width="7.5rem">
-                    {r.orgId}
-                  </Table.BodyCell>
-                  <Table.BodyCell textAlign="right" width="8.5rem">
+                  <Table.BodyCell textAlign="right">{r.orgId}</Table.BodyCell>
+                  <Table.BodyCell textAlign="right">
                     <PaymentStatus status={r.paymentStatus} />
                   </Table.BodyCell>
                 </Table.BodyRow>

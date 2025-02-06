@@ -3,8 +3,9 @@ import { Heading } from "@stellar/design-system";
 import { SectionHeader } from "components/SectionHeader";
 import { SettingsTeamMembers } from "components/SettingsTeamMembers";
 import { ReceiverInviteMessage } from "components/ReceiverInviteMessage";
-import { SettingsEnableReceiverInvitationRetry } from "components/SettingsEnableReceiverInvitationRetry";
+import { SettingsEnableShortLinking } from "components/SettingsEnableShortLinking";
 import { SettingsEnablePaymentCancellation } from "components/SettingsEnablePaymentCancellation";
+import { SettingsEnableReceiverInvitationRetry } from "components/SettingsEnableReceiverInvitationRetry";
 
 export const Settings = () => {
   return (
@@ -20,6 +21,9 @@ export const Settings = () => {
       </SectionHeader>
 
       <div className="CardStack">
+        {/* Enable short link */}
+        <SettingsEnableShortLinking />
+
         {/* Enable automatic ready payments cancellation */}
         <SettingsEnablePaymentCancellation />
 
