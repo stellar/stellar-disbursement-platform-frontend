@@ -72,6 +72,7 @@ export type OrganizationInitialState = {
     receiverInvitationResendInterval: number;
     receiverRegistrationMessageTemplate?: string;
     isLinkShortenerEnabled: boolean;
+    isMemoTrackingEnabled: boolean;
     baseUrl: string;
     paymentCancellationPeriodDays: number;
     distributionAccount?: {
@@ -818,6 +819,7 @@ export type ApiOrgInfo = {
   receiver_invitation_resend_interval_days: string;
   receiver_registration_message_template?: string;
   is_link_shortener_enabled: boolean;
+  is_tenant_memo_enabled: boolean;
   base_url: string;
   payment_cancellation_period_days: string;
   distribution_account?: {
