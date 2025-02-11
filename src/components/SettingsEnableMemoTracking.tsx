@@ -49,9 +49,10 @@ export const SettingsEnableMemoTracking = () => {
             </div>
           </div>
           <div className="Note">
-            Select this option to optionally attach a memo to your payments for
-            tracking purposes. The memo would look like{" "}
-            <code>sdp-100680ad546c</code>.
+            When enabled, payments will include an organization-specific memo
+            (e.g. <code>sdp-100680ad546c</code>) if the receiver's wallet
+            doesn't have an associated memo. This memo is derived from your
+            server URL and will update if the URL changes.
           </div>
         </div>
       </div>
