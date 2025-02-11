@@ -32,16 +32,13 @@ export const SettingsEnableMemoTracking = () => {
       <div className="SdpSettings">
         <div className="SdpSettings__row">
           <div className="SdpSettings__item">
-            <label
-              className="SdpSettings__label"
-              htmlFor="memo-tracking-toggle"
-            >
-              Enable memo tracking
+            <label className="SdpSettings__label" htmlFor="memo-tracing-toggle">
+              Enable memo tracing
             </label>
             <div className="Toggle__wrapper">
               {isPending ? <Loader size="1rem" /> : null}
               <Toggle
-                id="memo-tracking-toggle"
+                id="memo-tracing-toggle"
                 checked={Boolean(organization.data.isMemoTrackingEnabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
@@ -49,10 +46,10 @@ export const SettingsEnableMemoTracking = () => {
             </div>
           </div>
           <div className="Note">
-            When enabled, payments will include an organization-specific memo
-            (e.g. <code>sdp-100680ad546c</code>) if the receiver's wallet
-            doesn't have an associated memo. This memo is derived from your
-            server URL and will update if the URL changes.
+            When enabled, payments will include an organization-specific memo if
+            the receiver's wallet doesn't have an associated memo. This memo is
+            derived from your server URL and will update if the URL changes
+            (e.g. <code>sdp-100680ad546c</code>).
           </div>
         </div>
       </div>
