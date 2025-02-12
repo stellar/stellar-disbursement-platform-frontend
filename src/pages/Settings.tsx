@@ -6,6 +6,7 @@ import { ReceiverInviteMessage } from "components/ReceiverInviteMessage";
 import { SettingsEnableShortLinking } from "components/SettingsEnableShortLinking";
 import { SettingsEnablePaymentCancellation } from "components/SettingsEnablePaymentCancellation";
 import { SettingsEnableReceiverInvitationRetry } from "components/SettingsEnableReceiverInvitationRetry";
+import { SettingsEnableMemoTracking } from "components/SettingsEnableMemoTracking";
 
 export const Settings = () => {
   return (
@@ -23,6 +24,9 @@ export const Settings = () => {
       <div className="CardStack">
         {/* Enable short link */}
         <SettingsEnableShortLinking />
+
+        {/* Enable memo tracking */}
+        <SettingsEnableMemoTracking />
 
         {/* Enable automatic ready payments cancellation */}
         <SettingsEnablePaymentCancellation />
