@@ -8,7 +8,7 @@ export const useUpdateOrgMemoTrackingEnabled = () => {
     mutationFn: (isEnabled: boolean) => {
       const formData = new FormData();
 
-      formData.append("data", `{"is_tenant_memo_enabled": ${isEnabled}}`);
+      formData.append("data", `{"is_memo_tracing_enabled": ${isEnabled}}`);
 
       return fetchApi(
         `${API_URL}/organization`,
