@@ -18,6 +18,15 @@ import { InfoTooltip } from "components/InfoTooltip";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 export const ResetPassword = () => {
+  // Get token from URL params
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const token = searchParams.get("token");
+    if (token) {
+      setConfirmationToken(token);
+    }
+  }, [searchParams]);
+
   const { isSuccess, isPending, error, mutateAsync, reset } =
     useResetPassword();
 
