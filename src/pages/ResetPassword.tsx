@@ -6,7 +6,7 @@ import {
   Notification,
   Link,
 } from "@stellar/design-system";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { SINGLE_TENANT_MODE } from "constants/envVariables";
 import { ORG_NAME_INFO_TEXT } from "constants/settings";
@@ -39,7 +39,6 @@ export const ResetPassword = () => {
 
   const [errorPassword, setErrorPassword] = useState("");
   const [errorPasswordMatch, setErrorPasswordMatch] = useState("");
-  const [errorConfirmationToken, setErrorConfirmationToken] = useState("");
 
   const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,14 +61,8 @@ export const ResetPassword = () => {
     navigate("/");
   };
 
-  const validateConfirmationToken = () => {
-    setErrorConfirmationToken(
-      confirmationToken ? "" : "Confirmation token is required",
-    );
-  };
-
   const allInputsValid = () => {
-    if (errorPassword || errorPasswordMatch || errorConfirmationToken) {
+    if (errorPassword || errorPasswordMatch) {
       return false;
     } else if (
       organizationName &&
@@ -136,20 +129,6 @@ export const ResetPassword = () => {
               type="text"
             />
           )}
-
-          <Input
-            fieldSize="sm"
-            id="rp-token"
-            name="rp-token"
-            label="Confirmation token"
-            onChange={(e) => {
-              setErrorConfirmationToken("");
-              setConfirmationToken(e.target.value);
-            }}
-            onBlur={validateConfirmationToken}
-            value={confirmationToken}
-            error={errorConfirmationToken}
-          />
 
           <Input
             fieldSize="sm"
