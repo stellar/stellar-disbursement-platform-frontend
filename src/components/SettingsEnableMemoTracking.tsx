@@ -24,7 +24,7 @@ export const SettingsEnableMemoTracking = () => {
   }, [dispatch, isSuccess]);
 
   const handleToggleChange = () => {
-    mutateAsync(!organization.data.isMemoTrackingEnabled);
+    mutateAsync(!organization.data.isMemoTracingEnabled);
   };
 
   const renderContent = () => {
@@ -39,7 +39,7 @@ export const SettingsEnableMemoTracking = () => {
               {isPending ? <Loader size="1rem" /> : null}
               <Toggle
                 id="memo-tracing-toggle"
-                checked={Boolean(organization.data.isMemoTrackingEnabled)}
+                checked={Boolean(organization.data.isMemoTracingEnabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
               />

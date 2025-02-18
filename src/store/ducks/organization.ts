@@ -133,7 +133,7 @@ const initialState: OrganizationInitialState = {
     receiverInvitationResendInterval: 0,
     paymentCancellationPeriodDays: 0,
     isLinkShortenerEnabled: false,
-    isMemoTrackingEnabled: false,
+    isMemoTracingEnabled: false,
     baseUrl: "",
   },
   updateMessage: undefined,
@@ -173,7 +173,7 @@ const organizationSlice = createSlice({
         receiverRegistrationMessageTemplate:
           action.payload.receiver_registration_message_template,
         isLinkShortenerEnabled: action.payload.is_link_shortener_enabled,
-        isMemoTrackingEnabled: action.payload.is_tenant_memo_enabled,
+        isMemoTracingEnabled: action.payload.is_memo_tracing_enabled,
         baseUrl: action.payload.base_url,
         receiverInvitationResendInterval: Number(
           action.payload.receiver_invitation_resend_interval_days || 0,
