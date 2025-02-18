@@ -15,7 +15,7 @@ import {
   DisbursementDetailsInitialState,
   DisbursementDraft,
   DisbursementReceiver,
-  DisbursementStatus,
+  DisbursementStatusType,
   PaginationParams,
   RejectMessage,
 } from "types";
@@ -85,8 +85,8 @@ export const getDisbursementReceiversAction = createAsyncThunk<
 );
 
 export const pauseOrStartDisbursementAction = createAsyncThunk<
-  { status: DisbursementStatus; message: string },
-  DisbursementStatus,
+  { status: DisbursementStatusType; message: string },
+  DisbursementStatusType,
   { rejectValue: RejectMessage; state: RootState }
 >(
   "disbursementDetails/pauseOrStartDisbursementAction",

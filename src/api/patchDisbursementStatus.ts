@@ -1,12 +1,12 @@
 import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/envVariables";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { DisbursementStatus } from "types";
+import { DisbursementStatusType } from "types";
 
 export const patchDisbursementStatus = async (
   token: string,
   disbursementId: string,
-  status: DisbursementStatus,
+  status: DisbursementStatusType,
 ): Promise<{ message: string }> => {
   const response = await fetch(
     `${API_URL}/disbursements/${disbursementId}/status`,
