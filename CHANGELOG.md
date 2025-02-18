@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [3.6.0 UNRELEASED](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.5.0...3.6.0))
 
-> Place unreleased changes here.
+### Changed
+
+- Improve UX on the reset-password flow by parsing the reset token in the URL,
+  which reduces human intervention.
+  [#239](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/239)
 
 ## [3.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.4.0...3.5.0))
 
