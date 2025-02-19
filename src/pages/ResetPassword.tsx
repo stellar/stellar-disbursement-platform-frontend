@@ -46,12 +46,22 @@ export const ResetPassword = () => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      setPassword("");
-      setConfirmPassword("");
-      setConfirmationToken("");
+    if (!isSuccess) {
+      return;
     }
-  }, [isSuccess]);
+
+    setPassword("");
+    setConfirmPassword("");
+    setConfirmationToken("");
+
+    // Add 3 second delay before redirecting to signin page
+    const timer = setTimeout(() => {
+      reset();
+      navigate("/", { state: { didResetPassword: true } });
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [isSuccess, navigate, reset]);
 
   const goToSignIn = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -80,9 +90,8 @@ export const ResetPassword = () => {
     <>
       <div className="CardLayout">
         {isSuccess ? (
-          <Notification variant="success" title="Password reset">
-            Password reset successfully. You can{" "}
-            <Link onClick={goToSignIn}>sign in</Link> using your new password.
+          <Notification variant="success" title="Password Reset Successfu">
+            Your password has been updated. Redirecting to sign in...
           </Notification>
         ) : null}
 
