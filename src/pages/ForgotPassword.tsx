@@ -68,7 +68,7 @@ export const ForgotPassword = () => {
     <>
       <div className="CardLayout">
         {isSuccess ? (
-          <Notification variant="success" title="Password reset email sent">
+          <Notification variant="success" title="Password reset requested">
             {data?.message}
           </Notification>
         ) : null}
