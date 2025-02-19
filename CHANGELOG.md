@@ -8,12 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Improve UX on the forgotPassword->resetPassword flow by parsing the reset
+  token in the URL, which reduces human intervention.
+  [#239](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/239)
+- Improve UX on the resetPassword->signIn flow by automatically redirecting the
+  user to the signIn page after the reset password request succeeds, and showing
+  a success notification in the signIn page.
+  [#242](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/242)
 - Prettify the disbursement status text in the Disbursements table, similar to
   the payment status in the payment table.
   [#240](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/240)
-- Improve UX on the reset-password flow by parsing the reset token in the URL,
-  which reduces human intervention.
-  [#239](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/239)
 
 ## [3.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.4.0...3.5.0))
 
