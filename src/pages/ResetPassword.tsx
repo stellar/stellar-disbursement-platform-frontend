@@ -93,13 +93,7 @@ export const ResetPassword = () => {
         {isSuccess ? (
           <Notification variant="success" title="Password Reset Successful">
             Your password has been updated. Redirecting to the sign in page{" "}
-            <span
-              style={{
-                verticalAlign: "middle",
-                marginRight: "0.5rem",
-                display: "inline-block",
-              }}
-            >
+            <span style={{ verticalAlign: "middle", display: "inline-block" }}>
               <Loader size="1rem" />
             </span>
           </Notification>
