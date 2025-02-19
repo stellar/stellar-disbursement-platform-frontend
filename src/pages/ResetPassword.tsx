@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import {
+  Button,
   Heading,
   Input,
-  Button,
-  Notification,
   Link,
+  Loader,
+  Notification,
 } from "@stellar/design-system";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -90,8 +91,17 @@ export const ResetPassword = () => {
     <>
       <div className="CardLayout">
         {isSuccess ? (
-          <Notification variant="success" title="Password Reset Successfu">
-            Your password has been updated. Redirecting to sign in...
+          <Notification variant="success" title="Password Reset Successful">
+            Your password has been updated. Redirecting to the sign in page{" "}
+            <span
+              style={{
+                verticalAlign: "middle",
+                marginRight: "0.5rem",
+                display: "inline-block",
+              }}
+            >
+              <Loader size="1rem" />
+            </span>
           </Notification>
         ) : null}
 
