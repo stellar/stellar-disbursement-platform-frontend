@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Prettify the disbursement status text in the Disbursements table, similar to
+  the payment status in the payment table.
+  [#240](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/240)
 - Improve UX on the reset-password flow by parsing the reset token in the URL,
   which reduces human intervention.
   [#239](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/239)
