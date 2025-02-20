@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Prettify the disbursement status text in the Disbursements table, similar to
   the payment status in the payment table.
   [#240](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/240)
+- Change the `Confirm Disbursement` operation to be atomic. This change ensures
+  that the disbursement creation and instruction processing is done in a single
+  operation.
+  [#241](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/241)
 
 ## [3.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.4.0...3.5.0))
 
