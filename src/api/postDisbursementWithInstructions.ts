@@ -2,6 +2,7 @@ import { handleApiResponse } from "api/handleApiResponse";
 import { API_URL } from "constants/envVariables";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
 import { ApiDisbursement, Disbursement } from "types";
+import { preparePostDisbursementData } from "./postDisbursement";
 
 export const postDisbursementWithInstructions = async (
   token: string,
@@ -10,16 +11,7 @@ export const postDisbursementWithInstructions = async (
 ): Promise<ApiDisbursement> => {
   const formData = new FormData();
 
-  const data = {
-    name: disbursement.name,
-    wallet_id: disbursement.wallet.id,
-    asset_id: disbursement.asset.id,
-    registration_contact_type: disbursement.registrationContactType,
-    verification_field: disbursement.verificationField || "",
-    receiver_registration_message_template:
-      disbursement.receiverRegistrationMessageTemplate,
-  };
-
+  const data = preparePostDisbursementData(disbursement);
   formData.append("data", JSON.stringify(data));
   formData.append("file", file);
 
