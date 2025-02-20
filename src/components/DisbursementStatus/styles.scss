@@ -1,0 +1,11 @@
+.DisbursementStatus {
+  color: currentColor;
+
+  &--success {
+    color: var(--color-green-60);
+  }
+
+  &--disabled {
+    color: var(--color-gray-60);
+  }
+}

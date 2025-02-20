@@ -199,7 +199,7 @@ export type DistributionAccountType =
 // =============================================================================
 // Disbursement
 // =============================================================================
-export type DisbursementStatus =
+export type DisbursementStatusType =
   | "DRAFT"
   | "READY"
   | "STARTED"
@@ -256,10 +256,10 @@ export type Disbursement = {
     name: string;
   };
   verificationField?: string;
-  status: DisbursementStatus;
+  status: DisbursementStatusType;
   fileName?: string;
   statusHistory: {
-    status: DisbursementStatus;
+    status: DisbursementStatusType;
     timestamp: string;
     userId: string | null;
   }[];
@@ -573,7 +573,7 @@ export type ApiDisbursementAsset = {
 
 export type ApiDisbursementHistory = {
   user_id: string | null;
-  status: DisbursementStatus;
+  status: DisbursementStatusType;
   timestamp: string;
 };
 
@@ -582,7 +582,7 @@ export type ApiDisbursement = {
   name: string;
   wallet: ApiDisbursementWallet;
   asset: ApiDisbursementAsset;
-  status: DisbursementStatus;
+  status: DisbursementStatusType;
   verification_field?: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
   receiver_registration_message_template: string;
@@ -619,7 +619,7 @@ export type ApiPaymentStatusHistory = {
 export type ApiPaymentDisbursement = {
   id: string;
   name: string;
-  status: DisbursementStatus;
+  status: DisbursementStatusType;
   created_at: string;
   updated_at: string;
 };

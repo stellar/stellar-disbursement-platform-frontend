@@ -4,9 +4,10 @@ import { Routes } from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
 import { useSort } from "hooks/useSort";
-import { Table } from "components/Table";
 import { AssetAmount } from "components/AssetAmount";
+import { DisbursementStatus } from "components/DisbursementStatus";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { Table } from "components/Table";
 import {
   ActionStatus,
   Disbursement,
@@ -168,7 +169,9 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                   </span>
                 </Table.BodyCell>
 
-                <Table.BodyCell textAlign="right">{d.status}</Table.BodyCell>
+                <Table.BodyCell textAlign="right">
+                  <DisbursementStatus status={d.status} />
+                </Table.BodyCell>
 
                 <Table.BodyCell textAlign="right">
                   <AssetAmount
