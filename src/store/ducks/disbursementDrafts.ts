@@ -4,6 +4,7 @@ import { deleteDisbursementDraft } from "api/deleteDisbursementDraft";
 import { getDisbursementDrafts } from "api/getDisbursementDrafts";
 import { postDisbursement } from "api/postDisbursement";
 import { postDisbursementFile } from "api/postDisbursementFile";
+import { postDisbursementWithInstructions } from "api/postDisbursementWithInstructions";
 import { patchDisbursementStatus } from "api/patchDisbursementStatus";
 import { formatDisbursement } from "helpers/formatDisbursements";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
@@ -70,19 +71,19 @@ export const saveDisbursementDraftAction = createAsyncThunk<
     const { token } = getState().userAccount;
     const { newDraftId } = getState().disbursementDrafts;
 
-    let draftId;
-
     try {
-      draftId = newDraftId ?? (await postDisbursement(token, details)).id;
-
       if (file) {
-        await postDisbursementFile(token, draftId, file);
+        const newDisbursement = await postDisbursementWithInstructions(
+          token,
+          details,
+          file,
+        );
         refreshSessionToken(dispatch);
-
-        return draftId;
+        return newDisbursement.id;
       } else {
+        const draftId =
+          newDraftId ?? (await postDisbursement(token, details)).id;
         refreshSessionToken(dispatch);
-
         return draftId;
       }
     } catch (error: unknown) {
@@ -93,8 +94,6 @@ export const saveDisbursementDraftAction = createAsyncThunk<
       return rejectWithValue({
         errorString: `Error saving draft: ${errorString}`,
         errorExtras: apiError?.extras,
-        // Need to save draft ID if it failed because of CSV upload
-        newDraftId: draftId,
       });
     }
   },
@@ -114,15 +113,18 @@ export const submitDisbursementNewDraftAction = createAsyncThunk<
     const { id } = getState().disbursementDetails.details;
     const { newDraftId } = getState().disbursementDrafts;
 
-    let draftId = id ?? newDraftId;
+    let draftId = id && id.length > 0 ? id : newDraftId;
 
     try {
       if (!draftId) {
-        const newDisbursement = await postDisbursement(token, details);
+        const newDisbursement = await postDisbursementWithInstructions(
+          token,
+          details,
+          file,
+        );
         draftId = newDisbursement.id;
       }
 
-      await postDisbursementFile(token, draftId, file);
       await patchDisbursementStatus(token, draftId, "STARTED");
       refreshSessionToken(dispatch);
 
@@ -135,7 +137,7 @@ export const submitDisbursementNewDraftAction = createAsyncThunk<
       return rejectWithValue({
         errorString: `Error submitting disbursement: ${errorString}`,
         errorExtras: apiError?.extras,
-        // Need to save draft ID if it failed because of CSV upload
+        // Need to save draft ID if it failed because of status update
         newDraftId: draftId,
       });
     }
