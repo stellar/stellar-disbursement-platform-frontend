@@ -364,6 +364,15 @@ export const ReceiverDetails = () => {
 
                   <div className="StatCards__card__item StatCards__card__item--inline">
                     <label className="StatCards__card__item__label">
+                      Wallet address memo
+                    </label>
+                    <div className="StatCards__card__item__value">
+                      {selectedWallet.stellarAddressMemo || "-"}
+                    </div>
+                  </div>
+
+                  <div className="StatCards__card__item StatCards__card__item--inline">
+                    <label className="StatCards__card__item__label">
                       Wallet provider
                     </label>
                     <div className="StatCards__card__item__value">
