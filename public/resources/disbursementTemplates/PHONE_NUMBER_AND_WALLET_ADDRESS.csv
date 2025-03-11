@@ -1,3 +1,3 @@
-phone,walletAddress,id,amount,paymentID
+phone,walletAddress,walletAddressMemo,id,amount,paymentID
 "--- Below are EXAMPLE rows.","Please DELETE these rows before uploading your actual data ---",,
-+1604xxxx,GCBGRAR...X23U,4ba1,520,PAY_01
++1604xxxx,GCBGRAR...X23U,12345678,4ba1,520,PAY_01
