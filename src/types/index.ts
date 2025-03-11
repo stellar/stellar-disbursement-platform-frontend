@@ -380,13 +380,13 @@ export type Receiver = {
 export type ReceiverWallet = {
   id: string;
   stellarAddress: string;
+  stellarAddressMemo?: string;
   provider: string;
   invitedAt: string;
   createdAt: string;
   smsLastSentAt: string;
   totalPaymentsCount: number;
   totalAmountReceived: string;
-  withdrawnAmount?: string;
   assetCode?: string;
 };
 

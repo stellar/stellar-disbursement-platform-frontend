@@ -425,19 +425,6 @@ export const ReceiverDetails = () => {
                       />
                     </div>
                   </div>
-
-                  <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Withdrawn amount
-                    </label>
-                    <div className="StatCards__card__item__value">
-                      <AssetAmount
-                        amount={selectedWallet.withdrawnAmount}
-                        assetCode={selectedWallet.assetCode}
-                        fallback="-"
-                      />
-                    </div>
-                  </div>
                 </div>
               </div>
             </Card>
