@@ -18,6 +18,7 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
   wallets: receiver.wallets.map((w) => ({
     id: w.id,
     stellarAddress: w.stellar_address,
+    stellarAddressMemo: w.stellar_memo,
     provider: w.wallet.name,
     invitedAt: w.invited_at,
     createdAt: w.created_at,
@@ -26,8 +27,6 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
     // TODO: how to handle multiple
     assetCode: w.received_amounts?.[0]?.asset_code,
     totalAmountReceived: w.received_amounts?.[0]?.received_amount,
-    // TODO: withdrawn amount
-    withdrawnAmount: "",
   })),
   verifications:
     receiver.verifications?.map((v) => ({
