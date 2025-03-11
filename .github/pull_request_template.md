@@ -1,0 +1,20 @@
+### What
+
+[TODO: Brief description of the changes]
+
+### Why
+
+[TODO: Why this change is being made. Include any context required to understand the why.]
+
+### Known limitations
+
+[TODO or N/A]
+
+### Checklist
+
+- [ ] Title follows `SDP-1234: Add new feature` or `Chore: Refactor package xyz` format. The Jira ticket code was included if available.
+- [ ] PR has a focused scope and doesn't mix features with refactoring
+- [ ] `CHANGELOG.md` is updated (if applicable)
+- [ ] Preview deployment works as expected
+- [ ] CONFIG/SECRETS changes are updated in helmcharts and deployments (if applicable)
+- [ ] Ready for production
