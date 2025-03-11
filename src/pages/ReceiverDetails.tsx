@@ -370,7 +370,10 @@ export const ReceiverDetails = () => {
                       {selectedWallet.stellarAddressMemo || "-"}
                     </div>
                   </div>
+                </div>
 
+                {/* Column two */}
+                <div className="StatCards__card__column">
                   <div className="StatCards__card__item StatCards__card__item--inline">
                     <label className="StatCards__card__item__label">
                       Wallet provider
@@ -379,40 +382,6 @@ export const ReceiverDetails = () => {
                       {selectedWallet.provider || "-"}
                     </div>
                   </div>
-                </div>
-
-                {/* Column two */}
-                <div className="StatCards__card__column">
-                  <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Invited at
-                    </label>
-                    <div className="StatCards__card__item__value">
-                      {formatDateTime(selectedWallet.invitedAt)}
-                    </div>
-                  </div>
-
-                  <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Created at
-                    </label>
-                    <div className="StatCards__card__item__value">
-                      {formatDateTime(selectedWallet.createdAt)}
-                    </div>
-                  </div>
-
-                  <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Invitation last sent
-                    </label>
-                    <div className="StatCards__card__item__value">
-                      {formatDateTime(selectedWallet.smsLastSentAt)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column three */}
-                <div className="StatCards__card__column">
                   <div className="StatCards__card__item StatCards__card__item--inline">
                     <label className="StatCards__card__item__label">
                       Total payments received
@@ -432,6 +401,36 @@ export const ReceiverDetails = () => {
                         assetCode={selectedWallet.assetCode}
                         fallback="-"
                       />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Column three */}
+                <div className="StatCards__card__column">
+                  <div className="StatCards__card__item StatCards__card__item--inline">
+                    <label className="StatCards__card__item__label">
+                      Created at
+                    </label>
+                    <div className="StatCards__card__item__value">
+                      {formatDateTime(selectedWallet.createdAt)}
+                    </div>
+                  </div>
+
+                  <div className="StatCards__card__item StatCards__card__item--inline">
+                    <label className="StatCards__card__item__label">
+                      Invited at
+                    </label>
+                    <div className="StatCards__card__item__value">
+                      {formatDateTime(selectedWallet.invitedAt)}
+                    </div>
+                  </div>
+
+                  <div className="StatCards__card__item StatCards__card__item--inline">
+                    <label className="StatCards__card__item__label">
+                      Invitation last sent
+                    </label>
+                    <div className="StatCards__card__item__value">
+                      {formatDateTime(selectedWallet.smsLastSentAt)}
                     </div>
                   </div>
                 </div>
