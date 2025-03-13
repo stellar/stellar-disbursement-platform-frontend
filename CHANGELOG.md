@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [3.6.0 UNRELEASED](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.5.0...3.6.0))
 
+### Added
+
+- Add the `Wallet address memo` field to the Receiver Details page.
+  [#248](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/248)
+
 ### Changed
 
 - Improve UX on the forgotPassword->resetPassword flow by parsing the reset
