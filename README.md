@@ -53,7 +53,7 @@ Example settings for local testing:
 
 ```javascript
 window._env_ = {
-  API_URL: "https://localhost:8000",
+  API_URL: "http://localhost:8000",
   STELLAR_EXPERT_URL: "https://stellar.expert/explorer/testnet",
   HORIZON_URL: "https://horizon-testnet.stellar.org",
   RECAPTCHA_SITE_KEY: "6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn",
@@ -82,7 +82,7 @@ For example:
 ```
 REACT_APP_DISABLE_WINDOW_ENV=true
 REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN=false
-REACT_APP_API_URL=https://localhost:8000
+REACT_APP_API_URL=http://localhost:8000
 REACT_APP_STELLAR_EXPERT_URL=https://stellar.expert/explorer/testnet
 REACT_APP_HORIZON_URL=https://horizon-testnet.stellar.org
 REACT_APP_RECAPTCHA_SITE_KEY=6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn
