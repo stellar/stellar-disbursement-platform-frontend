@@ -8,6 +8,8 @@ import {
   Icon,
   Notification,
 } from "@stellar/design-system";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
@@ -16,6 +18,7 @@ import { Breadcrumbs } from "components/Breadcrumbs";
 import { CopyWithIcon } from "components/CopyWithIcon";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { InfoTooltip } from "components/InfoTooltip";
+import { CheckMark } from "components/CheckMark";
 import { LoadingContent } from "components/LoadingContent";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { SectionHeader } from "components/SectionHeader";
@@ -44,6 +47,7 @@ export const ReceiverDetailsEdit = () => {
       pin: "",
       nationalId: "",
     });
+  const [selectedDob, setSelectedDob] = useState<Date | null>(null);
 
   const {
     data: receiverDetails,
@@ -189,6 +193,21 @@ export const ReceiverDetailsEdit = () => {
     setReceiverEditFields({
       ...receiverEditFields,
       [event.target.name]: event.target.value,
+    });
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    if (!date) return;
+
+    if (updateError) {
+      resetUpdateState();
+    }
+
+    const formattedDate = date.toISOString().substring(0, 10); // YYYY-MM-DD
+    setSelectedDob(date);
+    setReceiverEditFields({
+      ...receiverEditFields,
+      dateOfBirth: formattedDate,
     });
   };
 
@@ -363,23 +382,29 @@ export const ReceiverDetailsEdit = () => {
                       value={receiverEditFields.yearMonth}
                       onChange={handleDetailsChange}
                     />
-                    <Input
-                      id="dateOfBirth"
-                      name="dateOfBirth"
-                      label={
-                        <InfoTooltip
-                          hideTooltip={
-                            !isVerificationFieldConfirmed("DATE_OF_BIRTH")
-                          }
-                          infoText={alreadyConfirmedText}
-                        >
-                          {VerificationFieldMap["DATE_OF_BIRTH"]}
-                        </InfoTooltip>
-                      }
-                      fieldSize="sm"
-                      value={receiverEditFields.dateOfBirth}
-                      onChange={handleDetailsChange}
-                    />
+                    <div className="Input Input--sm">
+                      <CheckMark
+                        hideCheckMark={
+                          !isVerificationFieldConfirmed("DATE_OF_BIRTH")
+                        }
+                        infoText={alreadyConfirmedText}
+                      >
+                        {VerificationFieldMap["DATE_OF_BIRTH"]}
+                      </CheckMark>
+                      <DatePicker
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        selected={selectedDob}
+                        onChange={handleDateChange}
+                        dateFormat="yyyy-MM-dd"
+                        placeholderText="Select a date"
+                        showMonthDropdown
+                        showYearDropdown
+                        scrollableYearDropdown
+                        yearDropdownItemNumber={100}
+                        maxDate={new Date()}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
