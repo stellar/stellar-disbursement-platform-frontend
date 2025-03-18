@@ -6,32 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [3.6.0 UNRELEASED](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.5.0...3.6.0))
 
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `3.6.0`.
+
 ### Added
 
-- Add the `Wallet address memo` field to the Receiver Details page.
-  [#248](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/248)
+- Add the `Wallet address memo` field to the Receiver Details page. [#248](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/248)
 
 ### Changed
 
-- Improve UX on the forgotPassword->resetPassword flow by parsing the reset
-  token in the URL, which reduces human intervention.
-  [#239](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/239)
-- Improve UX on the resetPassword->signIn flow by automatically redirecting the
-  user to the signIn page after the reset password request succeeds, and showing
-  a success notification in the signIn page.
-  [#242](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/242)
-- Prettify the disbursement status text in the Disbursements table, similar to
-  the payment status in the payment table.
-  [#240](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/240)
-- Change the `Confirm Disbursement` operation to be atomic. This change ensures
-  that the disbursement creation and instruction processing is done in a single
-  operation.
-  [#241](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/241)
+- Improve UX on the forgotPassword->resetPassword flow by parsing the reset token in the URL, which reduces human intervention. [#239](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/239)
+- Improve UX on the resetPassword->signIn flow by automatically redirecting the user to the signIn page after the reset password request succeeds, and showing a success notification in the signIn page. [#242](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/242)
+- Prettify the disbursement status text in the Disbursements table, similar to the payment status in the payment table. [#240](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/240)
+- Change the `Confirm Disbursement` operation to be atomic. This change ensures that the disbursement creation and instruction processing is done in a single operation. [#241](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/241)
 
 ## [3.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.4.0...3.5.0))
 
-> [!WARNING] This version is only compatible with the
-> [stellar/stellar-disbursement-platform-backend] version `3.5.0`.
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `3.5.0`.
 
 ### Added
 
@@ -47,8 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [3.4.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.4.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.3.0...3.4.0))
 
-> [!WARNING] This version is only compatible with the
-> [stellar/stellar-disbursement-platform-backend] version `3.4.0`.
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `3.4.0`.
 
 ### Added
 
