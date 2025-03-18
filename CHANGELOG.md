@@ -33,6 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `@babel/helpers` from 7.21.0 to 7.26.10
   - `@babel/runtime` from 7.22.6 to 7.26.10
   - `elliptic` from 6.6.0 to 6.6.1
+- Bump GitHub Actions. [#252](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/252)
 
 ## [3.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.4.0...3.5.0))
 
