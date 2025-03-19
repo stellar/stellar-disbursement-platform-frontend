@@ -1,12 +1,17 @@
 import { FloaterPlacement, Icon, Tooltip } from "@stellar/design-system";
 import "./styles.scss";
 
+const ICONS = {
+  info: <Icon.Info />,
+  check: <Icon.CheckCircle color="green" />,
+};
+
 interface InfoTooltipProps {
   children: React.ReactNode;
   infoText: React.ReactNode;
   placement?: FloaterPlacement;
   hideTooltip?: boolean;
-  showCheckMark?: boolean;
+  icon?: "info" | "check";
 }
 
 export const InfoTooltip = ({
@@ -14,21 +19,19 @@ export const InfoTooltip = ({
   infoText,
   placement = "right",
   hideTooltip = false,
-  showCheckMark = false,
+  icon = "info",
 }: InfoTooltipProps) => {
   if (hideTooltip) {
     return <>{children}</>;
   }
 
+  const iconComponent = ICONS[icon] ?? ICONS.info;
+
   return (
     <div className="InfoTooltip">
       {children}
       <Tooltip
-        triggerEl={
-          <div className="InfoTooltip__button">
-            {showCheckMark ? <Icon.CheckCircle color="green" /> : <Icon.Info />}
-          </div>
-        }
+        triggerEl={<div className="InfoTooltip__button">{iconComponent}</div>}
         placement={placement}
       >
         {infoText}

@@ -232,7 +232,8 @@ export const ReceiverDetailsEdit = () => {
 
     const alreadyConfirmedText =
       "This field was already confirmed by the user.";
-    const alreadySubmittedText = "This field was not confirmed by the user yet.";
+    const notConfirmedText =
+      "This field has not been confirmed by the user yet.";
     const dummyInputPlaceholder = "******";
 
     return (
@@ -335,11 +336,15 @@ export const ReceiverDetailsEdit = () => {
                       label={
                         <InfoTooltip
                           hideTooltip={!isVerificationFieldSubmitted("PIN")}
-                          showCheckMark={isVerificationFieldConfirmed("PIN")}
+                          icon={
+                            isVerificationFieldConfirmed("PIN")
+                              ? "check"
+                              : "info"
+                          }
                           infoText={
                             isVerificationFieldConfirmed("PIN")
                               ? alreadyConfirmedText
-                              : alreadySubmittedText
+                              : notConfirmedText
                           }
                         >
                           Personal PIN
@@ -361,13 +366,15 @@ export const ReceiverDetailsEdit = () => {
                           hideTooltip={
                             !isVerificationFieldSubmitted("NATIONAL_ID_NUMBER")
                           }
-                          showCheckMark={isVerificationFieldConfirmed(
-                            "NATIONAL_ID_NUMBER",
-                          )}
+                          icon={
+                            isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
+                              ? "check"
+                              : "info"
+                          }
                           infoText={
                             isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
                               ? alreadyConfirmedText
-                              : alreadySubmittedText
+                              : notConfirmedText
                           }
                         >
                           {VerificationFieldMap["NATIONAL_ID_NUMBER"]}
@@ -389,13 +396,15 @@ export const ReceiverDetailsEdit = () => {
                           hideTooltip={
                             !isVerificationFieldSubmitted("YEAR_MONTH")
                           }
-                          showCheckMark={isVerificationFieldConfirmed(
-                            "YEAR_MONTH",
-                          )}
+                          icon={
+                            isVerificationFieldConfirmed("YEAR_MONTH")
+                              ? "check"
+                              : "info"
+                          }
                           infoText={
                             isVerificationFieldConfirmed("YEAR_MONTH")
                               ? alreadyConfirmedText
-                              : alreadySubmittedText
+                              : notConfirmedText
                           }
                         >
                           Date of Birth (Year & Month only)
@@ -414,13 +423,15 @@ export const ReceiverDetailsEdit = () => {
                           hideTooltip={
                             !isVerificationFieldSubmitted("DATE_OF_BIRTH")
                           }
-                          showCheckMark={isVerificationFieldConfirmed(
-                            "DATE_OF_BIRTH",
-                          )}
+                          icon={
+                            isVerificationFieldConfirmed("DATE_OF_BIRTH")
+                              ? "check"
+                              : "info"
+                          }
                           infoText={
                             isVerificationFieldConfirmed("DATE_OF_BIRTH")
                               ? alreadyConfirmedText
-                              : alreadySubmittedText
+                              : notConfirmedText
                           }
                         >
                           {VerificationFieldMap["DATE_OF_BIRTH"]}
