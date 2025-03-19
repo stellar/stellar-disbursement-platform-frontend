@@ -25,7 +25,7 @@ export const InfoTooltip = ({
     return <>{children}</>;
   }
 
-  const iconComponent = ICONS[icon] ?? ICONS.info;
+  const iconComponent = ICONS[icon];
 
   return (
     <div className="InfoTooltip">
