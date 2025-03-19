@@ -232,7 +232,7 @@ export const ReceiverDetailsEdit = () => {
 
     const alreadyConfirmedText =
       "This field was already confirmed by the user.";
-    const alreadySubmittedText = "This field was already submitted.";
+    const alreadySubmittedText = "This field was not confirmed by the user yet.";
     const dummyInputPlaceholder = "******";
 
     return (
