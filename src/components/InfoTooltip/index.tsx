@@ -6,6 +6,7 @@ interface InfoTooltipProps {
   infoText: React.ReactNode;
   placement?: FloaterPlacement;
   hideTooltip?: boolean;
+  showCheckMark?: boolean;
 }
 
 export const InfoTooltip = ({
@@ -13,6 +14,7 @@ export const InfoTooltip = ({
   infoText,
   placement = "right",
   hideTooltip = false,
+  showCheckMark = false,
 }: InfoTooltipProps) => {
   if (hideTooltip) {
     return <>{children}</>;
@@ -24,7 +26,7 @@ export const InfoTooltip = ({
       <Tooltip
         triggerEl={
           <div className="InfoTooltip__button">
-            <Icon.Info />
+            {showCheckMark ? <Icon.CheckCircle color="green" /> : <Icon.Info />}
           </div>
         }
         placement={placement}

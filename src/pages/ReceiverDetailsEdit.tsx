@@ -8,8 +8,6 @@ import {
   Icon,
   Notification,
 } from "@stellar/design-system";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
@@ -18,7 +16,6 @@ import { Breadcrumbs } from "components/Breadcrumbs";
 import { CopyWithIcon } from "components/CopyWithIcon";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { InfoTooltip } from "components/InfoTooltip";
-import { CheckMark } from "components/CheckMark";
 import { LoadingContent } from "components/LoadingContent";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { SectionHeader } from "components/SectionHeader";
@@ -47,7 +44,6 @@ export const ReceiverDetailsEdit = () => {
       pin: "",
       nationalId: "",
     });
-  const [selectedDob, setSelectedDob] = useState<Date | null>(null);
 
   const {
     data: receiverDetails,
@@ -78,6 +74,14 @@ export const ReceiverDetailsEdit = () => {
     },
     [receiverDetails?.verifications],
   );
+
+  const isVerificationFieldSubmitted = (
+    field: DisbursementVerificationField,
+  ): boolean => {
+    const verification: ReceiverVerification | undefined =
+      receiverDetails?.verifications.find((v) => v.verificationField === field);
+    return verification !== undefined;
+  };
 
   const isVerificationFieldConfirmed = (
     field: DisbursementVerificationField,
@@ -190,24 +194,13 @@ export const ReceiverDetailsEdit = () => {
       resetUpdateState();
     }
 
+    const { name, value } = event.target;
+    // Format yearMonth input to YYYY-MM
+    const formattedValue = name === "yearMonth" ? value.substring(0, 7) : value;
+
     setReceiverEditFields({
       ...receiverEditFields,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const handleDateChange = (date: Date | null) => {
-    if (!date) return;
-
-    if (updateError) {
-      resetUpdateState();
-    }
-
-    const formattedDate = date.toISOString().substring(0, 10); // YYYY-MM-DD
-    setSelectedDob(date);
-    setReceiverEditFields({
-      ...receiverEditFields,
-      dateOfBirth: formattedDate,
+      [name]: formattedValue,
     });
   };
 
@@ -239,6 +232,9 @@ export const ReceiverDetailsEdit = () => {
 
     const alreadyConfirmedText =
       "This field was already confirmed by the user.";
+    const alreadySubmittedText = "This field was already submitted.";
+    const dummyInputPlaceholder = "******";
+
     return (
       <>
         <SectionHeader>
@@ -338,14 +334,23 @@ export const ReceiverDetailsEdit = () => {
                       name="pin"
                       label={
                         <InfoTooltip
-                          hideTooltip={!isVerificationFieldConfirmed("PIN")}
-                          infoText={alreadyConfirmedText}
+                          hideTooltip={!isVerificationFieldSubmitted("PIN")}
+                          showCheckMark={isVerificationFieldConfirmed("PIN")}
+                          infoText={
+                            isVerificationFieldConfirmed("PIN")
+                              ? alreadyConfirmedText
+                              : alreadySubmittedText
+                          }
                         >
                           Personal PIN
                         </InfoTooltip>
                       }
                       fieldSize="sm"
-                      value={receiverEditFields.pin}
+                      placeholder={
+                        receiverEditFields.pin === ""
+                          ? ""
+                          : dummyInputPlaceholder
+                      }
                       onChange={handleDetailsChange}
                     />
                     <Input
@@ -354,15 +359,26 @@ export const ReceiverDetailsEdit = () => {
                       label={
                         <InfoTooltip
                           hideTooltip={
-                            !isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
+                            !isVerificationFieldSubmitted("NATIONAL_ID_NUMBER")
                           }
-                          infoText={alreadyConfirmedText}
+                          showCheckMark={isVerificationFieldConfirmed(
+                            "NATIONAL_ID_NUMBER",
+                          )}
+                          infoText={
+                            isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
+                              ? alreadyConfirmedText
+                              : alreadySubmittedText
+                          }
                         >
                           {VerificationFieldMap["NATIONAL_ID_NUMBER"]}
                         </InfoTooltip>
                       }
                       fieldSize="sm"
-                      value={receiverEditFields.nationalId}
+                      placeholder={
+                        receiverEditFields.nationalId === ""
+                          ? ""
+                          : dummyInputPlaceholder
+                      }
                       onChange={handleDetailsChange}
                     />
                     <Input
@@ -371,40 +387,50 @@ export const ReceiverDetailsEdit = () => {
                       label={
                         <InfoTooltip
                           hideTooltip={
-                            !isVerificationFieldConfirmed("YEAR_MONTH")
+                            !isVerificationFieldSubmitted("YEAR_MONTH")
                           }
-                          infoText={alreadyConfirmedText}
+                          showCheckMark={isVerificationFieldConfirmed(
+                            "YEAR_MONTH",
+                          )}
+                          infoText={
+                            isVerificationFieldConfirmed("YEAR_MONTH")
+                              ? alreadyConfirmedText
+                              : alreadySubmittedText
+                          }
                         >
                           Date of Birth (Year & Month only)
                         </InfoTooltip>
                       }
                       fieldSize="sm"
-                      value={receiverEditFields.yearMonth}
+                      type="date"
+                      max={new Date().toISOString().split("T")[0]}
                       onChange={handleDetailsChange}
                     />
-                    <div className="Input Input--sm">
-                      <CheckMark
-                        hideCheckMark={
-                          !isVerificationFieldConfirmed("DATE_OF_BIRTH")
-                        }
-                        infoText={alreadyConfirmedText}
-                      >
-                        {VerificationFieldMap["DATE_OF_BIRTH"]}
-                      </CheckMark>
-                      <DatePicker
-                        id="dateOfBirth"
-                        name="dateOfBirth"
-                        selected={selectedDob}
-                        onChange={handleDateChange}
-                        dateFormat="yyyy-MM-dd"
-                        placeholderText="Select a date"
-                        showMonthDropdown
-                        showYearDropdown
-                        scrollableYearDropdown
-                        yearDropdownItemNumber={100}
-                        maxDate={new Date()}
-                      />
-                    </div>
+                    <Input
+                      id="dateOfBirth"
+                      name="dateOfBirth"
+                      label={
+                        <InfoTooltip
+                          hideTooltip={
+                            !isVerificationFieldSubmitted("DATE_OF_BIRTH")
+                          }
+                          showCheckMark={isVerificationFieldConfirmed(
+                            "DATE_OF_BIRTH",
+                          )}
+                          infoText={
+                            isVerificationFieldConfirmed("DATE_OF_BIRTH")
+                              ? alreadyConfirmedText
+                              : alreadySubmittedText
+                          }
+                        >
+                          {VerificationFieldMap["DATE_OF_BIRTH"]}
+                        </InfoTooltip>
+                      }
+                      fieldSize="sm"
+                      type="date"
+                      max={new Date().toISOString().split("T")[0]}
+                      onChange={handleDetailsChange}
+                    />
                   </div>
                 </div>
               </div>
