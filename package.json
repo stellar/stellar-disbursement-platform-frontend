@@ -1,6 +1,6 @@
 {
   "name": "stellar-disbursement-platform-frontend",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "license": "Apache-2.0",
   "engines": {
     "node": ">=20.x"
@@ -85,7 +85,7 @@
     "prod:serve": "docker run -p 8000:80 disbursement-platform-frontend:localbuild",
     "production": "yarn prod:build && yarn prod:serve",
     "prepare": "husky",
-    "pre-commit": "concurrently 'pretty-quick --staged' 'lint-staged' 'tsc --noEmit'",
+    "pre-commit": "concurrently 'pretty-quick --staged --pattern \"**/*.{ts,tsx,js,jsx}\"' 'lint-staged' 'tsc --noEmit'",
     "git-info": "rm -rf src/generated/ && mkdir src/generated/ && echo export default \"{\\\"commitHash\\\": \\\"$(git rev-parse --short HEAD)\\\", \\\"version\\\": \\\"$(git describe --tags --always)\\\"};\" > src/generated/gitInfo.ts"
   },
   "eslintConfig": {

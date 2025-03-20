@@ -42,6 +42,9 @@ export const SignIn = () => {
   const [password, setPassword] = useState("");
   const [recaptchaToken, setRecaptchaToken] = useState("");
   const [deviceId, setDeviceId] = useState("");
+  const [showPasswordResetSuccess, setShowPasswordResetSuccess] = useState(
+    Boolean(location.state?.didResetPassword),
+  );
 
   const isSessionExpired = userAccount.isSessionExpired;
 
@@ -62,6 +65,7 @@ export const SignIn = () => {
 
   useEffect(() => {
     if (userAccount.isAuthenticated && userAccount.needsMFA) {
+      setShowPasswordResetSuccess(false);
       navigate(
         {
           pathname: Routes.MFA,
@@ -78,10 +82,12 @@ export const SignIn = () => {
     userAccount.needsMFA,
     email,
     password,
+    setShowPasswordResetSuccess,
   ]);
 
   useEffect(() => {
     if (userAccount.isAuthenticated && !userAccount.needsMFA) {
+      setShowPasswordResetSuccess(false);
       navigate({
         pathname: userAccount.restoredPathname ?? Routes.HOME,
         search: location.search,
@@ -93,6 +99,7 @@ export const SignIn = () => {
     userAccount.isAuthenticated,
     userAccount.restoredPathname,
     userAccount.needsMFA,
+    showPasswordResetSuccess,
   ]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -125,6 +132,12 @@ export const SignIn = () => {
   return (
     <>
       <div className="CardLayout">
+        {showPasswordResetSuccess && (
+          <Notification variant="success" title="Password Reset Successful">
+            Your password has been reset successfully. Please log in with your
+            new password.
+          </Notification>
+        )}
         {isSessionExpired && (
           <Notification
             variant="primary"

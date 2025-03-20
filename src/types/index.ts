@@ -72,6 +72,7 @@ export type OrganizationInitialState = {
     receiverInvitationResendInterval: number;
     receiverRegistrationMessageTemplate?: string;
     isLinkShortenerEnabled: boolean;
+    isMemoTracingEnabled: boolean;
     baseUrl: string;
     paymentCancellationPeriodDays: number;
     distributionAccount?: {
@@ -198,7 +199,7 @@ export type DistributionAccountType =
 // =============================================================================
 // Disbursement
 // =============================================================================
-export type DisbursementStatus =
+export type DisbursementStatusType =
   | "DRAFT"
   | "READY"
   | "STARTED"
@@ -255,10 +256,10 @@ export type Disbursement = {
     name: string;
   };
   verificationField?: string;
-  status: DisbursementStatus;
+  status: DisbursementStatusType;
   fileName?: string;
   statusHistory: {
-    status: DisbursementStatus;
+    status: DisbursementStatusType;
     timestamp: string;
     userId: string | null;
   }[];
@@ -379,13 +380,13 @@ export type Receiver = {
 export type ReceiverWallet = {
   id: string;
   stellarAddress: string;
+  stellarAddressMemo?: string;
   provider: string;
   invitedAt: string;
   createdAt: string;
   smsLastSentAt: string;
   totalPaymentsCount: number;
   totalAmountReceived: string;
-  withdrawnAmount?: string;
   assetCode?: string;
 };
 
@@ -572,7 +573,7 @@ export type ApiDisbursementAsset = {
 
 export type ApiDisbursementHistory = {
   user_id: string | null;
-  status: DisbursementStatus;
+  status: DisbursementStatusType;
   timestamp: string;
 };
 
@@ -581,7 +582,7 @@ export type ApiDisbursement = {
   name: string;
   wallet: ApiDisbursementWallet;
   asset: ApiDisbursementAsset;
-  status: DisbursementStatus;
+  status: DisbursementStatusType;
   verification_field?: DisbursementVerificationField;
   status_history: ApiDisbursementHistory[];
   receiver_registration_message_template: string;
@@ -618,7 +619,7 @@ export type ApiPaymentStatusHistory = {
 export type ApiPaymentDisbursement = {
   id: string;
   name: string;
-  status: DisbursementStatus;
+  status: DisbursementStatusType;
   created_at: string;
   updated_at: string;
 };
@@ -818,6 +819,7 @@ export type ApiOrgInfo = {
   receiver_invitation_resend_interval_days: string;
   receiver_registration_message_template?: string;
   is_link_shortener_enabled: boolean;
+  is_memo_tracing_enabled: boolean;
   base_url: string;
   payment_cancellation_period_days: string;
   distribution_account?: {

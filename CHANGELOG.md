@@ -4,14 +4,41 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [3.6.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.5.0...3.6.0))
 
-> Place unreleased changes here.
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `3.6.0`.
+
+### Added
+
+- Feature to toggle memo tracking. [#237](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/237)
+- Add the `Wallet address memo` field to the Receiver Details page. [#248](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/248)
+- Add PR template. [#249](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/249)
+
+### Changed
+
+- Improve UX on the forgotPassword->resetPassword flow by parsing the reset token in the URL, which reduces human intervention. [#239](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/239)
+- Improve UX on the resetPassword->signIn flow by automatically redirecting the user to the signIn page after the reset password request succeeds, and showing a success notification in the signIn page. [#242](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/242)
+- Prettify the disbursement status text in the Disbursements table, similar to the payment status in the payment table. [#240](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/240)
+- Change the `Confirm Disbursement` operation to be atomic. This change ensures that the disbursement creation and instruction processing is done in a single operation. [#241](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/241)
+
+### Fixed
+
+- Rename variable `is_tenant_memo_enabled` to `is_memo_tracing_enabled` [#238](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/238)
+- Fix .env example in README.md. [#251](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/251)
+
+### Security and Dependencies
+
+- Bump dependencies [#250](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/250):
+  - `@babel/helpers` from 7.21.0 to 7.26.10
+  - `@babel/runtime` from 7.22.6 to 7.26.10
+  - `elliptic` from 6.6.0 to 6.6.1
+- Bump GitHub Actions. [#252](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/252)
 
 ## [3.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.4.0...3.5.0))
 
-> [!WARNING] This version is only compatible with the
-> [stellar/stellar-disbursement-platform-backend] version `3.5.0`.
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `3.5.0`.
 
 ### Added
 
@@ -27,8 +54,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [3.4.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.4.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.3.0...3.4.0))
 
-> [!WARNING] This version is only compatible with the
-> [stellar/stellar-disbursement-platform-backend] version `3.4.0`.
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `3.4.0`.
 
 ### Added
 
@@ -118,9 +145,8 @@ and `PHONE_NUMBER_AND_WALLET_ADDRESS`. If a receiver is registered with a wallet
 address, they can receive the payment right away without having to go through
 the SEP-24 registration flow.
 
-> [!WARNING]  
-> This version is only compatible with the
-> [stellar/stellar-disbursement-platform-backend] version `3.0.0`.
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `3.0.0`.
 
 ### Added
 

@@ -14,16 +14,18 @@ export const postDisbursement = async (
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(),
     },
-    body: JSON.stringify({
-      name: disbursement.name,
-      wallet_id: disbursement.wallet.id,
-      asset_id: disbursement.asset.id,
-      registration_contact_type: disbursement.registrationContactType,
-      verification_field: disbursement.verificationField || "",
-      receiver_registration_message_template:
-        disbursement.receiverRegistrationMessageTemplate,
-    }),
+    body: JSON.stringify(preparePostDisbursementData(disbursement)),
   });
 
   return handleApiResponse(response);
 };
+
+export const preparePostDisbursementData = (disbursement: Disbursement) => ({
+  name: disbursement.name,
+  wallet_id: disbursement.wallet.id,
+  asset_id: disbursement.asset.id,
+  registration_contact_type: disbursement.registrationContactType,
+  verification_field: disbursement.verificationField || "",
+  receiver_registration_message_template:
+    disbursement.receiverRegistrationMessageTemplate,
+});
