@@ -19,7 +19,7 @@ export const useStellarAccountInfo = (stellarAddress: string | undefined) => {
         },
       );
     },
-    enabled: Boolean(stellarAddress),
+    enabled: Boolean(stellarAddress) && stellarAddress?.startsWith("G"),
   });
 
   return query;

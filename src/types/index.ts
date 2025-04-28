@@ -833,6 +833,7 @@ export type ApiOrgInfo = {
 export type ApiStellarAccountBalance = {
   asset_code?: string;
   asset_issuer?: string;
+  asset_type: string;
   balance: string;
 };
 
