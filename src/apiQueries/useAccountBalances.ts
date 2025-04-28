@@ -62,9 +62,10 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
     queryKey: ["account-balances", stellarAddress],
     queryFn: async () => {
       if (!stellarAddress) {
-        throw new Error("stellarAddress is required");
+        return [];
       }
 
+      // If the address is a Stellar address (starts with "G"), fetch from Horizon
       if (stellarAddress.startsWith("G")) {
         const accountInfo = await fetchStellarApi(
           `${HORIZON_URL}/accounts/${stellarAddress}`,
@@ -74,11 +75,8 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
           },
         );
         return accountInfo?.balances ?? [];
-      } else {
-        if (!RPC_URL || !API_URL) {
-          throw new Error("RPC_URL and API_URL are required for SAC balances");
-        }
-
+      } // If the address is a Stellar testnet address (starts with "C"), fetch from RPC
+      else {
         const assetsUrl = new URL(`${API_URL}/assets`);
         const assets: ApiAsset[] = await fetchApi(assetsUrl.toString());
 

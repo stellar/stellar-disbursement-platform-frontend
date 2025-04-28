@@ -3,6 +3,8 @@ import { Loader, Notification } from "@stellar/design-system";
 import { useAccountBalances } from "apiQueries/useAccountBalances";
 import { AssetAmount } from "components/AssetAmount";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { RPC_URL } from "constants/envVariables";
+import { InfoTooltip } from "./InfoTooltip";
 
 interface ReceiverWalletBalanceProps {
   stellarAddress: string | undefined;
@@ -20,7 +22,9 @@ export const ReceiverWalletBalance = ({
 
   const displayBalances =
     balances?.filter(
-      (b) => b.asset_type == "native" || (b.asset_issuer && b.asset_code),
+      (b) =>
+        (b.asset_type == "native" || (b.asset_issuer && b.asset_code)) &&
+        parseFloat(b.balance) > 0,
     ) || [];
 
   if (stellarAddress && (isLoading || isFetching)) {
@@ -32,6 +36,17 @@ export const ReceiverWalletBalance = ({
       <Notification variant="error" title="Error">
         <ErrorWithExtras appError={error} />
       </Notification>
+    );
+  }
+
+  if (stellarAddress?.startsWith("C") && !RPC_URL) {
+    return (
+      <InfoTooltip
+        infoText="Fetching balances for this account is disabled"
+        placement="bottom"
+      >
+        Unavailable
+      </InfoTooltip>
     );
   }
 

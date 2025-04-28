@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  Button,
   Card,
   Heading,
   Notification,
   Profile,
   Select,
-  Button,
 } from "@stellar/design-system";
 
 import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
@@ -33,7 +33,7 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 import { shortenAccountKey } from "helpers/shortenAccountKey";
 import { renderTextWithCount } from "helpers/renderTextWithCount";
 
-import { ReceiverWallet, ReceiverDetails as ReceiverDetailsType } from "types";
+import { ReceiverDetails as ReceiverDetailsType, ReceiverWallet } from "types";
 
 export const ReceiverDetails = () => {
   const { id: receiverId } = useParams();
@@ -162,9 +162,9 @@ export const ReceiverDetails = () => {
                   </InfoTooltip>
                 </div>
                 {/* TODO: add chart */}
-                <div className="StatCards__card__unit">{`${percent.format(
-                  calculateRate(),
-                )}`}</div>
+                <div className="StatCards__card__unit">
+                  {`${percent.format(calculateRate())}`}
+                </div>
               </div>
             </div>
 
@@ -328,7 +328,11 @@ export const ReceiverDetails = () => {
             <Card>
               <div
                 className="StatCards__card StatCards__card--grid StatCards__card--wideGap"
-                style={{ "--StatCard-grid-columns": 3 } as React.CSSProperties}
+                style={
+                  {
+                    "--StatCard-grid-columns": 3,
+                  } as React.CSSProperties
+                }
               >
                 {/* Column one */}
                 <div className="StatCards__card__column">
@@ -437,21 +441,23 @@ export const ReceiverDetails = () => {
               </div>
             </Card>
 
-            <div className="DetailsSection DetailsSection">
-              <SectionHeader>
-                <SectionHeader.Row>
-                  <SectionHeader.Content>
-                    <Heading as="h4" size="xs">
-                      Recent wallet history
-                    </Heading>
-                  </SectionHeader.Content>
-                </SectionHeader.Row>
-              </SectionHeader>
+            {selectedWallet.stellarAddress.startsWith("G") ? (
+              <div className="DetailsSection DetailsSection">
+                <SectionHeader>
+                  <SectionHeader.Row>
+                    <SectionHeader.Content>
+                      <Heading as="h4" size="xs">
+                        Recent wallet history
+                      </Heading>
+                    </SectionHeader.Content>
+                  </SectionHeader.Row>
+                </SectionHeader>
 
-              <ReceiverWalletHistory
-                stellarAddress={selectedWallet.stellarAddress}
-              />
-            </div>
+                <ReceiverWalletHistory
+                  stellarAddress={selectedWallet.stellarAddress}
+                />
+              </div>
+            ) : null}
           </>
         ) : null}
       </div>
