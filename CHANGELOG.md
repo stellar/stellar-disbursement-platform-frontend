@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Fixed
+
+-  Fix receiver's XLM balance [#258](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/258)
+
 ## [3.6.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.5.0...3.6.0))
 
 > [!WARNING]
