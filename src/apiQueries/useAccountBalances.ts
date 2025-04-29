@@ -75,7 +75,7 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
           },
         );
         return accountInfo?.balances ?? [];
-      } // If the address is a Stellar testnet address (starts with "C"), fetch from RPC
+      } // If the address is a Stellar contract address (starts with "C"), fetch from RPC
       else {
         const assetsUrl = new URL(`${API_URL}/assets`);
         const assets: ApiAsset[] = await fetchApi(assetsUrl.toString());
@@ -88,7 +88,7 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
         } else if (passphrase === Networks.TESTNET) {
           network = Networks.TESTNET;
         } else {
-          network = Networks.TESTNET;
+          network = Networks.FUTURENET;
         }
 
         const balancePromises = assets.map((apiAsset) =>
