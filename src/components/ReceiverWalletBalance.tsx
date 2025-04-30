@@ -42,7 +42,7 @@ export const ReceiverWalletBalance = ({
   if (stellarAddress?.startsWith("C") && !RPC_URL) {
     return (
       <InfoTooltip
-        infoText="Fetching balances for this account is disabled"
+        infoText="Fetching balances is disabled. Please check with your technical support team to enable."
         placement="bottom"
       >
         Unavailable

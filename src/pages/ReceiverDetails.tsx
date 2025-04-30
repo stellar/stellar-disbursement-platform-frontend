@@ -441,7 +441,7 @@ export const ReceiverDetails = () => {
               </div>
             </Card>
 
-            {selectedWallet.stellarAddress.startsWith("G") ? (
+            {selectedWallet.stellarAddress?.startsWith("G") ? (
               <div className="DetailsSection DetailsSection">
                 <SectionHeader>
                   <SectionHeader.Row>
