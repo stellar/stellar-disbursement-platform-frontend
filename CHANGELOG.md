@@ -4,18 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [3.7.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.7.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.6.0...3.7.0))
+
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `3.7.0`.
 
 ### Fixed
 
--  Fix receiver's XLM balance [#258](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/258)
-
-## [3.6.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.6.1) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.6.0...3.6.1))
-
-### Fixed
-
+- Fix receiver's XLM balance [#258](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/258)
 - Fix the behavior of a toggle that enables automatic payments' cancellation. [#259](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/259)
 
+### Security and Dependencies
+- Bump http-proxy-middleware in the npm_and_yarn group. [#261](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/261)
 
 ## [3.6.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.5.0...3.6.0))
 
