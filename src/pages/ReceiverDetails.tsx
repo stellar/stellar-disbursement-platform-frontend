@@ -128,20 +128,6 @@ export const ReceiverDetails = () => {
     }
   }, [isUnregisterWalletSuccess, queryClient, receiverId]);
 
-  const handleUnregisterWallet = async () => {
-    if (selectedWallet?.id) {
-      try {
-        await unregisterWallet({
-          receiverWalletId: selectedWallet.id,
-          status: "READY",
-        });
-        setIsUnregisterModalVisible(false);
-      } catch (e) {
-        alert(e);
-      }
-    }
-  };
-
   const showUnregisterModal = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
@@ -694,7 +680,17 @@ export const ReceiverDetails = () => {
           <Button
             variant="destructive"
             size="sm"
-            onClick={handleUnregisterWallet}
+            onClick={(event) => {
+              event.preventDefault();
+
+              if (selectedWallet?.id) {
+                unregisterWallet({
+                  receiverWalletId: selectedWallet.id,
+                  status: "READY",
+                });
+                setIsUnregisterModalVisible(false);
+              }
+            }}
             isLoading={isUnregisterWalletPending}
           >
             Unregister Wallet
