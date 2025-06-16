@@ -32,16 +32,13 @@ export const SettingsEnableShortLinking = () => {
       <div className="SdpSettings">
         <div className="SdpSettings__row">
           <div className="SdpSettings__item">
-            <label
-              className="SdpSettings__label"
-              htmlFor="payment-cancellation"
-            >
+            <label className="SdpSettings__label" htmlFor="short-linking">
               Enable short linking
             </label>
             <div className="Toggle__wrapper">
               {isPending ? <Loader size="1rem" /> : null}
               <Toggle
-                id="payment-cancellation"
+                id="short-linking"
                 checked={Boolean(organization.data.isLinkShortenerEnabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
