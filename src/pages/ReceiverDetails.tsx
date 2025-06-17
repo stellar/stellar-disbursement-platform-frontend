@@ -186,7 +186,6 @@ export const ReceiverDetails = () => {
         size="xs"
         onClick={showUnregisterModal}
         isLoading={isUnregisterWalletPending}
-        disabled={isUnregisterWalletPending}
         title="Unregister this wallet"
       >
         Unregister Wallet
