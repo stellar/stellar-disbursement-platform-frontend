@@ -96,6 +96,12 @@ export const InnerPage = ({
 
   const ITEMS_BOTTOM: NavItem[] = [
     {
+      id: "nav-api-keys",
+      label: "API Keys",
+      route: Routes.API_KEYS,
+      icon: <Icon.Key />,
+    },
+    {
       id: "nav-profile",
       label: "Profile",
       route: Routes.PROFILE,
