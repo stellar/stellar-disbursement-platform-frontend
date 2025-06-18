@@ -121,13 +121,16 @@ export const PaymentsTable = ({
                     "-"
                   )}
                 </Table.BodyCell>
-                <Table.BodyCell width="7.5rem" title={p.disbursement.name}>
+                <Table.BodyCell width="7.5rem" title={p.disbursement?.name}>
                   <Link
                     onClick={(event) =>
-                      handlePaymentDisbursementClicked(event, p.disbursement.id)
+                      handlePaymentDisbursementClicked(
+                        event,
+                        p.disbursement?.id,
+                      )
                     }
                   >
-                    {p.disbursement.name}
+                    {p.disbursement?.name}
                   </Link>
                 </Table.BodyCell>
                 <Table.BodyCell>

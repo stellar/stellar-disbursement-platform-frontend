@@ -83,7 +83,6 @@ const apiKeysSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Get API Keys
       .addCase(getApiKeysAction.pending, (state = apiKeysInitialState) => {
         state.status = "PENDING";
         state.errorString = undefined;
