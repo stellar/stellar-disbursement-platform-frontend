@@ -98,7 +98,6 @@ export const ApiKeys = () => {
         if (deleteApiKeyAction.fulfilled.match(resultAction)) {
           setIsDeleteModalVisible(false);
           setSelectedApiKey(undefined);
-          // Optionally show a success message
         }
       } catch (error) {
         console.error("Error deleting API key:", error);
