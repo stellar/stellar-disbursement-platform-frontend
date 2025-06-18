@@ -1,4 +1,3 @@
-// src/store/ducks/apiKeys.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "store";
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
@@ -51,7 +50,6 @@ const apiKeysSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Get API Keys
       .addCase(getApiKeysAction.pending, (state = apiKeysInitialState) => {
         state.status = "PENDING";
         state.errorString = undefined;
