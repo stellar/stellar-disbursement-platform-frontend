@@ -1,0 +1,658 @@
+import {
+  Button,
+  Heading,
+  Icon,
+  Input,
+  Modal,
+  Notification,
+  Select,
+} from "@stellar/design-system";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { usePrevious } from "hooks/usePrevious";
+import { useEffect, useState } from "react";
+import { CreateApiKeyRequest } from "types";
+
+interface CreateApiKeyModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSubmit: (apiKeyData: CreateApiKeyRequest) => void;
+  onResetQuery: () => void;
+  isLoading: boolean;
+  errorMessage?: string;
+}
+
+type PermissionLevel = "none" | "read" | "read_write";
+
+type PermissionState = {
+  all: PermissionLevel;
+  disbursements: PermissionLevel;
+  receivers: PermissionLevel;
+  payments: PermissionLevel;
+  organization: PermissionLevel;
+  users: PermissionLevel;
+  wallets: PermissionLevel;
+  statistics: PermissionLevel;
+  exports: PermissionLevel;
+};
+
+const INITIAL_PERMISSIONS: PermissionState = {
+  all: "none",
+  disbursements: "none",
+  receivers: "none",
+  payments: "none",
+  organization: "none",
+  users: "none",
+  wallets: "none",
+  statistics: "none",
+  exports: "none",
+};
+
+type FormData = {
+  name: string;
+  expiryDate: string;
+  allowedIPs: string;
+  permissions: PermissionState;
+};
+
+export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
+  visible,
+  onClose,
+  onSubmit,
+  onResetQuery,
+  isLoading,
+  errorMessage,
+}) => {
+  const getInitForm = (): FormData => ({
+    name: "",
+    expiryDate: "",
+    allowedIPs: "",
+    permissions: { ...INITIAL_PERMISSIONS },
+  });
+
+  const [formData, setFormData] = useState<FormData>(getInitForm());
+  const [formErrors, setFormErrors] = useState<string[]>([]);
+
+  const previousVisible = usePrevious(visible);
+
+  useEffect(() => {
+    if (previousVisible && !visible) {
+      setFormData(getInitForm());
+      setFormErrors([]);
+    }
+  }, [visible, previousVisible]);
+
+  const handleClose = () => {
+    onClose();
+  };
+
+  const removeItemFromErrors = (id: string) => {
+    setFormErrors(formErrors.filter((e) => e !== id));
+  };
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    if (errorMessage) {
+      onResetQuery();
+    }
+    removeItemFromErrors(event.target.id);
+    if (event.target.id === "allowedIPs") {
+      const newValue = event.target.value;
+      if (!newValue.trim()) {
+        setFormErrors((prev) => prev.filter((e) => e !== "allowedIPs"));
+      }
+    }
+    setFormData({
+      ...formData,
+      [event.target.id]: event.target.value,
+    });
+  };
+
+  const handlePermissionChange = (
+    resource: keyof PermissionState,
+    level: PermissionLevel,
+  ) => {
+    if (errorMessage) {
+      onResetQuery();
+    }
+    removeItemFromErrors("permissions");
+
+    const newPermissions = { ...formData.permissions };
+
+    if (resource === "all" && level === "read_write") {
+      // If "All" is set to "Read & Write", reset all others to "none"
+      Object.keys(newPermissions).forEach((key) => {
+        if (key !== "all") {
+          newPermissions[key as keyof PermissionState] = "none";
+        }
+      });
+    } else if (
+      resource !== "all" &&
+      formData.permissions.all === "read_write"
+    ) {
+      // If trying to change other permissions while "All" is "Read & Write", reset "All" first
+      newPermissions.all = "none";
+    }
+
+    newPermissions[resource] = level;
+
+    setFormData({
+      ...formData,
+      permissions: newPermissions,
+    });
+  };
+
+  const parseAllowedIPs = (input: string): string[] => {
+    if (!input.trim()) {
+      return [];
+    }
+
+    // Split by newlines and commas, then clean up
+    const ips = input
+      .split(/[\n,]/)
+      .map((ip) => ip.trim())
+      .filter((ip) => ip.length > 0);
+
+    return ips;
+  };
+
+  const validateIP = (ip: string): boolean => {
+    // Check if it's a CIDR block
+    if (ip.includes("/")) {
+      const parts = ip.split("/");
+      if (parts.length !== 2) return false;
+
+      const [ipPart, maskPart] = parts;
+      const mask = parseInt(maskPart, 10);
+
+      // Validate IP part (IPv4 only)
+      if (!isValidIPAddress(ipPart)) return false;
+
+      // Validate mask (IPv4: 0-32)
+      return mask >= 0 && mask <= 32;
+    } else {
+      // Regular IP address (IPv4 only)
+      return isValidIPAddress(ip);
+    }
+  };
+
+  const isValidIPAddress = (ip: string): boolean => {
+    // IPv4 validation only
+    const ipv4Regex = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/;
+    if (ipv4Regex.test(ip)) {
+      const parts = ip.split(".");
+      return (
+        parts.length === 4 &&
+        parts.every((part) => {
+          const num = parseInt(part, 10);
+          return num >= 0 && num <= 255;
+        })
+      );
+    }
+
+    return false;
+  };
+
+  const validateAllowedIPs = (): { isValid: boolean; error?: string } => {
+    const ips = parseAllowedIPs(formData.allowedIPs);
+
+    if (ips.length === 0) {
+      return { isValid: true }; // Empty is valid (no restrictions)
+    }
+
+    for (const ip of ips) {
+      if (!validateIP(ip)) {
+        if (ip.includes("/")) {
+          return { isValid: false, error: `Invalid CIDR: ${ip}` };
+        } else {
+          return { isValid: false, error: `Invalid IP: ${ip}` };
+        }
+      }
+    }
+
+    return { isValid: true };
+  };
+
+  const convertToApiPermissions = (permissions: PermissionState): string[] => {
+    const apiPermissions: string[] = [];
+
+    // Handle "all" permissions first
+    if (permissions.all === "read") {
+      apiPermissions.push("read:all");
+    } else if (permissions.all === "read_write") {
+      apiPermissions.push("read:all", "write:all");
+      return apiPermissions; // If all permissions are granted, return early
+    }
+
+    // Handle specific resource permissions
+    Object.entries(permissions).forEach(([resource, level]) => {
+      if (resource === "all" || level === "none") return;
+
+      if (level === "read") {
+        apiPermissions.push(`read:${resource}`);
+      } else if (level === "read_write") {
+        // Statistics and exports only have read permissions
+        if (resource === "statistics" || resource === "exports") {
+          apiPermissions.push(`read:${resource}`);
+        } else {
+          apiPermissions.push(`read:${resource}`, `write:${resource}`);
+        }
+      }
+    });
+
+    return apiPermissions;
+  };
+
+  const hasAnyPermissions = (): boolean => {
+    return Object.values(formData.permissions).some(
+      (level) => level !== "none",
+    );
+  };
+
+  const handleValidate = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    if (!event.target.value) {
+      if (!formErrors.includes(event.target.id)) {
+        setFormErrors([...formErrors, event.target.id]);
+      }
+    }
+
+    // Special validation for allowedIPs
+    if (event.target.id === "allowedIPs" && event.target.value.trim()) {
+      const { isValid } = validateAllowedIPs();
+      if (!isValid) {
+        setFormErrors([
+          ...formErrors.filter((e) => e !== "allowedIPs"),
+          "allowedIPs",
+        ]);
+      }
+    } else if (event.target.id === "allowedIPs" && !event.target.value.trim()) {
+      setFormErrors(formErrors.filter((e) => e !== "allowedIPs"));
+    }
+  };
+
+  const validatePermissions = () => {
+    if (!hasAnyPermissions()) {
+      if (!formErrors.includes("permissions")) {
+        setFormErrors([...formErrors, "permissions"]);
+      }
+      return false;
+    }
+    return true;
+  };
+
+  const itemHasError = (id: string, label: string) => {
+    if (id === "allowedIPs" && formErrors.includes(id)) {
+      const { error } = validateAllowedIPs();
+      return error || "Invalid IP format";
+    }
+    return formErrors.includes(id) ? `${label} is required` : undefined;
+  };
+
+  const canSubmit =
+    formErrors.length === 0 &&
+    formData.name.trim() !== "" &&
+    hasAnyPermissions() &&
+    validateAllowedIPs().isValid;
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!formData.name.trim()) {
+      setFormErrors([...formErrors, "name"]);
+      return;
+    }
+
+    if (!validatePermissions()) {
+      return;
+    }
+
+    // Validate allowed IPs
+    const ipValidation = validateAllowedIPs();
+    if (!ipValidation.isValid) {
+      setFormErrors([...formErrors, "allowedIPs"]);
+      return;
+    }
+
+    const apiPermissions = convertToApiPermissions(formData.permissions);
+    const allowedIPs = parseAllowedIPs(formData.allowedIPs);
+
+    const apiKeyData: CreateApiKeyRequest = {
+      name: formData.name.trim(),
+      permissions: apiPermissions,
+      expiry_date: formData.expiryDate
+        ? new Date(formData.expiryDate).toISOString()
+        : undefined,
+      allowed_ips: allowedIPs.length > 0 ? allowedIPs : undefined,
+    };
+
+    onSubmit(apiKeyData);
+  };
+
+  const isAllReadWrite = formData.permissions.all === "read_write";
+
+  return (
+    <Modal visible={visible} onClose={handleClose}>
+      <Modal.Heading>Create API Key</Modal.Heading>
+      <form onSubmit={handleSubmit} onReset={handleClose}>
+        <Modal.Body>
+          {errorMessage && (
+            <Notification variant="error" title="Error">
+              <ErrorWithExtras
+                appError={{
+                  message: errorMessage,
+                }}
+              />
+            </Notification>
+          )}
+
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
+            <Input
+              fieldSize="sm"
+              id="name"
+              name="name"
+              type="text"
+              label="Key name"
+              placeholder="Enter a descriptive name for this API key"
+              value={formData.name}
+              onChange={handleInputChange}
+              onBlur={handleValidate}
+              error={itemHasError("name", "Key name")}
+              required
+            />
+
+            <Input
+              fieldSize="sm"
+              id="expiryDate"
+              name="expiryDate"
+              type="date"
+              label="Expiration date (optional)"
+              value={formData.expiryDate}
+              onChange={handleInputChange}
+              note="Leave empty for no expiration"
+            />
+
+            <div>
+              <label
+                htmlFor="allowedIPs"
+                style={{
+                  display: "block",
+                  marginBottom: "0.25rem",
+                  fontWeight: 500,
+                  fontSize: "0.875rem",
+                }}
+              >
+                Allowed IP addresses (optional)
+              </label>
+              <textarea
+                id="allowedIPs"
+                name="allowedIPs"
+                value={formData.allowedIPs}
+                onChange={handleInputChange}
+                onBlur={handleValidate}
+                placeholder="192.168.1.1&#10;10.0.0.0/24&#10;172.16.0.0/16"
+                style={{
+                  width: "100%",
+                  minHeight: "80px",
+                  padding: "0.5rem",
+                  border: `1px solid ${formErrors.includes("allowedIPs") ? "var(--color-red-60)" : "var(--color-gray-30)"}`,
+                  borderRadius: "4px",
+                  fontSize: "0.875rem",
+                  fontFamily: "monospace",
+                  resize: "vertical",
+                  boxSizing: "border-box",
+                }}
+              />
+              {formErrors.includes("allowedIPs") && (
+                <div
+                  style={{
+                    color: "var(--color-red-60)",
+                    fontSize: "0.75rem",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  {itemHasError("allowedIPs", "Allowed IPs")}
+                </div>
+              )}
+              <div
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--color-gray-60)",
+                  marginTop: "0.25rem",
+                }}
+              >
+                Enter IPv4 addresses or CIDR blocks, one per line or
+                comma-separated. Leave empty to allow access from any IP.
+              </div>
+            </div>
+
+            <div>
+              <Heading as="h4" size="xs" style={{ marginBottom: "0.5rem" }}>
+                Permissions
+              </Heading>
+              {formErrors.includes("permissions") && (
+                <div
+                  style={{
+                    color: "var(--color-red-60)",
+                    fontSize: "0.875rem",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  At least one permission is required
+                </div>
+              )}
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.75rem",
+                }}
+              >
+                {/* All Permissions */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ fontWeight: 500, minWidth: "120px" }}>
+                    All
+                  </span>
+                  <div style={{ flexShrink: 0 }}>
+                    <Select
+                      id="permission-all"
+                      fieldSize="sm"
+                      value={formData.permissions.all}
+                      onChange={(e) =>
+                        handlePermissionChange(
+                          "all",
+                          e.target.value as PermissionLevel,
+                        )
+                      }
+                      style={{ minWidth: "150px" }}
+                    >
+                      <option value="none">None</option>
+                      <option value="read">Read</option>
+                      <option value="read_write">Read & Write</option>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Resource-specific permissions */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.75rem",
+                    opacity: isAllReadWrite ? 0.5 : 1,
+                    pointerEvents: isAllReadWrite ? "none" : "auto",
+                  }}
+                >
+                  {[
+                    {
+                      key: "disbursements",
+                      label: "Disbursements",
+                      hasWrite: true,
+                    },
+                    { key: "receivers", label: "Receivers", hasWrite: true },
+                    { key: "payments", label: "Payments", hasWrite: true },
+                    {
+                      key: "organization",
+                      label: "Organization",
+                      hasWrite: true,
+                    },
+                    { key: "users", label: "Users", hasWrite: true },
+                    { key: "wallets", label: "Wallets", hasWrite: true },
+                    { key: "statistics", label: "Statistics", hasWrite: false },
+                    { key: "exports", label: "Exports", hasWrite: false },
+                  ].map(({ key, label, hasWrite }) => (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span style={{ fontWeight: 500, minWidth: "120px" }}>
+                        {label}
+                      </span>
+                      <div style={{ flexShrink: 0 }}>
+                        <Select
+                          id={`permission-${key}`}
+                          fieldSize="sm"
+                          value={
+                            formData.permissions[key as keyof PermissionState]
+                          }
+                          onChange={(e) =>
+                            handlePermissionChange(
+                              key as keyof PermissionState,
+                              e.target.value as PermissionLevel,
+                            )
+                          }
+                          style={{ minWidth: "150px" }}
+                          disabled={isAllReadWrite}
+                        >
+                          <option value="none">None</option>
+                          <option value="read">Read</option>
+                          {hasWrite && (
+                            <option value="read_write">Read & Write</option>
+                          )}
+                        </Select>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            size="sm"
+            variant="secondary"
+            type="reset"
+            disabled={isLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            variant="tertiary"
+            type="submit"
+            disabled={!canSubmit}
+            isLoading={isLoading}
+          >
+            Create new key
+          </Button>
+        </Modal.Footer>
+      </form>
+    </Modal>
+  );
+};
+
+interface ApiKeySuccessModalProps {
+  visible: boolean;
+  onClose: () => void;
+  apiKey?: {
+    name: string;
+    key: string;
+  };
+}
+
+export const ApiKeySuccessModal: React.FC<ApiKeySuccessModalProps> = ({
+  visible,
+  onClose,
+  apiKey,
+}) => {
+  const [hasCopied, setHasCopied] = useState(false);
+
+  const handleCopy = () => {
+    if (apiKey?.key) {
+      navigator.clipboard.writeText(apiKey.key);
+      setHasCopied(true);
+      setTimeout(() => setHasCopied(false), 2000);
+    }
+  };
+
+  return (
+    <Modal visible={visible} onClose={onClose}>
+      <Modal.Heading>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <Icon.CheckCircle style={{ color: "var(--color-green-60)" }} />
+          API Key Created Successfully
+        </div>
+      </Modal.Heading>
+      <Modal.Body>
+        <Notification variant="warning" title="Important">
+          API key was successfully create! Make sure to copy and store it
+          securely, THIS KEY WILL NOT BE SHOWN AGAIN. It may take a few minutes
+          to be usable
+        </Notification>
+
+        <div style={{ position: "relative", marginBottom: "1rem" }}>
+          <input
+            type="text"
+            value={apiKey?.key || ""}
+            readOnly
+            style={{
+              width: "100%",
+              padding: "0.75rem",
+              paddingRight: "3rem", // Space for the button
+              borderRadius: "4px",
+              fontFamily: "monospace",
+              fontSize: "0.875rem",
+              boxSizing: "border-box",
+              outline: "none",
+            }}
+          />
+          <Button
+            variant="tertiary"
+            size="sm"
+            icon={hasCopied ? <Icon.Check /> : <Icon.ContentCopy />}
+            onClick={handleCopy}
+            style={{
+              position: "absolute",
+              right: "0rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: "100px",
+              padding: "0.5rem",
+            }}
+          >
+            {hasCopied ? "Copied!" : "Copy"}
+          </Button>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button size="sm" variant="primary" onClick={onClose}>
+          I have saved the key securely
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
