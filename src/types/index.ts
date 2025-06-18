@@ -958,22 +958,7 @@ export type ApiKeysInitialState = {
 };
 
 export type ApiKeysResponse = {
-  data: ApiApiKey[];
-};
-
-export type ApiApiKey = {
-  id: string;
-  name: string;
-  key?: string;
-  expiry_date: string | null;
-  permissions: string[];
-  created_at: string;
-  created_by: string;
-  updated_at: string;
-  updated_by: string;
-  last_used_at: string | null;
-  allowed_ips: string[];
-  enabled: boolean;
+  data: ApiKey[];
 };
 
 export type CreateApiKeyRequest = {

@@ -5,7 +5,7 @@ import {
   Icon,
   Button,
 } from "@stellar/design-system";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 import { useRedux } from "hooks/useRedux";
@@ -16,6 +16,9 @@ import { ApiKeysTable } from "components/ApiKeysTable";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { ShowForRoles } from "components/ShowForRoles";
 import { ApiKeysDescription } from "components/ApiKeysDescription";
+import { UserRole } from "types";
+
+const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 
 export const ApiKeys = () => {
   const { apiKeys } = useRedux("apiKeys");
@@ -25,9 +28,21 @@ export const ApiKeys = () => {
     dispatch(getApiKeysAction());
   }, [dispatch]);
 
-  const renderContent = () => {
-    if (apiKeys.errorString) {
-      return (
+  const handleCreateApiKey = useCallback(() => {
+    console.log("Create API Key clicked - implement modal/form");
+  }, []);
+
+  const handleEditKey = useCallback((keyId: string) => {
+    console.log("Edit API Key:", keyId);
+  }, []);
+
+  const handleDeleteKey = useCallback((keyId: string) => {
+    console.log("Delete API Key:", keyId);
+  }, []);
+
+  if (apiKeys.errorString) {
+    return (
+      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
         <Notification variant="error" title="Error">
           <ErrorWithExtras
             appError={{
@@ -35,14 +50,20 @@ export const ApiKeys = () => {
             }}
           />
         </Notification>
-      );
-    }
+      </ShowForRoles>
+    );
+  }
 
-    if (apiKeys.status === "PENDING" && apiKeys.items.length === 0) {
-      return <div className="Note">Loading…</div>;
-    }
-
+  if (apiKeys.status === "PENDING" && apiKeys.items.length === 0) {
     return (
+      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
+        <div className="Note">Loading…</div>
+      </ShowForRoles>
+    );
+  }
+
+  return (
+    <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
       <div className="CardStack">
         <div className="CardStack__card">
           <Card>
@@ -56,9 +77,7 @@ export const ApiKeys = () => {
                 icon={<Icon.Add />}
                 iconPosition="right"
                 style={{ marginBottom: "1.5rem" }}
-                onClick={() => {
-                  console.log("Create API Key clicked");
-                }}
+                onClick={handleCreateApiKey}
               >
                 Create API Key
               </Button>
@@ -67,6 +86,8 @@ export const ApiKeys = () => {
               <ApiKeysTable
                 apiKeys={apiKeys.items}
                 isLoading={apiKeys.status === "PENDING"}
+                onEditKey={handleEditKey}
+                onDeleteKey={handleDeleteKey}
               />
             </div>
           </Card>
@@ -85,12 +106,6 @@ export const ApiKeys = () => {
           </Card>
         </div>
       </div>
-    );
-  };
-
-  return (
-    <ShowForRoles acceptedRoles={["owner", "developer"]}>
-      {renderContent()}
     </ShowForRoles>
   );
 };
