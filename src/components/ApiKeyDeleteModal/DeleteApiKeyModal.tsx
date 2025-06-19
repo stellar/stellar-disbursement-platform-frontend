@@ -1,8 +1,12 @@
-import { Button, Input, Modal, Notification } from "@stellar/design-system";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { usePrevious } from "hooks/usePrevious";
 import { useEffect, useState } from "react";
+import { Button, Input, Modal, Notification } from "@stellar/design-system";
+
+import { usePrevious } from "hooks/usePrevious";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+
 import { ApiKey } from "types";
+
+import "./styles.scss";
 
 interface DeleteApiKeyModalProps {
   visible: boolean;
@@ -68,9 +72,7 @@ export const DeleteApiKeyModal: React.FC<DeleteApiKeyModalProps> = ({
             </Notification>
           )}
 
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
+          <div className="DeleteApiKeyModal__content">
             <p>
               Are you sure you want to delete this API key? Type the name of the
               key to confirm you want to delete it.

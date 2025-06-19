@@ -1,16 +1,19 @@
+import { useEffect, useState } from "react";
 import {
   Button,
   Heading,
-  Icon,
   Input,
   Modal,
   Notification,
   Select,
 } from "@stellar/design-system";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+
 import { usePrevious } from "hooks/usePrevious";
-import { useEffect, useState } from "react";
+import { ErrorWithExtras } from "components/ErrorWithExtras";
+
 import { CreateApiKeyRequest } from "types";
+
+import "./styles.scss";
 
 interface CreateApiKeyModalProps {
   visible: boolean;
@@ -120,7 +123,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
     const newPermissions = { ...formData.permissions };
 
     if (resource === "all" && level === "read_write") {
-      // If "All" is set to "Read & Write", reset all others to "none"
       Object.keys(newPermissions).forEach((key) => {
         if (key !== "all") {
           newPermissions[key as keyof PermissionState] = "none";
@@ -130,7 +132,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       resource !== "all" &&
       formData.permissions.all === "read_write"
     ) {
-      // If trying to change other permissions while "All" is "Read & Write", reset "All" first
       newPermissions.all = "none";
     }
 
@@ -147,7 +148,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       return [];
     }
 
-    // Split by newlines and commas, then clean up
     const ips = input
       .split(/[\n,]/)
       .map((ip) => ip.trim())
@@ -157,7 +157,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
   };
 
   const validateIP = (ip: string): boolean => {
-    // Check if it's a CIDR block
     if (ip.includes("/")) {
       const parts = ip.split("/");
       if (parts.length !== 2) return false;
@@ -165,19 +164,15 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       const [ipPart, maskPart] = parts;
       const mask = parseInt(maskPart, 10);
 
-      // Validate IP part (IPv4 only)
       if (!isValidIPAddress(ipPart)) return false;
 
-      // Validate mask (IPv4: 0-32)
       return mask >= 0 && mask <= 32;
     } else {
-      // Regular IP address (IPv4 only)
       return isValidIPAddress(ip);
     }
   };
 
   const isValidIPAddress = (ip: string): boolean => {
-    // IPv4 validation only
     const ipv4Regex = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/;
     if (ipv4Regex.test(ip)) {
       const parts = ip.split(".");
@@ -197,7 +192,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
     const ips = parseAllowedIPs(formData.allowedIPs);
 
     if (ips.length === 0) {
-      return { isValid: true }; // Empty is valid (no restrictions)
+      return { isValid: true };
     }
 
     for (const ip of ips) {
@@ -216,22 +211,19 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
   const convertToApiPermissions = (permissions: PermissionState): string[] => {
     const apiPermissions: string[] = [];
 
-    // Handle "all" permissions first
     if (permissions.all === "read") {
       apiPermissions.push("read:all");
     } else if (permissions.all === "read_write") {
       apiPermissions.push("read:all", "write:all");
-      return apiPermissions; // If all permissions are granted, return early
+      return apiPermissions;
     }
 
-    // Handle specific resource permissions
     Object.entries(permissions).forEach(([resource, level]) => {
       if (resource === "all" || level === "none") return;
 
       if (level === "read") {
         apiPermissions.push(`read:${resource}`);
       } else if (level === "read_write") {
-        // Statistics and exports only have read permissions
         if (resource === "statistics" || resource === "exports") {
           apiPermissions.push(`read:${resource}`);
         } else {
@@ -258,7 +250,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       }
     }
 
-    // Special validation for allowedIPs
     if (event.target.id === "allowedIPs" && event.target.value.trim()) {
       const { isValid } = validateAllowedIPs();
       if (!isValid) {
@@ -308,7 +299,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       return;
     }
 
-    // Validate allowed IPs
     const ipValidation = validateAllowedIPs();
     if (!ipValidation.isValid) {
       setFormErrors([...formErrors, "allowedIPs"]);
@@ -347,9 +337,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
             </Notification>
           )}
 
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
+          <div className="CreateApiKeyModal__form">
             <Input
               fieldSize="sm"
               id="name"
@@ -375,16 +363,8 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               note="Leave empty for no expiration"
             />
 
-            <div>
-              <label
-                htmlFor="allowedIPs"
-                style={{
-                  display: "block",
-                  marginBottom: "0.25rem",
-                  fontWeight: 500,
-                  fontSize: "0.875rem",
-                }}
-              >
+            <div className="CreateApiKeyModal__allowedIPs">
+              <label htmlFor="allowedIPs" className="CreateApiKeyModal__label">
                 Allowed IP addresses (optional)
               </label>
               <textarea
@@ -394,76 +374,43 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                 onChange={handleInputChange}
                 onBlur={handleValidate}
                 placeholder="192.168.1.1&#10;10.0.0.0/24&#10;172.16.0.0/16"
-                style={{
-                  width: "100%",
-                  minHeight: "80px",
-                  padding: "0.5rem",
-                  border: `1px solid ${formErrors.includes("allowedIPs") ? "var(--color-red-60)" : "var(--color-gray-30)"}`,
-                  borderRadius: "4px",
-                  fontSize: "0.875rem",
-                  fontFamily: "monospace",
-                  resize: "vertical",
-                  boxSizing: "border-box",
-                }}
+                className={`CreateApiKeyModal__textarea ${
+                  formErrors.includes("allowedIPs")
+                    ? "CreateApiKeyModal__textarea--error"
+                    : ""
+                }`}
               />
               {formErrors.includes("allowedIPs") && (
-                <div
-                  style={{
-                    color: "var(--color-red-60)",
-                    fontSize: "0.75rem",
-                    marginTop: "0.25rem",
-                  }}
-                >
+                <div className="CreateApiKeyModal__error">
                   {itemHasError("allowedIPs", "Allowed IPs")}
                 </div>
               )}
-              <div
-                style={{
-                  fontSize: "0.75rem",
-                  color: "var(--color-gray-60)",
-                  marginTop: "0.25rem",
-                }}
-              >
+              <div className="CreateApiKeyModal__note">
                 Enter IPv4 addresses or CIDR blocks, one per line or
                 comma-separated. Leave empty to allow access from any IP.
               </div>
             </div>
 
-            <div>
-              <Heading as="h4" size="xs" style={{ marginBottom: "0.5rem" }}>
+            <div className="CreateApiKeyModal__permissions">
+              <Heading
+                as="h4"
+                size="xs"
+                className="CreateApiKeyModal__permissionsHeading"
+              >
                 Permissions
               </Heading>
               {formErrors.includes("permissions") && (
-                <div
-                  style={{
-                    color: "var(--color-red-60)",
-                    fontSize: "0.875rem",
-                    marginBottom: "0.5rem",
-                  }}
-                >
+                <div className="CreateApiKeyModal__permissionsError">
                   At least one permission is required
                 </div>
               )}
 
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.75rem",
-                }}
-              >
-                {/* All Permissions */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span style={{ fontWeight: 500, minWidth: "120px" }}>
+              <div className="CreateApiKeyModal__permissionsList">
+                <div className="CreateApiKeyModal__permissionRow">
+                  <span className="CreateApiKeyModal__permissionLabel CreateApiKeyModal__permissionLabel--bold">
                     All
                   </span>
-                  <div style={{ flexShrink: 0 }}>
+                  <div className="CreateApiKeyModal__permissionSelect">
                     <Select
                       id="permission-all"
                       fieldSize="sm"
@@ -474,7 +421,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                           e.target.value as PermissionLevel,
                         )
                       }
-                      style={{ minWidth: "150px" }}
                     >
                       <option value="none">None</option>
                       <option value="read">Read</option>
@@ -483,15 +429,12 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                   </div>
                 </div>
 
-                {/* Resource-specific permissions */}
                 <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.75rem",
-                    opacity: isAllReadWrite ? 0.5 : 1,
-                    pointerEvents: isAllReadWrite ? "none" : "auto",
-                  }}
+                  className={`CreateApiKeyModal__resourcePermissions ${
+                    isAllReadWrite
+                      ? "CreateApiKeyModal__resourcePermissions--disabled"
+                      : ""
+                  }`}
                 >
                   {[
                     {
@@ -511,17 +454,11 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                     { key: "statistics", label: "Statistics", hasWrite: false },
                     { key: "exports", label: "Exports", hasWrite: false },
                   ].map(({ key, label, hasWrite }) => (
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span style={{ fontWeight: 500, minWidth: "120px" }}>
+                    <div key={key} className="CreateApiKeyModal__permissionRow">
+                      <span className="CreateApiKeyModal__permissionLabel">
                         {label}
                       </span>
-                      <div style={{ flexShrink: 0 }}>
+                      <div className="CreateApiKeyModal__permissionSelect">
                         <Select
                           id={`permission-${key}`}
                           fieldSize="sm"
@@ -534,7 +471,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                               e.target.value as PermissionLevel,
                             )
                           }
-                          style={{ minWidth: "150px" }}
                           disabled={isAllReadWrite}
                         >
                           <option value="none">None</option>
@@ -571,88 +507,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
           </Button>
         </Modal.Footer>
       </form>
-    </Modal>
-  );
-};
-
-interface ApiKeySuccessModalProps {
-  visible: boolean;
-  onClose: () => void;
-  apiKey?: {
-    name: string;
-    key: string;
-  };
-}
-
-export const ApiKeySuccessModal: React.FC<ApiKeySuccessModalProps> = ({
-  visible,
-  onClose,
-  apiKey,
-}) => {
-  const [hasCopied, setHasCopied] = useState(false);
-
-  const handleCopy = () => {
-    if (apiKey?.key) {
-      navigator.clipboard.writeText(apiKey.key);
-      setHasCopied(true);
-      setTimeout(() => setHasCopied(false), 2000);
-    }
-  };
-
-  return (
-    <Modal visible={visible} onClose={onClose}>
-      <Modal.Heading>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <Icon.CheckCircle style={{ color: "var(--color-green-60)" }} />
-          API Key Created Successfully
-        </div>
-      </Modal.Heading>
-      <Modal.Body>
-        <Notification variant="warning" title="Important">
-          API key was successfully create! Make sure to copy and store it
-          securely, THIS KEY WILL NOT BE SHOWN AGAIN. It may take a few minutes
-          to be usable
-        </Notification>
-
-        <div style={{ position: "relative", marginBottom: "1rem" }}>
-          <input
-            type="text"
-            value={apiKey?.key || ""}
-            readOnly
-            style={{
-              width: "100%",
-              padding: "0.75rem",
-              paddingRight: "3rem", // Space for the button
-              borderRadius: "4px",
-              fontFamily: "monospace",
-              fontSize: "0.875rem",
-              boxSizing: "border-box",
-              outline: "none",
-            }}
-          />
-          <Button
-            variant="tertiary"
-            size="sm"
-            icon={hasCopied ? <Icon.Check /> : <Icon.ContentCopy />}
-            onClick={handleCopy}
-            style={{
-              position: "absolute",
-              right: "0rem",
-              top: "50%",
-              transform: "translateY(-50%)",
-              width: "100px",
-              padding: "0.5rem",
-            }}
-          >
-            {hasCopied ? "Copied!" : "Copy"}
-          </Button>
-        </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button size="sm" variant="primary" onClick={onClose}>
-          I have saved the key securely
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };

@@ -1,0 +1,38 @@
+.ApiKeySuccessModal {
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__successIcon {
+    color: var(--color-green-60);
+  }
+
+  &__keyContainer {
+    position: relative;
+    margin-bottom: 1rem;
+
+    button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 44px;
+      width: 100px;
+      margin: 0;
+      border-radius: 0 4px 4px 0;
+      transform: none;
+    }
+  }
+
+  &__keyInput {
+    width: 100%;
+    height: 44px;
+    padding: 0.75rem;
+    padding-right: 100px;
+    border-radius: 4px;
+    font-family: monospace;
+    box-sizing: border-box;
+    outline: none;
+  }
+}
