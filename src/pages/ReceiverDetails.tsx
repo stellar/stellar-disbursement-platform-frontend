@@ -8,6 +8,7 @@ import {
   Profile,
   Select,
   Button,
+  Modal,
 } from "@stellar/design-system";
 
 import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
@@ -26,6 +27,7 @@ import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { useReceiverWalletInviteSmsRetry } from "apiQueries/useReceiverWalletInviteSmsRetry";
+import { useUpdateReceiverWalletStatus } from "apiQueries/useUpdateReceiverWalletStatus";
 
 import { percent } from "helpers/formatIntlNumber";
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
@@ -39,6 +41,8 @@ export const ReceiverDetails = () => {
   const { id: receiverId } = useParams();
 
   const [selectedWallet, setSelectedWallet] = useState<ReceiverWallet>();
+  const [isUnregisterModalVisible, setIsUnregisterModalVisible] =
+    useState(false);
 
   const {
     data: receiverDetails,
@@ -57,6 +61,15 @@ export const ReceiverDetails = () => {
     error: invitationRetryError,
     refetch: retryReceiverInvitation,
   } = useReceiverWalletInviteSmsRetry(selectedWallet?.id);
+
+  const {
+    mutateAsync: unregisterWallet,
+    isPending: isUnregisterWalletPending,
+    isSuccess: isUnregisterWalletSuccess,
+    isError: isUnregisterWalletError,
+    error: unregisterWalletError,
+    reset: resetUnregisterWallet,
+  } = useUpdateReceiverWalletStatus();
 
   const [selectedWalletId, setSelectedWalletId] = useState<string | undefined>(
     receiverDetails?.wallets?.[0]?.id,
@@ -81,24 +94,54 @@ export const ReceiverDetails = () => {
   }, [defaultWalletId, isReceiverDetailsSuccess]);
 
   useEffect(() => {
-    if (selectedWalletId) {
+    if (selectedWalletId && receiverDetails?.wallets) {
       setSelectedWallet(
-        receiverDetails?.wallets.find((w) => w.id === selectedWalletId),
+        receiverDetails.wallets.find((w) => w.id === selectedWalletId),
       );
     }
-    // We don't want to track receiverDetails here
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWalletId]);
+  }, [selectedWalletId, receiverDetails]);
 
   useEffect(() => {
     return () => {
       if (isInvitationRetrySuccess || isInvitationRetryError) {
         resetInvitationRetry();
       }
+      if (isUnregisterWalletSuccess || isUnregisterWalletError) {
+        resetUnregisterWallet();
+      }
     };
     // Don't need to include queryClient.resetQueries
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInvitationRetryError, isInvitationRetrySuccess]);
+  }, [
+    isInvitationRetryError,
+    isInvitationRetrySuccess,
+    isUnregisterWalletError,
+    isUnregisterWalletSuccess,
+  ]);
+
+  useEffect(() => {
+    if (isUnregisterWalletSuccess) {
+      // Trigger receiver details refetch
+      queryClient.invalidateQueries({
+        queryKey: ["receivers", "receiver", receiverId],
+      });
+    }
+  }, [isUnregisterWalletSuccess, queryClient, receiverId]);
+
+  const showUnregisterModal = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    event.preventDefault();
+    resetUnregisterWallet();
+    setIsUnregisterModalVisible(true);
+  };
+
+  const hideUnregisterModal = () => {
+    setIsUnregisterModalVisible(false);
+    if (isUnregisterWalletError) {
+      resetUnregisterWallet();
+    }
+  };
 
   const calculateRate = () => {
     if (!stats) return 0;
@@ -114,6 +157,40 @@ export const ReceiverDetails = () => {
     return {
       "--StatCard-template-rows": rows,
     } as React.CSSProperties;
+  };
+
+  const renderRetryInvitationButton = () => {
+    return (
+      <Button
+        variant="secondary"
+        size="xs"
+        onClick={(e) => {
+          e.preventDefault();
+          retryReceiverInvitation();
+        }}
+        isLoading={isInvitationRetryFetching}
+        disabled={Boolean(selectedWallet?.stellarAddress)}
+        {...(selectedWallet?.stellarAddress
+          ? { title: "This wallet has already been registered" }
+          : {})}
+      >
+        Retry invitation message
+      </Button>
+    );
+  };
+
+  const renderUnregisterWalletButton = () => {
+    return (
+      <Button
+        variant="secondary"
+        size="xs"
+        onClick={showUnregisterModal}
+        isLoading={isUnregisterWalletPending}
+        title="Unregister this wallet"
+      >
+        Unregister Wallet
+      </Button>
+    );
   };
 
   const renderInfoCards = () => {
@@ -278,6 +355,40 @@ export const ReceiverDetails = () => {
             <ErrorWithExtras appError={invitationRetryError} />
           </NotificationWithButtons>
         )}
+        {isUnregisterWalletSuccess && (
+          <NotificationWithButtons
+            variant="success"
+            title="Wallet unregistered successfully!"
+            buttons={[
+              {
+                label: "Dismiss",
+                onClick: () => {
+                  resetUnregisterWallet();
+                },
+              },
+            ]}
+          >
+            The wallet has been set to 'Ready' status. The receiver can register
+            again with their original link or you can resend the invitation
+            message below.
+          </NotificationWithButtons>
+        )}
+        {isUnregisterWalletError && (
+          <NotificationWithButtons
+            variant="error"
+            title="Error Unregistering Wallet"
+            buttons={[
+              {
+                label: "Dismiss",
+                onClick: () => {
+                  resetUnregisterWallet();
+                },
+              },
+            ]}
+          >
+            <ErrorWithExtras appError={unregisterWalletError} />
+          </NotificationWithButtons>
+        )}
         <div className="ReceiverDetails__wallets__row">
           <div className="ReceiverDetails__wallets__dropdown">
             <Select
@@ -305,21 +416,9 @@ export const ReceiverDetails = () => {
           </div>
 
           <div>
-            <Button
-              variant="secondary"
-              size="xs"
-              onClick={(e) => {
-                e.preventDefault();
-                retryReceiverInvitation();
-              }}
-              isLoading={isInvitationRetryFetching}
-              disabled={Boolean(selectedWallet?.stellarAddress)}
-              {...(selectedWallet?.stellarAddress
-                ? { title: "This wallet has already been registered" }
-                : {})}
-            >
-              Retry invitation message
-            </Button>
+            {selectedWallet?.stellarAddress
+              ? renderUnregisterWalletButton()
+              : renderRetryInvitationButton()}
           </div>
         </div>
 
@@ -556,6 +655,47 @@ export const ReceiverDetails = () => {
       />
 
       {renderContent()}
+
+      <Modal visible={isUnregisterModalVisible} onClose={hideUnregisterModal}>
+        <Modal.Heading>Confirm Unregister Wallet</Modal.Heading>
+        <Modal.Body>
+          <p>
+            Are you sure you want to unregister this wallet? The receiver will
+            need to go through verification again to receive payments.
+            <br />
+            The receiver can register the same wallet if unregistered by
+            mistake.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={hideUnregisterModal}
+            isLoading={isUnregisterWalletPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={(event) => {
+              event.preventDefault();
+
+              if (selectedWallet?.id) {
+                unregisterWallet({
+                  receiverWalletId: selectedWallet.id,
+                  status: "READY",
+                });
+                setIsUnregisterModalVisible(false);
+              }
+            }}
+            isLoading={isUnregisterWalletPending}
+          >
+            Unregister Wallet
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
