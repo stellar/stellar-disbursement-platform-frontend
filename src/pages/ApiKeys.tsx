@@ -1,10 +1,4 @@
-import {
-  Card,
-  Heading,
-  Notification,
-  Icon,
-  Button,
-} from "@stellar/design-system";
+import { Notification } from "@stellar/design-system";
 import { useEffect, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -16,12 +10,13 @@ import {
   clearApiKeysErrorAction,
 } from "store/ducks/apiKeys";
 
-import { ApiKeysTable } from "components/ApiKeysTable";
+import { ApiKeysTable } from "components/ApiKeysTable/ApiKeysTable";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { ShowForRoles } from "components/ShowForRoles";
-import { ApiKeysDescription } from "components/ApiKeysDescription";
+import { ApiKeysDescription } from "components/ApiKeysDescription/ApiKeysDescription";
 import { UserRole, CreateApiKeyRequest, ApiKey } from "types";
-import { ApiKeySuccessModal, CreateApiKeyModal } from "components/ApiKeyModal";
+import { CreateApiKeyModal } from "components/ApiKeyCreateModal/ApiKeyCreateModal";
+import { ApiKeySuccessModal } from "components/ApiKeySuccessModal/ApiKeySuccessModal";
 
 const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 
@@ -117,44 +112,17 @@ export const ApiKeys = () => {
     <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
       <div className="CardStack">
         <div className="CardStack__card">
-          <Card>
-            <div className="CardStack__title">
-              <Heading as="h3" size="sm" style={{ marginBottom: "1.5rem" }}>
-                API Keys
-              </Heading>
-              <Button
-                variant="tertiary"
-                size="sm"
-                icon={<Icon.Add />}
-                iconPosition="right"
-                style={{ marginBottom: "1.5rem" }}
-                onClick={handleCreateApiKey}
-              >
-                Create API Key
-              </Button>
-            </div>
-            <div className="CardStack__body">
-              <ApiKeysTable
-                apiKeys={apiKeys.items}
-                isLoading={apiKeys.status === "PENDING"}
-                onEditKey={handleEditKey}
-                onDeleteKey={handleDeleteKey}
-              />
-            </div>
-          </Card>
+          <ApiKeysTable
+            apiKeys={apiKeys.items}
+            isLoading={apiKeys.status === "PENDING"}
+            onCreateKey={handleCreateApiKey}
+            onEditKey={handleEditKey}
+            onDeleteKey={handleDeleteKey}
+          />
         </div>
 
         <div className="CardStack__card">
-          <Card>
-            <div className="CardStack__title">
-              <Heading as="h3" size="sm" style={{ marginBottom: "1rem" }}>
-                Available API Fields
-              </Heading>
-            </div>
-            <div className="CardStack__body">
-              <ApiKeysDescription />
-            </div>
-          </Card>
+          <ApiKeysDescription />
         </div>
       </div>
 
