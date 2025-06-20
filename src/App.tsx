@@ -38,6 +38,7 @@ import { Help } from "pages/Help";
 import { NotFound } from "pages/NotFound";
 import { Unauthorized } from "pages/Unauthorized";
 import { SigninOidc } from "pages/Redirect";
+import { ApiKeys } from "pages/ApiKeys";
 
 import "styles.scss";
 
@@ -265,6 +266,17 @@ export const App = () => {
                 <PrivateRoute>
                   <InnerPage>
                     <Analytics />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            {/* Api Keys */}
+            <Route
+              path={Routes.API_KEYS}
+              element={
+                <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                  <InnerPage>
+                    <ApiKeys />
                   </InnerPage>
                 </PrivateRoute>
               }

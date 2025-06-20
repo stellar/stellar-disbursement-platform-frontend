@@ -35,6 +35,7 @@ export enum Routes {
   ANALYTICS = "/analytics",
   PROFILE = "/profile",
   SETTINGS = "/settings",
+  API_KEYS = "/api-keys",
   HELP = "/help",
   UNAUTHORIZED = "/unauthorized",
 }

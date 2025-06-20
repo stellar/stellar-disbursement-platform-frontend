@@ -102,6 +102,7 @@ export interface Store {
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
   userAccount: UserAccountInitialState;
+  apiKeys: ApiKeysInitialState;
 }
 
 export type StoreKey = keyof Store;
@@ -935,4 +936,45 @@ export type ApiStellarTransaction = {
   signatures: string[];
   valid_after: string;
   valid_before: string;
+};
+
+export type ApiKey = {
+  id: string;
+  name: string;
+  key?: string; // Only provided during creation
+  expiry_date: string | null;
+  permissions: string[];
+  created_at: string;
+  created_by: string;
+  updated_at: string;
+  updated_by: string;
+  last_used_at: string | null;
+  allowed_ips: string[];
+  enabled: boolean;
+};
+
+export type ApiKeysInitialState = {
+  items: ApiKey[];
+  status: ActionStatus | undefined;
+  errorString?: string;
+};
+
+export type ApiKeysResponse = {
+  data: ApiKey[];
+};
+
+export type CreateApiKeyRequest = {
+  name: string;
+  expiry_date?: string | null;
+  permissions: string[];
+  allowed_ips?: string[];
+  enabled?: boolean;
+};
+
+export type UpdateApiKeyRequest = {
+  name?: string;
+  expiry_date?: string | null;
+  permissions?: string[];
+  allowed_ips?: string[];
+  enabled?: boolean;
 };

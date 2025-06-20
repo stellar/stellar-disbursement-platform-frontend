@@ -1,0 +1,71 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "store";
+import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
+import { refreshSessionToken } from "helpers/refreshSessionToken";
+import { normalizeApiError } from "helpers/normalizeApiError";
+import { ApiKey, ApiKeysInitialState, ApiError, RejectMessage } from "types";
+import { getApiKeys } from "api/getApiKeys";
+
+export const apiKeysInitialState: ApiKeysInitialState = {
+  items: [],
+  status: undefined,
+  errorString: undefined,
+};
+
+export const getApiKeysAction = createAsyncThunk<
+  ApiKey[],
+  undefined,
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "apiKeys/getApiKeysAction",
+  async (_, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+
+    try {
+      const response = await getApiKeys(token);
+      refreshSessionToken(dispatch);
+
+      return Array.isArray(response) ? response : response.data || [];
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error fetching API keys: ${errorString}`,
+      });
+    }
+  },
+);
+
+const apiKeysSlice = createSlice({
+  name: "apiKeys",
+  initialState: apiKeysInitialState,
+  reducers: {
+    resetApiKeysAction: () => apiKeysInitialState,
+    clearApiKeysErrorAction: (state) => {
+      state.errorString = undefined;
+      state.status = "SUCCESS";
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getApiKeysAction.pending, (state = apiKeysInitialState) => {
+        state.status = "PENDING";
+        state.errorString = undefined;
+      })
+      .addCase(getApiKeysAction.fulfilled, (state, action) => {
+        state.status = "SUCCESS";
+        state.items = action.payload;
+        state.errorString = undefined;
+      })
+      .addCase(getApiKeysAction.rejected, (state, action) => {
+        state.status = "ERROR";
+        state.errorString = action.payload?.errorString;
+      });
+  },
+});
+
+export const { resetApiKeysAction, clearApiKeysErrorAction } =
+  apiKeysSlice.actions;
+export const { reducer } = apiKeysSlice;
