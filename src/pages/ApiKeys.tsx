@@ -88,15 +88,9 @@ export const ApiKeys = () => {
     [dispatch],
   );
 
-  const handleSubmitDeleteApiKey = useCallback(
-    async (apiKeyId: string) => {
-      try {
-        await dispatch(deleteApiKeyAction(apiKeyId)).unwrap();
-        setIsDeleteModalVisible(false);
-        setSelectedApiKey(undefined);
-      } catch (error) {
-        console.error("Failed to delete API key:", error);
-      }
+  const deleteApiKey = useCallback(
+    (apiKeyId: string) => {
+      dispatch(deleteApiKeyAction(apiKeyId));
     },
     [dispatch],
   );
@@ -128,6 +122,12 @@ export const ApiKeys = () => {
     },
     [apiKeys.items],
   );
+  useEffect(() => {
+    if (apiKeys.status === "SUCCESS") {
+      setIsDeleteModalVisible(false);
+      setSelectedApiKey(undefined);
+    }
+  }, [apiKeys.status]);
 
   const handleDeleteKey = useCallback(
     (keyId: string) => {
@@ -202,7 +202,7 @@ export const ApiKeys = () => {
       <DeleteApiKeyModal
         visible={isDeleteModalVisible}
         onClose={handleCloseDeleteModal}
-        onSubmit={handleSubmitDeleteApiKey}
+        onSubmit={deleteApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
         errorMessage={apiKeys.errorString}

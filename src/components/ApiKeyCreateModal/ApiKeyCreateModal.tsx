@@ -6,12 +6,14 @@ import {
   Modal,
   Notification,
   Select,
+  Textarea,
 } from "@stellar/design-system";
 
 import { usePrevious } from "hooks/usePrevious";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { CreateApiKeyRequest } from "types";
+import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
 
 import "./styles.scss";
 
@@ -324,9 +326,13 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
 
   return (
     <Modal visible={visible} onClose={handleClose}>
-      <Modal.Heading>Create API Key</Modal.Heading>
+      <Modal.Heading>Create new key</Modal.Heading>
       <form onSubmit={handleSubmit} onReset={handleClose}>
         <Modal.Body>
+          <div className="CreateApiKeyModal__description">
+            Generate an API key for authenticating with our API.
+          </div>
+          <div className="CreateApiKeyModal__permissionsDivider" />
           {errorMessage && (
             <Notification variant="error" title="Error">
               <ErrorWithExtras
@@ -363,33 +369,19 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               note="Leave empty for no expiration"
             />
 
-            <div className="CreateApiKeyModal__allowedIPs">
-              <label htmlFor="allowedIPs" className="CreateApiKeyModal__label">
-                Allowed IP addresses (optional)
-              </label>
-              <textarea
-                id="allowedIPs"
-                name="allowedIPs"
-                value={formData.allowedIPs}
-                onChange={handleInputChange}
-                onBlur={handleValidate}
-                placeholder="192.168.1.1&#10;10.0.0.0/24&#10;172.16.0.0/16"
-                className={`CreateApiKeyModal__textarea ${
-                  formErrors.includes("allowedIPs")
-                    ? "CreateApiKeyModal__textarea--error"
-                    : ""
-                }`}
-              />
-              {formErrors.includes("allowedIPs") && (
-                <div className="CreateApiKeyModal__error">
-                  {itemHasError("allowedIPs", "Allowed IPs")}
-                </div>
-              )}
-              <div className="CreateApiKeyModal__note">
-                Enter IPv4 addresses or CIDR blocks, one per line or
-                comma-separated. Leave empty to allow access from any IP.
-              </div>
-            </div>
+            <Textarea
+              fieldSize="sm"
+              id="allowedIPs"
+              name="allowedIPs"
+              label="Allowed IP addresses (optional)"
+              placeholder="192.168.1.1&#10;10.0.0.0/24&#10;172.16.0.0/16"
+              value={formData.allowedIPs}
+              onChange={handleInputChange}
+              onBlur={handleValidate}
+              error={itemHasError("allowedIPs", "Allowed IPs")}
+              note="Enter IPv4 addresses or CIDR blocks, one per line or comma-separated. Leave empty to allow access from any IP."
+              className="CreateApiKeyModal__allowedIPs"
+            />
 
             <div className="CreateApiKeyModal__permissions">
               <Heading
@@ -399,6 +391,9 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               >
                 Permissions
               </Heading>
+
+              <div className="CreateApiKeyModal__permissionsDivider" />
+
               {formErrors.includes("permissions") && (
                 <div className="CreateApiKeyModal__permissionsError">
                   At least one permission is required
@@ -436,56 +431,45 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                       : ""
                   }`}
                 >
-                  {[
-                    {
-                      key: "disbursements",
-                      label: "Disbursements",
-                      hasWrite: true,
-                    },
-                    { key: "receivers", label: "Receivers", hasWrite: true },
-                    { key: "payments", label: "Payments", hasWrite: true },
-                    {
-                      key: "organization",
-                      label: "Organization",
-                      hasWrite: true,
-                    },
-                    { key: "users", label: "Users", hasWrite: true },
-                    { key: "wallets", label: "Wallets", hasWrite: true },
-                    { key: "statistics", label: "Statistics", hasWrite: false },
-                    { key: "exports", label: "Exports", hasWrite: false },
-                  ].map(({ key, label, hasWrite }) => (
-                    <div key={key} className="CreateApiKeyModal__permissionRow">
-                      <span className="CreateApiKeyModal__permissionLabel">
-                        {label}
-                      </span>
-                      <div className="CreateApiKeyModal__permissionSelect">
-                        <Select
-                          id={`permission-${key}`}
-                          fieldSize="sm"
-                          value={
-                            formData.permissions[key as keyof PermissionState]
-                          }
-                          onChange={(e) =>
-                            handlePermissionChange(
-                              key as keyof PermissionState,
-                              e.target.value as PermissionLevel,
-                            )
-                          }
-                          disabled={isAllReadWrite}
-                        >
-                          <option value="none">None</option>
-                          <option value="read">Read</option>
-                          {hasWrite && (
-                            <option value="read_write">Read & Write</option>
-                          )}
-                        </Select>
+                  {API_KEY_PERMISSION_RESOURCES.map(
+                    ({ key, label, hasWrite }) => (
+                      <div
+                        key={key}
+                        className="CreateApiKeyModal__permissionRow"
+                      >
+                        <span className="CreateApiKeyModal__permissionLabel">
+                          {label}
+                        </span>
+                        <div className="CreateApiKeyModal__permissionSelect">
+                          <Select
+                            id={`permission-${key}`}
+                            fieldSize="sm"
+                            value={
+                              formData.permissions[key as keyof PermissionState]
+                            }
+                            onChange={(e) =>
+                              handlePermissionChange(
+                                key as keyof PermissionState,
+                                e.target.value as PermissionLevel,
+                              )
+                            }
+                            disabled={isAllReadWrite}
+                          >
+                            <option value="none">None</option>
+                            <option value="read">Read</option>
+                            {hasWrite && (
+                              <option value="read_write">Read & Write</option>
+                            )}
+                          </Select>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
               </div>
             </div>
           </div>
+          <div className="CreateApiKeyModal__permissionsDivider" />
         </Modal.Body>
         <Modal.Footer>
           <Button

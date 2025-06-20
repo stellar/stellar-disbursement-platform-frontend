@@ -656,7 +656,8 @@ export type ApiPayment = {
   stellar_address?: string;
   status: PaymentStatus;
   status_history: ApiPaymentStatusHistory[];
-  disbursement: ApiPaymentDisbursement;
+  payment_type: "DISBURSEMENT" | "DIRECT";
+  disbursement?: ApiPaymentDisbursement;
   asset: ApiPaymentAsset;
   receiver_wallet: ApiPaymentReceiverWallet;
   created_at: string;
