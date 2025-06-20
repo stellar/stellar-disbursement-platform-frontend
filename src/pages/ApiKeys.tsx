@@ -58,9 +58,25 @@ export const ApiKeys = () => {
     dispatch(clearApiKeysErrorAction());
   }, [dispatch]);
 
-  const createApiKey = useCallback(
-    (apiKeyData: CreateApiKeyRequest) => {
-      dispatch(createApiKeyAction(apiKeyData));
+  const handleSubmitCreateApiKey = useCallback(
+    async (apiKeyData: CreateApiKeyRequest) => {
+      try {
+        const resultAction = await dispatch(createApiKeyAction(apiKeyData));
+
+        if (createApiKeyAction.fulfilled.match(resultAction)) {
+          const newApiKey = resultAction.payload as ApiKey;
+
+          setIsCreateModalVisible(false);
+
+          setCreatedApiKey({
+            name: newApiKey.name,
+            key: newApiKey.key || "", // The key should be present in creation response
+          });
+          setIsSuccessModalVisible(true);
+        }
+      } catch (error) {
+        console.error("Error creating API key:", error);
+      }
     },
     [dispatch],
   );
@@ -74,30 +90,10 @@ export const ApiKeys = () => {
 
   useEffect(() => {
     if (apiKeys.status === "SUCCESS") {
-      if (isCreateModalVisible && apiKeys.items.length > 0) {
-        const newestKey = apiKeys.items[0];
-
-        if (newestKey.key) {
-          setCreatedApiKey({
-            name: newestKey.name,
-            key: newestKey.key,
-          });
-          setIsCreateModalVisible(false);
-          setIsSuccessModalVisible(true);
-        }
-      }
-
-      if (isDeleteModalVisible) {
-        setIsDeleteModalVisible(false);
-        setSelectedApiKey(undefined);
-      }
+      setIsDeleteModalVisible(false);
+      setSelectedApiKey(undefined);
     }
-  }, [
-    apiKeys.status,
-    isCreateModalVisible,
-    isDeleteModalVisible,
-    apiKeys.items,
-  ]);
+  }, [apiKeys.status]);
 
   const handleEditKey = useCallback((keyId: string) => {
     console.log("Edit API Key:", keyId);
@@ -168,7 +164,7 @@ export const ApiKeys = () => {
       <CreateApiKeyModal
         visible={isCreateModalVisible}
         onClose={handleCloseCreateModal}
-        onSubmit={createApiKey}
+        onSubmit={handleSubmitCreateApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
         errorMessage={apiKeys.errorString}
