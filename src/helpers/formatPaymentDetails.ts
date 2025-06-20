@@ -4,8 +4,8 @@ export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
   return {
     id: payment.id,
     createdAt: payment.created_at,
-    disbursementName: payment.disbursement.name,
-    disbursementId: payment.disbursement.id,
+    disbursementName: payment.disbursement?.name || "Direct Payment",
+    disbursementId: payment.disbursement?.id || "",
     receiverId: payment?.receiver_wallet?.receiver?.id,
     receiverWalletId: payment?.receiver_wallet?.id,
     transactionId: payment.stellar_transaction_id,
