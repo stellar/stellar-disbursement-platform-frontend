@@ -4,6 +4,7 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 import { Table } from "components/Table";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { DropdownMenu } from "components/DropdownMenu";
+import { EmptyStateMessage } from "components/EmptyStateMessage/EmptyStateMessage";
 
 import { ApiKey } from "types";
 
@@ -31,10 +32,10 @@ const getApiKeyStatus = (apiKey: ApiKey): ApiKeyStatus => {
 const EmptyState = () => (
   <Card variant="secondary">
     <div className="ApiKeysTable__emptyState">
-      <div className="Note">
-        <Icon.Key />
-        You have no keys. Create one to get started.
-      </div>
+      <EmptyStateMessage
+        icon={<Icon.Key />}
+        message="You have no keys. Create one to get started."
+      />
     </div>
   </Card>
 );

@@ -1,5 +1,3 @@
-@use "./styles-utils.scss" as *;
-
 .ApiKeysTable {
   &__header {
     display: flex;
@@ -11,9 +9,9 @@
   &__emptyState {
     display: flex;
     flex-direction: column;
-    padding: pxToRem(48) pxToRem(24);
+    padding: 48px 24px;
     text-align: center;
-    gap: pxToRem(8);
+    gap: 8px;
   }
 
   &__actionItem {
@@ -23,12 +21,12 @@
   }
 
   &__keyName {
-    font-weight: var(--font-weight-medium);
+    font-weight: 500;
   }
 }
 
 .StatusCell {
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
 
   &[data-status="active"] {
     color: var(--color-green-60);
