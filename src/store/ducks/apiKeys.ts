@@ -1,8 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "store";
+
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
 import { normalizeApiError } from "helpers/normalizeApiError";
+import { getApiKeys } from "api/getApiKeys";
+import { postApiKey } from "api/postApiKey";
+import { deleteApiKey } from "api/deleteApiKey";
+import { updateApiKey, UpdateApiKeyRequest } from "api/updateApiKey";
+
 import {
   ApiKey,
   ApiKeysInitialState,
@@ -10,9 +15,8 @@ import {
   RejectMessage,
   CreateApiKeyRequest,
 } from "types";
-import { getApiKeys } from "api/getApiKeys";
-import { postApiKey } from "api/postApiKey";
-import { deleteApiKey } from "api/deleteApiKey";
+
+import { RootState } from "store";
 
 export const apiKeysInitialState: ApiKeysInitialState = {
   items: [],
@@ -98,6 +102,32 @@ export const deleteApiKeyAction = createAsyncThunk<
   },
 );
 
+export const updateApiKeyAction = createAsyncThunk<
+  string,
+  { apiKeyId: string; updateData: UpdateApiKeyRequest },
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "apiKeys/updateApiKeyAction",
+  async ({ apiKeyId, updateData }, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+
+    try {
+      await updateApiKey(token, apiKeyId, updateData);
+      refreshSessionToken(dispatch);
+
+      return apiKeyId;
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error updating API key: ${errorString}`,
+      });
+    }
+  },
+);
+
 const apiKeysSlice = createSlice({
   name: "apiKeys",
   initialState: apiKeysInitialState,
@@ -148,6 +178,29 @@ const apiKeysSlice = createSlice({
         state.errorString = undefined;
       })
       .addCase(deleteApiKeyAction.rejected, (state, action) => {
+        state.status = "ERROR";
+        state.errorString = action.payload?.errorString;
+      })
+      // Update API Key
+      .addCase(updateApiKeyAction.pending, (state) => {
+        state.status = "PENDING";
+        state.errorString = undefined;
+      })
+      .addCase(updateApiKeyAction.fulfilled, (state, action) => {
+        state.status = "SUCCESS";
+        // Optimistically update the item with the data we sent
+        const { apiKeyId, updateData } = action.meta.arg;
+        const index = state.items.findIndex((item) => item.id === apiKeyId);
+        if (index !== -1) {
+          state.items[index] = {
+            ...state.items[index],
+            permissions: updateData.permissions,
+            allowed_ips: updateData.allowed_ips || [],
+          };
+        }
+        state.errorString = undefined;
+      })
+      .addCase(updateApiKeyAction.rejected, (state, action) => {
         state.status = "ERROR";
         state.errorString = action.payload?.errorString;
       });
