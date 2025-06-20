@@ -58,44 +58,46 @@ export const ApiKeys = () => {
     dispatch(clearApiKeysErrorAction());
   }, [dispatch]);
 
-  const handleSubmitCreateApiKey = useCallback(
-    async (apiKeyData: CreateApiKeyRequest) => {
-      try {
-        const resultAction = await dispatch(createApiKeyAction(apiKeyData));
+  const createApiKey = useCallback(
+    (apiKeyData: CreateApiKeyRequest) => {
+      dispatch(createApiKeyAction(apiKeyData));
+    },
+    [dispatch],
+  );
 
-        if (createApiKeyAction.fulfilled.match(resultAction)) {
-          const newApiKey = resultAction.payload as ApiKey;
+  const deleteApiKey = useCallback(
+    (apiKeyId: string) => {
+      dispatch(deleteApiKeyAction(apiKeyId));
+    },
+    [dispatch],
+  );
 
-          setIsCreateModalVisible(false);
+  useEffect(() => {
+    if (apiKeys.status === "SUCCESS") {
+      if (isCreateModalVisible && apiKeys.items.length > 0) {
+        const newestKey = apiKeys.items[0];
 
+        if (newestKey.key) {
           setCreatedApiKey({
-            name: newApiKey.name,
-            key: newApiKey.key || "", // The key should be present in creation response
+            name: newestKey.name,
+            key: newestKey.key,
           });
+          setIsCreateModalVisible(false);
           setIsSuccessModalVisible(true);
         }
-      } catch (error) {
-        console.error("Error creating API key:", error);
       }
-    },
-    [dispatch],
-  );
 
-  const handleSubmitDeleteApiKey = useCallback(
-    async (apiKeyId: string) => {
-      try {
-        const resultAction = await dispatch(deleteApiKeyAction(apiKeyId));
-
-        if (deleteApiKeyAction.fulfilled.match(resultAction)) {
-          setIsDeleteModalVisible(false);
-          setSelectedApiKey(undefined);
-        }
-      } catch (error) {
-        console.error("Error deleting API key:", error);
+      if (isDeleteModalVisible) {
+        setIsDeleteModalVisible(false);
+        setSelectedApiKey(undefined);
       }
-    },
-    [dispatch],
-  );
+    }
+  }, [
+    apiKeys.status,
+    isCreateModalVisible,
+    isDeleteModalVisible,
+    apiKeys.items,
+  ]);
 
   const handleEditKey = useCallback((keyId: string) => {
     console.log("Edit API Key:", keyId);
@@ -166,7 +168,7 @@ export const ApiKeys = () => {
       <CreateApiKeyModal
         visible={isCreateModalVisible}
         onClose={handleCloseCreateModal}
-        onSubmit={handleSubmitCreateApiKey}
+        onSubmit={createApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
         errorMessage={apiKeys.errorString}
@@ -181,7 +183,7 @@ export const ApiKeys = () => {
       <DeleteApiKeyModal
         visible={isDeleteModalVisible}
         onClose={handleCloseDeleteModal}
-        onSubmit={handleSubmitDeleteApiKey}
+        onSubmit={deleteApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
         errorMessage={apiKeys.errorString}
