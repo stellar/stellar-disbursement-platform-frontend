@@ -469,6 +469,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               </div>
             </div>
           </div>
+          <div className="CreateApiKeyModal__permissionsDivider" />
         </Modal.Body>
         <Modal.Footer>
           <Button

@@ -23,12 +23,12 @@
   }
 
   &__keyName {
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
   }
 }
 
 .StatusCell {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 
   &[data-status="active"] {
     color: var(--color-green-60);
