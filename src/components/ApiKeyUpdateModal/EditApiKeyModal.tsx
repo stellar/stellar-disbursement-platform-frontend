@@ -6,6 +6,7 @@ import {
   Modal,
   Notification,
   Select,
+  Textarea,
 } from "@stellar/design-system";
 
 import { usePrevious } from "hooks/usePrevious";
@@ -14,6 +15,7 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 
 import { ApiKey } from "types";
 import { UpdateApiKeyRequest } from "api/updateApiKey";
+import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
 
 import "./styles.scss";
 
@@ -78,19 +80,17 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
   const parseExistingPermissions = (permissions: string[]): PermissionState => {
     const state = { ...INITIAL_PERMISSIONS };
 
-    // Check for "all" permissions
     const hasReadAll = permissions.includes("read:all");
     const hasWriteAll = permissions.includes("write:all");
 
     if (hasReadAll && hasWriteAll) {
       state.all = "read_write";
-      return state; // If all permissions, return early
+      return state;
     } else if (hasReadAll) {
       state.all = "read";
       return state;
     }
 
-    // Parse individual permissions
     const resourceMap: Record<string, keyof PermissionState> = {
       disbursements: "disbursements",
       receivers: "receivers",
@@ -118,7 +118,6 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
 
   useEffect(() => {
     if (visible && apiKey) {
-      // Initialize form with existing API key data
       const allowedIpsString = Array.isArray(apiKey.allowed_ips)
         ? apiKey.allowed_ips.join("\n")
         : apiKey.allowed_ips || "";
@@ -322,12 +321,12 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
     return true;
   };
 
-  const itemHasError = (id: string) => {
+  const itemHasError = (id: string, label: string) => {
     if (id === "allowedIPs" && formErrors.includes(id)) {
       const { error } = validateAllowedIPs();
       return error || "Invalid IP format";
     }
-    return undefined;
+    return formErrors.includes(id) ? `${label} is required` : undefined;
   };
 
   const canSubmit =
@@ -374,6 +373,10 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
       <Modal.Heading>Edit API Key</Modal.Heading>
       <form onSubmit={handleSubmit} onReset={handleClose}>
         <Modal.Body>
+          <div className="EditApiKeyModal__description">
+            Update the permissions and IP restrictions for this API key.
+          </div>
+          <div className="EditApiKeyModal__permissionsDivider" />
           {errorMessage && (
             <Notification variant="error" title="Error">
               <ErrorWithExtras
@@ -385,63 +388,45 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
           )}
 
           <div className="EditApiKeyModal__form">
-            {/* Read-only fields */}
-            <div className="EditApiKeyModal__readOnlySection">
-              <Input
-                fieldSize="sm"
-                id="name"
-                name="name"
-                type="text"
-                label="Key name"
-                value={apiKey.name}
-                disabled
-                note="Key name cannot be changed"
-              />
+            <Input
+              fieldSize="sm"
+              id="name"
+              name="name"
+              type="text"
+              label="Key name"
+              value={apiKey.name}
+              disabled
+              note="Key name cannot be changed"
+            />
 
-              <Input
-                fieldSize="sm"
-                id="expiryDate"
-                name="expiryDate"
-                type="text"
-                label="Expiration date"
-                value={
-                  apiKey.expiry_date
-                    ? formatDateTime(apiKey.expiry_date)
-                    : "No expiration"
-                }
-                disabled
-                note="Expiration date cannot be changed"
-              />
-            </div>
+            <Input
+              fieldSize="sm"
+              id="expiryDate"
+              name="expiryDate"
+              type="text"
+              label="Expiration date"
+              value={
+                apiKey.expiry_date
+                  ? formatDateTime(apiKey.expiry_date)
+                  : "No expiration"
+              }
+              disabled
+              note="Expiration date cannot be changed"
+            />
 
-            {/* Editable fields */}
-            <div className="EditApiKeyModal__allowedIPs">
-              <label htmlFor="allowedIPs" className="EditApiKeyModal__label">
-                Allowed IP addresses (optional)
-              </label>
-              <textarea
-                id="allowedIPs"
-                name="allowedIPs"
-                value={formData.allowedIPs}
-                onChange={handleInputChange}
-                onBlur={handleValidate}
-                placeholder="192.168.1.1&#10;10.0.0.0/24&#10;172.16.0.0/16"
-                className={`EditApiKeyModal__textarea ${
-                  formErrors.includes("allowedIPs")
-                    ? "EditApiKeyModal__textarea--error"
-                    : ""
-                }`}
-              />
-              {formErrors.includes("allowedIPs") && (
-                <div className="EditApiKeyModal__error">
-                  {itemHasError("allowedIPs")}
-                </div>
-              )}
-              <div className="EditApiKeyModal__note">
-                Enter IPv4 addresses or CIDR blocks, one per line or
-                comma-separated. Leave empty to allow access from any IP.
-              </div>
-            </div>
+            <Textarea
+              fieldSize="sm"
+              id="allowedIPs"
+              name="allowedIPs"
+              label="Allowed IP addresses (optional)"
+              placeholder="192.168.1.1&#10;10.0.0.0/24&#10;172.16.0.0/16"
+              value={formData.allowedIPs}
+              onChange={handleInputChange}
+              onBlur={handleValidate}
+              error={itemHasError("allowedIPs", "Allowed IPs")}
+              note="Enter IPv4 addresses or CIDR blocks, one per line or comma-separated. Leave empty to allow access from any IP."
+              className="EditApiKeyModal__allowedIPs"
+            />
 
             <div className="EditApiKeyModal__permissions">
               <Heading
@@ -451,6 +436,9 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
               >
                 Permissions
               </Heading>
+
+              <div className="EditApiKeyModal__permissionsDivider" />
+
               {formErrors.includes("permissions") && (
                 <div className="EditApiKeyModal__permissionsError">
                   At least one permission is required
@@ -488,56 +476,42 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
                       : ""
                   }`}
                 >
-                  {[
-                    {
-                      key: "disbursements",
-                      label: "Disbursements",
-                      hasWrite: true,
-                    },
-                    { key: "receivers", label: "Receivers", hasWrite: true },
-                    { key: "payments", label: "Payments", hasWrite: true },
-                    {
-                      key: "organization",
-                      label: "Organization",
-                      hasWrite: true,
-                    },
-                    { key: "users", label: "Users", hasWrite: true },
-                    { key: "wallets", label: "Wallets", hasWrite: true },
-                    { key: "statistics", label: "Statistics", hasWrite: false },
-                    { key: "exports", label: "Exports", hasWrite: false },
-                  ].map(({ key, label, hasWrite }) => (
-                    <div key={key} className="EditApiKeyModal__permissionRow">
-                      <span className="EditApiKeyModal__permissionLabel">
-                        {label}
-                      </span>
-                      <div className="EditApiKeyModal__permissionSelect">
-                        <Select
-                          id={`permission-${key}`}
-                          fieldSize="sm"
-                          value={
-                            formData.permissions[key as keyof PermissionState]
-                          }
-                          onChange={(e) =>
-                            handlePermissionChange(
-                              key as keyof PermissionState,
-                              e.target.value as PermissionLevel,
-                            )
-                          }
-                          disabled={isAllReadWrite}
-                        >
-                          <option value="none">None</option>
-                          <option value="read">Read</option>
-                          {hasWrite && (
-                            <option value="read_write">Read & Write</option>
-                          )}
-                        </Select>
+                  {API_KEY_PERMISSION_RESOURCES.map(
+                    ({ key, label, hasWrite }) => (
+                      <div key={key} className="EditApiKeyModal__permissionRow">
+                        <span className="EditApiKeyModal__permissionLabel">
+                          {label}
+                        </span>
+                        <div className="EditApiKeyModal__permissionSelect">
+                          <Select
+                            id={`permission-${key}`}
+                            fieldSize="sm"
+                            value={
+                              formData.permissions[key as keyof PermissionState]
+                            }
+                            onChange={(e) =>
+                              handlePermissionChange(
+                                key as keyof PermissionState,
+                                e.target.value as PermissionLevel,
+                              )
+                            }
+                            disabled={isAllReadWrite}
+                          >
+                            <option value="none">None</option>
+                            <option value="read">Read</option>
+                            {hasWrite && (
+                              <option value="read_write">Read & Write</option>
+                            )}
+                          </Select>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
               </div>
             </div>
           </div>
+          <div className="EditApiKeyModal__permissionsDivider" />
         </Modal.Body>
         <Modal.Footer>
           <Button
