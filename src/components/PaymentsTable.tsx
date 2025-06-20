@@ -87,6 +87,9 @@ export const PaymentsTable = ({
             <Table.HeaderCell textAlign="right" width="6rem">
               Status
             </Table.HeaderCell>
+            <Table.HeaderCell textAlign="right" width="6rem">
+              Type
+            </Table.HeaderCell>
           </Table.Header>
 
           <Table.Body>
@@ -121,14 +124,27 @@ export const PaymentsTable = ({
                     "-"
                   )}
                 </Table.BodyCell>
-                <Table.BodyCell width="7.5rem" title={p.disbursement.name}>
-                  <Link
-                    onClick={(event) =>
-                      handlePaymentDisbursementClicked(event, p.disbursement.id)
-                    }
-                  >
-                    {p.disbursement.name}
-                  </Link>
+                <Table.BodyCell
+                  width="7.5rem"
+                  title={p.disbursement?.name || "-"}
+                >
+                  {(() => {
+                    const disbursement = p.disbursement;
+                    return disbursement ? (
+                      <Link
+                        onClick={(event) =>
+                          handlePaymentDisbursementClicked(
+                            event,
+                            disbursement.id,
+                          )
+                        }
+                      >
+                        {disbursement.name}
+                      </Link>
+                    ) : (
+                      "-"
+                    );
+                  })()}
                 </Table.BodyCell>
                 <Table.BodyCell>
                   <span className="Table-v2__cell--secondary">
@@ -146,6 +162,11 @@ export const PaymentsTable = ({
                 </Table.BodyCell>
                 <Table.BodyCell textAlign="right">
                   <PaymentStatus status={p.status} />
+                </Table.BodyCell>
+                <Table.BodyCell textAlign="right">
+                  <span className="Table-v2__cell--secondary">
+                    {p.payment_type}
+                  </span>
                 </Table.BodyCell>
               </Table.BodyRow>
             ))}
