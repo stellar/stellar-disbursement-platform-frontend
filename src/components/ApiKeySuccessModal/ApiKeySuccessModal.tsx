@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Button, Icon, Modal, Notification } from "@stellar/design-system";
+import {
+  Button,
+  Icon,
+  Modal,
+  Notification,
+  Input,
+} from "@stellar/design-system";
 
 import "./styles.scss";
 
@@ -43,7 +49,10 @@ export const ApiKeySuccessModal: React.FC<ApiKeySuccessModalProps> = ({
         </Notification>
 
         <div className="ApiKeySuccessModal__keyContainer">
-          <input
+          <Input
+            fieldSize="sm"
+            id="apiKey"
+            name="apiKey"
             type="text"
             value={apiKey?.key || ""}
             readOnly

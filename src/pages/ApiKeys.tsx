@@ -1,6 +1,6 @@
-import { Notification } from "@stellar/design-system";
 import { useEffect, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Notification } from "@stellar/design-system";
 
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
@@ -10,7 +10,6 @@ import {
   clearApiKeysErrorAction,
   deleteApiKeyAction,
 } from "store/ducks/apiKeys";
-
 import { ApiKeysTable } from "components/ApiKeysTable/ApiKeysTable";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { ShowForRoles } from "components/ShowForRoles";
