@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Button,
   Heading,
@@ -8,14 +7,15 @@ import {
   Select,
   Textarea,
 } from "@stellar/design-system";
+import { useEffect, useState } from "react";
 
-import { usePrevious } from "hooks/usePrevious";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { formatDateTime } from "helpers/formatIntlDateTime";
+import { usePrevious } from "hooks/usePrevious";
 
-import { ApiKey } from "types";
 import { UpdateApiKeyRequest } from "api/updateApiKey";
 import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
+import { ApiKey } from "types";
 
 import "./styles.scss";
 
@@ -376,7 +376,6 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
           <div className="EditApiKeyModal__description">
             Update the permissions and IP restrictions for this API key.
           </div>
-          <div className="EditApiKeyModal__permissionsDivider" />
           {errorMessage && (
             <Notification variant="error" title="Error">
               <ErrorWithExtras
@@ -436,8 +435,6 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
               >
                 Permissions
               </Heading>
-
-              <div className="EditApiKeyModal__permissionsDivider" />
 
               {formErrors.includes("permissions") && (
                 <div className="EditApiKeyModal__permissionsError">
@@ -511,7 +508,6 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="EditApiKeyModal__permissionsDivider" />
         </Modal.Body>
         <Modal.Footer>
           <Button
