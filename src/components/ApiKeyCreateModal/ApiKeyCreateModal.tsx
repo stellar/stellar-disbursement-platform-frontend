@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Button,
   Heading,
@@ -7,7 +8,6 @@ import {
   Select,
   Textarea,
 } from "@stellar/design-system";
-import { useEffect, useState } from "react";
 
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";

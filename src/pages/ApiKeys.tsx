@@ -8,6 +8,7 @@ import {
   getApiKeysAction,
   createApiKeyAction,
   clearApiKeysErrorAction,
+  deleteApiKeyAction,
 } from "store/ducks/apiKeys";
 import { ApiKeysTable } from "components/ApiKeysTable/ApiKeysTable";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
@@ -16,6 +17,7 @@ import { ApiKeysDescription } from "components/ApiKeysDescription/ApiKeysDescrip
 import { UserRole, CreateApiKeyRequest, ApiKey } from "types";
 import { CreateApiKeyModal } from "components/ApiKeyCreateModal/ApiKeyCreateModal";
 import { ApiKeySuccessModal } from "components/ApiKeySuccessModal/ApiKeySuccessModal";
+import { DeleteApiKeyModal } from "components/ApiKeyDeleteModal/DeleteApiKeyModal";
 
 const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 
@@ -24,6 +26,8 @@ export const ApiKeys = () => {
   const dispatch: AppDispatch = useDispatch();
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [selectedApiKey, setSelectedApiKey] = useState<ApiKey | undefined>();
   const [createdApiKey, setCreatedApiKey] = useState<
     { name: string; key: string } | undefined
   >();
@@ -43,6 +47,11 @@ export const ApiKeys = () => {
   const handleCloseSuccessModal = useCallback(() => {
     setIsSuccessModalVisible(false);
     setCreatedApiKey(undefined);
+  }, []);
+
+  const handleCloseDeleteModal = useCallback(() => {
+    setIsDeleteModalVisible(false);
+    setSelectedApiKey(undefined);
   }, []);
 
   const handleResetQuery = useCallback(() => {
@@ -72,15 +81,41 @@ export const ApiKeys = () => {
     [dispatch],
   );
 
+  const deleteApiKey = useCallback(
+    (apiKeyId: string) => {
+      dispatch(deleteApiKeyAction(apiKeyId));
+    },
+    [dispatch],
+  );
+
+  useEffect(() => {
+    if (apiKeys.status === "SUCCESS") {
+      setIsDeleteModalVisible(false);
+      setSelectedApiKey(undefined);
+    }
+  }, [apiKeys.status]);
+
   const handleEditKey = useCallback((keyId: string) => {
     console.log("Edit API Key:", keyId);
   }, []);
 
-  const handleDeleteKey = useCallback((keyId: string) => {
-    console.log("Delete API Key:", keyId);
-  }, []);
+  const handleDeleteKey = useCallback(
+    (keyId: string) => {
+      const apiKey = apiKeys.items.find((key) => key.id === keyId);
+      if (apiKey) {
+        setSelectedApiKey(apiKey);
+        setIsDeleteModalVisible(true);
+      }
+    },
+    [apiKeys.items],
+  );
 
-  if (apiKeys.errorString && !isCreateModalVisible && !isSuccessModalVisible) {
+  if (
+    apiKeys.errorString &&
+    !isCreateModalVisible &&
+    !isSuccessModalVisible &&
+    !isDeleteModalVisible
+  ) {
     return (
       <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
         <Notification variant="error" title="Error">
@@ -98,7 +133,8 @@ export const ApiKeys = () => {
     apiKeys.status === "PENDING" &&
     apiKeys.items.length === 0 &&
     !isCreateModalVisible &&
-    !isSuccessModalVisible
+    !isSuccessModalVisible &&
+    !isDeleteModalVisible
   ) {
     return (
       <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
@@ -138,6 +174,16 @@ export const ApiKeys = () => {
         visible={isSuccessModalVisible}
         onClose={handleCloseSuccessModal}
         apiKey={createdApiKey}
+      />
+
+      <DeleteApiKeyModal
+        visible={isDeleteModalVisible}
+        onClose={handleCloseDeleteModal}
+        onSubmit={deleteApiKey}
+        onResetQuery={handleResetQuery}
+        isLoading={apiKeys.status === "PENDING"}
+        errorMessage={apiKeys.errorString}
+        apiKey={selectedApiKey}
       />
     </ShowForRoles>
   );
