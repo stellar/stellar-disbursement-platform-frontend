@@ -9,11 +9,11 @@ import {
   Textarea,
 } from "@stellar/design-system";
 
-import { usePrevious } from "hooks/usePrevious";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
+import { usePrevious } from "hooks/usePrevious";
 
 import { CreateApiKeyRequest } from "types";
-import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
 
 import "./styles.scss";
 
@@ -380,6 +380,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               onBlur={handleValidate}
               error={itemHasError("allowedIPs", "Allowed IPs")}
               note="Enter IPv4 addresses or CIDR blocks, one per line or comma-separated. Leave empty to allow access from any IP."
+              rows={3}
               className="CreateApiKeyModal__allowedIPs"
             />
 
@@ -391,8 +392,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               >
                 Permissions
               </Heading>
-
-              <div className="CreateApiKeyModal__permissionsDivider" />
 
               {formErrors.includes("permissions") && (
                 <div className="CreateApiKeyModal__permissionsError">
@@ -469,7 +468,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               </div>
             </div>
           </div>
-          <div className="CreateApiKeyModal__permissionsDivider" />
         </Modal.Body>
         <Modal.Footer>
           <Button
