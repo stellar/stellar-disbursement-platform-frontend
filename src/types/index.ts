@@ -968,7 +968,6 @@ export type CreateApiKeyRequest = {
   expiry_date?: string | null;
   permissions: string[];
   allowed_ips?: string[];
-  enabled?: boolean;
 };
 
 export type UpdateApiKeyRequest = {
