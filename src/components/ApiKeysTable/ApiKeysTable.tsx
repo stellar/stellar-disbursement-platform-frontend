@@ -20,7 +20,7 @@ interface ApiKeysTableProps {
   onDeleteKey?: (keyId: string) => void;
 }
 
-type ApiKeyStatus = "ACTIVE" | "EXPIRED" | "DISABLED";
+type ApiKeyStatus = "ACTIVE" | "EXPIRED";
 
 const getApiKeyStatus = (apiKey: ApiKey): ApiKeyStatus => {
   if (!apiKey.expiry_date) {
