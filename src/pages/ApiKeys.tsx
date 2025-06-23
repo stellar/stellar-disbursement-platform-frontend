@@ -4,20 +4,26 @@ import { Notification } from "@stellar/design-system";
 
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
+
 import {
   getApiKeysAction,
   createApiKeyAction,
-  clearApiKeysErrorAction,
   deleteApiKeyAction,
+  updateApiKeyAction,
+  clearApiKeysErrorAction,
 } from "store/ducks/apiKeys";
+
 import { ApiKeysTable } from "components/ApiKeysTable/ApiKeysTable";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { ShowForRoles } from "components/ShowForRoles";
 import { ApiKeysDescription } from "components/ApiKeysDescription/ApiKeysDescription";
-import { UserRole, CreateApiKeyRequest, ApiKey } from "types";
-import { CreateApiKeyModal } from "components/ApiKeyCreateModal/ApiKeyCreateModal";
 import { ApiKeySuccessModal } from "components/ApiKeySuccessModal/ApiKeySuccessModal";
+import { CreateApiKeyModal } from "components/ApiKeyCreateModal/ApiKeyCreateModal";
 import { DeleteApiKeyModal } from "components/ApiKeyDeleteModal/DeleteApiKeyModal";
+import { EditApiKeyModal } from "components/ApiKeyUpdateModal/EditApiKeyModal";
+
+import { UserRole, CreateApiKeyRequest, ApiKey } from "types";
+import { UpdateApiKeyRequest } from "api/updateApiKey";
 
 const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 
@@ -27,10 +33,12 @@ export const ApiKeys = () => {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [selectedApiKey, setSelectedApiKey] = useState<ApiKey | undefined>();
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [createdApiKey, setCreatedApiKey] = useState<
     { name: string; key: string } | undefined
   >();
+  const [selectedApiKey, setSelectedApiKey] = useState<ApiKey | undefined>();
+  const [editingApiKey, setEditingApiKey] = useState<ApiKey | undefined>();
 
   useEffect(() => {
     dispatch(getApiKeysAction());
@@ -54,9 +62,10 @@ export const ApiKeys = () => {
     setSelectedApiKey(undefined);
   }, []);
 
-  const handleResetQuery = useCallback(() => {
-    dispatch(clearApiKeysErrorAction());
-  }, [dispatch]);
+  const handleCloseEditModal = useCallback(() => {
+    setIsEditModalVisible(false);
+    setEditingApiKey(undefined);
+  }, []);
 
   const handleSubmitCreateApiKey = useCallback(
     async (apiKeyData: CreateApiKeyRequest) => {
@@ -88,16 +97,39 @@ export const ApiKeys = () => {
     [dispatch],
   );
 
+  const handleSubmitEditApiKey = useCallback(
+    async (apiKeyId: string, updateData: UpdateApiKeyRequest) => {
+      try {
+        await dispatch(updateApiKeyAction({ apiKeyId, updateData })).unwrap();
+        setIsEditModalVisible(false);
+        setEditingApiKey(undefined);
+      } catch (error) {
+        console.error("Failed to update API key:", error);
+      }
+    },
+    [dispatch],
+  );
+
+  const handleResetQuery = useCallback(() => {
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
+
+  const handleEditKey = useCallback(
+    (keyId: string) => {
+      const apiKey = apiKeys.items.find((key) => key.id === keyId);
+      if (apiKey) {
+        setEditingApiKey(apiKey);
+        setIsEditModalVisible(true);
+      }
+    },
+    [apiKeys.items],
+  );
   useEffect(() => {
     if (apiKeys.status === "SUCCESS") {
       setIsDeleteModalVisible(false);
       setSelectedApiKey(undefined);
     }
   }, [apiKeys.status]);
-
-  const handleEditKey = useCallback((keyId: string) => {
-    console.log("Edit API Key:", keyId);
-  }, []);
 
   const handleDeleteKey = useCallback(
     (keyId: string) => {
@@ -110,14 +142,9 @@ export const ApiKeys = () => {
     [apiKeys.items],
   );
 
-  if (
-    apiKeys.errorString &&
-    !isCreateModalVisible &&
-    !isSuccessModalVisible &&
-    !isDeleteModalVisible
-  ) {
-    return (
-      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
+  const renderPageContent = () => {
+    if (apiKeys.errorString) {
+      return (
         <Notification variant="error" title="Error">
           <ErrorWithExtras
             appError={{
@@ -125,26 +152,14 @@ export const ApiKeys = () => {
             }}
           />
         </Notification>
-      </ShowForRoles>
-    );
-  }
+      );
+    }
 
-  if (
-    apiKeys.status === "PENDING" &&
-    apiKeys.items.length === 0 &&
-    !isCreateModalVisible &&
-    !isSuccessModalVisible &&
-    !isDeleteModalVisible
-  ) {
+    if (apiKeys.status === "PENDING" && apiKeys.items.length === 0) {
+      return <div className="Note">Loading…</div>;
+    }
+
     return (
-      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
-        <div className="Note">Loading…</div>
-      </ShowForRoles>
-    );
-  }
-
-  return (
-    <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
       <div className="CardStack">
         <div className="CardStack__card">
           <ApiKeysTable
@@ -160,7 +175,16 @@ export const ApiKeys = () => {
           <ApiKeysDescription />
         </div>
       </div>
+    );
+  };
 
+  return (
+    <>
+      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
+        {renderPageContent()}
+      </ShowForRoles>
+
+      {/* Modals - rendered once outside of conditional logic */}
       <CreateApiKeyModal
         visible={isCreateModalVisible}
         onClose={handleCloseCreateModal}
@@ -185,6 +209,16 @@ export const ApiKeys = () => {
         errorMessage={apiKeys.errorString}
         apiKey={selectedApiKey}
       />
-    </ShowForRoles>
+
+      <EditApiKeyModal
+        visible={isEditModalVisible}
+        onClose={handleCloseEditModal}
+        onSubmit={handleSubmitEditApiKey}
+        onResetQuery={handleResetQuery}
+        isLoading={apiKeys.status === "PENDING"}
+        errorMessage={apiKeys.errorString}
+        apiKey={editingApiKey}
+      />
+    </>
   );
 };

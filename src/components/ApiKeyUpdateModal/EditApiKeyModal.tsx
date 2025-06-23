@@ -1,42 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import {
   ApiKeyFormFields,
   convertToApiPermissions,
+  parseExistingPermissions,
 } from "components/ApiKeyFormFields/ApiKeyFormFields";
 
 import { useApiKeyForm } from "hooks/useApiKeyForm";
 import { usePrevious } from "hooks/usePrevious";
 
+import { formatDateTime } from "helpers/formatIntlDateTime";
 import { parseAllowedIPs } from "helpers/parseIPs";
 
-import { CreateApiKeyRequest } from "types";
+import { UpdateApiKeyRequest } from "api/updateApiKey";
+import { ApiKey } from "types";
 
 import "./styles.scss";
 
-interface CreateApiKeyModalProps {
+interface EditApiKeyModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (apiKeyData: CreateApiKeyRequest) => void;
+  onSubmit: (apiKeyId: string, updateData: UpdateApiKeyRequest) => void;
   onResetQuery: () => void;
   isLoading: boolean;
   errorMessage?: string;
+  apiKey?: ApiKey;
 }
 
-export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
+export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
   visible,
   onClose,
   onSubmit,
   onResetQuery,
   isLoading,
   errorMessage,
+  apiKey,
 }) => {
-  const [name, setName] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [nameError, setNameError] = useState(false);
-
   const {
     formData,
     handleAllowedIPsChange,
@@ -47,78 +48,68 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
     getPermissionsError,
     isFormValid,
     resetForm,
+    setForm,
   } = useApiKeyForm({ onResetQuery, errorMessage });
 
   const previousVisible = usePrevious(visible);
 
   useEffect(() => {
-    if (previousVisible && !visible) {
-      setName("");
-      setExpiryDate("");
-      setNameError(false);
+    if (visible && apiKey) {
+      const allowedIpsString = Array.isArray(apiKey.allowed_ips)
+        ? apiKey.allowed_ips.join("\n")
+        : apiKey.allowed_ips || "";
+
+      const permissions = parseExistingPermissions(apiKey.permissions || []);
+
+      setForm({
+        allowedIPs: allowedIpsString,
+        permissions,
+      });
+    } else if (previousVisible && !visible) {
       resetForm();
     }
-  }, [visible, previousVisible, resetForm]);
+  }, [visible, apiKey, previousVisible, setForm, resetForm]);
 
   const handleClose = () => {
     onClose();
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (errorMessage) {
-      onResetQuery();
-    }
-
-    if (event.target.id === "name") {
-      setName(event.target.value);
-      setNameError(false);
-    } else if (event.target.id === "expiryDate") {
-      setExpiryDate(event.target.value);
-    }
-  };
-
-  const handleValidate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.id === "name" && !event.target.value) {
-      setNameError(true);
-    }
-  };
-
-  const canSubmit = !nameError && name.trim() !== "" && isFormValid();
+  const canSubmit = isFormValid();
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!name.trim()) {
-      setNameError(true);
+    if (!validatePermissions()) {
       return;
     }
 
-    if (!validatePermissions()) {
+    if (!apiKey) {
       return;
     }
 
     const apiPermissions = convertToApiPermissions(formData.permissions);
     const allowedIPs = parseAllowedIPs(formData.allowedIPs);
 
-    const apiKeyData: CreateApiKeyRequest = {
-      name: name.trim(),
+    const updateData: UpdateApiKeyRequest = {
       permissions: apiPermissions,
-      expiry_date: expiryDate ? new Date(expiryDate).toISOString() : undefined,
-      allowed_ips: allowedIPs.length > 0 ? allowedIPs : undefined,
+      allowed_ips: allowedIPs.length > 0 ? allowedIPs : null,
     };
 
-    onSubmit(apiKeyData);
+    onSubmit(apiKey.id, updateData);
   };
+
+  if (!apiKey) {
+    return null;
+  }
 
   return (
     <Modal visible={visible} onClose={handleClose}>
-      <Modal.Heading>Create new key</Modal.Heading>
+      <Modal.Heading>Edit API Key</Modal.Heading>
       <form onSubmit={handleSubmit} onReset={handleClose}>
         <Modal.Body>
-          <div className="CreateApiKeyModal__description">
-            Generate an API key for authenticating with our API.
+          <div className="EditApiKeyModal__description">
+            Update the permissions and IP restrictions for this API key.
           </div>
-          <div className="CreateApiKeyModal__permissionsDivider" />
           {errorMessage && (
             <Notification variant="error" title="Error">
               <ErrorWithExtras
@@ -129,30 +120,31 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
             </Notification>
           )}
 
-          <div className="CreateApiKeyModal__form">
+          <div className="EditApiKeyModal__form">
             <Input
               fieldSize="sm"
               id="name"
               name="name"
               type="text"
               label="Key name"
-              placeholder="Enter a descriptive name for this API key"
-              value={name}
-              onChange={handleInputChange}
-              onBlur={handleValidate}
-              error={nameError ? "Key name is required" : undefined}
-              required
+              value={apiKey.name}
+              disabled
+              note="Key name cannot be changed"
             />
 
             <Input
               fieldSize="sm"
               id="expiryDate"
               name="expiryDate"
-              type="date"
-              label="Expiration date (optional)"
-              value={expiryDate}
-              onChange={handleInputChange}
-              note="Leave empty for no expiration"
+              type="text"
+              label="Expiration date"
+              value={
+                apiKey.expiry_date
+                  ? formatDateTime(apiKey.expiry_date)
+                  : "No expiration"
+              }
+              disabled
+              note="Expiration date cannot be changed"
             />
 
             <ApiKeyFormFields
@@ -182,7 +174,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
             disabled={!canSubmit}
             isLoading={isLoading}
           >
-            Create new key
+            Update key
           </Button>
         </Modal.Footer>
       </form>

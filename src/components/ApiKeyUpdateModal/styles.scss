@@ -1,6 +1,6 @@
 @use "./styles-utils.scss" as *;
 
-.CreateApiKeyModal {
+.EditApiKeyModal {
   &__description {
     color: var(--color-gray-60);
     margin-bottom: pxToRem(24);
