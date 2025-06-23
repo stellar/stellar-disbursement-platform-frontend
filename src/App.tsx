@@ -41,6 +41,7 @@ import { SigninOidc } from "pages/Redirect";
 import { ApiKeys } from "pages/ApiKeys";
 
 import "styles.scss";
+import { ApiKeyDetails } from "components/ApiKeyDetails/ApiKeyDetails";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -277,6 +278,17 @@ export const App = () => {
                 <PrivateRoute acceptedRoles={["owner", "developer"]}>
                   <InnerPage>
                     <ApiKeys />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            {/* Api Key Details */}
+            <Route
+              path={`${Routes.API_KEYS}/:id`}
+              element={
+                <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                  <InnerPage>
+                    <ApiKeyDetails />
                   </InnerPage>
                 </PrivateRoute>
               }

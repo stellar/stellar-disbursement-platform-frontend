@@ -1,10 +1,12 @@
-import { Card, Icon, Heading, Button } from "@stellar/design-system";
+import { useNavigate } from "react-router-dom";
+import { Card, Icon, Heading, Button, Link } from "@stellar/design-system";
 
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { Table } from "components/Table";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { DropdownMenu } from "components/DropdownMenu";
 import { EmptyStateMessage } from "components/EmptyStateMessage/EmptyStateMessage";
+import { Routes } from "constants/settings";
 
 import { ApiKey } from "types";
 
@@ -18,7 +20,7 @@ interface ApiKeysTableProps {
   onDeleteKey?: (keyId: string) => void;
 }
 
-type ApiKeyStatus = "ACTIVE" | "EXPIRED";
+type ApiKeyStatus = "ACTIVE" | "EXPIRED" | "DISABLED";
 
 const getApiKeyStatus = (apiKey: ApiKey): ApiKeyStatus => {
   if (!apiKey.expiry_date) {
@@ -90,6 +92,16 @@ export const ApiKeysTable = ({
   onEditKey,
   onDeleteKey,
 }: ApiKeysTableProps) => {
+  const navigate = useNavigate();
+
+  const handleApiKeyClicked = (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    apiKeyId: string,
+  ) => {
+    event.preventDefault();
+    navigate(`${Routes.API_KEYS}/${apiKeyId}`);
+  };
+
   return (
     <Card>
       <div className="ApiKeysTable__header">
@@ -128,7 +140,15 @@ export const ApiKeysTable = ({
                 {apiKeys.map((apiKey) => (
                   <Table.BodyRow key={apiKey.id}>
                     <Table.BodyCell>
-                      <div className="ApiKeysTable__keyName">{apiKey.name}</div>
+                      <Link
+                        onClick={(event) =>
+                          handleApiKeyClicked(event, apiKey.id)
+                        }
+                      >
+                        <div className="ApiKeysTable__keyName">
+                          {apiKey.name}
+                        </div>
+                      </Link>
                     </Table.BodyCell>
 
                     <Table.BodyCell>

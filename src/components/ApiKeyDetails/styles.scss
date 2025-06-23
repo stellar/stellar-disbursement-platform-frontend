@@ -1,0 +1,50 @@
+@use "./styles-utils.scss" as *;
+
+.ApiKeyDetails {
+  &__permissions {
+    &__list {
+      margin: 0;
+      padding-left: pxToRem(24);
+      
+      li {
+        color: var(--color-gray-90);
+        font-size: pxToRem(14);
+      }
+    }
+    
+    &__empty {
+      color: var(--color-gray-60);
+      font-size: pxToRem(14);
+    }
+  }
+
+  &__ipRestrictions {
+    &__list {
+      margin: 0;
+      padding-left: pxToRem(24);
+      
+      li {
+        font-family: var(--font-family-monospace);
+        font-size: pxToRem(14);
+        color: var(--color-gray-90);
+      }
+    }
+    
+    &__empty {
+      color: var(--color-gray-60);
+      font-size: pxToRem(14);
+    }
+  }
+
+  &__status {
+    font-weight: var(--font-weight-medium);
+    
+    &--active {
+      color: var(--color-green-60);
+    }
+    
+    &--expired {
+      color: var(--color-red-60);
+    }
+  }
+}
