@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Heading,
-  Input,
-  Modal,
-  Notification,
-  Select,
-  Textarea,
-} from "@stellar/design-system";
+import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
 import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
+import { validateAllowedIPs } from "helpers/validateIPs";
+import { parseAllowedIPs } from "helpers/parseIPs";
 import { usePrevious } from "hooks/usePrevious";
+import {
+  ApiKeyFormFields,
+  INITIAL_PERMISSIONS,
+  PermissionState,
+  PermissionLevel,
+  convertToApiPermissions,
+  hasAnyPermissions,
+} from "components/ApiKeyFormFields/ApiKeyFormFields";
 
 import { CreateApiKeyRequest } from "types";
 
@@ -25,32 +26,6 @@ interface CreateApiKeyModalProps {
   isLoading: boolean;
   errorMessage?: string;
 }
-
-type PermissionLevel = "none" | "read" | "read_write";
-
-type PermissionState = {
-  all: PermissionLevel;
-  disbursements: PermissionLevel;
-  receivers: PermissionLevel;
-  payments: PermissionLevel;
-  organization: PermissionLevel;
-  users: PermissionLevel;
-  wallets: PermissionLevel;
-  statistics: PermissionLevel;
-  exports: PermissionLevel;
-};
-
-const INITIAL_PERMISSIONS: PermissionState = {
-  all: "none",
-  disbursements: "none",
-  receivers: "none",
-  payments: "none",
-  organization: "none",
-  users: "none",
-  wallets: "none",
-  statistics: "none",
-  exports: "none",
-};
 
 type FormData = {
   name: string;
@@ -94,22 +69,28 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
     setFormErrors(formErrors.filter((e) => e !== id));
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (errorMessage) {
       onResetQuery();
     }
     removeItemFromErrors(event.target.id);
-    if (event.target.id === "allowedIPs") {
-      const newValue = event.target.value;
-      if (!newValue.trim()) {
-        setFormErrors((prev) => prev.filter((e) => e !== "allowedIPs"));
-      }
-    }
     setFormData({
       ...formData,
       [event.target.id]: event.target.value,
+    });
+  };
+
+  const handleAllowedIPsChange = (value: string) => {
+    if (errorMessage) {
+      onResetQuery();
+    }
+    removeItemFromErrors("allowedIPs");
+    if (!value.trim()) {
+      setFormErrors((prev) => prev.filter((e) => e !== "allowedIPs"));
+    }
+    setFormData({
+      ...formData,
+      allowedIPs: value,
     });
   };
 
@@ -145,128 +126,28 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
     });
   };
 
-  const parseAllowedIPs = (input: string): string[] => {
-    if (!input.trim()) {
-      return [];
-    }
-
-    const ips = input
-      .split(/[\n,]/)
-      .map((ip) => ip.trim())
-      .filter((ip) => ip.length > 0);
-
-    return ips;
-  };
-
-  const validateIP = (ip: string): boolean => {
-    if (ip.includes("/")) {
-      const parts = ip.split("/");
-      if (parts.length !== 2) return false;
-
-      const [ipPart, maskPart] = parts;
-      const mask = parseInt(maskPart, 10);
-
-      if (!isValidIPAddress(ipPart)) return false;
-
-      return mask >= 0 && mask <= 32;
-    } else {
-      return isValidIPAddress(ip);
-    }
-  };
-
-  const isValidIPAddress = (ip: string): boolean => {
-    const ipv4Regex = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/;
-    if (ipv4Regex.test(ip)) {
-      const parts = ip.split(".");
-      return (
-        parts.length === 4 &&
-        parts.every((part) => {
-          const num = parseInt(part, 10);
-          return num >= 0 && num <= 255;
-        })
-      );
-    }
-
-    return false;
-  };
-
-  const validateAllowedIPs = (): { isValid: boolean; error?: string } => {
-    const ips = parseAllowedIPs(formData.allowedIPs);
-
-    if (ips.length === 0) {
-      return { isValid: true };
-    }
-
-    for (const ip of ips) {
-      if (!validateIP(ip)) {
-        if (ip.includes("/")) {
-          return { isValid: false, error: `Invalid CIDR: ${ip}` };
-        } else {
-          return { isValid: false, error: `Invalid IP: ${ip}` };
-        }
-      }
-    }
-
-    return { isValid: true };
-  };
-
-  const convertToApiPermissions = (permissions: PermissionState): string[] => {
-    const apiPermissions: string[] = [];
-
-    if (permissions.all === "read") {
-      apiPermissions.push("read:all");
-    } else if (permissions.all === "read_write") {
-      apiPermissions.push("read:all", "write:all");
-      return apiPermissions;
-    }
-
-    Object.entries(permissions).forEach(([resource, level]) => {
-      if (resource === "all" || level === "none") return;
-
-      if (level === "read") {
-        apiPermissions.push(`read:${resource}`);
-      } else if (level === "read_write") {
-        if (resource === "statistics" || resource === "exports") {
-          apiPermissions.push(`read:${resource}`);
-        } else {
-          apiPermissions.push(`read:${resource}`, `write:${resource}`);
-        }
-      }
-    });
-
-    return apiPermissions;
-  };
-
-  const hasAnyPermissions = (): boolean => {
-    return Object.values(formData.permissions).some(
-      (level) => level !== "none",
-    );
-  };
-
-  const handleValidate = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleValidate = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.value) {
       if (!formErrors.includes(event.target.id)) {
         setFormErrors([...formErrors, event.target.id]);
       }
     }
+  };
 
-    if (event.target.id === "allowedIPs" && event.target.value.trim()) {
-      const { isValid } = validateAllowedIPs();
+  const handleAllowedIPsBlur = () => {
+    if (formData.allowedIPs.trim()) {
+      const { isValid } = validateAllowedIPs(formData.allowedIPs);
       if (!isValid) {
         setFormErrors([
           ...formErrors.filter((e) => e !== "allowedIPs"),
           "allowedIPs",
         ]);
       }
-    } else if (event.target.id === "allowedIPs" && !event.target.value.trim()) {
-      setFormErrors(formErrors.filter((e) => e !== "allowedIPs"));
     }
   };
 
   const validatePermissions = () => {
-    if (!hasAnyPermissions()) {
+    if (!hasAnyPermissions(formData.permissions)) {
       if (!formErrors.includes("permissions")) {
         setFormErrors([...formErrors, "permissions"]);
       }
@@ -276,18 +157,22 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
   };
 
   const itemHasError = (id: string, label: string) => {
-    if (id === "allowedIPs" && formErrors.includes(id)) {
-      const { error } = validateAllowedIPs();
+    return formErrors.includes(id) ? `${label} is required` : undefined;
+  };
+
+  const getAllowedIPsError = () => {
+    if (formErrors.includes("allowedIPs")) {
+      const { error } = validateAllowedIPs(formData.allowedIPs);
       return error || "Invalid IP format";
     }
-    return formErrors.includes(id) ? `${label} is required` : undefined;
+    return undefined;
   };
 
   const canSubmit =
     formErrors.length === 0 &&
     formData.name.trim() !== "" &&
-    hasAnyPermissions() &&
-    validateAllowedIPs().isValid;
+    hasAnyPermissions(formData.permissions) &&
+    validateAllowedIPs(formData.allowedIPs).isValid;
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -301,7 +186,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       return;
     }
 
-    const ipValidation = validateAllowedIPs();
+    const ipValidation = validateAllowedIPs(formData.allowedIPs);
     if (!ipValidation.isValid) {
       setFormErrors([...formErrors, "allowedIPs"]);
       return;
@@ -321,8 +206,6 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
 
     onSubmit(apiKeyData);
   };
-
-  const isAllReadWrite = formData.permissions.all === "read_write";
 
   return (
     <Modal visible={visible} onClose={handleClose}>
@@ -369,104 +252,19 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               note="Leave empty for no expiration"
             />
 
-            <Textarea
-              fieldSize="sm"
-              id="allowedIPs"
-              name="allowedIPs"
-              label="Allowed IP addresses (optional)"
-              placeholder="192.168.1.1&#10;10.0.0.0/24&#10;172.16.0.0/16"
-              value={formData.allowedIPs}
-              onChange={handleInputChange}
-              onBlur={handleValidate}
-              error={itemHasError("allowedIPs", "Allowed IPs")}
-              note="Enter IPv4 addresses or CIDR blocks, one per line or comma-separated. Leave empty to allow access from any IP."
-              rows={3}
-              className="CreateApiKeyModal__allowedIPs"
+            <ApiKeyFormFields
+              allowedIPs={formData.allowedIPs}
+              permissions={formData.permissions}
+              onAllowedIPsChange={handleAllowedIPsChange}
+              onAllowedIPsBlur={handleAllowedIPsBlur}
+              onPermissionChange={handlePermissionChange}
+              allowedIPsError={getAllowedIPsError()}
+              permissionsError={
+                formErrors.includes("permissions")
+                  ? "At least one permission is required"
+                  : undefined
+              }
             />
-
-            <div className="CreateApiKeyModal__permissions">
-              <Heading
-                as="h4"
-                size="xs"
-                className="CreateApiKeyModal__permissionsHeading"
-              >
-                Permissions
-              </Heading>
-
-              {formErrors.includes("permissions") && (
-                <div className="CreateApiKeyModal__permissionsError">
-                  At least one permission is required
-                </div>
-              )}
-
-              <div className="CreateApiKeyModal__permissionsList">
-                <div className="CreateApiKeyModal__permissionRow">
-                  <span className="CreateApiKeyModal__permissionLabel CreateApiKeyModal__permissionLabel--bold">
-                    All
-                  </span>
-                  <div className="CreateApiKeyModal__permissionSelect">
-                    <Select
-                      id="permission-all"
-                      fieldSize="sm"
-                      value={formData.permissions.all}
-                      onChange={(e) =>
-                        handlePermissionChange(
-                          "all",
-                          e.target.value as PermissionLevel,
-                        )
-                      }
-                    >
-                      <option value="none">None</option>
-                      <option value="read">Read</option>
-                      <option value="read_write">Read & Write</option>
-                    </Select>
-                  </div>
-                </div>
-
-                <div
-                  className={`CreateApiKeyModal__resourcePermissions ${
-                    isAllReadWrite
-                      ? "CreateApiKeyModal__resourcePermissions--disabled"
-                      : ""
-                  }`}
-                >
-                  {API_KEY_PERMISSION_RESOURCES.map(
-                    ({ key, label, hasWrite }) => (
-                      <div
-                        key={key}
-                        className="CreateApiKeyModal__permissionRow"
-                      >
-                        <span className="CreateApiKeyModal__permissionLabel">
-                          {label}
-                        </span>
-                        <div className="CreateApiKeyModal__permissionSelect">
-                          <Select
-                            id={`permission-${key}`}
-                            fieldSize="sm"
-                            value={
-                              formData.permissions[key as keyof PermissionState]
-                            }
-                            onChange={(e) =>
-                              handlePermissionChange(
-                                key as keyof PermissionState,
-                                e.target.value as PermissionLevel,
-                              )
-                            }
-                            disabled={isAllReadWrite}
-                          >
-                            <option value="none">None</option>
-                            <option value="read">Read</option>
-                            {hasWrite && (
-                              <option value="read_write">Read & Write</option>
-                            )}
-                          </Select>
-                        </div>
-                      </div>
-                    ),
-                  )}
-                </div>
-              </div>
-            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
