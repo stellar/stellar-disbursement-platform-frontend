@@ -4,6 +4,7 @@ import { Notification } from "@stellar/design-system";
 
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
+
 import {
   getApiKeysAction,
   createApiKeyAction,
@@ -11,17 +12,18 @@ import {
   updateApiKeyAction,
   clearApiKeysErrorAction,
 } from "store/ducks/apiKeys";
+
 import { ApiKeysTable } from "components/ApiKeysTable/ApiKeysTable";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { ShowForRoles } from "components/ShowForRoles";
 import { ApiKeysDescription } from "components/ApiKeysDescription/ApiKeysDescription";
 import { ApiKeySuccessModal } from "components/ApiKeySuccessModal/ApiKeySuccessModal";
-
-import { UserRole, CreateApiKeyRequest, ApiKey } from "types";
-import { UpdateApiKeyRequest } from "api/updateApiKey";
 import { CreateApiKeyModal } from "components/ApiKeyCreateModal/ApiKeyCreateModal";
 import { DeleteApiKeyModal } from "components/ApiKeyDeleteModal/DeleteApiKeyModal";
 import { EditApiKeyModal } from "components/ApiKeyUpdateModal/EditApiKeyModal";
+
+import { UserRole, CreateApiKeyRequest, ApiKey } from "types";
+import { UpdateApiKeyRequest } from "api/updateApiKey";
 
 const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 

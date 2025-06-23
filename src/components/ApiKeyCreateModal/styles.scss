@@ -6,11 +6,6 @@
     margin-bottom: pxToRem(24);
   }
 
-  &__permissionsDivider {
-    border-bottom: pxToRem(1) solid var(--color-gray-30);
-    margin-bottom: pxToRem(24);
-  }
-
   &__form {
     display: flex;
     flex-direction: column;

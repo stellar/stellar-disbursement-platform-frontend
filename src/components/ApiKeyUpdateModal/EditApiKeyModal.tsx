@@ -1,20 +1,18 @@
+import { useEffect } from "react";
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
-import { useEffect, useState } from "react";
 
 import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { validateAllowedIPs } from "helpers/validateIPs";
-import { parseAllowedIPs } from "helpers/parseIPs";
-import { usePrevious } from "hooks/usePrevious";
 import {
   ApiKeyFormFields,
-  INITIAL_PERMISSIONS,
-  PermissionState,
-  PermissionLevel,
   convertToApiPermissions,
-  hasAnyPermissions,
   parseExistingPermissions,
 } from "components/ApiKeyFormFields/ApiKeyFormFields";
+
+import { useApiKeyForm } from "hooks/useApiKeyForm";
+import { usePrevious } from "hooks/usePrevious";
+
+import { formatDateTime } from "helpers/formatIntlDateTime";
+import { parseAllowedIPs } from "helpers/parseIPs";
 
 import { UpdateApiKeyRequest } from "api/updateApiKey";
 import { ApiKey } from "types";
@@ -31,11 +29,6 @@ interface EditApiKeyModalProps {
   apiKey?: ApiKey;
 }
 
-type FormData = {
-  allowedIPs: string;
-  permissions: PermissionState;
-};
-
 export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
   visible,
   onClose,
@@ -45,11 +38,18 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
   errorMessage,
   apiKey,
 }) => {
-  const [formData, setFormData] = useState<FormData>({
-    allowedIPs: "",
-    permissions: { ...INITIAL_PERMISSIONS },
-  });
-  const [formErrors, setFormErrors] = useState<string[]>([]);
+  const {
+    formData,
+    handleAllowedIPsChange,
+    handlePermissionChange,
+    handleAllowedIPsBlur,
+    validatePermissions,
+    getAllowedIPsError,
+    getPermissionsError,
+    isFormValid,
+    resetForm,
+    setForm,
+  } = useApiKeyForm({ onResetQuery, errorMessage });
 
   const previousVisible = usePrevious(visible);
 
@@ -61,119 +61,25 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
 
       const permissions = parseExistingPermissions(apiKey.permissions || []);
 
-      setFormData({
+      setForm({
         allowedIPs: allowedIpsString,
         permissions,
       });
-      setFormErrors([]);
     } else if (previousVisible && !visible) {
-      setFormData({
-        allowedIPs: "",
-        permissions: { ...INITIAL_PERMISSIONS },
-      });
-      setFormErrors([]);
+      resetForm();
     }
-  }, [visible, apiKey, previousVisible]);
+  }, [visible, apiKey, previousVisible, setForm, resetForm]);
 
   const handleClose = () => {
     onClose();
   };
 
-  const removeItemFromErrors = (id: string) => {
-    setFormErrors(formErrors.filter((e) => e !== id));
-  };
-
-  const handleAllowedIPsChange = (value: string) => {
-    if (errorMessage) {
-      onResetQuery();
-    }
-    removeItemFromErrors("allowedIPs");
-    if (!value.trim()) {
-      setFormErrors((prev) => prev.filter((e) => e !== "allowedIPs"));
-    }
-    setFormData({
-      ...formData,
-      allowedIPs: value,
-    });
-  };
-
-  const handlePermissionChange = (
-    resource: keyof PermissionState,
-    level: PermissionLevel,
-  ) => {
-    if (errorMessage) {
-      onResetQuery();
-    }
-    removeItemFromErrors("permissions");
-
-    const newPermissions = { ...formData.permissions };
-
-    if (resource === "all" && level === "read_write") {
-      Object.keys(newPermissions).forEach((key) => {
-        if (key !== "all") {
-          newPermissions[key as keyof PermissionState] = "none";
-        }
-      });
-    } else if (
-      resource !== "all" &&
-      formData.permissions.all === "read_write"
-    ) {
-      newPermissions.all = "none";
-    }
-
-    newPermissions[resource] = level;
-
-    setFormData({
-      ...formData,
-      permissions: newPermissions,
-    });
-  };
-
-  const handleAllowedIPsBlur = () => {
-    if (formData.allowedIPs.trim()) {
-      const { isValid } = validateAllowedIPs(formData.allowedIPs);
-      if (!isValid) {
-        setFormErrors([
-          ...formErrors.filter((e) => e !== "allowedIPs"),
-          "allowedIPs",
-        ]);
-      }
-    }
-  };
-
-  const validatePermissions = () => {
-    if (!hasAnyPermissions(formData.permissions)) {
-      if (!formErrors.includes("permissions")) {
-        setFormErrors([...formErrors, "permissions"]);
-      }
-      return false;
-    }
-    return true;
-  };
-
-  const getAllowedIPsError = () => {
-    if (formErrors.includes("allowedIPs")) {
-      const { error } = validateAllowedIPs(formData.allowedIPs);
-      return error || "Invalid IP format";
-    }
-    return undefined;
-  };
-
-  const canSubmit =
-    formErrors.length === 0 &&
-    hasAnyPermissions(formData.permissions) &&
-    validateAllowedIPs(formData.allowedIPs).isValid;
+  const canSubmit = isFormValid();
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!validatePermissions()) {
-      return;
-    }
-
-    const ipValidation = validateAllowedIPs(formData.allowedIPs);
-    if (!ipValidation.isValid) {
-      setFormErrors([...formErrors, "allowedIPs"]);
       return;
     }
 
@@ -248,11 +154,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
               onAllowedIPsBlur={handleAllowedIPsBlur}
               onPermissionChange={handlePermissionChange}
               allowedIPsError={getAllowedIPsError()}
-              permissionsError={
-                formErrors.includes("permissions")
-                  ? "At least one permission is required"
-                  : undefined
-              }
+              permissionsError={getPermissionsError()}
             />
           </div>
         </Modal.Body>
