@@ -121,7 +121,7 @@ export const ApiKeysTable = ({
                   Last Used
                 </Table.HeaderCell>
                 <Table.HeaderCell textAlign="center">Status</Table.HeaderCell>
-                <Table.HeaderCell width="1rem">Actions</Table.HeaderCell>
+                <Table.HeaderCell>Actions</Table.HeaderCell>
               </Table.Header>
 
               <Table.Body>

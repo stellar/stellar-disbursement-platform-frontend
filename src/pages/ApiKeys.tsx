@@ -82,7 +82,7 @@ export const ApiKeys = () => {
           setIsSuccessModalVisible(true);
         }
       } catch (error) {
-        console.error("Failed to create API key:", error);
+        console.error("Error creating API key:", error);
       }
     },
     [dispatch],
@@ -140,7 +140,6 @@ export const ApiKeys = () => {
     [apiKeys.items],
   );
 
-  // Render page content based on state
   const renderPageContent = () => {
     if (apiKeys.errorString) {
       return (
