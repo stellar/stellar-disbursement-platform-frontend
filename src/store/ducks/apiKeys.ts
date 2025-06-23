@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { RootState } from "store";
 
 import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
 import { refreshSessionToken } from "helpers/refreshSessionToken";
@@ -15,8 +16,6 @@ import {
   RejectMessage,
   CreateApiKeyRequest,
 } from "types";
-
-import { RootState } from "store";
 
 export const apiKeysInitialState: ApiKeysInitialState = {
   items: [],
