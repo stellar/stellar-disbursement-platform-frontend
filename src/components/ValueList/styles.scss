@@ -1,7 +1,6 @@
 @use "./styles-utils.scss" as *;
 
 .ValuesList {
-  list-style: none;
   display: grid;
   padding: 0.5rem 1.5rem;
   grid-template-columns: 1fr 1fr;

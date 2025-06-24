@@ -18,6 +18,7 @@ import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { ShowForRoles } from "components/ShowForRoles";
 import { EditApiKeyModal } from "components/ApiKeyUpdateModal/EditApiKeyModal";
 import { DeleteApiKeyModal } from "components/ApiKeyDeleteModal/DeleteApiKeyModal";
+import { ValuesList } from "components/ValueList/ValueList";
 import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
 import { Routes } from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
@@ -31,7 +32,6 @@ import {
 import { ApiKey, UserRole } from "types";
 
 import "./styles.scss";
-import { ValuesList } from "components/ValueList/ValueList";
 
 const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 
@@ -89,34 +89,19 @@ export const ApiKeyDetails = () => {
     }
   }, [apiKeys.status, apiKeys.items, apiKeyId, navigate]);
 
-  const handleEditKey = useCallback(() => {
-    setIsEditModalVisible(true);
-  }, []);
-
-  const handleDeleteKey = useCallback(() => {
-    setIsDeleteModalVisible(true);
-  }, []);
-
-  const handleCloseEditModal = useCallback(() => {
-    setIsEditModalVisible(false);
-  }, []);
-
-  const handleCloseDeleteModal = useCallback(() => {
-    setIsDeleteModalVisible(false);
-  }, []);
+  const handleEditKey = () => setIsEditModalVisible(true);
+  const handleDeleteKey = () => setIsDeleteModalVisible(true);
+  const handleCloseEditModal = () => setIsEditModalVisible(false);
+  const handleCloseDeleteModal = () => setIsDeleteModalVisible(false);
 
   const handleSubmitEditApiKey = useCallback(
     async (apiKeyId: string, updateData: UpdateApiKeyRequest) => {
-      try {
-        await dispatch(updateApiKeyAction({ apiKeyId, updateData })).unwrap();
-        setIsEditModalVisible(false);
-        // Refresh the API key data
-        if (userAccount.token) {
-          const updatedKey = await getApiKey(userAccount.token, apiKeyId);
-          setApiKey(updatedKey);
-        }
-      } catch (error) {
-        console.error("Failed to update API key:", error);
+      await dispatch(updateApiKeyAction({ apiKeyId, updateData }));
+      setIsEditModalVisible(false);
+      // Refresh the API key data
+      if (userAccount.token) {
+        const updatedKey = await getApiKey(userAccount.token, apiKeyId);
+        setApiKey(updatedKey);
       }
     },
     [dispatch, userAccount.token],
@@ -367,7 +352,7 @@ export const ApiKeyDetails = () => {
               route: Routes.API_KEYS,
             },
             {
-              label: "API Key details",
+              label: "API Key Details",
             },
           ]}
         />

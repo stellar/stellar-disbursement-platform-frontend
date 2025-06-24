@@ -7,6 +7,7 @@ import GitInfo from "generated/gitInfo";
 
 import { store } from "store";
 import { Routes } from "constants/settings";
+import { ApiKeyDetails } from "components/ApiKeyDetails/ApiKeyDetails";
 import { PrivateRoute } from "components/PrivateRoute";
 import { InnerPage } from "components/InnerPage";
 import { UserSession } from "components/UserSession";
@@ -41,7 +42,6 @@ import { SigninOidc } from "pages/Redirect";
 import { ApiKeys } from "pages/ApiKeys";
 
 import "styles.scss";
-import { ApiKeyDetails } from "components/ApiKeyDetails/ApiKeyDetails";
 
 const queryClient = new QueryClient({
   defaultOptions: {
