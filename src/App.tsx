@@ -7,6 +7,7 @@ import GitInfo from "generated/gitInfo";
 
 import { store } from "store";
 import { Routes } from "constants/settings";
+import { ApiKeyDetails } from "components/ApiKeyDetails/ApiKeyDetails";
 import { PrivateRoute } from "components/PrivateRoute";
 import { InnerPage } from "components/InnerPage";
 import { UserSession } from "components/UserSession";
@@ -277,6 +278,17 @@ export const App = () => {
                 <PrivateRoute acceptedRoles={["owner", "developer"]}>
                   <InnerPage>
                     <ApiKeys />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            {/* Api Key Details */}
+            <Route
+              path={`${Routes.API_KEYS}/:id`}
+              element={
+                <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                  <InnerPage>
+                    <ApiKeyDetails />
                   </InnerPage>
                 </PrivateRoute>
               }

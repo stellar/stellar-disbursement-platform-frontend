@@ -103,6 +103,7 @@ export interface Store {
   profile: ProfileInitialState;
   userAccount: UserAccountInitialState;
   apiKeys: ApiKeysInitialState;
+  apiKeyDetails: ApiKeyDetailsInitialState;
 }
 
 export type StoreKey = keyof Store;
@@ -976,4 +977,10 @@ export type UpdateApiKeyRequest = {
   permissions?: string[];
   allowed_ips?: string[];
   enabled?: boolean;
+};
+
+export type ApiKeyDetailsInitialState = {
+  details: ApiKey | null;
+  status: ActionStatus | undefined;
+  errorString?: string;
 };

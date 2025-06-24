@@ -69,22 +69,15 @@ export const ApiKeys = () => {
 
   const handleSubmitCreateApiKey = useCallback(
     async (apiKeyData: CreateApiKeyRequest) => {
-      try {
-        const resultAction = await dispatch(createApiKeyAction(apiKeyData));
-
-        if (createApiKeyAction.fulfilled.match(resultAction)) {
-          const newApiKey = resultAction.payload as ApiKey;
-
-          setIsCreateModalVisible(false);
-
-          setCreatedApiKey({
-            name: newApiKey.name,
-            key: newApiKey.key || "", // The key should be present in creation response
-          });
-          setIsSuccessModalVisible(true);
-        }
-      } catch (error) {
-        console.error("Error creating API key:", error);
+      const resultAction = await dispatch(createApiKeyAction(apiKeyData));
+      if (createApiKeyAction.fulfilled.match(resultAction)) {
+        const newApiKey = resultAction.payload as ApiKey;
+        setIsCreateModalVisible(false);
+        setCreatedApiKey({
+          name: newApiKey.name,
+          key: newApiKey.key || "", // The key should be present in creation response
+        });
+        setIsSuccessModalVisible(true);
       }
     },
     [dispatch],
@@ -99,13 +92,9 @@ export const ApiKeys = () => {
 
   const handleSubmitEditApiKey = useCallback(
     async (apiKeyId: string, updateData: UpdateApiKeyRequest) => {
-      try {
-        await dispatch(updateApiKeyAction({ apiKeyId, updateData })).unwrap();
-        setIsEditModalVisible(false);
-        setEditingApiKey(undefined);
-      } catch (error) {
-        console.error("Failed to update API key:", error);
-      }
+      await dispatch(updateApiKeyAction({ apiKeyId, updateData }));
+      setIsEditModalVisible(false);
+      setEditingApiKey(undefined);
     },
     [dispatch],
   );

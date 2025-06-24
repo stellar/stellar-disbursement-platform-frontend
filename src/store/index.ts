@@ -11,6 +11,7 @@ import { reducer as organization } from "store/ducks/organization";
 import { reducer as profile } from "store/ducks/profile";
 import { reducer as userAccount } from "store/ducks/userAccount";
 import { reducer as apiKeys } from "store/ducks/apiKeys";
+import { reducer as apiKeyDetails } from "store/ducks/apiKeyDetails";
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
@@ -27,6 +28,7 @@ const reducers = combineReducers({
   profile,
   userAccount,
   apiKeys,
+  apiKeyDetails,
 });
 
 // Create a reset action

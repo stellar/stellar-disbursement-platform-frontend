@@ -3,12 +3,12 @@
 .EditApiKeyModal {
   &__description {
     color: var(--color-gray-60);
-    margin-bottom: pxToRem(24);
+    margin-bottom: pxToRem(24px);
   }
 
   &__form {
     display: flex;
     flex-direction: column;
-    gap: pxToRem(16);
+    gap: pxToRem(16px);
   }
 }

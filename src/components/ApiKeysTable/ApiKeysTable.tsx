@@ -1,10 +1,12 @@
-import { Card, Icon, Heading, Button } from "@stellar/design-system";
+import { useNavigate } from "react-router-dom";
+import { Card, Icon, Heading, Button, Link } from "@stellar/design-system";
 
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { Table } from "components/Table";
 import { MoreMenuButton } from "components/MoreMenuButton";
 import { DropdownMenu } from "components/DropdownMenu";
 import { EmptyStateMessage } from "components/EmptyStateMessage/EmptyStateMessage";
+import { Routes } from "constants/settings";
 
 import { ApiKey } from "types";
 
@@ -90,6 +92,16 @@ export const ApiKeysTable = ({
   onEditKey,
   onDeleteKey,
 }: ApiKeysTableProps) => {
+  const navigate = useNavigate();
+
+  const handleApiKeyClicked = (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    apiKeyId: string,
+  ) => {
+    event.preventDefault();
+    navigate(`${Routes.API_KEYS}/${apiKeyId}`);
+  };
+
   return (
     <Card>
       <div className="ApiKeysTable__header">
@@ -121,14 +133,24 @@ export const ApiKeysTable = ({
                   Last Used
                 </Table.HeaderCell>
                 <Table.HeaderCell textAlign="center">Status</Table.HeaderCell>
-                <Table.HeaderCell>Actions</Table.HeaderCell>
+                <Table.HeaderCell textAlign="right" width="1.5rem">
+                  Actions
+                </Table.HeaderCell>
               </Table.Header>
 
               <Table.Body>
                 {apiKeys.map((apiKey) => (
                   <Table.BodyRow key={apiKey.id}>
                     <Table.BodyCell>
-                      <div className="ApiKeysTable__keyName">{apiKey.name}</div>
+                      <Link
+                        onClick={(event) =>
+                          handleApiKeyClicked(event, apiKey.id)
+                        }
+                      >
+                        <div className="ApiKeysTable__keyName">
+                          {apiKey.name}
+                        </div>
+                      </Link>
                     </Table.BodyCell>
 
                     <Table.BodyCell>
