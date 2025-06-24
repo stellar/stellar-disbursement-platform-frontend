@@ -1,0 +1,29 @@
+@use "./styles-utils.scss" as *;
+
+.ValuesList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    color: var(--color-gray-90);
+    font-size: pxToRem(14);
+    padding: pxToRem(8) 0;
+    border-bottom: 1px solid var(--color-gray-20);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__empty {
+    color: var(--color-gray-60);
+    font-size: pxToRem(14);
+  }
+
+  &--monospace {
+    .ValuesList__item {
+      font-family: var(--font-family-monospace);
+    }
+  }
+}

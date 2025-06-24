@@ -31,6 +31,7 @@ import {
 import { ApiKey, UserRole } from "types";
 
 import "./styles.scss";
+import { ValuesList } from "components/ValueList/ValueList";
 
 const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 
@@ -232,9 +233,13 @@ export const ApiKeyDetails = () => {
           </SectionHeader.Row>
         </SectionHeader>
 
-        <div className="StatCards">
-          <Card>
-            <div className="StatCards__card StatCards__card--grid">
+        <Card>
+          <div
+            className="StatCards__card StatCards__card--grid StatCards__card--wideGap"
+            style={{ "--StatCard-grid-columns": 4 } as React.CSSProperties}
+          >
+            {/* Column one */}
+            <div className="StatCards__card__column">
               <div className="StatCards__card__item">
                 <label className="StatCards__card__item__label">Status</label>
                 <div
@@ -243,17 +248,9 @@ export const ApiKeyDetails = () => {
                   {status}
                 </div>
               </div>
-
+            </div>
+            <div className="StatCards__card__column">
               <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Created at
-                </label>
-                <div className="StatCards__card__item__value">
-                  {formatDateTime(apiKey.created_at)}
-                </div>
-              </div>
-
-              <div className="StatCards__card__item StatCards__card__item--fullWidth">
                 <label className="StatCards__card__item__label">
                   API Key ID
                 </label>
@@ -261,6 +258,25 @@ export const ApiKeyDetails = () => {
                   <CopyWithIcon textToCopy={apiKey.id} iconSizeRem="0.875">
                     {apiKey.id}
                   </CopyWithIcon>
+                </div>
+              </div>
+              <div className="StatCards__card__item">
+                <label className="StatCards__card__item__label">
+                  Created by
+                </label>
+                <div className="StatCards__card__item__value">
+                  {apiKey.created_by || "-"}
+                </div>
+              </div>
+            </div>
+            {/* Column two */}
+            <div className="StatCards__card__column">
+              <div className="StatCards__card__item">
+                <label className="StatCards__card__item__label">
+                  Created at
+                </label>
+                <div className="StatCards__card__item__value">
+                  {formatDateTime(apiKey.created_at)}
                 </div>
               </div>
 
@@ -274,7 +290,16 @@ export const ApiKeyDetails = () => {
                     : "No expiration"}
                 </div>
               </div>
-
+            </div>
+            <div className="StatCards__card__column">
+              <div className="StatCards__card__item">
+                <label className="StatCards__card__item__label">
+                  Updated at
+                </label>
+                <div className="StatCards__card__item__value">
+                  {formatDateTime(apiKey.updated_at)}
+                </div>
+              </div>
               <div className="StatCards__card__item">
                 <label className="StatCards__card__item__label">
                   Last used
@@ -285,67 +310,50 @@ export const ApiKeyDetails = () => {
                     : "Never"}
                 </div>
               </div>
-
-              <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Created by
-                </label>
-                <div className="StatCards__card__item__value">
-                  {apiKey.created_by || "-"}
-                </div>
-              </div>
-
-              <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Updated at
-                </label>
-                <div className="StatCards__card__item__value">
-                  {formatDateTime(apiKey.updated_at)}
-                </div>
-              </div>
             </div>
-          </Card>
+          </div>
+        </Card>
 
+        <div className="DetailsSection DetailsSection">
+          <SectionHeader>
+            <SectionHeader.Row>
+              <SectionHeader.Content>
+                <Heading as="h4" size="xs">
+                  Permissions
+                </Heading>
+              </SectionHeader.Content>
+            </SectionHeader.Row>
+          </SectionHeader>
           <Card>
             <div className="StatCards__card">
-              <Heading as="h3" size="xs">
-                Permissions
-              </Heading>
               <div className="ApiKeyDetails__permissions">
-                {formatPermissions(apiKey.permissions).length > 0 ? (
-                  <ul className="ApiKeyDetails__permissions__list">
-                    {formatPermissions(apiKey.permissions).map(
-                      (perm, index) => (
-                        <li key={index}>{perm}</li>
-                      ),
-                    )}
-                  </ul>
-                ) : (
-                  <div className="ApiKeyDetails__permissions__empty">
-                    No permissions assigned
-                  </div>
-                )}
+                <ValuesList
+                  values={formatPermissions(apiKey.permissions)}
+                  emptyMessage="No permissions assigned"
+                />
               </div>
             </div>
           </Card>
+        </div>
 
+        <div className="DetailsSection DetailsSection">
+          <SectionHeader>
+            <SectionHeader.Row>
+              <SectionHeader.Content>
+                <Heading as="h4" size="xs">
+                  IP Restrictions
+                </Heading>
+              </SectionHeader.Content>
+            </SectionHeader.Row>
+          </SectionHeader>
           <Card>
             <div className="StatCards__card">
-              <Heading as="h3" size="xs">
-                IP Restrictions
-              </Heading>
               <div className="ApiKeyDetails__ipRestrictions">
-                {apiKey.allowed_ips && apiKey.allowed_ips.length > 0 ? (
-                  <ul className="ApiKeyDetails__ipRestrictions__list">
-                    {apiKey.allowed_ips.map((ip, index) => (
-                      <li key={index}>{ip}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div className="ApiKeyDetails__ipRestrictions__empty">
-                    No IP restrictions (accessible from any IP)
-                  </div>
-                )}
+                <ValuesList
+                  values={apiKey.allowed_ips}
+                  emptyMessage="No IP restrictions (accessible from any IP)"
+                  isMonospace={true}
+                />
               </div>
             </div>
           </Card>
