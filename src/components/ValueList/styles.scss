@@ -7,13 +7,13 @@
 
   &__item {
     color: var(--color-gray-90);
-    font-size: pxToRem(14);
-    padding: pxToRem(8) 0;
+    font-size: pxToRem(14px);
+    padding: pxToRem(8px) 0;
   }
 
   &__empty {
     color: var(--color-gray-60);
-    font-size: pxToRem(14);
+    font-size: pxToRem(14px);
     padding: 1rem 1.5rem;
   }
 
