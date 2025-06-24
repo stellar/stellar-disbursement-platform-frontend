@@ -532,6 +532,7 @@ export type ApiWallet = {
   created_at: string;
   updated_at: string;
   user_managed?: boolean;
+  embedded?: boolean;
 };
 
 export const isUserManagedWalletEnabled = (

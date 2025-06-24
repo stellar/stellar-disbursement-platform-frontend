@@ -58,6 +58,7 @@ window._env_ = {
   HORIZON_URL: "https://horizon-testnet.stellar.org",
   RECAPTCHA_SITE_KEY: "6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn",
   SINGLE_TENANT_MODE: false,
+  ENABLE_EMBEDDED_WALLETS: false,
 };
 ```
 
@@ -69,13 +70,16 @@ variables should be prefixed with `REACT_APP_`.
 Set the value to true to avoid fetching the file if the Window ENV is not used.
 
 <!-- prettier-ignore -->
+
 > [!NOTE]
 > Set `REACT_APP_DISABLE_WINDOW_ENV=true` to avoid fetching the
 > `public/settings/env-config.js` file if the `window._env_` is not used.
 
 <!-- prettier-ignore -->
+
 > [!NOTE]
-> Set `REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN=true` to skip prefilling the hostname from the domain.
+> Set `REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN=true` to skip prefilling the
+> hostname from the domain.
 
 For example:
 

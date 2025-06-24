@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import {
+  Button,
   Card,
   Heading,
-  Notification,
-  Modal,
-  Button,
   Loader,
+  Modal,
+  Notification,
 } from "@stellar/design-system";
 
 import { InfoTooltip } from "components/InfoTooltip";
@@ -76,6 +76,7 @@ export const WalletProviders = () => {
           assets={item.assets?.map((asset) => asset.code)}
           editable={canEditWalletProviders}
           userManaged={item.user_managed}
+          embedded={item.embedded}
           onChange={() => {
             setSelectedWallet({ id: item.id, enabled: item.enabled });
 

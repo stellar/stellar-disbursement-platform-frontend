@@ -1,5 +1,7 @@
 import React from "react";
-import { Card, Icon, Toggle, Title } from "@stellar/design-system";
+import { Card, Icon, Title, Toggle } from "@stellar/design-system";
+import { ENABLE_EMBEDDED_WALLETS } from "constants/envVariables";
+import { InfoTooltip } from "components/InfoTooltip";
 import "./styles.scss";
 
 interface WalletCardProps {
@@ -10,6 +12,7 @@ interface WalletCardProps {
   assets: string[];
   editable: boolean | null;
   userManaged: boolean | undefined;
+  embedded?: boolean;
   onChange: () => void;
 }
 
@@ -21,8 +24,12 @@ export const WalletCard: React.FC<WalletCardProps> = ({
   assets,
   editable = true,
   userManaged,
+  embedded = false,
   onChange,
 }: WalletCardProps) => {
+  const isEmbeddedWalletDisabled = embedded && !ENABLE_EMBEDDED_WALLETS;
+  const isToggleDisabled = !editable || isEmbeddedWalletDisabled;
+
   return (
     <Card noPadding>
       <div className="WalletCard">
@@ -42,12 +49,26 @@ export const WalletCard: React.FC<WalletCardProps> = ({
               </div>
             </div>
 
-            <Toggle
-              id={walletId}
-              checked={enabled}
-              onChange={onChange}
-              disabled={!editable}
-            />
+            <div className="WalletCard__toggle">
+              {isEmbeddedWalletDisabled && (
+                <InfoTooltip infoText="Contact your system administrator to enable embedded wallets.">
+                  <Toggle
+                    id={walletId}
+                    checked={enabled}
+                    onChange={onChange}
+                    disabled={isToggleDisabled}
+                  />
+                </InfoTooltip>
+              )}
+              {!isEmbeddedWalletDisabled && (
+                <Toggle
+                  id={walletId}
+                  checked={enabled}
+                  onChange={onChange}
+                  disabled={isToggleDisabled}
+                />
+              )}
+            </div>
           </div>
         </div>
 

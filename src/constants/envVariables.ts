@@ -17,6 +17,7 @@ declare global {
       RPC_URL: string;
       RECAPTCHA_SITE_KEY: string;
       SINGLE_TENANT_MODE: boolean;
+      ENABLE_EMBEDDED_WALLETS?: boolean;
 
       USE_SSO?: boolean;
       OIDC_AUTHORITY?: string;
@@ -57,6 +58,10 @@ const generateEnvConfig = async () => {
       process?.env?.REACT_APP_SINGLE_TENANT_MODE ||
         window._env_.SINGLE_TENANT_MODE,
     ),
+    ENABLE_EMBEDDED_WALLETS: Boolean(
+      process?.env?.REACT_APP_ENABLE_EMBEDDED_WALLETS ||
+        window?._env_?.ENABLE_EMBEDDED_WALLETS,
+    ),
     USE_SSO: Boolean(process?.env?.REACT_APP_USE_SSO || window?._env_?.USE_SSO),
     OIDC_AUTHORITY:
       process?.env?.REACT_APP_OIDC_AUTHORITY || window?._env_?.OIDC_AUTHORITY,
@@ -80,6 +85,7 @@ export const {
   RPC_URL,
   RECAPTCHA_SITE_KEY,
   SINGLE_TENANT_MODE,
+  ENABLE_EMBEDDED_WALLETS,
   USE_SSO,
   OIDC_AUTHORITY,
   OIDC_CLIENT_ID,
