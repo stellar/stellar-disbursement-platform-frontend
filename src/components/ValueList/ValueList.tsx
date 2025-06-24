@@ -16,12 +16,12 @@ export const ValuesList = ({
   }
 
   return (
-    <ul className={`ValuesList ${isMonospace ? "ValuesList--monospace" : ""}`}>
+    <div className={`ValuesList ${isMonospace ? "ValuesList--monospace" : ""}`}>
       {values.map((value, index) => (
-        <li key={index} className="ValuesList__item">
+        <div key={index} className="ValuesList__item">
           {value}
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 };

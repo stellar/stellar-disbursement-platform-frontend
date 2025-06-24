@@ -236,9 +236,8 @@ export const ApiKeyDetails = () => {
         <Card>
           <div
             className="StatCards__card StatCards__card--grid StatCards__card--wideGap"
-            style={{ "--StatCard-grid-columns": 4 } as React.CSSProperties}
+            style={{ "--StatCard-grid-columns": 3 } as React.CSSProperties}
           >
-            {/* Column one */}
             <div className="StatCards__card__column">
               <div className="StatCards__card__item">
                 <label className="StatCards__card__item__label">Status</label>
@@ -268,9 +267,6 @@ export const ApiKeyDetails = () => {
                   {apiKey.created_by || "-"}
                 </div>
               </div>
-            </div>
-            {/* Column two */}
-            <div className="StatCards__card__column">
               <div className="StatCards__card__item">
                 <label className="StatCards__card__item__label">
                   Created at
@@ -279,7 +275,8 @@ export const ApiKeyDetails = () => {
                   {formatDateTime(apiKey.created_at)}
                 </div>
               </div>
-
+            </div>
+            <div className="StatCards__card__column">
               <div className="StatCards__card__item">
                 <label className="StatCards__card__item__label">
                   Expiration date
@@ -290,8 +287,6 @@ export const ApiKeyDetails = () => {
                     : "No expiration"}
                 </div>
               </div>
-            </div>
-            <div className="StatCards__card__column">
               <div className="StatCards__card__item">
                 <label className="StatCards__card__item__label">
                   Updated at
@@ -324,7 +319,7 @@ export const ApiKeyDetails = () => {
               </SectionHeader.Content>
             </SectionHeader.Row>
           </SectionHeader>
-          <Card>
+          <Card noPadding>
             <div className="StatCards__card">
               <div className="ApiKeyDetails__permissions">
                 <ValuesList
@@ -346,7 +341,7 @@ export const ApiKeyDetails = () => {
               </SectionHeader.Content>
             </SectionHeader.Row>
           </SectionHeader>
-          <Card>
+          <Card noPadding>
             <div className="StatCards__card">
               <div className="ApiKeyDetails__ipRestrictions">
                 <ValuesList
