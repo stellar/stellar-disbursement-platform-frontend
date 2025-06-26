@@ -9,17 +9,17 @@ import {
 } from "@stellar/design-system";
 
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { SelectedReceiverInfo } from "components/SelectedReceiverInfo/SelectedReceiverInfo";
 
 import { useAllAssets } from "apiQueries/useAllAssets";
 import { useAllWallets } from "apiQueries/useWallets";
 import { useSearchReceivers } from "apiQueries/useSearchReceivers";
-import { usePrevious } from "hooks/usePrevious";
 import { useDebounce } from "hooks/useDebounce";
+import { usePrevious } from "hooks/usePrevious";
 
 import { CreateDirectPaymentRequest, ApiReceiver } from "types";
 
 import "./styles.scss";
-import { SelectedReceiverInfo } from "components/SelectedReceiverInfo/SelectedReceiverInfo";
 
 interface DirectPaymentCreateModalProps {
   visible: boolean;
