@@ -23,3 +23,15 @@ export const useWallets = ({ userManaged }: UseWalletsProps) => {
 
   return query;
 };
+
+export const useAllWallets = () => {
+  const query = useQuery<ApiWallet[], AppError>({
+    queryKey: ["wallets", "all"],
+    queryFn: async () => {
+      return await fetchApi(`${API_URL}/wallets`);
+    },
+    staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
+  });
+
+  return query;
+};

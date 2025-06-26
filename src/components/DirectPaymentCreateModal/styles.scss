@@ -1,0 +1,131 @@
+@use "./styles-utils.scss" as *;
+
+.DirectPaymentCreateModal {
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(20px);
+  }
+
+  &__receiverSection {
+    position: relative;
+  }
+
+  &__searchResults {
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid var(--color-gray-30);
+    border-radius: pxToRem(4px);
+    box-shadow: 0 pxToRem(4px) pxToRem(12px) rgba(0, 0, 0, 0.1);
+    max-height: pxToRem(200px);
+    overflow-y: auto;
+    margin-top: pxToRem(4px);
+  }
+
+  &__searchResult {
+    width: 100%;
+    padding: pxToRem(12px);
+    border: none;
+    background: white;
+    text-align: left;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-gray-20);
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &:hover {
+      background-color: var(--color-gray-05);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__searchResultContent {
+    flex: 1;
+  }
+
+  &__searchResultMain {
+    font-size: pxToRem(14px);
+    font-weight: 500;
+    color: var(--color-gray-80);
+    margin-bottom: pxToRem(4px);
+  }
+
+  &__searchResultSub {
+    font-size: pxToRem(12px);
+    color: var(--color-gray-60);
+  }
+
+  &__noResults {
+    padding: pxToRem(12px);
+    text-align: center;
+    color: var(--color-gray-60);
+    font-size: pxToRem(14px);
+    border: 1px solid var(--color-gray-30);
+    border-radius: pxToRem(4px);
+    background-color: var(--color-gray-05);
+    margin-top: pxToRem(4px);
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(12px);
+    padding: pxToRem(16px);
+    border: 1px solid var(--color-gray-20);
+    border-radius: pxToRem(6px);
+    background-color: var(--color-gray-05);
+  }
+
+  &__sectionTitle {
+    font-weight: 600;
+    font-size: pxToRem(14px);
+    color: var(--color-gray-80);
+    margin-bottom: pxToRem(8px);
+  }
+
+  &__error {
+    display: block;
+    color: var(--color-error);
+    font-size: pxToRem(12px);
+    font-weight: 400;
+    margin-top: pxToRem(4px);
+  }
+
+  &__currency {
+    display: flex;
+    align-items: center;
+    padding: 0 pxToRem(8px);
+    font-size: pxToRem(14px);
+    color: var(--color-gray-60);
+    font-weight: 500;
+  }
+
+  // Style adjustments for better visual hierarchy
+  .Input {
+    &:not(:last-child) {
+      margin-bottom: 0;
+    }
+  }
+
+  .Select {
+    &:not(:last-child) {
+      margin-bottom: 0;
+    }
+  }
+
+  // Special styling for the note text
+  .Input__note,
+  .Select__note {
+    font-size: pxToRem(12px);
+    color: var(--color-gray-60);
+    margin-top: pxToRem(4px);
+  }
+}

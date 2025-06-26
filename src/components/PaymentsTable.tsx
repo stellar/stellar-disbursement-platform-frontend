@@ -84,12 +84,10 @@ export const PaymentsTable = ({
             <Table.HeaderCell textAlign="right" width="8.125rem">
               Amount
             </Table.HeaderCell>
-            <Table.HeaderCell textAlign="right" width="6rem">
+            <Table.HeaderCell textAlign="right" width="4rem">
               Status
             </Table.HeaderCell>
-            <Table.HeaderCell textAlign="right" width="6rem">
-              Type
-            </Table.HeaderCell>
+            <Table.HeaderCell>Type</Table.HeaderCell>
           </Table.Header>
 
           <Table.Body>
@@ -163,10 +161,8 @@ export const PaymentsTable = ({
                 <Table.BodyCell textAlign="right">
                   <PaymentStatus status={p.status} />
                 </Table.BodyCell>
-                <Table.BodyCell textAlign="right">
-                  <span className="Table-v2__cell--secondary">
-                    {p.payment_type}
-                  </span>
+                <Table.BodyCell>
+                  <span className="Table-v2__cell--secondary">{p.type}</span>
                 </Table.BodyCell>
               </Table.BodyRow>
             ))}
