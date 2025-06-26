@@ -343,7 +343,7 @@ export const DirectPaymentCreateModal: React.FC<
 
             {/* Receiver Search */}
             {showReceiverField && (
-              <div className="DirectPaymentCreateModal__receiverSection">
+              <div>
                 <Input
                   fieldSize="sm"
                   id="receiverSearch"
@@ -371,10 +371,10 @@ export const DirectPaymentCreateModal: React.FC<
                           <button
                             key={receiver.id}
                             type="button"
-                            className={`DirectPaymentCreateModal__searchResult ${isSelected ? "DirectPaymentCreateModal__searchResult--selected" : ""}`}
+                            className={`DirectPaymentCreateModal__searchResult`}
                             onClick={() => handleReceiverSelect(receiver)}
                           >
-                            <div className="DirectPaymentCreateModal__searchResultContent">
+                            <div>
                               <div className="DirectPaymentCreateModal__searchResultMain">
                                 {getReceiverDisplayInfo(
                                   receiver,
