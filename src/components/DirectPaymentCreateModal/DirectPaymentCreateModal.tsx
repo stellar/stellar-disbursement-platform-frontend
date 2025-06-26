@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Button,
   Input,
@@ -14,10 +14,12 @@ import { useAllAssets } from "apiQueries/useAllAssets";
 import { useAllWallets } from "apiQueries/useWallets";
 import { useSearchReceivers } from "apiQueries/useSearchReceivers";
 import { usePrevious } from "hooks/usePrevious";
+import { useDebounce } from "hooks/useDebounce";
 
 import { CreateDirectPaymentRequest, ApiReceiver } from "types";
 
 import "./styles.scss";
+import { SelectedReceiverInfo } from "components/SelectedReceiverInfo/SelectedReceiverInfo";
 
 interface DirectPaymentCreateModalProps {
   visible: boolean;
@@ -41,8 +43,7 @@ export const DirectPaymentCreateModal: React.FC<
   });
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const receiverSearchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [debouncedReceiverSearch, setDebouncedReceiverSearch] = useState("");
+  const debouncedReceiverSearch = useDebounce(formData.receiverSearch, 300);
 
   const { data: allAssets } = useAllAssets();
   const { data: allWallets } = useAllWallets();
@@ -61,25 +62,8 @@ export const DirectPaymentCreateModal: React.FC<
         externalPaymentId: "",
       });
       setFormErrors({});
-      setDebouncedReceiverSearch("");
     }
   }, [visible, previousVisible]);
-
-  useEffect(() => {
-    if (receiverSearchTimeoutRef.current) {
-      clearTimeout(receiverSearchTimeoutRef.current);
-    }
-
-    const timeout = setTimeout(() => {
-      setDebouncedReceiverSearch(formData.receiverSearch);
-    }, 300);
-
-    receiverSearchTimeoutRef.current = timeout;
-
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [formData.receiverSearch]);
 
   const filteredWallets = useMemo(() => {
     if (!allWallets || !formData.assetId || !formData.selectedReceiver) {
@@ -137,15 +121,18 @@ export const DirectPaymentCreateModal: React.FC<
         receiverSearch: "",
         walletId: "",
       }));
-      setDebouncedReceiverSearch("");
       return;
     }
 
     if (id === "receiverSearch") {
+      // Clear selected receiver if user modifies the search text
+      const shouldClearReceiver =
+        formData.selectedReceiver && value !== formData.receiverSearch;
+
       setFormData((prev) => ({
         ...prev,
         [id]: value,
-        selectedReceiver: null,
+        selectedReceiver: shouldClearReceiver ? null : prev.selectedReceiver,
         walletId: "",
       }));
       setFormErrors((prev) => ({
@@ -312,9 +299,8 @@ export const DirectPaymentCreateModal: React.FC<
               {allAssets?.map((asset) => (
                 <option key={asset.id} value={asset.id}>
                   {asset.code}{" "}
-                  {asset.issuer !== "native"
-                    ? `(${asset.issuer.slice(0, 8)}...)`
-                    : "(Native)"}
+                  {asset.code !== "XLM" &&
+                    `(${asset.issuer.slice(0, 4)}...${asset.issuer.slice(-4)})`}
                 </option>
               ))}
             </Select>
@@ -342,7 +328,13 @@ export const DirectPaymentCreateModal: React.FC<
             />
 
             {/* Receiver Search */}
-            {showReceiverField && (
+            <div
+              className={`DirectPaymentCreateModal__fieldWrapper ${
+                showReceiverField
+                  ? "DirectPaymentCreateModal__fieldWrapper--visible"
+                  : ""
+              }`}
+            >
               <div>
                 <Input
                   fieldSize="sm"
@@ -358,9 +350,15 @@ export const DirectPaymentCreateModal: React.FC<
                   required
                 />
 
-                {/* Search Results */}
+                {/* Selected Receiver Info */}
+                {formData.selectedReceiver && !isReceiverWalletAddress && (
+                  <SelectedReceiverInfo receiver={formData.selectedReceiver} />
+                )}
+
+                {/* Search Results - Only show if receiver not selected */}
                 {!isReceiverWalletAddress &&
                   formData.receiverSearch &&
+                  !formData.selectedReceiver &&
                   searchResults?.data &&
                   searchResults.data.length > 0 && (
                     <div className="DirectPaymentCreateModal__searchResults">
@@ -395,6 +393,7 @@ export const DirectPaymentCreateModal: React.FC<
 
                 {!isReceiverWalletAddress &&
                   formData.receiverSearch &&
+                  !formData.selectedReceiver &&
                   debouncedReceiverSearch &&
                   searchResults?.data &&
                   searchResults.data.length === 0 && (
@@ -404,45 +403,60 @@ export const DirectPaymentCreateModal: React.FC<
                     </div>
                   )}
               </div>
-            )}
+            </div>
 
             {/* Wallet Selection */}
-            {showWalletField && (
-              <Select
-                fieldSize="sm"
-                id="walletId"
-                label="Wallet"
-                value={formData.walletId}
-                onChange={handleInputChange}
-                error={formErrors.walletId}
-                disabled={!formData.selectedReceiver}
-                note={
-                  !formData.selectedReceiver
-                    ? "Select a receiver first"
-                    : `${filteredWallets.length} compatible wallet(s) available`
-                }
-                required
-              >
-                <option value="">Select wallet</option>
-                {filteredWallets.map((wallet) => (
-                  <option key={wallet.id} value={wallet.id}>
-                    {wallet.name}
-                  </option>
-                ))}
-              </Select>
-            )}
+            <div
+              className={`DirectPaymentCreateModal__fieldWrapper ${
+                showWalletField &&
+                "DirectPaymentCreateModal__fieldWrapper--visible"
+              }`}
+            >
+              <div>
+                <Select
+                  fieldSize="sm"
+                  id="walletId"
+                  label="Wallet"
+                  value={formData.walletId}
+                  onChange={handleInputChange}
+                  error={formErrors.walletId}
+                  disabled={!formData.selectedReceiver}
+                  note={
+                    !formData.selectedReceiver
+                      ? "Select a receiver first"
+                      : `${filteredWallets.length} compatible wallet(s) available`
+                  }
+                  required
+                >
+                  <option value="">Select wallet</option>
+                  {filteredWallets.map((wallet) => (
+                    <option key={wallet.id} value={wallet.id}>
+                      {wallet.name}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            </div>
 
             {/* External Payment ID */}
-            <Input
-              fieldSize="sm"
-              id="externalPaymentId"
-              name="externalPaymentId"
-              type="text"
-              label="External Payment ID (optional)"
-              placeholder="Enter external payment ID"
-              value={formData.externalPaymentId}
-              onChange={handleInputChange}
-            />
+            <div
+              className={`DirectPaymentCreateModal__fieldWrapper ${
+                showReceiverField
+                  ? "DirectPaymentCreateModal__fieldWrapper--visible"
+                  : ""
+              }`}
+            >
+              <Input
+                fieldSize="sm"
+                id="externalPaymentId"
+                name="externalPaymentId"
+                type="text"
+                label="External Payment ID (optional)"
+                placeholder="Enter external payment ID"
+                value={formData.externalPaymentId}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>

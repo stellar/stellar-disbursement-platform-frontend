@@ -4,7 +4,10 @@
   &__form {
     display: flex;
     flex-direction: column;
-    gap: pxToRem(20px);
+
+    & > *:not(:last-child):not(.DirectPaymentCreateModal__fieldWrapper) {
+      margin-bottom: pxToRem(20px);
+    }
   }
 
   &__searchResults {
@@ -74,6 +77,50 @@
     font-size: pxToRem(12px);
     font-weight: 400;
     margin-top: pxToRem(4px);
+  }
+
+  &__fieldWrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition:
+      grid-template-rows ease-in-out 300ms,
+      margin ease-in-out 300ms;
+    margin-bottom: 0;
+
+    &--visible {
+      grid-template-rows: 1fr;
+      margin-bottom: pxToRem(20px);
+    }
+
+    & > div {
+      overflow: hidden;
+    }
+  }
+
+  &__selectedReceiver {
+    margin-top: pxToRem(8px);
+    padding: pxToRem(12px);
+    background-color: var(--color-gray-10);
+    border: 1px solid var(--color-gray-30);
+    border-radius: pxToRem(4px);
+    font-size: pxToRem(12px);
+    color: var(--color-gray-60);
+    line-height: pxToRem(18px);
+
+    &__item {
+      display: flex;
+      align-items: center;
+      gap: pxToRem(4px);
+
+      &:not(:last-child) {
+        margin-bottom: pxToRem(4px);
+      }
+    }
+
+    &__label {
+      font-weight: 500;
+      color: var(--color-gray-70);
+    }
   }
 
   &__currency {

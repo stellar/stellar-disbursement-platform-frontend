@@ -20,6 +20,7 @@ export const useSearchReceivers = (
     },
     enabled: Boolean(enabled && searchQuery.trim().length > 0),
     staleTime: 30 * 1000, // Keep results for 30 seconds
+    placeholderData: (prev) => prev,
   });
 
   return query;
