@@ -5,9 +5,13 @@ import { ApiWallet, AppError } from "types";
 
 type UseWalletsProps = {
   userManaged?: boolean;
+  supportedAssets?: string[];
 };
 
-export const useWallets = ({ userManaged }: UseWalletsProps) => {
+export const useWallets = ({
+  userManaged,
+  supportedAssets,
+}: UseWalletsProps) => {
   const query = useQuery<ApiWallet[], AppError>({
     queryKey: ["wallets"],
     queryFn: async () => {
@@ -17,20 +21,12 @@ export const useWallets = ({ userManaged }: UseWalletsProps) => {
         url.searchParams.append("user_managed", userManaged.toString());
       }
 
+      if (supportedAssets && supportedAssets.length > 0) {
+        url.searchParams.set("supported_assets", supportedAssets.join(","));
+      }
+
       return await fetchApi(url.toString());
     },
-  });
-
-  return query;
-};
-
-export const useAllWallets = () => {
-  const query = useQuery<ApiWallet[], AppError>({
-    queryKey: ["wallets", "all"],
-    queryFn: async () => {
-      return await fetchApi(`${API_URL}/wallets`);
-    },
-    staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
   });
 
   return query;
