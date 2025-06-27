@@ -27,9 +27,7 @@ export const SelectedReceiverInfo: React.FC<SelectedReceiverInfoProps> = ({ rece
       </div>
       {!hasContactInfo && (
         <div className="DirectPaymentCreateModal__selectedReceiver__item">
-          <span>
-            <i>No contact information available</i>
-          </span>
+          <i>No contact information available</i>
         </div>
       )}
     </div>
