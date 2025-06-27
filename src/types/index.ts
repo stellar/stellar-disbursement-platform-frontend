@@ -657,7 +657,7 @@ export type ApiPayment = {
   stellar_address?: string;
   status: PaymentStatus;
   status_history: ApiPaymentStatusHistory[];
-  payment_type: "DISBURSEMENT" | "DIRECT";
+  type: "DISBURSEMENT" | "DIRECT";
   disbursement?: ApiPaymentDisbursement;
   asset: ApiPaymentAsset;
   receiver_wallet: ApiPaymentReceiverWallet;
@@ -983,4 +983,32 @@ export type ApiKeyDetailsInitialState = {
   details: ApiKey | null;
   status: ActionStatus | undefined;
   errorString?: string;
+};
+
+export type CreateDirectPaymentRequest = {
+  amount: string;
+  asset: DirectPaymentAsset;
+  receiver: DirectPaymentReceiver;
+  wallet?: DirectPaymentWallet;
+  external_payment_id?: string;
+};
+
+export type DirectPaymentAsset = {
+  id?: string;
+  type?: "native" | "classic" | "contract" | "fiat";
+  code?: string;
+  issuer?: string;
+  contract_id?: string;
+};
+
+export type DirectPaymentReceiver = {
+  id?: string;
+  email?: string;
+  phone_number?: string;
+  wallet_address?: string;
+};
+
+export type DirectPaymentWallet = {
+  id?: string;
+  address?: string;
 };
