@@ -165,9 +165,6 @@ export const DirectPaymentCreateModal: React.FC<
     );
   };
 
-  const isWalletAddress = (input: string) =>
-    input.startsWith("G") && input.length === 56;
-
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
     if (!formData.assetId) errors.assetId = "Asset selection is required";
@@ -178,14 +175,10 @@ export const DirectPaymentCreateModal: React.FC<
     }
     if (!formData.receiverSearch.trim()) {
       errors.receiverSearch = "Receiver is required";
-    } else if (
-      !isWalletAddress(formData.receiverSearch) &&
-      !formData.selectedReceiver
-    ) {
-      errors.receiverSearch =
-        "Please select a receiver from search results or enter a valid wallet address";
+    } else if (!formData.selectedReceiver) {
+      errors.receiverSearch = "Please select a receiver from search results";
     }
-    if (!isWalletAddress(formData.receiverSearch) && !formData.walletId) {
+    if (!formData.walletId) {
       errors.walletId = "Wallet selection is required";
     }
     setFormErrors(errors);
@@ -196,7 +189,6 @@ export const DirectPaymentCreateModal: React.FC<
     event.preventDefault();
     if (!validateForm()) return;
 
-    const isAddr = isWalletAddress(formData.receiverSearch);
     const selectedWallet = supportedWallets.find(
       (w) => w.id === formData.walletId,
     );
@@ -208,12 +200,8 @@ export const DirectPaymentCreateModal: React.FC<
         code: selectedAsset?.code,
         issuer: selectedAsset?.issuer,
       },
-      receiver: isAddr
-        ? { wallet_address: formData.receiverSearch.trim() }
-        : { id: formData.selectedReceiver!.id },
-      ...(isAddr
-        ? { wallet: { address: formData.receiverSearch.trim() } }
-        : selectedWallet && { wallet: { id: selectedWallet.id } }),
+      receiver: { id: formData.selectedReceiver!.id },
+      ...(selectedWallet && { wallet: { id: selectedWallet.id } }),
       ...(formData.externalPaymentId.trim() && {
         external_payment_id: formData.externalPaymentId.trim(),
       }),
@@ -222,8 +210,7 @@ export const DirectPaymentCreateModal: React.FC<
     onSubmit(paymentData);
   };
 
-  const isReceiverWalletAddress = isWalletAddress(formData.receiverSearch);
-  const showWalletField = formData.assetId && !isReceiverWalletAddress;
+  const showWalletField = formData.assetId;
   const showReceiverField = Boolean(formData.assetId);
 
   return (
@@ -292,20 +279,18 @@ export const DirectPaymentCreateModal: React.FC<
                   fieldSize="sm"
                   id="receiverSearch"
                   label="Receiver"
-                  placeholder="Search by name, email, phone, or enter wallet address (GXXX...)"
+                  placeholder="Search by name, email, phone"
                   value={formData.receiverSearch}
                   onChange={handleInputChange}
                   error={formErrors.receiverSearch}
-                  note={isReceiverWalletAddress && "Wallet address detected"}
                   required
                 />
 
-                {formData.selectedReceiver && !isReceiverWalletAddress && (
+                {formData.selectedReceiver && (
                   <SelectedReceiverInfo receiver={formData.selectedReceiver} />
                 )}
 
-                {!isReceiverWalletAddress &&
-                  formData.receiverSearch &&
+                {formData.receiverSearch &&
                   !formData.selectedReceiver &&
                   searchResults?.data &&
                   searchResults?.data.length > 0 && (
@@ -339,14 +324,12 @@ export const DirectPaymentCreateModal: React.FC<
                     </div>
                   )}
 
-                {!isReceiverWalletAddress &&
-                  formData.receiverSearch &&
+                {formData.receiverSearch &&
                   !formData.selectedReceiver &&
                   debouncedReceiverSearch &&
                   searchResults?.data?.length === 0 && (
                     <div className="DirectPaymentCreateModal__noResults">
-                      No receivers found. Make sure the receiver exists or enter
-                      a wallet address.
+                      No receivers found. Make sure the receiver exists.
                     </div>
                   )}
               </div>
