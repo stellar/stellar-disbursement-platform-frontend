@@ -10,7 +10,7 @@ import { useSearchReceivers } from "apiQueries/useSearchReceivers";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { SelectedReceiverInfo } from "components/SelectedReceiverInfo/SelectedReceiverInfo";
 
-import { DIRECT_PAYMENT_CONSTANTS } from "constants/directPayment";
+import { directPayment } from "constants/directPayment";
 import { CreateDirectPaymentRequest, ApiReceiver } from "types";
 
 import "./styles.scss";
@@ -45,7 +45,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const debouncedReceiverSearch = useDebounce(
     formData.receiverSearch,
-    DIRECT_PAYMENT_CONSTANTS.SEARCH_DEBOUNCE_MS,
+    directPayment.SEARCH_DEBOUNCE_MS,
   );
   const previousVisible = usePrevious(visible);
   const { data: allAssets } = useAllAssets();
@@ -79,7 +79,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   };
 
   const showReceiverField = Boolean(formData.assetId);
-  const showWalletField = Boolean(formData.assetId);
   useEffect(() => {
     if (previousVisible && !visible) {
       setFormData(INITIAL_FORM_DATA);
@@ -230,31 +229,36 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (searchResults?.data && searchResults.data.length > 0) {
       return (
         <div className="DirectPaymentCreateModal__searchResults">
-          {searchResults.data
-            .slice(0, DIRECT_PAYMENT_CONSTANTS.MAX_SEARCH_RESULTS)
-            .map((receiver) => {
-              const isSelected = formData.selectedReceiver?.id === receiver.id;
-              return (
-                <button
-                  key={receiver.id}
-                  type="button"
-                  className="DirectPaymentCreateModal__searchResult"
-                  onClick={() => handleReceiverSelect(receiver)}
-                >
-                  <div>
-                    <div className="DirectPaymentCreateModal__searchResultMain">
-                      {getReceiverDisplayInfo(receiver, formData.receiverSearch)}
-                    </div>
-                    <div className="DirectPaymentCreateModal__searchResultSub">
-                      ID:{" "}
-                      {receiver.id.slice(0, DIRECT_PAYMENT_CONSTANTS.RECEIVER_ID_PREVIEW_LENGTH)}… •{" "}
-                      {receiver.wallets.length} wallet(s)
-                    </div>
+          {searchResults.data.slice(0, directPayment.MAX_SEARCH_RESULTS).map((receiver) => {
+            const isSelected = formData.selectedReceiver?.id === receiver.id;
+            return (
+              <div
+                key={receiver.id}
+                className="DirectPaymentCreateModal__searchResult"
+                onClick={() => handleReceiverSelect(receiver)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleReceiverSelect(receiver);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Select receiver ${getReceiverDisplayInfo(receiver, formData.receiverSearch)}`}
+              >
+                <div>
+                  <div className="DirectPaymentCreateModal__searchResultMain">
+                    {getReceiverDisplayInfo(receiver, formData.receiverSearch)}
                   </div>
-                  {isSelected && <Icon.CheckCircle />}
-                </button>
-              );
-            })}
+                  <div className="DirectPaymentCreateModal__searchResultSub">
+                    ID: {receiver.id.slice(0, directPayment.RECEIVER_ID_PREVIEW_LENGTH)}… •{" "}
+                    {receiver.wallets.length} wallet(s)
+                  </div>
+                </div>
+                {isSelected && <Icon.CheckCircle />}
+              </div>
+            );
+          })}
         </div>
       );
     }
@@ -304,7 +308,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                 <option key={asset.id} value={asset.id}>
                   {asset.code}{" "}
                   {asset.code !== "XLM" &&
-                    `(${asset.issuer.slice(0, DIRECT_PAYMENT_CONSTANTS.ASSET_ISSUER_PREVIEW_LENGTH / 2)}…${asset.issuer.slice(-DIRECT_PAYMENT_CONSTANTS.ASSET_ISSUER_PREVIEW_LENGTH / 2)})`}
+                    `(${asset.issuer.slice(0, directPayment.ASSET_ISSUER_PREVIEW_LENGTH / 2)}…${asset.issuer.slice(-directPayment.ASSET_ISSUER_PREVIEW_LENGTH / 2)})`}
                 </option>
               ))}
             </Select>
@@ -331,35 +335,31 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
 
             {/* Receiver Search */}
             <div
-              className={`DirectPaymentCreateModal__fieldWrapper ${
-                showReceiverField && "DirectPaymentCreateModal__fieldWrapper--visible"
-              }`}
+              className="DirectPaymentCreateModal__fieldWrapper"
+              data-visible={showReceiverField}
             >
-              <div>
-                <Input
-                  fieldSize="sm"
-                  id="receiverSearch"
-                  label="Receiver"
-                  placeholder="Search by name, email, phone"
-                  value={formData.receiverSearch}
-                  onChange={handleInputChange}
-                  error={formErrors.receiverSearch}
-                  required
-                />
+              <Input
+                fieldSize="sm"
+                id="receiverSearch"
+                label="Receiver"
+                placeholder="Search by name, email, phone"
+                value={formData.receiverSearch}
+                onChange={handleInputChange}
+                error={formErrors.receiverSearch}
+                required
+              />
 
-                {formData.selectedReceiver && (
-                  <SelectedReceiverInfo receiver={formData.selectedReceiver} />
-                )}
+              {formData.selectedReceiver && (
+                <SelectedReceiverInfo receiver={formData.selectedReceiver} />
+              )}
 
-                {renderSearchResults()}
-              </div>
+              {renderSearchResults()}
             </div>
 
             {/* Wallet Selection */}
             <div
-              className={`DirectPaymentCreateModal__fieldWrapper ${
-                showWalletField && "DirectPaymentCreateModal__fieldWrapper--visible"
-              }`}
+              className="DirectPaymentCreateModal__fieldWrapper"
+              data-visible={showReceiverField}
             >
               <Select
                 fieldSize="sm"
@@ -379,9 +379,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
 
             {/* External Payment ID */}
             <div
-              className={`DirectPaymentCreateModal__fieldWrapper ${
-                showReceiverField && "DirectPaymentCreateModal__fieldWrapper--visible"
-              }`}
+              className="DirectPaymentCreateModal__fieldWrapper"
+              data-visible={showReceiverField}
             >
               <Input
                 fieldSize="sm"

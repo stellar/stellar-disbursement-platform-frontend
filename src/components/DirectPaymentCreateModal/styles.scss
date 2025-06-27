@@ -19,10 +19,16 @@
   }
 
   &__searchResult {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+
     width: 100%;
     padding: pxToRem(12px);
-    border: none;
-    background: white;
     text-align: left;
     border-bottom: 1px solid var(--color-gray-20);
     transition: background-color 0.2s ease;
@@ -87,7 +93,7 @@
       margin ease-in-out 300ms;
     margin-bottom: 0;
 
-    &--visible {
+    &[data-visible="true"] {
       grid-template-rows: 1fr;
       margin-bottom: pxToRem(20px);
     }

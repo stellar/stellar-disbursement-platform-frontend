@@ -1,4 +1,4 @@
-export const DIRECT_PAYMENT_CONSTANTS = {
+export const directPayment = {
   SEARCH_DEBOUNCE_MS: 300,
   MAX_SEARCH_RESULTS: 5,
   SEARCH_PAGE_LIMIT: "20",

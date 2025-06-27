@@ -3,7 +3,7 @@ import { API_URL } from "constants/envVariables";
 import { fetchApi } from "helpers/fetchApi";
 import { handleSearchParams } from "api/handleSearchParams";
 import { ApiReceivers, AppError } from "types";
-import { DIRECT_PAYMENT_CONSTANTS } from "constants/directPayment";
+import { directPayment } from "constants/directPayment";
 
 export const useSearchReceivers = (searchQuery: string, enabled: boolean = true) => {
   const query = useQuery<ApiReceivers, AppError>({
@@ -12,7 +12,7 @@ export const useSearchReceivers = (searchQuery: string, enabled: boolean = true)
       const params = handleSearchParams({
         q: searchQuery,
         page: "1",
-        page_limit: DIRECT_PAYMENT_CONSTANTS.SEARCH_PAGE_LIMIT,
+        page_limit: directPayment.SEARCH_PAGE_LIMIT,
       });
       return await fetchApi(`${API_URL}/receivers${params}`);
     },
