@@ -1012,3 +1012,58 @@ export type DirectPaymentWallet = {
   id?: string;
   address?: string;
 };
+
+// =============================================================================
+// Bridge Integration
+// =============================================================================
+export interface BridgeIntegration {
+  status: BridgeIntegrationStatusType;
+  customer_id: string;
+  kyc_status: {
+    id: string;
+    type: "individual" | "business";
+    kyc_status: BridgeKYCStatusType;
+    tos_status: BridgeTOSStatusType;
+    kyc_link: string;
+    tos_link: string;
+  };
+  virtual_account?: {
+    id: string;
+    status: "activated" | "deactivated";
+    source_deposit_instructions: {
+      bank_beneficiary_name: string;
+      currency: string;
+      bank_name: string;
+      bank_address: string;
+      bank_account_number: string;
+      bank_routing_number: string;
+      payment_rails: string[];
+    };
+  };
+}
+
+export interface BridgeIntegrationUpdate {
+  status: "OPTED_IN" | "READY_FOR_DEPOSIT";
+  email?: string;
+  full_name?: string;
+  kyc_type?: "individual" | "business";
+}
+
+export type BridgeIntegrationStatusType =
+  | "NOT_ENABLED"
+  | "NOT_OPTED_IN"
+  | "OPTED_IN"
+  | "READY_FOR_DEPOSIT"
+  | "ERROR";
+
+export type BridgeKYCStatusType =
+  | "not_started"
+  | "incomplete"
+  | "awaiting_ubo"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "paused"
+  | "offboarded";
+
+export type BridgeTOSStatusType = "pending" | "approved";

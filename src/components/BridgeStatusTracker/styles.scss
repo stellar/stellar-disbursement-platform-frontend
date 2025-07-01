@@ -1,0 +1,125 @@
+@use "./styles-utils.scss" as *;
+
+.BridgeStatusTracker {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: pxToRem(16px);
+
+    h4 {
+      margin: 0;
+      color: var(--color-gray-90);
+      font-size: pxToRem(16px);
+      font-weight: 500;
+    }
+  }
+
+  &__steps {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+  }
+
+  &__step {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(8px);
+    padding: pxToRem(12px);
+    border: 1px solid var(--color-gray-20);
+    border-radius: 4px;
+    background: var(--color-white);
+  }
+
+  &__stepHeader {
+    display: flex;
+    align-items: center;
+    gap: pxToRem(12px);
+    
+    span:not(.BridgeStatusTracker__statusDot):not(.BridgeStatusTracker__statusText) {
+      font-size: pxToRem(14px);
+      font-weight: 500;
+      color: var(--color-gray-90);
+      flex: 1;
+    }
+  }
+
+  &__statusText {
+    font-size: pxToRem(12px);
+    padding: pxToRem(4px) pxToRem(8px);
+    border-radius: 12px;
+    font-weight: 500;
+
+    &[data-status="pending"],
+    &[data-status="incomplete"],
+    &[data-status="awaiting_ubo"],
+    &[data-status="under_review"],
+    &[data-status="paused"],
+    &[data-status="not_started"] {
+      background-color: var(--color-gray-10);
+      color: var(--color-gray-70);
+    }
+
+    &[data-status="approved"] {
+      background-color: var(--color-green-10);
+      color: var(--color-green-70);
+    }
+
+    &[data-status="rejected"],
+    &[data-status="offboarded"] {
+      background-color: var(--color-red-10);
+      color: var(--color-red-70);
+    }
+  }
+
+  &__statusDot {
+    width: pxToRem(10px);
+    height: pxToRem(10px);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-block;
+
+    &[data-status="pending"],
+    &[data-status="incomplete"],
+    &[data-status="awaiting_ubo"],
+    &[data-status="under_review"],
+    &[data-status="paused"],
+    &[data-status="not_started"] {
+      background-color: var(--color-gray-60);
+    }
+
+    &[data-status="approved"] {
+      background-color: var(--color-green-60);
+    }
+
+    &[data-status="rejected"],
+    &[data-status="offboarded"] {
+      background-color: var(--color-red-60);
+    }
+  }
+
+  &__link {
+    color: var(--color-purple-60);
+    text-decoration: none;
+    font-size: pxToRem(14px);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: pxToRem(6px);
+    
+    &:hover {
+      color: var(--color-purple-70);
+      text-decoration: underline;
+    }
+  }
+
+  &__linkIcon {
+    width: pxToRem(14px);
+    height: pxToRem(14px);
+    flex-shrink: 0;
+  }
+}

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   Heading,
@@ -12,17 +13,70 @@ import { AccountBalances } from "components/AccountBalances";
 import { WalletTrustlines } from "components/WalletTrustlines";
 import { LoadingContent } from "components/LoadingContent";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { BridgeIntegrationSection } from "components/BridgeIntegrationSection";
+import { BridgeOptInModal } from "components/BridgeOptInModal";
 
 import { useRedux } from "hooks/useRedux";
 import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
+import { useUpdateBridgeIntegration } from "apiQueries/useUpdateBridgeIntegration";
+
+import { BridgeIntegrationUpdate } from "types";
+import { ShowForRoles } from "./ShowForRoles";
 
 export const DistributionAccountStellar = () => {
+  const [isBridgeOptInModalVisible, setIsBridgeOptInModalVisible] =
+    useState(false);
+
   const { organization } = useRedux("organization");
   const { distributionAccountPublicKey } = organization.data;
 
   const { balances, fetchAccountBalances } = useOrgAccountInfo(
     distributionAccountPublicKey,
   );
+
+  const {
+    mutateAsync: updateBridgeIntegration,
+    isPending: isBridgeUpdatePending,
+    error: bridgeUpdateError,
+    reset: resetBridgeUpdate,
+  } = useUpdateBridgeIntegration();
+
+  const handleBridgeOptIn = () => {
+    setIsBridgeOptInModalVisible(true);
+  };
+
+  const handleBridgeOptInModalClose = () => {
+    setIsBridgeOptInModalVisible(false);
+    resetBridgeUpdate();
+  };
+
+  const handleBridgeOptInSubmit = async (data: BridgeIntegrationUpdate) => {
+    try {
+      const result = await updateBridgeIntegration(data);
+      // Only close modal on success
+      setIsBridgeOptInModalVisible(false);
+
+      // Redirect to KYC link if available in the response
+      if (result && "kyc_status" in result && result.kyc_status?.kyc_link) {
+        window.open(
+          result.kyc_status.kyc_link,
+          "_blank",
+          "noopener,noreferrer",
+        );
+      }
+    } catch {
+      // Error is handled by the mutation hook and displayed in the modal
+      // Keep modal open so user can see the error message
+    }
+  };
+
+  const handleCreateVirtualAccount = async () => {
+    try {
+      await updateBridgeIntegration({ status: "READY_FOR_DEPOSIT" });
+    } catch {
+      // Error is handled by the mutation hook
+    }
+  };
 
   const renderContent = () => {
     if (organization.status === "PENDING") {
@@ -107,7 +161,22 @@ export const DistributionAccountStellar = () => {
             fetchAccountBalances();
           }}
         />
+
+        <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+          <BridgeIntegrationSection
+            onOptIn={handleBridgeOptIn}
+            onCreateVirtualAccount={handleCreateVirtualAccount}
+          />
+        </ShowForRoles>
       </div>
+
+      <BridgeOptInModal
+        visible={isBridgeOptInModalVisible}
+        onClose={handleBridgeOptInModalClose}
+        onSubmit={handleBridgeOptInSubmit}
+        isLoading={isBridgeUpdatePending}
+        error={bridgeUpdateError}
+      />
     </>
   );
 };
