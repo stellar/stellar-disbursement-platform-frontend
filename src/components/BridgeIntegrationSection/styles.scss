@@ -1,0 +1,80 @@
+@use "./styles-utils.scss" as *;
+
+.BridgeIntegration {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+
+  &__virtualAccountSection {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+    padding-top: pxToRem(8px);
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__account {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+  }
+
+  &__accountHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: pxToRem(16px);
+
+    h4 {
+      margin: 0;
+      color: var(--color-gray-90);
+      font-size: pxToRem(16px);
+      font-weight: 500;
+    }
+  }
+
+  &__accountStatus {
+    display: flex;
+    align-items: center;
+    gap: pxToRem(8px);
+    font-size: pxToRem(14px);
+    font-weight: 500;
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+    align-items: flex-start;
+
+    p {
+      margin: 0;
+      font-size: pxToRem(14px);
+      line-height: 1.5;
+      color: var(--color-gray-80);
+    }
+  }
+
+  &__faqSection {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: pxToRem(16px);
+  }
+
+  &__button {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.BridgeStatus {
+  color: currentColor;
+
+  &--success {
+    color: var(--color-green-60);
+  }
+}

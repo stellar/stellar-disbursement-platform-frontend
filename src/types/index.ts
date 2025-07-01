@@ -176,11 +176,7 @@ export type JwtUser = {
   roles: UserRole[] | null;
 };
 
-export type UserRole =
-  | "owner"
-  | "financial_controller"
-  | "developer"
-  | "business";
+export type UserRole = "owner" | "financial_controller" | "developer" | "business";
 
 export type NewUser = {
   first_name: string;
@@ -201,12 +197,7 @@ export type DistributionAccountType =
 // =============================================================================
 // Disbursement
 // =============================================================================
-export type DisbursementStatusType =
-  | "DRAFT"
-  | "READY"
-  | "STARTED"
-  | "PAUSED"
-  | "COMPLETED";
+export type DisbursementStatusType = "DRAFT" | "READY" | "STARTED" | "PAUSED" | "COMPLETED";
 
 export type DisbursementVerificationField =
   | "DATE_OF_BIRTH"
@@ -214,10 +205,7 @@ export type DisbursementVerificationField =
   | "PIN"
   | "NATIONAL_ID_NUMBER";
 
-export const VerificationFieldMap: Record<
-  DisbursementVerificationField | string,
-  string
-> = {
+export const VerificationFieldMap: Record<DisbursementVerificationField | string, string> = {
   DATE_OF_BIRTH: "Date of Birth",
   YEAR_MONTH: "Date of Birth (Year & Month only)",
   PIN: "PIN",
@@ -268,9 +256,7 @@ export type Disbursement = {
   receiverRegistrationMessageTemplate: string;
 };
 
-export type DisbursementsSearchParams = CommonFilters &
-  SortParams &
-  PaginationParams;
+export type DisbursementsSearchParams = CommonFilters & SortParams & PaginationParams;
 
 export interface DisbursementDraftRejectMessage extends RejectMessage {
   newDraftId?: string;
@@ -357,9 +343,7 @@ export type PaymentDetails = {
 // =============================================================================
 export type ReceiverStatus = "DRAFT" | "READY" | "REGISTERED" | "FLAGGED";
 
-export type ReceiversSearchParams = CommonFilters &
-  SortParams &
-  PaginationParams;
+export type ReceiversSearchParams = CommonFilters & SortParams & PaginationParams;
 
 export type AmountReceived = {
   assetCode: string;
@@ -502,10 +486,7 @@ export type RegistrationContactType =
   | "PHONE_NUMBER"
   | "PHONE_NUMBER_AND_WALLET_ADDRESS";
 
-export const RegistrationContactTypeMap: Record<
-  RegistrationContactType | string,
-  string
-> = {
+export const RegistrationContactTypeMap: Record<RegistrationContactType | string, string> = {
   EMAIL: "Email",
   EMAIL_AND_WALLET_ADDRESS: "Wallet Address and Email",
   PHONE_NUMBER: "Phone Number",
@@ -536,9 +517,7 @@ export type ApiWallet = {
   user_managed?: boolean;
 };
 
-export const isUserManagedWalletEnabled = (
-  wallets: ApiWallet[] | undefined,
-): boolean => {
+export const isUserManagedWalletEnabled = (wallets: ApiWallet[] | undefined): boolean => {
   if (!wallets) {
     return false;
   }
@@ -911,8 +890,7 @@ export interface ApiStellarOperationPathPaymentStrictReceive
   source_max: string;
 }
 
-export interface ApiStellarOperationPathPaymentStrictSend
-  extends ApiStellarOperationPathPayment {
+export interface ApiStellarOperationPathPaymentStrictSend extends ApiStellarOperationPathPayment {
   destination_min: string;
 }
 
@@ -1012,3 +990,55 @@ export type DirectPaymentWallet = {
   id?: string;
   address?: string;
 };
+
+export interface BridgeIntegration {
+  status: BridgeIntegrationStatusType;
+  customer_id: string;
+  kyc_status: {
+    id: string;
+    type: "individual" | "business";
+    kyc_status: BridgeKYCStatusType;
+    tos_status: BridgeTOSStatusType;
+    kyc_link: string;
+    tos_link: string;
+  };
+  virtual_account?: {
+    id: string;
+    status: "activated" | "deactivated";
+    source_deposit_instructions: {
+      bank_beneficiary_name: string;
+      currency: string;
+      bank_name: string;
+      bank_address: string;
+      bank_account_number: string;
+      bank_routing_number: string;
+      payment_rails: string[];
+    };
+  };
+}
+
+export interface BridgeIntegrationUpdate {
+  status: "OPTED_IN" | "READY_FOR_DEPOSIT";
+  email?: string;
+  full_name?: string;
+  kyc_type?: "individual" | "business";
+}
+
+export type BridgeIntegrationStatusType =
+  | "NOT_ENABLED"
+  | "NOT_OPTED_IN"
+  | "OPTED_IN"
+  | "READY_FOR_DEPOSIT"
+  | "ERROR";
+
+export type BridgeKYCStatusType =
+  | "not_started"
+  | "incomplete"
+  | "awaiting_ubo"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "paused"
+  | "offboarded";
+
+export type BridgeTOSStatusType = "pending" | "approved";

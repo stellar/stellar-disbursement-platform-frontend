@@ -1,0 +1,49 @@
+@use "./styles-utils.scss" as *;
+
+.BridgeAccountDetails {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+  padding: pxToRem(16px);
+  border: 1px solid var(--color-gray-20);
+  border-radius: 4px;
+  background: var(--color-gray-05);
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(4px);
+  }
+
+  &__value {
+    font-size: pxToRem(12px);
+    line-height: pxToRem(20px);
+    color: var(--color-gray-80);
+    font-weight: var(--font-weight-medium);
+
+    span:not(.BridgeAccountDetails__copyableText) {
+      font-family: var(--font-family-mono);
+      font-size: pxToRem(14px);
+      color: var(--color-gray-90);
+      font-weight: 500;
+    }
+  }
+
+  &__copyableText {
+    font-family: var(--font-family-mono);
+    font-size: pxToRem(14px);
+    color: var(--color-gray-90);
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--color-purple-60);
+    }
+  }
+
+  &__bankAddress {
+    margin-top: pxToRem(4px);
+    line-height: 1.3;
+  }
+}
