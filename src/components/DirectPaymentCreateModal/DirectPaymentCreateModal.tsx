@@ -78,7 +78,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     return `${filteredWallets.length} compatible wallet(s) available`;
   };
 
-  const showReceiverField = Boolean(formData.assetId);
   useEffect(() => {
     if (previousVisible && !visible) {
       setFormData(INITIAL_FORM_DATA);
@@ -147,6 +146,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     event.preventDefault();
     if (!validateForm()) return;
 
+    const isAddr = isWalletAddress(formData.receiverSearch);
     const selectedWallet = supportedWallets.find((w) => w.id === formData.walletId);
 
     const paymentData: CreateDirectPaymentRequest = {
@@ -156,8 +156,12 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
         code: selectedAsset?.code,
         issuer: selectedAsset?.issuer,
       },
-      receiver: { id: formData.selectedReceiver!.id },
-      ...(selectedWallet && { wallet: { id: selectedWallet.id } }),
+      receiver: isAddr
+        ? { wallet_address: formData.receiverSearch.trim() }
+        : { id: formData.selectedReceiver!.id },
+      ...(isAddr
+        ? { wallet: { address: formData.receiverSearch.trim() } }
+        : selectedWallet && { wallet: { id: selectedWallet.id } }),
       ...(formData.externalPaymentId.trim() && {
         external_payment_id: formData.externalPaymentId.trim(),
       }),
@@ -174,35 +178,29 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     return receiver.phone_number || receiver.email || receiver.external_id || "";
   };
 
+  const isWalletAddress = (input: string) => input.startsWith("G") && input.length === 56;
+
+  const showReceiverField = Boolean(formData.assetId);
+  const isReceiverWalletAddress = isWalletAddress(formData.receiverSearch);
+  const showWalletField = formData.assetId && !isReceiverWalletAddress;
+
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
-
-    if (!formData.assetId) {
-      errors.assetId = "Asset selection is required";
-    }
-
+    if (!formData.assetId) errors.assetId = "Asset selection is required";
     if (!formData.amount.trim()) {
       errors.amount = "Amount is required";
-    } else {
-      const numAmount = Number(formData.amount.trim());
-      if (isNaN(numAmount) || numAmount <= 0) {
-        errors.amount = "Amount must be a valid positive number";
-      }
-      if (formData.amount.includes(".") && formData.amount.split(".")[1]?.length > 7) {
-        errors.amount = "Amount has too many decimal places";
-      }
+    } else if (isNaN(Number(formData.amount)) || Number(formData.amount) <= 0) {
+      errors.amount = "Amount must be a valid positive number";
     }
-
     if (!formData.receiverSearch.trim()) {
       errors.receiverSearch = "Receiver is required";
-    } else if (!formData.selectedReceiver) {
-      errors.receiverSearch = "Please select a receiver from search results";
+    } else if (!isWalletAddress(formData.receiverSearch) && !formData.selectedReceiver) {
+      errors.receiverSearch =
+        "Please select a receiver from search results or enter a valid wallet address";
     }
-
-    if (!formData.walletId) {
+    if (!isWalletAddress(formData.receiverSearch) && !formData.walletId) {
       errors.walletId = "Wallet selection is required";
     }
-
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -218,10 +216,15 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       );
     }
 
-    if (debouncedReceiverSearch && searchResults?.data?.length === 0) {
+    if (
+      !isReceiverWalletAddress &&
+      formData.receiverSearch &&
+      debouncedReceiverSearch &&
+      searchResults?.data?.length === 0
+    ) {
       return (
         <div className="DirectPaymentCreateModal__noResults">
-          No receivers found. Make sure the receiver exists.
+          No receivers found. Make sure the receiver exists or enter a wallet address.
         </div>
       );
     }
@@ -342,14 +345,15 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                 fieldSize="sm"
                 id="receiverSearch"
                 label="Receiver"
-                placeholder="Search by name, email, phone"
+                placeholder="Search by name, email, phone, or enter wallet address (GXXX...)"
                 value={formData.receiverSearch}
                 onChange={handleInputChange}
                 error={formErrors.receiverSearch}
+                note={isReceiverWalletAddress && "Wallet address detected"}
                 required
               />
 
-              {formData.selectedReceiver && (
+              {formData.selectedReceiver && !isReceiverWalletAddress && (
                 <SelectedReceiverInfo receiver={formData.selectedReceiver} />
               )}
 
@@ -359,7 +363,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
             {/* Wallet Selection */}
             <div
               className="DirectPaymentCreateModal__fieldWrapper"
-              data-visible={showReceiverField}
+              data-visible={showReceiverField && showWalletField}
             >
               <Select
                 fieldSize="sm"
