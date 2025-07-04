@@ -807,3 +807,25 @@ body {
     }
   }
 }
+
+// Embedded Wallet Status in ReceiverDetails
+.ReceiverDetails {
+  &__status-badge {
+    padding: pxToRem(2px) pxToRem(6px);
+    border-radius: pxToRem(4px);
+    font-size: pxToRem(10px);
+    font-weight: 500;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &--success {
+      background-color: var(--color-green-10);
+      color: var(--color-green-90);
+    }
+
+    &--failed {
+      background-color: var(--color-red-10);
+      color: var(--color-red-90);
+    }
+  }
+}
