@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .idea/
+.vscode/
 
 # testing
 /coverage
@@ -28,6 +29,7 @@ yarn-error.log*
 
 # env variables
 /public/settings/env-config.js
+process.env
 
 # generated Git info
 /src/generated/gitInfo.ts

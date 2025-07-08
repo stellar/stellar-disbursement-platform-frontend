@@ -12,8 +12,7 @@ export const LOCAL_STORAGE_DEVICE_ID = "sdp_deviceID";
 export const LOCAL_STORAGE_TENANT_NAME = "sdp_tenant_name";
 export const UI_STATUS_DISBURSEMENT = "STARTED,PAUSED,COMPLETED";
 export const UI_STATUS_DISBURSEMENT_DRAFT = "DRAFT,READY";
-export const ORG_NAME_INFO_TEXT =
-  "You can find your organization name in the invitation email";
+export const ORG_NAME_INFO_TEXT = "You can find your organization name in the invitation email";
 
 export const CANCELED_PAYMENT_STATUS = "CANCELED";
 export const READY_PAYMENT_STATUS = "READY";
@@ -35,6 +34,7 @@ export enum Routes {
   ANALYTICS = "/analytics",
   PROFILE = "/profile",
   SETTINGS = "/settings",
+  API_KEYS = "/api-keys",
   HELP = "/help",
   UNAUTHORIZED = "/unauthorized",
 }

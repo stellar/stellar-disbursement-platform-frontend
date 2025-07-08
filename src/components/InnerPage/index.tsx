@@ -21,16 +21,8 @@ interface InnerPageProps {
   isCardLayout?: boolean;
 }
 
-export const InnerPage = ({
-  children,
-  isNarrow,
-  isCardLayout,
-}: InnerPageProps) => {
-  const { userAccount, organization, profile } = useRedux(
-    "userAccount",
-    "organization",
-    "profile",
-  );
+export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) => {
+  const { userAccount, organization, profile } = useRedux("userAccount", "organization", "profile");
   const dispatch: AppDispatch = useDispatch();
 
   const handleSignOut = () => {
@@ -96,6 +88,12 @@ export const InnerPage = ({
 
   const ITEMS_BOTTOM: NavItem[] = [
     {
+      id: "nav-api-keys",
+      label: "API Keys",
+      route: Routes.API_KEYS,
+      icon: <Icon.Key />,
+    },
+    {
       id: "nav-profile",
       label: "Profile",
       route: Routes.PROFILE,
@@ -125,9 +123,7 @@ export const InnerPage = ({
   const userNameText = () => {
     if (profile.data.firstName) {
       if (profile.data.lastName) {
-        return `${profile.data.firstName} ${profile.data.lastName
-          .charAt(0)
-          .toUpperCase()}.`;
+        return `${profile.data.firstName} ${profile.data.lastName.charAt(0).toUpperCase()}.`;
       }
 
       return profile.data.firstName;
@@ -142,9 +138,7 @@ export const InnerPage = ({
         <PageHeader />
         <div className="InnerPage">
           <div className="InnerPage__container">
-            <div className="InnerPage__content InnerPage--cardLayout">
-              {children}
-            </div>
+            <div className="InnerPage__content InnerPage--cardLayout">{children}</div>
           </div>
         </div>
       </>
@@ -175,11 +169,7 @@ export const InnerPage = ({
           </div>
         </div>
         <div className="InnerPage__container">
-          <div
-            className={`InnerPage__content ${
-              isNarrow ? "InnerPage__content--narrow" : ""
-            }`}
-          >
+          <div className={`InnerPage__content ${isNarrow ? "InnerPage__content--narrow" : ""}`}>
             {children}
           </div>
         </div>

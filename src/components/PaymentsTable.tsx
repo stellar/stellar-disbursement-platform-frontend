@@ -58,11 +58,7 @@ export const PaymentsTable = ({
     }
 
     if (isFiltersSelected) {
-      return (
-        <div className="Note">
-          There are no payments matching your selected filters
-        </div>
-      );
+      return <div className="Note">There are no payments matching your selected filters</div>;
     }
 
     return <div className="Note">There are no payments</div>;
@@ -84,9 +80,10 @@ export const PaymentsTable = ({
             <Table.HeaderCell textAlign="right" width="8.125rem">
               Amount
             </Table.HeaderCell>
-            <Table.HeaderCell textAlign="right" width="6rem">
+            <Table.HeaderCell textAlign="right" width="4rem">
               Status
             </Table.HeaderCell>
+            <Table.HeaderCell>Type</Table.HeaderCell>
           </Table.Header>
 
           <Table.Body>
@@ -102,9 +99,7 @@ export const PaymentsTable = ({
                   <Link onClick={(event) => handlePaymentClicked(event, p.id)}>
                     <span className="PaymentIDs__item">{p.id}</span>
                     {p.external_payment_id ? (
-                      <span className="PaymentIDs__item">
-                        {p.external_payment_id}
-                      </span>
+                      <span className="PaymentIDs__item">{p.external_payment_id}</span>
                     ) : null}
                   </Link>
                 </Table.BodyCell>
@@ -121,31 +116,35 @@ export const PaymentsTable = ({
                     "-"
                   )}
                 </Table.BodyCell>
-                <Table.BodyCell width="7.5rem" title={p.disbursement.name}>
-                  <Link
-                    onClick={(event) =>
-                      handlePaymentDisbursementClicked(event, p.disbursement.id)
-                    }
-                  >
-                    {p.disbursement.name}
-                  </Link>
+                <Table.BodyCell width="7.5rem" title={p.disbursement?.name || "-"}>
+                  {(() => {
+                    const disbursement = p.disbursement;
+                    return disbursement ? (
+                      <Link
+                        onClick={(event) =>
+                          handlePaymentDisbursementClicked(event, disbursement.id)
+                        }
+                      >
+                        {disbursement.name}
+                      </Link>
+                    ) : (
+                      "-"
+                    );
+                  })()}
                 </Table.BodyCell>
                 <Table.BodyCell>
                   <span className="Table-v2__cell--secondary">
-                    {p.status === "SUCCESS"
-                      ? formatDateTime(p.updated_at)
-                      : "-"}
+                    {p.status === "SUCCESS" ? formatDateTime(p.updated_at) : "-"}
                   </span>
                 </Table.BodyCell>
                 <Table.BodyCell textAlign="right">
-                  <AssetAmount
-                    amount={p.amount}
-                    assetCode={p.asset.code}
-                    fallback="-"
-                  />
+                  <AssetAmount amount={p.amount} assetCode={p.asset.code} fallback="-" />
                 </Table.BodyCell>
                 <Table.BodyCell textAlign="right">
                   <PaymentStatus status={p.status} />
+                </Table.BodyCell>
+                <Table.BodyCell>
+                  <span className="Table-v2__cell--secondary">{p.type}</span>
                 </Table.BodyCell>
               </Table.BodyRow>
             ))}
