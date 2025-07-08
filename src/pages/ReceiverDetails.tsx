@@ -8,6 +8,7 @@ import {
   Notification,
   Profile,
   Select,
+  Modal,
 } from "@stellar/design-system";
 
 import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
@@ -26,6 +27,7 @@ import { ErrorWithExtras } from "components/ErrorWithExtras";
 
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { useReceiverWalletInviteSmsRetry } from "apiQueries/useReceiverWalletInviteSmsRetry";
+import { useUpdateReceiverWalletStatus } from "apiQueries/useUpdateReceiverWalletStatus";
 
 import { percent } from "helpers/formatIntlNumber";
 import { renderNumberOrDash } from "helpers/renderNumberOrDash";
@@ -39,6 +41,7 @@ export const ReceiverDetails = () => {
   const { id: receiverId } = useParams();
 
   const [selectedWallet, setSelectedWallet] = useState<ReceiverWallet>();
+  const [isUnregisterModalVisible, setIsUnregisterModalVisible] = useState(false);
 
   const {
     data: receiverDetails,
@@ -57,6 +60,15 @@ export const ReceiverDetails = () => {
     error: invitationRetryError,
     refetch: retryReceiverInvitation,
   } = useReceiverWalletInviteSmsRetry(selectedWallet?.id);
+
+  const {
+    mutateAsync: unregisterWallet,
+    isPending: isUnregisterWalletPending,
+    isSuccess: isUnregisterWalletSuccess,
+    isError: isUnregisterWalletError,
+    error: unregisterWalletError,
+    reset: resetUnregisterWallet,
+  } = useUpdateReceiverWalletStatus();
 
   const [selectedWalletId, setSelectedWalletId] = useState<string | undefined>(
     receiverDetails?.wallets?.[0]?.id,
@@ -81,24 +93,50 @@ export const ReceiverDetails = () => {
   }, [defaultWalletId, isReceiverDetailsSuccess]);
 
   useEffect(() => {
-    if (selectedWalletId) {
-      setSelectedWallet(
-        receiverDetails?.wallets.find((w) => w.id === selectedWalletId),
-      );
+    if (selectedWalletId && receiverDetails?.wallets) {
+      setSelectedWallet(receiverDetails.wallets.find((w) => w.id === selectedWalletId));
     }
-    // We don't want to track receiverDetails here
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedWalletId]);
+  }, [selectedWalletId, receiverDetails]);
 
   useEffect(() => {
     return () => {
       if (isInvitationRetrySuccess || isInvitationRetryError) {
         resetInvitationRetry();
       }
+      if (isUnregisterWalletSuccess || isUnregisterWalletError) {
+        resetUnregisterWallet();
+      }
     };
     // Don't need to include queryClient.resetQueries
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInvitationRetryError, isInvitationRetrySuccess]);
+  }, [
+    isInvitationRetryError,
+    isInvitationRetrySuccess,
+    isUnregisterWalletError,
+    isUnregisterWalletSuccess,
+  ]);
+
+  useEffect(() => {
+    if (isUnregisterWalletSuccess) {
+      // Trigger receiver details refetch
+      queryClient.invalidateQueries({
+        queryKey: ["receivers", "receiver", receiverId],
+      });
+    }
+  }, [isUnregisterWalletSuccess, queryClient, receiverId]);
+
+  const showUnregisterModal = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    resetUnregisterWallet();
+    setIsUnregisterModalVisible(true);
+  };
+
+  const hideUnregisterModal = () => {
+    setIsUnregisterModalVisible(false);
+    if (isUnregisterWalletError) {
+      resetUnregisterWallet();
+    }
+  };
 
   const calculateRate = () => {
     if (!stats) return 0;
@@ -116,6 +154,40 @@ export const ReceiverDetails = () => {
     } as React.CSSProperties;
   };
 
+  const renderRetryInvitationButton = () => {
+    return (
+      <Button
+        variant="secondary"
+        size="xs"
+        onClick={(e) => {
+          e.preventDefault();
+          retryReceiverInvitation();
+        }}
+        isLoading={isInvitationRetryFetching}
+        disabled={Boolean(selectedWallet?.stellarAddress)}
+        {...(selectedWallet?.stellarAddress
+          ? { title: "This wallet has already been registered" }
+          : {})}
+      >
+        Retry invitation message
+      </Button>
+    );
+  };
+
+  const renderUnregisterWalletButton = () => {
+    return (
+      <Button
+        variant="secondary"
+        size="xs"
+        onClick={showUnregisterModal}
+        isLoading={isUnregisterWalletPending}
+        title="Unregister this wallet"
+      >
+        Unregister Wallet
+      </Button>
+    );
+  };
+
   const renderInfoCards = () => {
     if (!receiverDetails) {
       return null;
@@ -126,9 +198,7 @@ export const ReceiverDetails = () => {
         <Card>
           <div className="StatCards__card StatCards__card--grid">
             <div className="StatCards__card__item StatCards__card__item--fullWidth">
-              <label className="StatCards__card__item__label">
-                Total received
-              </label>
+              <label className="StatCards__card__item__label">Total received</label>
               <div className="StatCards__card__item__value">
                 <AssetAmount
                   amount={receiverDetails.totalReceived}
@@ -140,9 +210,7 @@ export const ReceiverDetails = () => {
 
             <div className="StatCards__card__item StatCards__card__item--fullWidth">
               <label className="StatCards__card__item__label">Org ID</label>
-              <div className="StatCards__card__item__value">
-                {receiverDetails.orgId || "-"}
-              </div>
+              <div className="StatCards__card__item__value">{receiverDetails.orgId || "-"}</div>
             </div>
           </div>
         </Card>
@@ -162,66 +230,43 @@ export const ReceiverDetails = () => {
                   </InfoTooltip>
                 </div>
                 {/* TODO: add chart */}
-                <div className="StatCards__card__unit">
-                  {`${percent.format(calculateRate())}`}
-                </div>
+                <div className="StatCards__card__unit">{`${percent.format(calculateRate())}`}</div>
               </div>
             </div>
 
-            <div
-              className="StatCards__card__column"
-              style={setCardTemplateRows(4)}
-            >
+            <div className="StatCards__card__column" style={setCardTemplateRows(4)}>
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Total payments
-                </label>
+                <label className="StatCards__card__item__label">Total payments</label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(receiverDetails.stats.paymentsTotalCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Successful payments
-                </label>
+                <label className="StatCards__card__item__label">Successful payments</label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    receiverDetails.stats.paymentsSuccessfulCount,
-                  )}
+                  {renderNumberOrDash(receiverDetails.stats.paymentsSuccessfulCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Failed payments
-                </label>
+                <label className="StatCards__card__item__label">Failed payments</label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    receiverDetails.stats.paymentsFailedCount,
-                  )}
+                  {renderNumberOrDash(receiverDetails.stats.paymentsFailedCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Canceled payments
-                </label>
+                <label className="StatCards__card__item__label">Canceled payments</label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    receiverDetails.stats.paymentsCanceledCount,
-                  )}
+                  {renderNumberOrDash(receiverDetails.stats.paymentsCanceledCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Remaining payments
-                </label>
+                <label className="StatCards__card__item__label">Remaining payments</label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    receiverDetails.stats.paymentsRemainingCount,
-                  )}
+                  {renderNumberOrDash(receiverDetails.stats.paymentsRemainingCount)}
                 </div>
               </div>
             </div>
@@ -233,9 +278,7 @@ export const ReceiverDetails = () => {
 
   const renderWalletOptionText = (wallet: ReceiverWallet) => {
     return `${wallet.provider} (${
-      wallet.stellarAddress
-        ? shortenAccountKey(wallet.stellarAddress)
-        : "Unregistered"
+      wallet.stellarAddress ? shortenAccountKey(wallet.stellarAddress) : "Unregistered"
     })`;
   };
 
@@ -278,6 +321,39 @@ export const ReceiverDetails = () => {
             <ErrorWithExtras appError={invitationRetryError} />
           </NotificationWithButtons>
         )}
+        {isUnregisterWalletSuccess && (
+          <NotificationWithButtons
+            variant="success"
+            title="Wallet unregistered successfully!"
+            buttons={[
+              {
+                label: "Dismiss",
+                onClick: () => {
+                  resetUnregisterWallet();
+                },
+              },
+            ]}
+          >
+            The wallet has been set to 'Ready' status. The receiver can register again with their
+            original link or you can resend the invitation message below.
+          </NotificationWithButtons>
+        )}
+        {isUnregisterWalletError && (
+          <NotificationWithButtons
+            variant="error"
+            title="Error Unregistering Wallet"
+            buttons={[
+              {
+                label: "Dismiss",
+                onClick: () => {
+                  resetUnregisterWallet();
+                },
+              },
+            ]}
+          >
+            <ErrorWithExtras appError={unregisterWalletError} />
+          </NotificationWithButtons>
+        )}
         <div className="ReceiverDetails__wallets__row">
           <div className="ReceiverDetails__wallets__dropdown">
             <Select
@@ -296,30 +372,14 @@ export const ReceiverDetails = () => {
             </Select>
 
             <div className="ReceiverDetails__wallets__subtitle">
-              {renderTextWithCount(
-                receiverDetails.wallets.length,
-                "wallet",
-                "wallets",
-              )}
+              {renderTextWithCount(receiverDetails.wallets.length, "wallet", "wallets")}
             </div>
           </div>
 
           <div>
-            <Button
-              variant="secondary"
-              size="xs"
-              onClick={(e) => {
-                e.preventDefault();
-                retryReceiverInvitation();
-              }}
-              isLoading={isInvitationRetryFetching}
-              disabled={Boolean(selectedWallet?.stellarAddress)}
-              {...(selectedWallet?.stellarAddress
-                ? { title: "This wallet has already been registered" }
-                : {})}
-            >
-              Retry invitation message
-            </Button>
+            {selectedWallet?.stellarAddress
+              ? renderUnregisterWalletButton()
+              : renderRetryInvitationButton()}
           </div>
         </div>
 
@@ -337,20 +397,14 @@ export const ReceiverDetails = () => {
                 {/* Column one */}
                 <div className="StatCards__card__column">
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Balance
-                    </label>
+                    <label className="StatCards__card__item__label">Balance</label>
                     <div className="StatCards__card__item__value">
-                      <ReceiverWalletBalance
-                        stellarAddress={selectedWallet.stellarAddress}
-                      />
+                      <ReceiverWalletBalance stellarAddress={selectedWallet.stellarAddress} />
                     </div>
                   </div>
 
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Wallet address
-                    </label>
+                    <label className="StatCards__card__item__label">Wallet address</label>
                     <div className="StatCards__card__item__value">
                       {selectedWallet.stellarAddress ? (
                         <Profile
@@ -367,9 +421,7 @@ export const ReceiverDetails = () => {
                   </div>
 
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Wallet address memo
-                    </label>
+                    <label className="StatCards__card__item__label">Wallet address memo</label>
                     <div className="StatCards__card__item__value">
                       {selectedWallet.stellarAddressMemo || "-"}
                     </div>
@@ -379,26 +431,20 @@ export const ReceiverDetails = () => {
                 {/* Column two */}
                 <div className="StatCards__card__column">
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Wallet provider
-                    </label>
+                    <label className="StatCards__card__item__label">Wallet provider</label>
                     <div className="StatCards__card__item__value">
                       {selectedWallet.provider || "-"}
                     </div>
                   </div>
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Total payments received
-                    </label>
+                    <label className="StatCards__card__item__label">Total payments received</label>
                     <div className="StatCards__card__item__value">
                       {renderNumberOrDash(selectedWallet.totalPaymentsCount)}
                     </div>
                   </div>
 
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Total amount received
-                    </label>
+                    <label className="StatCards__card__item__label">Total amount received</label>
                     <div className="StatCards__card__item__value">
                       <AssetAmount
                         amount={selectedWallet.totalAmountReceived}
@@ -412,27 +458,21 @@ export const ReceiverDetails = () => {
                 {/* Column three */}
                 <div className="StatCards__card__column">
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Created at
-                    </label>
+                    <label className="StatCards__card__item__label">Created at</label>
                     <div className="StatCards__card__item__value">
                       {formatDateTime(selectedWallet.createdAt)}
                     </div>
                   </div>
 
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Invited at
-                    </label>
+                    <label className="StatCards__card__item__label">Invited at</label>
                     <div className="StatCards__card__item__value">
                       {formatDateTime(selectedWallet.invitedAt)}
                     </div>
                   </div>
 
                   <div className="StatCards__card__item StatCards__card__item--inline">
-                    <label className="StatCards__card__item__label">
-                      Invitation last sent
-                    </label>
+                    <label className="StatCards__card__item__label">Invitation last sent</label>
                     <div className="StatCards__card__item__value">
                       {formatDateTime(selectedWallet.smsLastSentAt)}
                     </div>
@@ -453,9 +493,7 @@ export const ReceiverDetails = () => {
                   </SectionHeader.Row>
                 </SectionHeader>
 
-                <ReceiverWalletHistory
-                  stellarAddress={selectedWallet.stellarAddress}
-                />
+                <ReceiverWalletHistory stellarAddress={selectedWallet.stellarAddress} />
               </div>
             ) : null}
           </>
@@ -472,11 +510,7 @@ export const ReceiverDetails = () => {
     if (receiverDetailsError || !receiverDetails) {
       return (
         <Notification variant="error" title="Error">
-          <ErrorWithExtras
-            appError={
-              receiverDetailsError || { message: GENERIC_ERROR_MESSAGE }
-            }
-          />
+          <ErrorWithExtras appError={receiverDetailsError || { message: GENERIC_ERROR_MESSAGE }} />
         </Notification>
       );
     }
@@ -493,19 +527,13 @@ export const ReceiverDetails = () => {
               <SectionHeader.Content>
                 <Heading as="h2" size="sm">
                   {receiverDetails?.phoneNumber ? (
-                    <CopyWithIcon
-                      textToCopy={receiverDetails.phoneNumber}
-                      iconSizeRem="1.5"
-                    >
+                    <CopyWithIcon textToCopy={receiverDetails.phoneNumber} iconSizeRem="1.5">
                       {receiverDetails.phoneNumber}
                     </CopyWithIcon>
                   ) : null}
 
                   {receiverDetails?.email ? (
-                    <CopyWithIcon
-                      textToCopy={receiverDetails.email}
-                      iconSizeRem="1.5"
-                    >
+                    <CopyWithIcon textToCopy={receiverDetails.email} iconSizeRem="1.5">
                       {receiverDetails.email}
                     </CopyWithIcon>
                   ) : null}
@@ -562,6 +590,46 @@ export const ReceiverDetails = () => {
       />
 
       {renderContent()}
+
+      <Modal visible={isUnregisterModalVisible} onClose={hideUnregisterModal}>
+        <Modal.Heading>Confirm Unregister Wallet</Modal.Heading>
+        <Modal.Body>
+          <p>
+            Are you sure you want to unregister this wallet? The receiver will need to go through
+            verification again to receive payments.
+            <br />
+            The receiver can register the same wallet if unregistered by mistake.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={hideUnregisterModal}
+            isLoading={isUnregisterWalletPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={(event) => {
+              event.preventDefault();
+
+              if (selectedWallet?.id) {
+                unregisterWallet({
+                  receiverWalletId: selectedWallet.id,
+                  status: "READY",
+                });
+                setIsUnregisterModalVisible(false);
+              }
+            }}
+            isLoading={isUnregisterWalletPending}
+          >
+            Unregister Wallet
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

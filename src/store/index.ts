@@ -10,12 +10,13 @@ import { reducer as disbursements } from "store/ducks/disbursements";
 import { reducer as organization } from "store/ducks/organization";
 import { reducer as profile } from "store/ducks/profile";
 import { reducer as userAccount } from "store/ducks/userAccount";
+import { reducer as apiKeys } from "store/ducks/apiKeys";
+import { reducer as apiKeyDetails } from "store/ducks/apiKeyDetails";
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-const isSerializable = (value: any) =>
-  BigNumber.isBigNumber(value) || isPlain(value);
+const isSerializable = (value: any) => BigNumber.isBigNumber(value) || isPlain(value);
 
 // Combine reducers to let TypeScript infer the global state
 const reducers = combineReducers({
@@ -25,16 +26,15 @@ const reducers = combineReducers({
   organization,
   profile,
   userAccount,
+  apiKeys,
+  apiKeyDetails,
 });
 
 // Create a reset action
 export const resetStoreAction = createAction(RESET_STORE_ACTION_TYPE);
 
 // Define rootReducer without explicitly typing GlobalStates
-const rootReducer: Reducer<ReturnType<typeof reducers>, Action> = (
-  state,
-  action: Action,
-) => {
+const rootReducer: Reducer<ReturnType<typeof reducers>, Action> = (state, action: Action) => {
   // When resetting state for expired session, keep the isSessionExpired flag set
   const resetState = state?.userAccount?.isSessionExpired
     ? { userAccount: { isSessionExpired: true } }
