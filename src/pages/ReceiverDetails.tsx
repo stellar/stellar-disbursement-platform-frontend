@@ -460,7 +460,7 @@ export const ReceiverDetails = () => {
             </div>
 
             {selectedWallet.stellarAddress?.startsWith("G") ? (
-              <div className="DetailsSection DetailsSection">
+              <div className="DetailsSection">
                 <SectionHeader>
                   <SectionHeader.Row>
                     <SectionHeader.Content>

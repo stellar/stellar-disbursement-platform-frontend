@@ -1,29 +1,13 @@
 import { Card } from "@stellar/design-system";
 import { Table } from "components/Table";
 import { CopyWithIcon } from "components/CopyWithIcon";
+import { EmbeddedWalletStatus } from "components/EmbeddedWalletStatus";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { EmbeddedWallet } from "types";
-import "../PaymentStatus/styles.scss";
 
 interface EmbeddedWalletsTableProps {
   embeddedWallets: EmbeddedWallet[];
 }
-
-const EmbeddedWalletStatus = ({ status }: { status: string }) => {
-  switch (status.toUpperCase()) {
-    case "SUCCESS":
-      return (
-        <span className="PaymentStatus PaymentStatus--accent">Success</span>
-      );
-    case "FAILED":
-      return <span className="PaymentStatus">Failed</span>;
-    case "PROCESSING":
-      return <span className="PaymentStatus">Processing</span>;
-    case "PENDING":
-    default:
-      return <span className="PaymentStatus">Pending</span>;
-  }
-};
 
 export const EmbeddedWalletsTable: React.FC<EmbeddedWalletsTableProps> = ({
   embeddedWallets,
