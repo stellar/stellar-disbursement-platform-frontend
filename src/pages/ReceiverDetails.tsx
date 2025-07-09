@@ -24,6 +24,7 @@ import { LoadingContent } from "components/LoadingContent";
 import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { ReceiverPayments } from "components/ReceiverPayments";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { EmbeddedWalletsTable } from "components/EmbeddedWalletsTable";
 
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { useReceiverWalletInviteSmsRetry } from "apiQueries/useReceiverWalletInviteSmsRetry";
@@ -481,8 +482,25 @@ export const ReceiverDetails = () => {
               </div>
             </Card>
 
+            {/* Embedded Wallets Section */}
+            <div className="DetailsSection">
+              <SectionHeader>
+                <SectionHeader.Row>
+                  <SectionHeader.Content>
+                    <Heading as="h3" size="sm">
+                      Embedded Wallets
+                    </Heading>
+                  </SectionHeader.Content>
+                </SectionHeader.Row>
+              </SectionHeader>
+
+              <EmbeddedWalletsTable
+                embeddedWallets={receiverDetails.embeddedWallets || []}
+              />
+            </div>
+
             {selectedWallet.stellarAddress?.startsWith("G") ? (
-              <div className="DetailsSection DetailsSection">
+              <div className="DetailsSection">
                 <SectionHeader>
                   <SectionHeader.Row>
                     <SectionHeader.Content>

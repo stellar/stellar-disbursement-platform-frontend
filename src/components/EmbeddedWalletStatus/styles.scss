@@ -1,0 +1,19 @@
+.EmbeddedWalletStatus {
+  color: currentColor;
+
+  &--success {
+    color: var(--color-green-60);
+  }
+
+  &--failed {
+    color: currentColor;
+  }
+
+  &--pending {
+    color: currentColor;
+  }
+
+  &--processing {
+    color: currentColor;
+  }
+}

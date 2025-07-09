@@ -361,6 +361,8 @@ export type Receiver = {
   successfulPaymentsCounts: number;
   createdAt: string;
   amountsReceived?: AmountReceived[];
+  hasEmbeddedWallet?: boolean;
+  embeddedWalletStatuses?: string[];
 };
 
 export type ReceiverWallet = {
@@ -374,6 +376,19 @@ export type ReceiverWallet = {
   totalPaymentsCount: number;
   totalAmountReceived: string;
   assetCode?: string;
+};
+
+export type EmbeddedWallet = {
+  token: string;
+  wasm_hash: string;
+  contract_address?: string;
+  credential_id?: string;
+  receiver_contact: string;
+  contact_type: "EMAIL" | "PHONE_NUMBER";
+  receiver_id: string;
+  created_at: string;
+  updated_at?: string;
+  wallet_status: "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED";
 };
 
 export type ReceiverVerification = {
@@ -418,6 +433,7 @@ export type ReceiverDetails = {
   };
   wallets: ReceiverWallet[];
   verifications: ReceiverVerification[];
+  embeddedWallets?: EmbeddedWallet[];
 };
 
 export type ReceiverEditFields = {
@@ -775,6 +791,7 @@ export type ApiReceiver = {
   registered_wallets: string;
   wallets: ApiReceiverWallet[];
   verifications: ApiReceiverVerification[];
+  embedded_wallets?: EmbeddedWallet[];
 };
 
 export type ApiReceivers = {

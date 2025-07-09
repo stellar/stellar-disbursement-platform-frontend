@@ -34,4 +34,5 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
       value: v.hashed_value,
       confirmedAt: v.confirmed_at,
     })) || [],
+  embeddedWallets: receiver.embedded_wallets || [],
 });
