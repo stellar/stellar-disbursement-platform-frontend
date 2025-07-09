@@ -1,0 +1,32 @@
+@use "./styles-utils.scss" as *;
+
+.ApiKeySuccessModal {
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: pxToRem(8px);
+  }
+
+  &__successIcon {
+    color: var(--color-green-60);
+  }
+
+  &__keyContainer {
+    position: relative;
+    margin-bottom: 1rem;
+
+    button {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: pxToRem(44px);
+      width: pxToRem(100px);
+    }
+  }
+
+  &__keyInput {
+    height: 44px;
+    font-family: var(--font-family-monospace);
+    outline: none;
+  }
+}

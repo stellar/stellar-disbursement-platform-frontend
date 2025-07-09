@@ -1,0 +1,25 @@
+@use "./styles-utils.scss" as *;
+
+.ValuesList {
+  display: grid;
+  padding: 0.5rem 1.5rem;
+  grid-template-columns: 1fr 1fr;
+
+  &__item {
+    color: var(--color-gray-90);
+    font-size: pxToRem(14px);
+    padding: pxToRem(8px) 0;
+  }
+
+  &__empty {
+    color: var(--color-gray-60);
+    font-size: pxToRem(14px);
+    padding: 1rem 1.5rem;
+  }
+
+  &--monospace {
+    .ValuesList__item {
+      font-family: var(--font-family-monospace);
+    }
+  }
+}
