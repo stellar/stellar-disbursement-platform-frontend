@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Button, Notification, Icon } from "@stellar/design-system";
+import { Badge, Button, Card, Notification, Icon } from "@stellar/design-system";
 
 import { InfoTooltip } from "components/InfoTooltip";
 import { LoadingContent } from "components/LoadingContent";
@@ -159,17 +159,15 @@ export const BridgeIntegrationSection = ({
           <div className="BridgeIntegration">
             <div className="BridgeIntegration__account">
               <div className="BridgeIntegration__accountHeader">
-                <h4>Virtual USD Deposit Account</h4>
-                <div className="BridgeIntegration__accountStatus">
-                  <span className="BridgeStatus BridgeStatus--success">Active</span>
-                </div>
+                <div className="Note">Virtual USD Deposit Account</div>
+                <Badge variant="success">Active</Badge>
               </div>
 
-              <Notification variant="primary" title="Deposit Instructions">
+              <div className="Note">
                 Deposits to this account will automatically convert to USDC on Stellar and be
                 deposited in your distribution account. Processing typically takes 1-2 business
                 days.
-              </Notification>
+              </div>
 
               <BridgeAccountDetails virtualAccount={virtualAccount} />
 
