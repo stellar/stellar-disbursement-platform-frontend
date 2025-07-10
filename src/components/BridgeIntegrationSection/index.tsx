@@ -9,8 +9,9 @@ import { BridgeAccountDetails } from "components/BridgeAccountDetails";
 import { BridgePaymentMethods } from "components/BridgePaymentMethods";
 
 import { useBridgeIntegration } from "apiQueries/useBridgeIntegration";
-import { BridgeIntegration, BridgeIntegrationStatusType } from "types";
 import { getBridgeErrorMessage } from "constants/bridgeIntegration";
+
+import { BridgeIntegration, BridgeIntegrationStatusType } from "types";
 
 import "./styles.scss";
 
@@ -26,7 +27,10 @@ export const BridgeIntegrationSection = ({
   const { data: integration, isLoading, error, refetch } = useBridgeIntegration();
   const [showFaqModal, setShowFaqModal] = useState(false);
 
-  // Handle page visibility changes (when user returns from external KYC flows)
+  // Note: Page Visibility API is used here because users are redirected
+  // to external Bridge KYC pages outside our app's control.
+  // When they return, this is the most reliable way to detect the navigation
+  // and refresh the integration status.
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
@@ -40,6 +44,14 @@ export const BridgeIntegrationSection = ({
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [refetch]);
+
+  const renderInfoTooltip = () => {
+    return (
+      <InfoTooltip infoText="Liquidity sourcing via Bridge enables USD deposits that automatically convert to USDC on Stellar">
+        Fund your account with Bridge
+      </InfoTooltip>
+    );
+  };
 
   const getIntegrationStatus = (): BridgeIntegrationStatusType => {
     if (!integration) return "NOT_ENABLED";
@@ -60,11 +72,7 @@ export const BridgeIntegrationSection = ({
     return (
       <Card>
         <div className="CardStack__card">
-          <div className="CardStack__title">
-            <InfoTooltip infoText="Liquidity sourcing via Bridge enables USD deposits that automatically convert to USDC on Stellar">
-              Fund your distribution account with Bridge
-            </InfoTooltip>
-          </div>
+          <div className="CardStack__title">{renderInfoTooltip()}</div>
           <LoadingContent />
         </div>
       </Card>
@@ -75,11 +83,7 @@ export const BridgeIntegrationSection = ({
     return (
       <Card>
         <div className="CardStack__card">
-          <div className="CardStack__title">
-            <InfoTooltip infoText="Liquidity sourcing via Bridge enables USD deposits that automatically convert to USDC on Stellar">
-              Fund your distribution account with Bridge
-            </InfoTooltip>
-          </div>
+          <div className="CardStack__title">{renderInfoTooltip()}</div>
           <Notification variant="error" title="Error loading Bridge integration">
             <div className="BridgeIntegration__error">
               <p>{getBridgeErrorMessage(error)}</p>
@@ -211,11 +215,7 @@ export const BridgeIntegrationSection = ({
     <>
       <Card>
         <div className="CardStack__card">
-          <div className="CardStack__title">
-            <InfoTooltip infoText="Liquidity sourcing via Bridge enables USD deposits that automatically convert to USDC on Stellar">
-              Fund your account with Bridge
-            </InfoTooltip>
-          </div>
+          <div className="CardStack__title">{renderInfoTooltip()}</div>
           {renderContent()}
         </div>
       </Card>

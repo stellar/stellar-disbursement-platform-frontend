@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Card,
-  Heading,
-  Profile,
-  Title,
-  Notification,
-} from "@stellar/design-system";
+import { Card, Heading, Profile, Title, Notification } from "@stellar/design-system";
 
 import { InfoTooltip } from "components/InfoTooltip";
 import { SectionHeader } from "components/SectionHeader";
@@ -24,15 +18,12 @@ import { BridgeIntegrationUpdate } from "types";
 import { ShowForRoles } from "./ShowForRoles";
 
 export const DistributionAccountStellar = () => {
-  const [isBridgeOptInModalVisible, setIsBridgeOptInModalVisible] =
-    useState(false);
+  const [isBridgeOptInModalVisible, setIsBridgeOptInModalVisible] = useState(false);
 
   const { organization } = useRedux("organization");
   const { distributionAccountPublicKey } = organization.data;
 
-  const { balances, fetchAccountBalances } = useOrgAccountInfo(
-    distributionAccountPublicKey,
-  );
+  const { balances, fetchAccountBalances } = useOrgAccountInfo(distributionAccountPublicKey);
 
   const {
     mutateAsync: updateBridgeIntegration,
@@ -57,12 +48,8 @@ export const DistributionAccountStellar = () => {
       setIsBridgeOptInModalVisible(false);
 
       // Redirect to KYC link if available in the response
-      if (result && "kyc_status" in result && result.kyc_status?.kyc_link) {
-        window.open(
-          result.kyc_status.kyc_link,
-          "_blank",
-          "noopener,noreferrer",
-        );
+      if (result?.kyc_status?.kyc_link) {
+        window.open(result.kyc_status.kyc_link, "_blank", "noopener,noreferrer");
       }
     } catch {
       // Error is handled by the mutation hook and displayed in the modal
@@ -103,21 +90,15 @@ export const DistributionAccountStellar = () => {
     return (
       <>
         <div>
-          <Profile
-            publicAddress={distributionAccountPublicKey}
-            size="sm"
-            isCopy
-            hideAvatar
-          />
+          <Profile publicAddress={distributionAccountPublicKey} size="sm" isCopy hideAvatar />
           <div className="Note Note--small">
-            Add funds to your distribution account by sending Stellar-based
-            digital assets to the public key above.
+            Add funds to your distribution account by sending Stellar-based digital assets to the
+            public key above.
           </div>
           <div className="Note Note--small">
-            It is strongly recommended that you only fund the distribution
-            account when you are ready to send disbursements. It is not meant to
-            be a long-term store of value, as any SDP user with permission to
-            send disbursements can trigger payments from this account.
+            It is strongly recommended that you only fund the distribution account when you are
+            ready to send disbursements. It is not meant to be a long-term store of value, as any
+            SDP user with permission to send disbursements can trigger payments from this account.
           </div>
         </div>
 

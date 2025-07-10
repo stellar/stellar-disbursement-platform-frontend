@@ -1,4 +1,4 @@
-import { Modal } from "@stellar/design-system";
+import { Modal, Link } from "@stellar/design-system";
 
 import "./styles.scss";
 
@@ -20,12 +20,10 @@ const FAQ_DATA = [
   },
   {
     question: "Where can I find the 3-letter Plaid code?",
-    answer:
-      "The 3 letter code is included as part of the descriptor of the microdeposit.",
+    answer: "The 3 letter code is included as part of the descriptor of the microdeposit.",
   },
   {
-    question:
-      "What transactions can I receive in my virtual account as a non-US resident?",
+    question: "What transactions can I receive in my virtual account as a non-US resident?",
     answer:
       "Permitted transactions include: First-party payments from personal bank/fintech accounts, Third-party payments from registered businesses, Third-party payments from family members sharing a surname, and Person-to-Person payments under $2,000.",
   },
@@ -36,10 +34,7 @@ const FAQ_DATA = [
   },
 ];
 
-export const BridgeFaqModal: React.FC<BridgeFaqModalProps> = ({
-  visible,
-  onClose,
-}) => {
+export const BridgeFaqModal: React.FC<BridgeFaqModalProps> = ({ visible, onClose }) => {
   return (
     <Modal visible={visible} onClose={onClose}>
       <Modal.Heading>Bridge Virtual Account FAQ</Modal.Heading>
@@ -47,10 +42,7 @@ export const BridgeFaqModal: React.FC<BridgeFaqModalProps> = ({
       <Modal.Body>
         <div className="BridgeFaqModal">
           <div className="BridgeFaqModal__intro">
-            <p>
-              Find answers to frequently asked questions about Bridge virtual
-              accounts below.
-            </p>
+            <p>Find answers to frequently asked questions about Bridge virtual accounts below.</p>
           </div>
 
           <div className="BridgeFaqModal__content">
@@ -64,16 +56,15 @@ export const BridgeFaqModal: React.FC<BridgeFaqModalProps> = ({
 
           <div className="BridgeFaqModal__footer">
             <p>
-              For additional support or questions not covered here, please refer
-              to{" "}
-              <a
+              For additional support or questions not covered here, please refer to{" "}
+              <Link
                 href="https://apidocs.bridge.xyz/docs/virtual-accounts-faqs"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="BridgeFaqModal__link"
               >
                 Bridge's complete FAQ documentation
-              </a>
+              </Link>
               .
             </p>
           </div>

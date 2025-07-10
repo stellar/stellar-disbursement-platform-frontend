@@ -1,4 +1,5 @@
 import { CopyWithIcon } from "components/CopyWithIcon";
+
 import { BridgeIntegration } from "types";
 
 import "./styles.scss";
@@ -6,6 +7,12 @@ import "./styles.scss";
 interface BridgeAccountDetailsProps {
   virtualAccount: BridgeIntegration["virtual_account"];
 }
+
+const CopyValItem = ({ value }: { value: string | number }) => (
+  <CopyWithIcon textToCopy={String(value)} iconSizeRem="0.875" doneLabel="Copied!">
+    <span className="BridgeAccountDetails__value">{value}</span>
+  </CopyWithIcon>
+);
 
 export const BridgeAccountDetails = ({ virtualAccount }: BridgeAccountDetailsProps) => {
   if (!virtualAccount) {
@@ -48,28 +55,12 @@ export const BridgeAccountDetails = ({ virtualAccount }: BridgeAccountDetailsPro
         <div className="BridgeAccountDetails__column">
           <div className="BridgeAccountDetails__field">
             <div className="BridgeAccountDetails__label">Account number</div>
-            <CopyWithIcon
-              textToCopy={source_deposit_instructions.bank_account_number}
-              iconSizeRem="0.875"
-              doneLabel="Copied!"
-            >
-              <span className="BridgeAccountDetails__value">
-                {source_deposit_instructions.bank_account_number}
-              </span>
-            </CopyWithIcon>
+            <CopyValItem value={source_deposit_instructions.bank_account_number} />
           </div>
 
           <div className="BridgeAccountDetails__field">
             <div className="BridgeAccountDetails__label">Routing number</div>
-            <CopyWithIcon
-              textToCopy={source_deposit_instructions.bank_routing_number}
-              iconSizeRem="0.875"
-              doneLabel="Copied!"
-            >
-              <span className="BridgeAccountDetails__value">
-                {source_deposit_instructions.bank_routing_number}
-              </span>
-            </CopyWithIcon>
+            <CopyValItem value={source_deposit_instructions.bank_routing_number} />
           </div>
         </div>
       </div>

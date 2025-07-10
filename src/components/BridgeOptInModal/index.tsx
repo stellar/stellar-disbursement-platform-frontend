@@ -5,8 +5,9 @@ import { usePrevious } from "hooks/usePrevious";
 import { useRedux } from "hooks/useRedux";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { BridgeIntegrationUpdate } from "types";
 import { BRIDGE_FIELD_LABELS, BRIDGE_FIELD_DESCRIPTIONS } from "constants/bridgeIntegration";
+
+import { BridgeIntegrationUpdate } from "types";
 
 import "./styles.scss";
 

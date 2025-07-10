@@ -1,8 +1,8 @@
 @use "./styles-utils.scss" as *;
 
 .BridgeAccountDetails {
-  background: #ffffff;
-  border: 1px solid #eeedef;
+  background: var(--color-gray-00);
+  border: 1px solid var(--color-gray-30);
   border-radius: pxToRem(8px);
   padding: pxToRem(16px);
 
@@ -42,12 +42,12 @@
   }
 
   &__label {
-    color: #6f6f6f;
+    color: var(--color-gray-60);
   }
 
   &__value,
   &__address {
-    color: #171717;
+    color: var(--color-gray-90);
   }
 
   &__address {
