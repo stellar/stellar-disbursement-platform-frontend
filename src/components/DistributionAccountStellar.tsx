@@ -52,8 +52,7 @@ export const DistributionAccountStellar = () => {
         window.open(result.kyc_status.kyc_link, "_blank", "noopener,noreferrer");
       }
     } catch {
-      // Error is handled by the mutation hook and displayed in the modal
-      // Keep modal open so user can see the error message
+      // do nothing
     }
   };
 

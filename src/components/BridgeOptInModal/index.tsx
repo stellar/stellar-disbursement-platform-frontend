@@ -5,7 +5,7 @@ import { usePrevious } from "hooks/usePrevious";
 import { useRedux } from "hooks/useRedux";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { BRIDGE_FIELD_LABELS, BRIDGE_FIELD_DESCRIPTIONS } from "constants/bridgeIntegration";
+import { bridgeFieldLabels, bridgeFieldDescriptions } from "constants/bridgeIntegration";
 
 import { BridgeIntegrationUpdate } from "types";
 
@@ -204,43 +204,43 @@ export const BridgeOptInModal: React.FC<BridgeOptInModalProps> = ({
             <div className="BridgeOptInModal__form">
               <Input
                 id="fullName"
-                label={BRIDGE_FIELD_LABELS.FULL_NAME}
+                label={bridgeFieldLabels.FULL_NAME}
                 placeholder="Enter your full name"
                 value={formData.fullName}
                 onChange={handleInputChange}
                 onBlur={handleValidate}
                 error={itemHasError("fullName")}
-                note={BRIDGE_FIELD_DESCRIPTIONS.FULL_NAME}
+                note={bridgeFieldDescriptions.FULL_NAME}
                 fieldSize="md"
                 required
               />
 
               <Input
                 id="email"
-                label={BRIDGE_FIELD_LABELS.EMAIL}
+                label={bridgeFieldLabels.EMAIL}
                 type="email"
                 placeholder="Enter your email address"
                 value={formData.email}
                 onChange={handleInputChange}
                 onBlur={handleValidate}
                 error={itemHasError("email")}
-                note={BRIDGE_FIELD_DESCRIPTIONS.EMAIL}
+                note={bridgeFieldDescriptions.EMAIL}
                 fieldSize="md"
                 required
               />
 
               <Select
                 id="kycType"
-                label={BRIDGE_FIELD_LABELS.KYC_TYPE}
+                label={bridgeFieldLabels.KYC_TYPE}
                 value={formData.kycType}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   handleKycTypeChange(e.target.value)
                 }
-                note={BRIDGE_FIELD_DESCRIPTIONS.KYC_TYPE}
+                note={bridgeFieldDescriptions.KYC_TYPE}
                 fieldSize="md"
               >
-                <option value="individual">{BRIDGE_FIELD_LABELS.INDIVIDUAL}</option>
-                <option value="business">{BRIDGE_FIELD_LABELS.BUSINESS}</option>
+                <option value="individual">{bridgeFieldLabels.INDIVIDUAL}</option>
+                <option value="business">{bridgeFieldLabels.BUSINESS}</option>
               </Select>
             </div>
           </form>
