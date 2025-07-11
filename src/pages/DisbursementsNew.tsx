@@ -65,6 +65,7 @@ export const DisbursementsNew = () => {
   }, [isSavedDraftMessageVisible, apiError, isResponseSuccess]);
 
   useEffect(() => {
+    handleScrollToTop();
     if (
       disbursementDrafts.newDraftId &&
       disbursementDrafts.status === "SUCCESS"
@@ -122,6 +123,10 @@ export const DisbursementsNew = () => {
     }
   };
 
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleReview = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setCurrentStep("preview");
@@ -137,6 +142,7 @@ export const DisbursementsNew = () => {
     event: React.FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
+    handleScrollToTop();
     if (draftDetails && csvFile) {
       dispatch(
         submitDisbursementNewDraftAction({

@@ -1,0 +1,50 @@
+@use "./styles-utils.scss" as *;
+
+.BridgeIntegration {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+  
+  &__account,
+  &__virtualAccountSection {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+  }
+
+  &__virtualAccountSection {
+    padding-top: pxToRem(8px);
+  }
+  
+  &__actions,
+  &__faqSection,
+  &__button {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__faqSection {
+    padding-top: pxToRem(16px);
+  }
+
+  &__accountHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: pxToRem(16px);
+  }
+
+  &__error {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+    align-items: flex-start;
+
+    p {
+      margin: 0;
+      font-size: pxToRem(14px);
+      line-height: 1.5;
+      color: var(--color-gray-80);
+    }
+  }
+}

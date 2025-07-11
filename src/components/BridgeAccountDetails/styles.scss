@@ -1,0 +1,56 @@
+@use "./styles-utils.scss" as *;
+
+.BridgeAccountDetails {
+  background: var(--color-gray-00);
+  border: 1px solid var(--color-gray-30);
+  border-radius: pxToRem(8px);
+  padding: pxToRem(16px);
+
+  &__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: pxToRem(24px);
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: pxToRem(16px);
+    }
+  }
+
+  &__column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+    min-width: 0;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(4px);
+  }
+
+  &__label,
+  &__value,
+  &__address {
+    font-family: var(--font-family-sans-serif);
+    font-size: pxToRem(14px);
+    font-weight: 500;
+    line-height: pxToRem(20px);
+  }
+
+  &__label {
+    color: var(--color-gray-60);
+  }
+
+  &__value,
+  &__address {
+    color: var(--color-gray-90);
+  }
+
+  &__address {
+    margin-top: pxToRem(2px);
+  }
+}
