@@ -1,0 +1,38 @@
+@use "../../styles-utils.scss" as *;
+
+.ReceiverInviteHTMLEmailTemplate {
+  &__options {
+    .RadioButton {
+      --RadioButton-font-size: #{pxToRem(14px)};
+    }
+
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(8px);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+
+    .Textarea {
+      textarea {
+        font-family: var(--font-family-monospace);
+        font-size: pxToRem(13px);
+        line-height: 1.5;
+      }
+    }
+
+    &__buttons {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: pxToRem(8px);
+    }
+  }
+
+  .Note {
+    margin-top: 0;
+  }
+}
