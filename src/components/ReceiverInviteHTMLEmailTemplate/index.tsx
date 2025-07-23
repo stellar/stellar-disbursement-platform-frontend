@@ -85,10 +85,15 @@ export const ReceiverInviteHTMLEmailTemplate = () => {
     }
   }, [dispatch, isSuccess]);
 
+  const resetToDefault = () => {
+    setIsEditTemplate(false);
+    setCustomTemplateInput("");
+    setCustomSubjectInput("");
+    setSelectedOption(radioValue.DEFAULT);
+  };
+
   const handleOptionChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (isPending) {
-      return;
-    }
+    if (isPending) return;
 
     if (isError || isSuccess) {
       await reset();
@@ -96,25 +101,31 @@ export const ReceiverInviteHTMLEmailTemplate = () => {
 
     if (event.target.value === radioValue.DEFAULT) {
       if (organization.data.receiverRegistrationHTMLEmailTemplate) {
-        await mutateAsync({ template: "", subject: "" });
+        try {
+          await mutateAsync({ template: "", subject: "" });
+          resetToDefault();
+        } catch {
+          // Error handled by hook, don't update UI
+        }
+      } else {
+        resetToDefault();
       }
-
-      setIsEditTemplate(false);
-      setCustomTemplateInput("");
-      setCustomSubjectInput("");
-      setSelectedOption(radioValue.DEFAULT);
     } else {
       setSelectedOption(radioValue.CUSTOM);
     }
   };
 
-  const handleSubmitTemplate = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitTemplate = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (customTemplateInput.trim()) {
-      mutateAsync({
+    if (!customTemplateInput.trim()) return;
+
+    try {
+      await mutateAsync({
         template: customTemplateInput.trim(),
         subject: customSubjectInput.trim(),
       });
+    } catch {
+      // Error handled by hook, don't update UI
     }
   };
 
