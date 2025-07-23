@@ -36,6 +36,7 @@ export const ReceiverInviteHTMLEmailTemplate = () => {
       <p>You have a payment waiting for you from the {{.OrganizationName}}. Click <a href="{{.RegistrationLink}}">here</a> to register.</p>
     </body>
     </html>`.trim();
+  const PLACEHOLDER_SUBJECT = "You have a payment waiting for you from the {{.OrganizationName}}";
 
   const { organization } = useRedux("organization");
   const dispatch: AppDispatch = useDispatch();
@@ -49,8 +50,7 @@ export const ReceiverInviteHTMLEmailTemplate = () => {
     organization.data.receiverRegistrationHTMLEmailTemplate ?? PLACEHOLDER_TEMPLATE;
 
   const customSubject =
-    organization.data.receiverRegistrationHTMLEmailSubject ??
-    "You have a payment waiting for you from the {{.OrganizationName}}";
+    organization.data.receiverRegistrationHTMLEmailSubject ?? PLACEHOLDER_SUBJECT;
 
   const { isPending, data, isError, isSuccess, error, mutateAsync, reset } =
     useUpdateOrgHTMLEmailTemplate();
@@ -85,32 +85,27 @@ export const ReceiverInviteHTMLEmailTemplate = () => {
     }
   }, [dispatch, isSuccess]);
 
-  const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOptionChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (isPending) {
       return;
     }
 
     if (isError || isSuccess) {
-      reset();
+      await reset();
     }
 
-    // Adding little delay to make sure reset is done
-    const t = setTimeout(() => {
-      if (event.target.value === radioValue.DEFAULT) {
-        if (organization.data.receiverRegistrationHTMLEmailTemplate) {
-          mutateAsync({ template: "", subject: "" });
-        }
-
-        setIsEditTemplate(false);
-        setCustomTemplateInput("");
-        setCustomSubjectInput("");
-        setSelectedOption(radioValue.DEFAULT);
-      } else {
-        setSelectedOption(radioValue.CUSTOM);
+    if (event.target.value === radioValue.DEFAULT) {
+      if (organization.data.receiverRegistrationHTMLEmailTemplate) {
+        await mutateAsync({ template: "", subject: "" });
       }
 
-      clearTimeout(t);
-    }, 100);
+      setIsEditTemplate(false);
+      setCustomTemplateInput("");
+      setCustomSubjectInput("");
+      setSelectedOption(radioValue.DEFAULT);
+    } else {
+      setSelectedOption(radioValue.CUSTOM);
+    }
   };
 
   const handleSubmitTemplate = (event: React.FormEvent<HTMLFormElement>) => {
@@ -140,7 +135,7 @@ export const ReceiverInviteHTMLEmailTemplate = () => {
             id="html-email-subject-input"
             label="Email Subject"
             fieldSize="sm"
-            placeholder="🎉 Your payment from {{.OrganizationName}} is ready!"
+            placeholder={PLACEHOLDER_SUBJECT}
             value={customSubjectInput}
             onChange={(e) => setCustomSubjectInput(e.target.value)}
             disabled={isPending}
@@ -160,7 +155,7 @@ export const ReceiverInviteHTMLEmailTemplate = () => {
           />
 
           <div className="ReceiverInviteHTMLEmailTemplate__form__buttons">
-            <Button variant="secondary" size="xs" type="reset" isLoading={isPending}>
+            <Button variant="secondary" size="xs" type="reset" disabled={isPending}>
               Cancel
             </Button>
             <Button
@@ -202,9 +197,7 @@ export const ReceiverInviteHTMLEmailTemplate = () => {
             onClick={() => {
               setIsEditTemplate(true);
               setCustomTemplateInput(customTemplate);
-              setCustomSubjectInput(
-                customSubject || "🎉 Your payment from {{.OrganizationName}} is ready!",
-              );
+              setCustomSubjectInput(customSubject);
             }}
           >
             Edit template
