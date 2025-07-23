@@ -71,6 +71,8 @@ export type OrganizationInitialState = {
     isApprovalRequired: boolean | undefined;
     receiverInvitationResendInterval: number;
     receiverRegistrationMessageTemplate?: string;
+    receiverRegistrationHTMLEmailTemplate?: string;
+    receiverRegistrationHTMLEmailSubject?: string;
     isLinkShortenerEnabled: boolean;
     isMemoTracingEnabled: boolean;
     baseUrl: string;
@@ -817,6 +819,8 @@ export type ApiOrgInfo = {
   is_approval_required: boolean;
   receiver_invitation_resend_interval_days: string;
   receiver_registration_message_template?: string;
+  receiver_registration_html_email_template?: string;
+  receiver_registration_html_email_subject?: string;
   is_link_shortener_enabled: boolean;
   is_memo_tracing_enabled: boolean;
   base_url: string;

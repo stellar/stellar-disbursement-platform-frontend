@@ -3,6 +3,7 @@ import { Heading } from "@stellar/design-system";
 import { SectionHeader } from "components/SectionHeader";
 import { SettingsTeamMembers } from "components/SettingsTeamMembers";
 import { ReceiverInviteMessage } from "components/ReceiverInviteMessage";
+import { ReceiverInviteHTMLEmailTemplate } from "components/ReceiverInviteHTMLEmailTemplate";
 import { SettingsEnableShortLinking } from "components/SettingsEnableShortLinking";
 import { SettingsEnablePaymentCancellation } from "components/SettingsEnablePaymentCancellation";
 import { SettingsEnableReceiverInvitationRetry } from "components/SettingsEnableReceiverInvitationRetry";
@@ -36,6 +37,9 @@ export const Settings = () => {
 
         {/* Customize receiver wallet invite */}
         <ReceiverInviteMessage />
+
+        {/* Customize receiver wallet HTML email template */}
+        <ReceiverInviteHTMLEmailTemplate />
 
         {/* Team members */}
         <SettingsTeamMembers />
