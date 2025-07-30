@@ -48,7 +48,7 @@ export const BridgeStatusTracker = ({ kycStatus, onRefresh }: BridgeStatusTracke
       case "offboarded":
         return "error";
       default:
-        return "pending";
+        return "tertiary";
     }
   };
 
@@ -66,7 +66,7 @@ export const BridgeStatusTracker = ({ kycStatus, onRefresh }: BridgeStatusTracke
       <div className="BridgeStatusTracker__header">
         <div className="Note">Complete Bridge Setup</div>
         {!canCreateVirtualAccount && (
-          <Button size="xs" variant="secondary" onClick={onRefresh} icon={<Icon.RefreshVert />}>
+          <Button size="sm" variant="tertiary" onClick={onRefresh} icon={<Icon.RefreshCcw04 />}>
             Refresh status
           </Button>
         )}
@@ -82,15 +82,15 @@ export const BridgeStatusTracker = ({ kycStatus, onRefresh }: BridgeStatusTracke
               </Badge>
             </div>
             {tosApproved ? (
-              <Button size="xs" variant="secondary" disabled icon={<Icon.CheckCircle />}>
+              <Button size="sm" variant="tertiary" disabled icon={<Icon.CheckCircle />}>
                 Approved
               </Button>
             ) : kycStatus.tos_link ? (
               <Button
-                size="xs"
+                size="sm"
                 variant="tertiary"
                 onClick={() => window.open(kycStatus.tos_link, "_blank", "noopener,noreferrer")}
-                icon={<Icon.ExternalLink />}
+                icon={<Icon.LinkExternal01 />}
               >
                 Accept terms
               </Button>
@@ -107,15 +107,15 @@ export const BridgeStatusTracker = ({ kycStatus, onRefresh }: BridgeStatusTracke
               </Badge>
             </div>
             {kycApproved ? (
-              <Button size="xs" variant="secondary" disabled icon={<Icon.CheckCircle />}>
+              <Button size="sm" variant="tertiary" disabled icon={<Icon.CheckCircle />}>
                 Approved
               </Button>
             ) : kycStatus.kyc_link ? (
               <Button
-                size="xs"
+                size="sm"
                 variant="tertiary"
                 onClick={() => window.open(kycStatus.kyc_link, "_blank", "noopener,noreferrer")}
-                icon={<Icon.ExternalLink />}
+                icon={<Icon.LinkExternal01 />}
               >
                 {getKycLabel()}
               </Button>

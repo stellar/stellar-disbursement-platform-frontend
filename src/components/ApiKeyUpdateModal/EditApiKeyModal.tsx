@@ -138,11 +138,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
               name="expiryDate"
               type="text"
               label="Expiration date"
-              value={
-                apiKey.expiry_date
-                  ? formatDateTime(apiKey.expiry_date)
-                  : "No expiration"
-              }
+              value={apiKey.expiry_date ? formatDateTime(apiKey.expiry_date) : "No expiration"}
               disabled
               note="Expiration date cannot be changed"
             />
@@ -159,17 +155,12 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            size="sm"
-            variant="secondary"
-            type="reset"
-            disabled={isLoading}
-          >
+          <Button size="md" variant="tertiary" type="reset" disabled={isLoading}>
             Cancel
           </Button>
           <Button
-            size="sm"
-            variant="tertiary"
+            size="md"
+            variant="primary"
             type="submit"
             disabled={!canSubmit}
             isLoading={isLoading}

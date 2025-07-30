@@ -74,9 +74,7 @@ module.exports = {
       {
         test: /\.(scss|css)$/,
         use: [
-          process.env.NODE_ENV !== "production"
-            ? "style-loader"
-            : MiniCssExtractPlugin.loader,
+          process.env.NODE_ENV !== "production" ? "style-loader" : MiniCssExtractPlugin.loader,
           {
             loader: "css-loader",
           },
@@ -162,28 +160,17 @@ module.exports = {
         REACT_APP_STELLAR_EXPERT_URL: JSON.stringify(
           process.env.REACT_APP_STELLAR_EXPERT_URL || "",
         ),
-        REACT_APP_HORIZON_URL: JSON.stringify(
-          process.env.REACT_APP_HORIZON_URL || "",
-        ),
+        REACT_APP_HORIZON_URL: JSON.stringify(process.env.REACT_APP_HORIZON_URL || ""),
         REACT_APP_RECAPTCHA_SITE_KEY: JSON.stringify(
           process.env.REACT_APP_RECAPTCHA_SITE_KEY || "",
         ),
         REACT_APP_SINGLE_TENANT_MODE:
           process.env.REACT_APP_SINGLE_TENANT_MODE?.toLowerCase() === "true",
-        REACT_APP_USE_SSO:
-          process.env.REACT_APP_USE_SSO?.toLowerCase() === "true",
-        REACT_APP_OIDC_AUTHORITY: JSON.stringify(
-          process.env.REACT_APP_OIDC_AUTHORITY || "",
-        ),
-        REACT_APP_OIDC_CLIENT_ID: JSON.stringify(
-          process.env.REACT_APP_OIDC_CLIENT_ID || "",
-        ),
-        REACT_APP_OIDC_REDIRECT_URI: JSON.stringify(
-          process.env.REACT_APP_OIDC_REDIRECT_URI || "",
-        ),
-        REACT_APP_OIDC_SCOPE: JSON.stringify(
-          process.env.REACT_APP_OIDC_SCOPE || "",
-        ),
+        REACT_APP_USE_SSO: process.env.REACT_APP_USE_SSO?.toLowerCase() === "true",
+        REACT_APP_OIDC_AUTHORITY: JSON.stringify(process.env.REACT_APP_OIDC_AUTHORITY || ""),
+        REACT_APP_OIDC_CLIENT_ID: JSON.stringify(process.env.REACT_APP_OIDC_CLIENT_ID || ""),
+        REACT_APP_OIDC_REDIRECT_URI: JSON.stringify(process.env.REACT_APP_OIDC_REDIRECT_URI || ""),
+        REACT_APP_OIDC_SCOPE: JSON.stringify(process.env.REACT_APP_OIDC_SCOPE || ""),
         REACT_APP_OIDC_USERNAME_MAPPING: JSON.stringify(
           process.env.REACT_APP_OIDC_USERNAME_MAPPING || "",
         ),

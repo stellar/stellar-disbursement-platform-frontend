@@ -88,10 +88,10 @@ export const BridgeIntegrationSection = ({
             <div className="BridgeIntegration__error">
               <p>{getBridgeErrorMessage(error)}</p>
               <Button
-                size="sm"
-                variant="secondary"
+                size="md"
+                variant="tertiary"
                 onClick={() => refetch()}
-                icon={<Icon.RefreshVert />}
+                icon={<Icon.RefreshCcw04 />}
               >
                 Try Again
               </Button>
@@ -113,7 +113,7 @@ export const BridgeIntegrationSection = ({
               converted to USDC on Stellar and deposited into your distribution account.
             </div>
             <div className="BridgeIntegration__button">
-              <Button size="xs" variant="tertiary" onClick={onOptIn}>
+              <Button size="sm" variant="tertiary" onClick={onOptIn}>
                 Get Started with Bridge
               </Button>
             </div>
@@ -137,7 +137,7 @@ export const BridgeIntegrationSection = ({
                   Click the button below to create account details and start accepting USD payments.
                 </Notification>
                 <div className="BridgeIntegration__actions">
-                  <Button size="xs" variant="primary" onClick={onCreateVirtualAccount}>
+                  <Button size="sm" variant="primary" onClick={onCreateVirtualAccount}>
                     Create Virtual Account
                   </Button>
                 </div>
@@ -186,10 +186,10 @@ export const BridgeIntegrationSection = ({
 
               <div className="BridgeIntegration__faqSection">
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="tertiary"
                   onClick={() => setShowFaqModal(true)}
-                  icon={<Icon.Info />}
+                  icon={<Icon.InfoCircle />}
                 >
                   Virtual Account FAQ
                 </Button>

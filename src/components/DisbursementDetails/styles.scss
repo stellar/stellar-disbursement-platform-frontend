@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .DisbursementDetailsFields {
   &__inputs {
@@ -15,7 +15,7 @@
   &__value {
     font-size: pxToRem(12px);
     line-height: pxToRem(20px);
-    color: var(--color-gray-80);
+    color: var(--sds-clr-gray-11);
     font-weight: var(--font-weight-medium);
     margin-top: pxToRem(4px);
   }

@@ -1,12 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  Loader,
-  Notification,
-  RadioButton,
-  Textarea,
-} from "@stellar/design-system";
+import { Button, Card, Loader, Notification, RadioButton, Textarea } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
 import { NotificationWithButtons } from "components/NotificationWithButtons";
@@ -37,11 +30,9 @@ export const ReceiverInviteMessage = () => {
   const [customMessageInput, setCustomMessageInput] = useState("");
 
   const customMessage =
-    organization.data.receiverRegistrationMessageTemplate ??
-    PLACEHOLDER_MESSAGE;
+    organization.data.receiverRegistrationMessageTemplate ?? PLACEHOLDER_MESSAGE;
 
-  const { isPending, data, isError, isSuccess, error, mutateAsync, reset } =
-    useUpdateSmsTemplate();
+  const { isPending, data, isError, isSuccess, error, mutateAsync, reset } = useUpdateSmsTemplate();
 
   // Pre-select option when page loads
   useEffect(() => {
@@ -132,17 +123,12 @@ export const ReceiverInviteMessage = () => {
             disabled={isPending}
           ></Textarea>
           <div className="ReceiverInviteMessage__form__buttons">
-            <Button
-              variant="secondary"
-              size="xs"
-              type="reset"
-              isLoading={isPending}
-            >
+            <Button variant="tertiary" size="sm" type="reset" isLoading={isPending}>
               Cancel
             </Button>
             <Button
               variant="primary"
-              size="xs"
+              size="sm"
               type="submit"
               isLoading={isPending}
               disabled={customMessageInput === customMessage}
@@ -166,7 +152,7 @@ export const ReceiverInviteMessage = () => {
         <div className="ReceiverInviteMessage__form__buttons">
           <Button
             variant="primary"
-            size="xs"
+            size="sm"
             onClick={() => {
               setIsEditMessage(true);
               setCustomMessageInput(customMessage);
@@ -206,15 +192,12 @@ export const ReceiverInviteMessage = () => {
 
       <Card>
         <div className="CardStack__card ReceiverInviteMessage">
-          <div className="CardStack__title">
-            Customize receiver wallet invite
-          </div>
+          <div className="CardStack__title">Customize receiver wallet invite</div>
 
           <div className="Note">
-            You can use a standard message or customized text to invite your
-            receivers to set up a wallet and receive funds. This is the first
-            message they receive from your organization. It contains a link to
-            the appropriate wallet at the end of the message. Please check all
+            You can use a standard message or customized text to invite your receivers to set up a
+            wallet and receive funds. This is the first message they receive from your organization.
+            It contains a link to the appropriate wallet at the end of the message. Please check all
             values for accuracy. New disbursements use the text set here.
           </div>
 
@@ -230,7 +213,7 @@ export const ReceiverInviteMessage = () => {
                   ) : null}
                 </Fragment>
               }
-              fieldSize="xs"
+              fieldSize="sm"
               value={radioValue.STANDARD}
               onChange={handleOptionChange}
               checked={selectedOption === radioValue.STANDARD}
@@ -240,7 +223,7 @@ export const ReceiverInviteMessage = () => {
               id="msg-cst"
               name="receiver-message"
               label="Custom message"
-              fieldSize="xs"
+              fieldSize="sm"
               value={radioValue.CUSTOM}
               onChange={handleOptionChange}
               checked={selectedOption === radioValue.CUSTOM}

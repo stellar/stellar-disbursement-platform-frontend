@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .BridgePaymentMethods {
   display: flex;
@@ -21,7 +21,7 @@
     border-radius: 6px;
     font-size: pxToRem(14px);
     font-weight: 500;
-    color: var(--color-gray-90);
+    color: var(--sds-clr-gray-12);
   }
 
   &__icon {

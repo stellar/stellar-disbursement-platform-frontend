@@ -74,8 +74,8 @@ export const DeleteApiKeyModal: React.FC<DeleteApiKeyModalProps> = ({
 
           <div className="DeleteApiKeyModal__content">
             <p>
-              Are you sure you want to delete this API key? Type the name of the
-              key to confirm you want to delete it.
+              Are you sure you want to delete this API key? Type the name of the key to confirm you
+              want to delete it.
             </p>
             <Input
               fieldSize="sm"
@@ -90,17 +90,12 @@ export const DeleteApiKeyModal: React.FC<DeleteApiKeyModalProps> = ({
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            size="sm"
-            variant="secondary"
-            type="reset"
-            disabled={isLoading}
-          >
+          <Button size="md" variant="tertiary" type="reset" disabled={isLoading}>
             Cancel
           </Button>
           <Button
-            size="sm"
-            variant={!canDelete ? "secondary" : "destructive"}
+            size="md"
+            variant={!canDelete ? "tertiary" : "destructive"}
             type="submit"
             disabled={!canDelete}
             isLoading={isLoading}

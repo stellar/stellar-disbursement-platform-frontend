@@ -35,7 +35,7 @@ const EmptyState = () => (
   <Card variant="secondary">
     <div className="ApiKeysTable__emptyState">
       <EmptyStateMessage
-        icon={<Icon.Key />}
+        icon={<Icon.Key01 />}
         message="You have no keys. Create one to get started."
       />
     </div>
@@ -72,7 +72,7 @@ const ActionsCell = ({ apiKey, onEditKey, onDeleteKey }: ActionsCellProps) => {
       <DropdownMenu.Item onClick={handleEdit}>
         <div className="ApiKeysTable__actionItem">
           Edit key
-          <Icon.Edit />
+          <Icon.Edit01 />
         </div>
       </DropdownMenu.Item>
       <DropdownMenu.Item isHighlight={true} onClick={handleDelete}>
@@ -111,7 +111,7 @@ export const ApiKeysTable = ({
         <Button
           variant="tertiary"
           size="sm"
-          icon={<Icon.Add />}
+          icon={<Icon.Plus />}
           iconPosition="right"
           onClick={onCreateKey}
         >
@@ -126,12 +126,8 @@ export const ApiKeysTable = ({
             <Table isLoading={isLoading}>
               <Table.Header>
                 <Table.HeaderCell>Name</Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">
-                  Expiration
-                </Table.HeaderCell>
-                <Table.HeaderCell textAlign="center">
-                  Last Used
-                </Table.HeaderCell>
+                <Table.HeaderCell textAlign="center">Expiration</Table.HeaderCell>
+                <Table.HeaderCell textAlign="center">Last Used</Table.HeaderCell>
                 <Table.HeaderCell textAlign="center">Status</Table.HeaderCell>
                 <Table.HeaderCell textAlign="right" width="1.5rem">
                   Actions
@@ -142,30 +138,20 @@ export const ApiKeysTable = ({
                 {apiKeys.map((apiKey) => (
                   <Table.BodyRow key={apiKey.id}>
                     <Table.BodyCell>
-                      <Link
-                        onClick={(event) =>
-                          handleApiKeyClicked(event, apiKey.id)
-                        }
-                      >
-                        <div className="ApiKeysTable__keyName">
-                          {apiKey.name}
-                        </div>
+                      <Link onClick={(event) => handleApiKeyClicked(event, apiKey.id)}>
+                        <div className="ApiKeysTable__keyName">{apiKey.name}</div>
                       </Link>
                     </Table.BodyCell>
 
                     <Table.BodyCell>
                       <span className="Table-v2__cell--secondary">
-                        {apiKey.expiry_date
-                          ? formatDateTime(apiKey.expiry_date)
-                          : "-"}
+                        {apiKey.expiry_date ? formatDateTime(apiKey.expiry_date) : "-"}
                       </span>
                     </Table.BodyCell>
 
                     <Table.BodyCell>
                       <span className="Table-v2__cell--secondary">
-                        {apiKey.last_used_at
-                          ? formatDateTime(apiKey.last_used_at)
-                          : "-"}
+                        {apiKey.last_used_at ? formatDateTime(apiKey.last_used_at) : "-"}
                       </span>
                     </Table.BodyCell>
 

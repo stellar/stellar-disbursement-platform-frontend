@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Badge, Card, Heading, Title } from "@stellar/design-system";
+import { Badge, Card, Heading } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { BigNumber } from "bignumber.js";
@@ -27,14 +27,12 @@ import { NotificationWithButtons } from "components/NotificationWithButtons";
 import { InfoTooltip } from "components/InfoTooltip";
 import { AccountBalances } from "components/AccountBalances";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { Title } from "components/Title";
 
 import { Disbursement, DisbursementStep, hasWallet } from "types";
 
 export const DisbursementsNew = () => {
-  const { disbursementDrafts, organization } = useRedux(
-    "disbursementDrafts",
-    "organization",
-  );
+  const { disbursementDrafts, organization } = useRedux("disbursementDrafts", "organization");
 
   const [draftDetails, setDraftDetails] = useState<Disbursement>();
   const [customMessage, setCustomMessage] = useState("");
@@ -44,8 +42,7 @@ export const DisbursementsNew = () => {
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("edit");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
-  const [isSavedDraftMessageVisible, setIsSavedDraftMessageVisible] =
-    useState(false);
+  const [isSavedDraftMessageVisible, setIsSavedDraftMessageVisible] = useState(false);
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
   const notificationRef = useRef<HTMLDivElement | null>(null);
 
@@ -55,8 +52,7 @@ export const DisbursementsNew = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
-  const apiError =
-    disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
+  const apiError = disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
 
   useEffect(() => {
     if (!apiError && !isSavedDraftMessageVisible && !isResponseSuccess) return;
@@ -66,10 +62,7 @@ export const DisbursementsNew = () => {
 
   useEffect(() => {
     handleScrollToTop();
-    if (
-      disbursementDrafts.newDraftId &&
-      disbursementDrafts.status === "SUCCESS"
-    ) {
+    if (disbursementDrafts.newDraftId && disbursementDrafts.status === "SUCCESS") {
       // Show success response page
       if (disbursementDrafts.actionType === "submit") {
         setCurrentStep("confirmation");
@@ -84,11 +77,7 @@ export const DisbursementsNew = () => {
         setIsDraftInProgress(true);
       }
     }
-  }, [
-    disbursementDrafts.actionType,
-    disbursementDrafts.newDraftId,
-    disbursementDrafts.status,
-  ]);
+  }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
 
   const { allBalances } = useAllBalances();
 
@@ -138,9 +127,7 @@ export const DisbursementsNew = () => {
     setCurrentStep("edit");
   };
 
-  const handleSubmitDisbursement = (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
+  const handleSubmitDisbursement = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleScrollToTop();
     if (draftDetails && csvFile) {
@@ -182,8 +169,7 @@ export const DisbursementsNew = () => {
 
       // update future balance
       const assetBalance =
-        allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)
-          ?.balance ?? "0";
+        allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)?.balance ?? "0";
 
       if (totalAmount) {
         setFutureBalance(Number(assetBalance) - totalAmount.toNumber());
@@ -208,8 +194,7 @@ export const DisbursementsNew = () => {
           dispatch(resetDisbursementDraftsAction());
         }}
         isDraftDisabled={
-          !isDraftEnabled ||
-          Boolean(disbursementDrafts.newDraftId && currentStep === "preview")
+          !isDraftEnabled || Boolean(disbursementDrafts.newDraftId && currentStep === "preview")
         }
         isSubmitDisabled={
           organization.data.isApprovalRequired ||
@@ -238,10 +223,7 @@ export const DisbursementsNew = () => {
             details={draftDetails}
             futureBalance={futureBalance}
           />
-          <DisbursementInviteMessage
-            isEditMessage={false}
-            draftMessage={customMessage}
-          />
+          <DisbursementInviteMessage isEditMessage={false} draftMessage={customMessage} />
           <DisbursementInstructions
             variant="preview"
             csvFile={csvFile}
@@ -296,10 +278,7 @@ export const DisbursementsNew = () => {
               futureBalance={futureBalance}
               csvFile={csvFile}
             />
-            <DisbursementInviteMessage
-              isEditMessage={false}
-              draftMessage={customMessage}
-            />
+            <DisbursementInviteMessage isEditMessage={false} draftMessage={customMessage} />
 
             {renderButtons("confirmation")}
           </form>
@@ -385,11 +364,8 @@ export const DisbursementsNew = () => {
           </SectionHeader.Content>
 
           <SectionHeader.Content align="right">
-            <Toast
-              isVisible={isDraftInProgress}
-              setIsVisible={setIsDraftInProgress}
-            >
-              <Badge variant="pending">Changes saved</Badge>
+            <Toast isVisible={isDraftInProgress} setIsVisible={setIsDraftInProgress}>
+              <Badge variant="tertiary">Changes saved</Badge>
             </Toast>
           </SectionHeader.Content>
         </SectionHeader.Row>

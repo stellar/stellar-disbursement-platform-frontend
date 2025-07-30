@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Badge,
-  Heading,
-  Link,
-  Button,
-  Icon,
-  Modal,
-} from "@stellar/design-system";
+import { Badge, Heading, Link, Button, Icon, Modal } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useRedux } from "hooks/useRedux";
 import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
@@ -46,19 +39,14 @@ import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
 
-  const {
-    disbursements,
-    disbursementDrafts,
-    disbursementDetails,
-    organization,
-    profile,
-  } = useRedux(
-    "disbursements",
-    "disbursementDrafts",
-    "disbursementDetails",
-    "organization",
-    "profile",
-  );
+  const { disbursements, disbursementDrafts, disbursementDetails, organization, profile } =
+    useRedux(
+      "disbursements",
+      "disbursementDrafts",
+      "disbursementDetails",
+      "organization",
+      "profile",
+    );
 
   const [draftDetails, setDraftDetails] = useState<DisbursementDraft>();
   const [csvFile, setCsvFile] = useState<File>();
@@ -74,10 +62,7 @@ export const DisbursementDraftDetails = () => {
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(
-    setCsvFile,
-    true,
-  );
+  const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(setCsvFile, true);
   const { allBalances } = useAllBalances();
 
   const notificationRef = useRef<HTMLDivElement | null>(null);
@@ -90,9 +75,7 @@ export const DisbursementDraftDetails = () => {
     notificationRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [apiError, isCsvUpdatedSuccess, isResponseSuccess]);
 
-  const fetchedDisbursementDraft = disbursementDrafts.items.find(
-    (p) => p.details.id === draftId,
-  );
+  const fetchedDisbursementDraft = disbursementDrafts.items.find((p) => p.details.id === draftId);
   const fetchedDisbursement = disbursements.items.find((p) => p.id === draftId);
 
   const saveDisbursementDetails = useCallback(() => {
@@ -109,10 +92,7 @@ export const DisbursementDraftDetails = () => {
   }, [dispatch, fetchedDisbursement, fetchedDisbursementDraft]);
 
   useEffect(() => {
-    if (
-      disbursementDetails.details.id ||
-      disbursementDetails.status === "PENDING"
-    ) {
+    if (disbursementDetails.details.id || disbursementDetails.status === "PENDING") {
       return;
     }
 
@@ -136,10 +116,7 @@ export const DisbursementDraftDetails = () => {
   }, [disbursementDetails, dispatch]);
 
   useEffect(() => {
-    if (
-      disbursementDrafts.newDraftId &&
-      disbursementDrafts.status === "SUCCESS"
-    ) {
+    if (disbursementDrafts.newDraftId && disbursementDrafts.status === "SUCCESS") {
       // Show success response page
       if (disbursementDrafts.actionType === "submit") {
         setCurrentStep("confirmation");
@@ -159,10 +136,7 @@ export const DisbursementDraftDetails = () => {
   ]);
 
   useEffect(() => {
-    if (
-      disbursementDrafts.isCsvFileUpdated &&
-      disbursementDrafts.status === "SUCCESS"
-    ) {
+    if (disbursementDrafts.isCsvFileUpdated && disbursementDrafts.status === "SUCCESS") {
       setIsDraftInProgress(false);
       setIsCsvFileUpdated(false);
       setIsCsvUpdatedSuccess(true);
@@ -171,12 +145,7 @@ export const DisbursementDraftDetails = () => {
         dispatch(getDisbursementDetailsAction(draftId));
       }
     }
-  }, [
-    disbursementDrafts.isCsvFileUpdated,
-    disbursementDrafts.status,
-    dispatch,
-    draftId,
-  ]);
+  }, [disbursementDrafts.isCsvFileUpdated, disbursementDrafts.status, dispatch, draftId]);
 
   // Update future balance when total amount changes
   useEffect(() => {
@@ -184,19 +153,12 @@ export const DisbursementDraftDetails = () => {
     if (!totalAmount) return;
 
     const assetBalance =
-      allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)
-        ?.balance ?? "0";
+      allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)?.balance ?? "0";
 
     if (totalAmount) {
-      setFutureBalance(
-        Number(assetBalance) - BigNumber(totalAmount).toNumber(),
-      );
+      setFutureBalance(Number(assetBalance) - BigNumber(totalAmount).toNumber());
     }
-  }, [
-    draftDetails?.details.stats?.totalAmount,
-    draftDetails?.details.asset.code,
-    allBalances,
-  ]);
+  }, [draftDetails?.details.stats?.totalAmount, draftDetails?.details.asset.code, allBalances]);
 
   const resetState = () => {
     setCurrentStep("edit");
@@ -247,9 +209,7 @@ export const DisbursementDraftDetails = () => {
     resetState();
   };
 
-  const handleSubmitDisbursement = (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
+  const handleSubmitDisbursement = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (draftDetails && csvFile) {
       dispatch(
@@ -262,9 +222,7 @@ export const DisbursementDraftDetails = () => {
     }
   };
 
-  const handleViewDetails = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-  ) => {
+  const handleViewDetails = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
     navigate(`${Routes.DISBURSEMENTS}/${disbursementDetails.details.id}`);
     resetState();
@@ -272,15 +230,11 @@ export const DisbursementDraftDetails = () => {
 
   const hasUserWorkedOnThisDraft = () => {
     return Boolean(
-      disbursementDetails.details.statusHistory.find(
-        (h) => h.userId === profile.data.id,
-      ),
+      disbursementDetails.details.statusHistory.find((h) => h.userId === profile.data.id),
     );
   };
 
-  const handleDeleteDraft = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleDeleteDraft = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (draftId) {
       dispatch(deleteDisbursementDraftAction(draftId));
@@ -289,16 +243,12 @@ export const DisbursementDraftDetails = () => {
     }
   };
 
-  const showDeleteModal = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const showDeleteModal = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     setIsDeleteModalVisible(true);
   };
 
-  const hideDeleteModal = (
-    event?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const hideDeleteModal = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event?.preventDefault();
     setIsDeleteModalVisible(false);
   };
@@ -327,8 +277,7 @@ export const DisbursementDraftDetails = () => {
         }}
         isDraftDisabled={!isCsvFileUpdated}
         isSubmitDisabled={
-          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) ||
-          futureBalance < 0
+          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) || futureBalance < 0
         }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
@@ -393,9 +342,7 @@ export const DisbursementDraftDetails = () => {
             />
             <DisbursementInviteMessage
               isEditMessage={false}
-              draftMessage={
-                draftDetails?.details.receiverRegistrationMessageTemplate
-              }
+              draftMessage={draftDetails?.details.receiverRegistrationMessageTemplate}
             />
 
             {renderButtons("confirmation")}
@@ -407,14 +354,10 @@ export const DisbursementDraftDetails = () => {
     return (
       <>
         {isCsvUpdatedSuccess ? (
-          <NotificationWithButtons
-            ref={notificationRef}
-            variant="success"
-            title="CSV updated"
-          >
+          <NotificationWithButtons ref={notificationRef} variant="success" title="CSV updated">
             <div>
-              Your file was updated successfully. Make sure to confirm your
-              disbursement to start it.
+              Your file was updated successfully. Make sure to confirm your disbursement to start
+              it.
             </div>
 
             <div className="Notification__buttons">
@@ -432,17 +375,13 @@ export const DisbursementDraftDetails = () => {
           />
           <DisbursementInviteMessage
             isEditMessage={false}
-            draftMessage={
-              draftDetails?.details.receiverRegistrationMessageTemplate
-            }
+            draftMessage={draftDetails?.details.receiverRegistrationMessageTemplate}
           />
           <DisbursementInstructions
             variant={"preview"}
             csvFile={csvFile}
             onChange={handleCsvFileChange}
-            registrationContactType={
-              draftDetails?.details.registrationContactType
-            }
+            registrationContactType={draftDetails?.details.registrationContactType}
             verificationField={draftDetails?.details.verificationField}
           />
 
@@ -475,15 +414,12 @@ export const DisbursementDraftDetails = () => {
           </SectionHeader.Content>
 
           <SectionHeader.Content align="right">
-            <Toast
-              isVisible={isDraftInProgress}
-              setIsVisible={setIsDraftInProgress}
-            >
-              <Badge variant="pending">Changes saved</Badge>
+            <Toast isVisible={isDraftInProgress} setIsVisible={setIsDraftInProgress}>
+              <Badge variant="tertiary">Changes saved</Badge>
             </Toast>
             <Button
               variant="error"
-              size="sm"
+              size="md"
               icon={<Icon.Delete />}
               onClick={showDeleteModal}
               isLoading={disbursementDrafts.status === "PENDING"}
@@ -519,21 +455,20 @@ export const DisbursementDraftDetails = () => {
         <Modal.Heading>Delete draft permanently?</Modal.Heading>
         <Modal.Body>
           <div>
-            Clicking 'Delete draft' will permanently remove this draft and
-            cannot be undone.
+            Clicking 'Delete draft' will permanently remove this draft and cannot be undone.
           </div>
         </Modal.Body>
         <Modal.Footer>
           <Button
-            size="sm"
-            variant="secondary"
+            size="md"
+            variant="tertiary"
             onClick={hideDeleteModal}
             isLoading={disbursementDrafts.status === "PENDING"}
           >
             Not now
           </Button>
           <Button
-            size="sm"
+            size="md"
             variant="error"
             onClick={(event) => handleDeleteDraft(event)}
             isLoading={disbursementDrafts.status === "PENDING"}

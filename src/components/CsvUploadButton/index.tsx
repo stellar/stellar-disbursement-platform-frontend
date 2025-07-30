@@ -21,11 +21,7 @@ export const CsvUploadButton = ({
   showIcon,
   isStandalone,
 }: CsvUploadButtonProps) => {
-  const additionalClasses = [
-    "Button",
-    `Button--${variant}`,
-    `Button--${size}`,
-  ].join(" ");
+  const additionalClasses = ["Button", `Button--${variant}`, `Button--${size}`].join(" ");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (isStandalone) {
@@ -55,7 +51,7 @@ export const CsvUploadButton = ({
 
         {showIcon ? (
           <span className="Button__icon">
-            <Icon.Backup />
+            <Icon.UploadCloud01 />
           </span>
         ) : null}
       </label>

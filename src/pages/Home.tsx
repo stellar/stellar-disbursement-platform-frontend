@@ -18,15 +18,8 @@ import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
 import { NewDisbursementButton } from "components/NewDisbursementButton";
 
 export const Home = () => {
-  const { disbursements, userAccount } = useRedux(
-    "disbursements",
-    "userAccount",
-  );
-  const { isRoleAccepted } = useIsUserRoleAccepted([
-    "business",
-    "financial_controller",
-    "owner",
-  ]);
+  const { disbursements, userAccount } = useRedux("disbursements", "userAccount");
+  const { isRoleAccepted } = useIsUserRoleAccepted(["business", "financial_controller", "owner"]);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,16 +39,12 @@ export const Home = () => {
       ? disbursements.errorString
       : undefined;
 
-  const goToAnalytics = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const goToAnalytics = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     navigate(Routes.ANALYTICS);
   };
 
-  const goToDisbursements = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const goToDisbursements = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     navigate(Routes.DISBURSEMENTS);
   };
@@ -70,7 +59,7 @@ export const Home = () => {
             </Heading>
           </SectionHeader.Content>
           <SectionHeader.Content align="right">
-            <Button size="xs" variant="secondary" onClick={goToAnalytics}>
+            <Button size="sm" variant="tertiary" onClick={goToAnalytics}>
               View analytics
             </Button>
           </SectionHeader.Content>
@@ -81,9 +70,7 @@ export const Home = () => {
         <DashboardAnalytics />
       </div>
 
-      <ShowForRoles
-        acceptedRoles={["business", "financial_controller", "owner"]}
-      >
+      <ShowForRoles acceptedRoles={["business", "financial_controller", "owner"]}>
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
@@ -92,11 +79,11 @@ export const Home = () => {
               </Heading>
             </SectionHeader.Content>
             <SectionHeader.Content align="right">
-              <Button size="xs" variant="secondary" onClick={goToDisbursements}>
+              <Button size="sm" variant="tertiary" onClick={goToDisbursements}>
                 View all
               </Button>
               <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
-                <NewDisbursementButton size="xs" />
+                <NewDisbursementButton size="sm" />
               </ShowForRoles>
             </SectionHeader.Content>
           </SectionHeader.Row>

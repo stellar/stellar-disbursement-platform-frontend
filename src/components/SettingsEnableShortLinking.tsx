@@ -14,8 +14,7 @@ export const SettingsEnableShortLinking = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isPending, error, isSuccess } =
-    useUpdateOrgShortLinkEnabled();
+  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgShortLinkEnabled();
 
   useEffect(() => {
     if (isSuccess) {
@@ -42,13 +41,13 @@ export const SettingsEnableShortLinking = () => {
                 checked={Boolean(organization.data.isLinkShortenerEnabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
+                fieldSize="sm"
               />
             </div>
           </div>
           <div className="Note">
-            Select this option to use shorter links when inviting receivers. The
-            short link format will look like{" "}
-            <code>{organization.data.baseUrl}/r/abcd1234</code>.
+            Select this option to use shorter links when inviting receivers. The short link format
+            will look like <code>{organization.data.baseUrl}/r/abcd1234</code>.
           </div>
         </div>
       </div>
