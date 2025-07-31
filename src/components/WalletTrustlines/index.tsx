@@ -195,7 +195,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
         <div className="WalletTrustlines__button">
           <Button
             size="sm"
-            variant="tertiary"
+            variant="secondary"
             onClick={() => {
               setIsAddModalVisible(true);
             }}

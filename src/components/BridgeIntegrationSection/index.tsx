@@ -113,7 +113,7 @@ export const BridgeIntegrationSection = ({
               converted to USDC on Stellar and deposited into your distribution account.
             </div>
             <div className="BridgeIntegration__button">
-              <Button size="sm" variant="tertiary" onClick={onOptIn}>
+              <Button size="sm" variant="secondary" onClick={onOptIn}>
                 Get Started with Bridge
               </Button>
             </div>

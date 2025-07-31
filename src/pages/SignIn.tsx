@@ -135,7 +135,7 @@ export const SignIn = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-          <Heading size="sm" as="h1">
+          <Heading size="xs" as="h1">
             Sign in to Stellar Disbursement Platform
           </Heading>
           {!USE_SSO && (

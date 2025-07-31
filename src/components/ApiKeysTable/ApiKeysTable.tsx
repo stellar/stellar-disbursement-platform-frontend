@@ -109,7 +109,7 @@ export const ApiKeysTable = ({
           API Keys
         </Heading>
         <Button
-          variant="tertiary"
+          variant="secondary"
           size="sm"
           icon={<Icon.Plus />}
           iconPosition="right"

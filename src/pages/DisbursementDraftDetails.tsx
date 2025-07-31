@@ -420,7 +420,7 @@ export const DisbursementDraftDetails = () => {
             <Button
               variant="error"
               size="md"
-              icon={<Icon.Delete />}
+              icon={<Icon.Trash01 />}
               onClick={showDeleteModal}
               isLoading={disbursementDrafts.status === "PENDING"}
             >

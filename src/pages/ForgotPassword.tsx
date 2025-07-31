@@ -72,7 +72,7 @@ export const ForgotPassword = () => {
         ) : null}
 
         <form onSubmit={handleForgotPassword}>
-          <Heading size="sm" as="h1">
+          <Heading size="xs" as="h1">
             Forgot password
           </Heading>
 

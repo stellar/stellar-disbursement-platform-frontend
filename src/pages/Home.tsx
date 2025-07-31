@@ -54,7 +54,7 @@ export const Home = () => {
       <SectionHeader>
         <SectionHeader.Row>
           <SectionHeader.Content>
-            <Heading as="h2" size="lg">
+            <Heading as="h2" size="md">
               Dashboard
             </Heading>
           </SectionHeader.Content>

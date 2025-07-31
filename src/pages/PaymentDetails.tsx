@@ -230,7 +230,7 @@ export const PaymentDetails = () => {
                       {formattedPayment.senderAddress ? (
                         <Profile
                           publicAddress={formattedPayment.senderAddress}
-                          size="sm"
+                          size="md"
                           isCopy
                           isShort
                           hideAvatar
@@ -353,7 +353,7 @@ export const PaymentDetails = () => {
                       {receiver?.walletAddress ? (
                         <Profile
                           publicAddress={receiver.walletAddress}
-                          size="sm"
+                          size="md"
                           isCopy
                           isShort
                           hideAvatar

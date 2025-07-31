@@ -404,7 +404,7 @@ export const ReceiverDetails = () => {
                     <div className="StatCards__card__item__value">
                       {selectedWallet.stellarAddress ? (
                         <Profile
-                          size="sm"
+                          size="md"
                           publicAddress={selectedWallet.stellarAddress}
                           isCopy
                           isShort

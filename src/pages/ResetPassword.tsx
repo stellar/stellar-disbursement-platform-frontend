@@ -92,7 +92,7 @@ export const ResetPassword = () => {
 
         <form onSubmit={handleResetPassword}>
           <div className="CardLayout__heading">
-            <Heading size="sm" as="h1">
+            <Heading size="xs" as="h1">
               Reset password
             </Heading>
 
