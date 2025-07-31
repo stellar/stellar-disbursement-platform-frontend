@@ -84,7 +84,7 @@
   &__name {
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--sds-fw-medium);
     color: var(--sds-clr-gray-11);
     flex: 1;
   }
@@ -97,7 +97,7 @@
   gap: pxToRem(8px);
   font-size: pxToRem(14px);
   line-height: pxToRem(22px);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--sds-fw-medium);
   color: var(--sds-clr-gray-11);
 
   &__icon {

@@ -25,7 +25,7 @@
 
 .Table-v2__wrapper {
   opacity: 1;
-  transition: opacity var(--anim-transition-default);
+  transition: opacity var(--sds-anim-transition-default);
 
   &[data-scrollable="true"] {
     overflow-x: auto;
@@ -39,7 +39,7 @@ table.Table-v2 {
   thead tr,
   tr:not(:last-child) {
     border-bottom: 1px solid var(--sds-clr-gray-04);
-    transition: background-color var(--anim-transition-default);
+    transition: background-color var(--sds-anim-transition-default);
 
     &.Table-v2__row--highlighted {
       background-color: var(--sds-clr-gray-02);
@@ -66,7 +66,7 @@ table.Table-v2 {
   th {
     font-size: pxToRem(12px);
     line-height: pxToRem(20px);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--sds-fw-medium);
     color: var(--sds-clr-gray-09);
     text-align: left;
     white-space: nowrap;
@@ -79,8 +79,8 @@ table.Table-v2 {
       &[role="button"] {
         cursor: pointer;
         transition:
-          color var(--anim-transition-default),
-          fill var(--anim-transition-default);
+          color var(--sds-anim-transition-default),
+          fill var(--sds-anim-transition-default);
 
         @media (hover: hover) {
           &:hover {
@@ -111,7 +111,7 @@ table.Table-v2 {
           stroke: currentColor;
           position: absolute;
           left: 0;
-          transition: fill var(--anim-transition-default);
+          transition: fill var(--sds-anim-transition-default);
 
           &:nth-child(1) {
             top: 0;
@@ -157,7 +157,7 @@ table.Table-v2 {
   td {
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
-    font-weight: var(--font-weight-regular);
+    font-weight: var(--sds-fw-regular);
     color: var(--sds-clr-gray-11);
 
     &[data-text-align="right"] {

@@ -16,8 +16,8 @@
     align-items: center;
     gap: pxToRem(8px);
     padding: pxToRem(8px) pxToRem(12px);
-    background-color: var(--color-green-05);
-    border: 1px solid var(--color-green-20);
+    background-color: var(--sds-clr-green-02);
+    border: 1px solid var(--sds-clr-green-06);
     border-radius: 6px;
     font-size: pxToRem(14px);
     font-weight: 500;
@@ -25,7 +25,7 @@
   }
 
   &__icon {
-    color: var(--color-green-60);
+    color: var(--sds-clr-green-09);
     width: pxToRem(16px);
     height: pxToRem(16px);
     flex-shrink: 0;

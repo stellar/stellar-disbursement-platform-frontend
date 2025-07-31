@@ -61,10 +61,10 @@
     gap: pxToRem(16px);
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--sds-fw-medium);
     color: var(--sds-clr-gray-11);
     text-decoration: none;
-    transition: all var(--anim-transition-default);
+    transition: all var(--sds-anim-transition-default);
 
     &__icon {
       display: block;
@@ -94,7 +94,7 @@
   &__item {
     font-size: pxToRem(10px);
     line-height: pxToRem(16px);
-    font-weight: var(--font-weight-semi-bold);
+    font-weight: var(--sds-fw-semi-bold);
     color: var(--sds-clr-gray-11);
   }
 }

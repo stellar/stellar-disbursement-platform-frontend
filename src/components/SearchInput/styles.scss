@@ -20,7 +20,7 @@
     align-items: center;
     justify-content: center;
     color: var(--sds-clr-gray-11);
-    transition: color var(--anim-transition-default);
+    transition: color var(--sds-anim-transition-default);
 
     svg {
       width: pxToRem(14px);

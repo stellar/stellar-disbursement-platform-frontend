@@ -25,7 +25,7 @@
 
     &__label {
       font-size: pxToRem(14px);
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--sds-fw-medium);
       color: var(--sds-clr-gray-09);
       display: flex;
       align-items: center;
@@ -39,7 +39,7 @@
 
     &__value {
       font-size: pxToRem(14px);
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--sds-fw-medium);
       color: var(--sds-clr-gray-11);
       display: flex;
       justify-content: end;

@@ -16,8 +16,8 @@
     color: var(--sds-clr-gray-12);
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
-    font-weight: var(--font-weight-medium);
-    transition: all var(--anim-transition-default);
+    font-weight: var(--sds-fw-medium);
+    transition: all var(--sds-anim-transition-default);
     cursor: pointer;
 
     &--highlight {

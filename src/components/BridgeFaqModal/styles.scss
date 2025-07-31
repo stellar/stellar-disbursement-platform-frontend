@@ -55,12 +55,12 @@
   }
 
   &__link {
-    color: var(--color-purple-60);
+    color: var(--sds-clr-lilac-11);
     text-decoration: none;
     font-weight: 500;
 
     &:hover {
-      color: var(--color-purple-70);
+      color: var(--sds-clr-lilac-12);
       text-decoration: underline;
     }
   }
