@@ -554,7 +554,7 @@ export const ReceiverDetails = () => {
           <SectionHeader>
             <SectionHeader.Row>
               <SectionHeader.Content>
-                <Heading as="h3" size="sm">
+                <Heading as="h3" size="xs">
                   Wallets
                 </Heading>
               </SectionHeader.Content>

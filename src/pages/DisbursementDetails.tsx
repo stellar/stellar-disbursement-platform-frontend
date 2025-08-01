@@ -447,7 +447,7 @@ export const DisbursementDetails = () => {
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
-              <Heading as="h3" size="sm">
+              <Heading as="h3" size="xs">
                 {disbursementDetails.details.receivers?.pagination?.total &&
                 disbursementDetails.details.receivers?.pagination.total > 0
                   ? `${number.format(disbursementDetails.details.receivers.pagination.total)} `

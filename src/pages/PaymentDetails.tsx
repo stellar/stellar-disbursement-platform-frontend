@@ -265,7 +265,7 @@ export const PaymentDetails = () => {
 
           {/* Status history */}
           <div className="DetailsSection">
-            <Heading as="h2" size="sm">
+            <Heading as="h2" size="xs">
               Status history
             </Heading>
 
@@ -300,7 +300,7 @@ export const PaymentDetails = () => {
 
           {/* Receiver */}
           <div className="DetailsSection">
-            <Heading as="h2" size="sm">
+            <Heading as="h2" size="xs">
               Receiver
             </Heading>
 

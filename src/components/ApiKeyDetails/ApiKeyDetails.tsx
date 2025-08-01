@@ -178,7 +178,7 @@ export const ApiKeyDetails = () => {
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
-              <Heading as="h2" size="sm">
+              <Heading as="h2" size="xs">
                 <CopyWithIcon textToCopy={apiKey.name} iconSizeRem="1.5">
                   {apiKey.name}
                 </CopyWithIcon>

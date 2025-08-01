@@ -54,7 +54,7 @@ export const Home = () => {
       <SectionHeader>
         <SectionHeader.Row>
           <SectionHeader.Content>
-            <Heading as="h2" size="md">
+            <Heading as="h2" size="sm">
               Dashboard
             </Heading>
           </SectionHeader.Content>
@@ -74,7 +74,7 @@ export const Home = () => {
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
-              <Heading as="h2" size="sm">
+              <Heading as="h2" size="xs">
                 Recent disbursements
               </Heading>
             </SectionHeader.Content>
