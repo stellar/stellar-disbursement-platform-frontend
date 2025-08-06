@@ -505,6 +505,16 @@ export type ApiAsset = {
   deleted_at?: string;
 };
 
+export type ApiAssetWithTrustline = ApiAsset & {
+  has_trustline: boolean;
+};
+
+export const hasTrustlineInfo = (
+  asset: ApiAsset | ApiAssetWithTrustline,
+): asset is ApiAssetWithTrustline => {
+  return "has_trustline" in asset;
+};
+
 export type ApiWallet = {
   id: string;
   name: string;
