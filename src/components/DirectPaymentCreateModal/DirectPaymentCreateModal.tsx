@@ -14,7 +14,6 @@ import { directPayment } from "constants/directPayment";
 import { CreateDirectPaymentRequest, ApiReceiver, ApiAssetWithTrustline } from "types";
 
 import "./styles.scss";
-import { InfoTooltip } from "components/InfoTooltip";
 
 interface DirectPaymentCreateModalProps {
   visible: boolean;
@@ -381,7 +380,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   };
 
   return (
-    <Modal visible={visible} onClose={handleClose} alignToBottom={false} offsetTop="-100px">
+    <Modal visible={visible} onClose={handleClose}>
       <Modal.Heading>
         {showConfirmation ? "Confirm Direct Payment" : "Create a direct payment"}
       </Modal.Heading>
@@ -528,11 +527,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                   id="externalPaymentId"
                   name="externalPaymentId"
                   type="text"
-                  label={
-                    <InfoTooltip infoText="A unique identifier for the payment defined by your organization">
-                      Enter external payment ID (optional)
-                    </InfoTooltip>
-                  }
+                  infoText="A unique identifier for the payment defined by your organization"
+                  label="Enter external payment ID (optional)"
                   placeholder="Enter external payment ID"
                   value={formData.externalPaymentId}
                   onChange={handleInputChange}

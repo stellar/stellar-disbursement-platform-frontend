@@ -1,16 +1,5 @@
 @use "styles-utils.scss" as *;
 
-.Modal {
-  min-height: 120vh !important;
-  height: auto !important;
-}
-
-.Modal__body {
-  max-height:110vh !important;  
-  height: auto !important;
-  overflow-y: visible;
-}
-
 .DirectPaymentCreateModal {
   &__form {
     display: flex;
@@ -113,11 +102,8 @@
       overflow: hidden;
     }
 
-    // Also handle the case where it's the last visible field wrapper
     &:last-child[data-visible="true"] {
-      margin-bottom: 0 !important;
       min-height: pxToRem(85px);
-      margin-bottom: 0 !important;
     }
   }
 

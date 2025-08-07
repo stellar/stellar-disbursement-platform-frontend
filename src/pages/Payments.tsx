@@ -139,7 +139,7 @@ export const Payments = () => {
 
           <SectionHeader.Content align="right">
             <Button
-              variant="secondary"
+              variant="primary"
               size="sm"
               onClick={handleCreateDirectPayment}
               disabled={isLoading || isFetching}
