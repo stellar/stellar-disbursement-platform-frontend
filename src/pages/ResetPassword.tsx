@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Heading,
-  Input,
-  Link,
-  Loader,
-  Notification,
-} from "@stellar/design-system";
+import { Button, Heading, Input, Link, Loader, Notification } from "@stellar/design-system";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { SINGLE_TENANT_MODE } from "constants/envVariables";
@@ -28,8 +21,7 @@ export const ResetPassword = () => {
     }
   }, [searchParams]);
 
-  const { isSuccess, isPending, error, mutateAsync, reset } =
-    useResetPassword();
+  const { isSuccess, isPending, error, mutateAsync, reset } = useResetPassword();
 
   const navigate = useNavigate();
 
@@ -64,9 +56,7 @@ export const ResetPassword = () => {
     return () => clearTimeout(timer);
   }, [isSuccess, navigate, reset]);
 
-  const goToSignIn = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-  ) => {
+  const goToSignIn = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
     reset();
     navigate("/");
@@ -75,12 +65,7 @@ export const ResetPassword = () => {
   const allInputsValid = () => {
     if (errorPassword || errorPasswordMatch) {
       return false;
-    } else if (
-      organizationName &&
-      password &&
-      confirmPassword &&
-      confirmationToken
-    ) {
+    } else if (organizationName && password && confirmPassword && confirmationToken) {
       return true;
     }
 
@@ -107,7 +92,7 @@ export const ResetPassword = () => {
 
         <form onSubmit={handleResetPassword}>
           <div className="CardLayout__heading">
-            <Heading size="sm" as="h1">
+            <Heading size="xs" as="h1">
               Reset password
             </Heading>
 
@@ -115,13 +100,9 @@ export const ResetPassword = () => {
               New password must be:
               <ul>
                 <li>at least 12 characters long,</li>
+                <li>a combination of uppercase letters, lowercase letters and numbers</li>
                 <li>
-                  a combination of uppercase letters, lowercase letters and
-                  numbers
-                </li>
-                <li>
-                  at least one symbol from:{" "}
-                  <span className="CodeSnippet">! @ # $ % ^ &amp; *</span>
+                  at least one symbol from: <span className="CodeSnippet">! @ # $ % ^ &amp; *</span>
                 </li>
               </ul>
             </div>
@@ -132,11 +113,7 @@ export const ResetPassword = () => {
               fieldSize="sm"
               id="rp-organization-name"
               name="rp-organization-name"
-              label={
-                <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                  Organization name
-                </InfoTooltip>
-              }
+              label={<InfoTooltip infoText={ORG_NAME_INFO_TEXT}>Organization name</InfoTooltip>}
               onChange={(e) => setOrganizationName(e.target.value)}
               value={organizationName}
               type="text"
@@ -156,9 +133,7 @@ export const ResetPassword = () => {
               setErrorPassword(validateNewPassword(password));
 
               if (confirmPassword) {
-                setErrorPasswordMatch(
-                  validatePasswordMatch(password, confirmPassword),
-                );
+                setErrorPasswordMatch(validatePasswordMatch(password, confirmPassword));
               }
             }}
             value={password}
@@ -176,9 +151,7 @@ export const ResetPassword = () => {
               setConfirmPassword(e.target.value);
             }}
             onBlur={() => {
-              setErrorPasswordMatch(
-                validatePasswordMatch(password, confirmPassword),
-              );
+              setErrorPasswordMatch(validatePasswordMatch(password, confirmPassword));
             }}
             value={confirmPassword}
             isPassword
@@ -187,7 +160,7 @@ export const ResetPassword = () => {
 
           <Button
             variant="primary"
-            size="sm"
+            size="md"
             type="submit"
             disabled={!allInputsValid()}
             isLoading={isPending}

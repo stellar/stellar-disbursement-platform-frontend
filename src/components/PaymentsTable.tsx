@@ -58,11 +58,7 @@ export const PaymentsTable = ({
     }
 
     if (isFiltersSelected) {
-      return (
-        <div className="Note">
-          There are no payments matching your selected filters
-        </div>
-      );
+      return <div className="Note">There are no payments matching your selected filters</div>;
     }
 
     return <div className="Note">There are no payments</div>;
@@ -103,9 +99,7 @@ export const PaymentsTable = ({
                   <Link onClick={(event) => handlePaymentClicked(event, p.id)}>
                     <span className="PaymentIDs__item">{p.id}</span>
                     {p.external_payment_id ? (
-                      <span className="PaymentIDs__item">
-                        {p.external_payment_id}
-                      </span>
+                      <span className="PaymentIDs__item">{p.external_payment_id}</span>
                     ) : null}
                   </Link>
                 </Table.BodyCell>
@@ -113,7 +107,7 @@ export const PaymentsTable = ({
                   {p.receiver_wallet?.stellar_address ? (
                     <Profile
                       publicAddress={p.receiver_wallet?.stellar_address}
-                      size="sm"
+                      size="md"
                       isCopy
                       isShort
                       hideAvatar
@@ -122,19 +116,13 @@ export const PaymentsTable = ({
                     "-"
                   )}
                 </Table.BodyCell>
-                <Table.BodyCell
-                  width="7.5rem"
-                  title={p.disbursement?.name || "-"}
-                >
+                <Table.BodyCell width="7.5rem" title={p.disbursement?.name || "-"}>
                   {(() => {
                     const disbursement = p.disbursement;
                     return disbursement ? (
                       <Link
                         onClick={(event) =>
-                          handlePaymentDisbursementClicked(
-                            event,
-                            disbursement.id,
-                          )
+                          handlePaymentDisbursementClicked(event, disbursement.id)
                         }
                       >
                         {disbursement.name}
@@ -146,17 +134,11 @@ export const PaymentsTable = ({
                 </Table.BodyCell>
                 <Table.BodyCell>
                   <span className="Table-v2__cell--secondary">
-                    {p.status === "SUCCESS"
-                      ? formatDateTime(p.updated_at)
-                      : "-"}
+                    {p.status === "SUCCESS" ? formatDateTime(p.updated_at) : "-"}
                   </span>
                 </Table.BodyCell>
                 <Table.BodyCell textAlign="right">
-                  <AssetAmount
-                    amount={p.amount}
-                    assetCode={p.asset.code}
-                    fallback="-"
-                  />
+                  <AssetAmount amount={p.amount} assetCode={p.asset.code} fallback="-" />
                 </Table.BodyCell>
                 <Table.BodyCell textAlign="right">
                   <PaymentStatus status={p.status} />

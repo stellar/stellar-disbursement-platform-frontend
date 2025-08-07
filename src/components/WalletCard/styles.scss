@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .WalletCard {
   display: flex;
@@ -25,8 +25,8 @@
 
     &__label {
       font-size: pxToRem(14px);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-gray-60);
+      font-weight: var(--sds-fw-medium);
+      color: var(--sds-clr-gray-09);
       display: flex;
       align-items: center;
       gap: pxToRem(5px);
@@ -39,8 +39,8 @@
 
     &__value {
       font-size: pxToRem(14px);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-gray-80);
+      font-weight: var(--sds-fw-medium);
+      color: var(--sds-clr-gray-12);
       display: flex;
       justify-content: end;
       align-items: center;
@@ -48,7 +48,7 @@
   }
 
   &__walletData {
-    border-top: 1px solid var(--color-gray-30);
+    border-top: 1px solid var(--sds-clr-gray-04);
     padding-top: pxToRem(4px);
   }
 
@@ -60,7 +60,7 @@
 }
 
 .ExternalLinkIcon {
-  color: var(--color-gray-60);
+  color: var(--sds-clr-gray-09);
   width: pxToRem(14px);
   height: pxToRem(14px);
   cursor: pointer;

@@ -10,7 +10,7 @@ export const ApiKeysDescription = () => {
   return (
     <Card>
       <div className="ApiKeysDescription__header">
-        <Heading as="h3" size="sm">
+        <Heading as="h3" size="xs">
           Available API Fields
         </Heading>
       </div>
@@ -23,19 +23,17 @@ export const ApiKeysDescription = () => {
               <Table.HeaderCell>Example</Table.HeaderCell>
             </Table.Header>
             <Table.Body>
-              {API_KEY_FIELD_DESCRIPTIONS.map(
-                ({ name, description, example }) => (
-                  <Table.BodyRow key={name}>
-                    <Table.BodyCell>
-                      <code>{name}</code>
-                    </Table.BodyCell>
-                    <Table.BodyCell>{description}</Table.BodyCell>
-                    <Table.BodyCell textAlign="center">
-                      <code>{example}</code>
-                    </Table.BodyCell>
-                  </Table.BodyRow>
-                ),
-              )}
+              {API_KEY_FIELD_DESCRIPTIONS.map(({ name, description, example }) => (
+                <Table.BodyRow key={name}>
+                  <Table.BodyCell>
+                    <code>{name}</code>
+                  </Table.BodyCell>
+                  <Table.BodyCell>{description}</Table.BodyCell>
+                  <Table.BodyCell textAlign="center">
+                    <code>{example}</code>
+                  </Table.BodyCell>
+                </Table.BodyRow>
+              ))}
             </Table.Body>
           </Table>
         </Card>

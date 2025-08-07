@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .Pagination-v2 {
   display: flex;
@@ -8,8 +8,8 @@
 
   font-size: pxToRem(12px);
   line-height: pxToRem(20px);
-  font-weight: var(--font-weight-regular);
-  color: var(--color-gray-80);
+  font-weight: var(--sds-fw-regular);
+  color: var(--sds-clr-gray-11);
 
   span {
     flex-shrink: 0;

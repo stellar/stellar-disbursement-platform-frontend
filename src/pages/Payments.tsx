@@ -139,7 +139,7 @@ export const Payments = () => {
 
           <SectionHeader.Content align="right">
             <Button
-              variant="primary"
+              variant="secondary"
               size="sm"
               onClick={handleCreateDirectPayment}
               disabled={isLoading || isFetching}
@@ -211,9 +211,9 @@ export const Payments = () => {
             </FilterMenu>
 
             <Button
-              variant="secondary"
+              variant="tertiary"
               size="sm"
-              icon={<Icon.Download />}
+              icon={<Icon.Download01 />}
               onClick={handleExport}
               disabled={isLoading || isFetching}
             >

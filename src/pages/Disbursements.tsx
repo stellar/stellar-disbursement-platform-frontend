@@ -11,11 +11,7 @@ import { SearchInput } from "components/SearchInput";
 import { SectionHeader } from "components/SectionHeader";
 import { ShowForRoles } from "components/ShowForRoles";
 
-import {
-  PAGE_LIMIT_OPTIONS,
-  Routes,
-  UI_STATUS_DISBURSEMENT,
-} from "constants/settings";
+import { PAGE_LIMIT_OPTIONS, Routes, UI_STATUS_DISBURSEMENT } from "constants/settings";
 import { number } from "helpers/formatIntlNumber";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
@@ -85,9 +81,7 @@ export const Disbursements = () => {
     setCurrentPage(1);
   };
 
-  const handleFilterChange = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-  ) => {
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setFilters({
       ...filters,
       [event.target.id]: event.target.value,
@@ -117,10 +111,7 @@ export const Disbursements = () => {
     setCurrentPage(1);
   };
 
-  const handleSort = (
-    sort?: SortByDisbursements,
-    direction?: SortDirection,
-  ) => {
+  const handleSort = (sort?: SortByDisbursements, direction?: SortDirection) => {
     if (!sort || !direction || direction === "default") {
       dispatch(
         getDisbursementsWithParamsAction({
@@ -142,9 +133,7 @@ export const Disbursements = () => {
     setCurrentPage(1);
   };
 
-  const handleExport = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleExport = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
 
     if (disbursements.status === "PENDING") {
@@ -159,9 +148,7 @@ export const Disbursements = () => {
     );
   };
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const handlePageLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
 
     const pageLimit = Number(event.target.value);
@@ -183,8 +170,7 @@ export const Disbursements = () => {
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              {disbursements.pagination?.total &&
-              disbursements.pagination.total > 0
+              {disbursements.pagination?.total && disbursements.pagination.total > 0
                 ? `${number.format(disbursements.pagination.total)} `
                 : ""}
               Disbursements
@@ -193,9 +179,9 @@ export const Disbursements = () => {
           <SectionHeader.Content align="right">
             <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
               <Button
-                variant="secondary"
+                variant="tertiary"
                 size="sm"
-                icon={<Icon.Draft />}
+                icon={<Icon.Edit05 />}
                 iconPosition="right"
                 onClick={goToDrafts}
               >
@@ -264,9 +250,9 @@ export const Disbursements = () => {
             </FilterMenu>
 
             <Button
-              variant="secondary"
+              variant="tertiary"
               size="sm"
-              icon={<Icon.Download />}
+              icon={<Icon.Download01 />}
               onClick={handleExport}
               isLoading={disbursements.status === "PENDING"}
             >
@@ -293,9 +279,7 @@ export const Disbursements = () => {
               maxPages={Number(maxPages)}
               onSetPage={(page) => {
                 setCurrentPage(page);
-                dispatch(
-                  getDisbursementsWithParamsAction({ page: page.toString() }),
-                );
+                dispatch(getDisbursementsWithParamsAction({ page: page.toString() }));
               }}
               isLoading={disbursements.status === "PENDING"}
             />

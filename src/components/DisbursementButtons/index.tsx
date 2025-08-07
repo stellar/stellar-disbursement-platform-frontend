@@ -40,9 +40,7 @@ export const DisbursementButtons = ({
   const isSavePending = isDraftPending && actionType === "save";
   const isSubmitPending = isDraftPending && actionType === "submit";
 
-  const handleGoToDisbursements = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleGoToDisbursements = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
 
     if (clearDrafts) {
@@ -52,9 +50,7 @@ export const DisbursementButtons = ({
     navigate(Routes.DISBURSEMENTS);
   };
 
-  const handleGoToDrafts = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleGoToDrafts = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
 
     if (onGoToDrafts) {
@@ -68,9 +64,7 @@ export const DisbursementButtons = ({
     }
   };
 
-  const handleStartNewDisbursement = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleStartNewDisbursement = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
 
     if (onNewDisbursement) {
@@ -84,25 +78,19 @@ export const DisbursementButtons = ({
     }
   };
 
-  const handleDiscard = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleDiscard = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (onDiscard) {
       onDiscard();
     }
   };
 
-  const handleSaveDraft = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleSaveDraft = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     onSaveDraft();
   };
 
-  const handleGoBack = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleGoBack = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     onGoBack();
   };
@@ -113,8 +101,8 @@ export const DisbursementButtons = ({
         <>
           <Button
             variant="error"
-            size="xs"
-            icon={<Icon.DeleteForever />}
+            size="sm"
+            icon={<Icon.Trash01 />}
             iconPosition="right"
             onClick={handleDiscard}
             disabled={isSavePending}
@@ -124,14 +112,13 @@ export const DisbursementButtons = ({
 
           <div className="DisbursementButtons--continue">
             <Button
-              variant="secondary"
-              size="xs"
+              variant="tertiary"
+              size="sm"
               onClick={handleSaveDraft}
               disabled={isDraftDisabled}
               {...(isDraftDisabled
                 ? {
-                    title:
-                      "Please complete all fields above before saving a draft",
+                    title: "Please complete all fields above before saving a draft",
                   }
                 : {})}
               isLoading={isSavePending}
@@ -140,7 +127,7 @@ export const DisbursementButtons = ({
             </Button>
             <Button
               variant="primary"
-              size="xs"
+              size="sm"
               icon={<Icon.ArrowRight />}
               iconPosition="right"
               type="submit"
@@ -157,8 +144,8 @@ export const DisbursementButtons = ({
       return (
         <>
           <Button
-            variant="secondary"
-            size="xs"
+            variant="tertiary"
+            size="sm"
             icon={<Icon.ArrowLeft />}
             iconPosition="left"
             onClick={handleGoBack}
@@ -169,8 +156,8 @@ export const DisbursementButtons = ({
 
           <div className="DisbursementButtons--continue">
             <Button
-              variant="secondary"
-              size="xs"
+              variant="tertiary"
+              size="sm"
               onClick={handleSaveDraft}
               isLoading={isSavePending}
               disabled={isDraftDisabled || isSubmitPending}
@@ -179,7 +166,7 @@ export const DisbursementButtons = ({
             </Button>
             <Button
               variant="primary"
-              size="xs"
+              size="sm"
               icon={<Icon.CheckCircle />}
               iconPosition="right"
               type="submit"
@@ -198,8 +185,8 @@ export const DisbursementButtons = ({
     return (
       <>
         <Button
-          variant="secondary"
-          size="xs"
+          variant="tertiary"
+          size="sm"
           icon={<Icon.ArrowLeft />}
           iconPosition="left"
           onClick={handleGoToDisbursements}
@@ -208,13 +195,13 @@ export const DisbursementButtons = ({
         </Button>
 
         <div className="DisbursementButtons--continue">
-          <Button variant="secondary" size="xs" onClick={handleGoToDrafts}>
+          <Button variant="tertiary" size="sm" onClick={handleGoToDrafts}>
             Go to drafts
           </Button>
           <Button
             variant="primary"
-            size="xs"
-            icon={<Icon.Add />}
+            size="sm"
+            icon={<Icon.Plus />}
             iconPosition="right"
             onClick={handleStartNewDisbursement}
           >
