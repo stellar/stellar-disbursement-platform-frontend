@@ -14,8 +14,7 @@ export const SettingsEnableMemoTracking = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isPending, error, isSuccess } =
-    useUpdateOrgMemoTrackingEnabled();
+  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgMemoTrackingEnabled();
 
   useEffect(() => {
     if (isSuccess) {
@@ -42,14 +41,14 @@ export const SettingsEnableMemoTracking = () => {
                 checked={Boolean(organization.data.isMemoTracingEnabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
+                fieldSize="sm"
               />
             </div>
           </div>
           <div className="Note">
-            When enabled, payments will include an organization-specific memo if
-            the receiver's wallet doesn't have an associated memo. This memo is
-            derived from your server URL and will update if the URL changes
-            (e.g. <code>sdp-100680ad546c</code>).
+            When enabled, payments will include an organization-specific memo if the receiver's
+            wallet doesn't have an associated memo. This memo is derived from your server URL and
+            will update if the URL changes (e.g. <code>sdp-100680ad546c</code>).
           </div>
         </div>
       </div>

@@ -15,12 +15,7 @@ import { ReceiversTable } from "components/ReceiversTable";
 import { useReceivers } from "apiQueries/useReceivers";
 import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
 import { number } from "helpers/formatIntlNumber";
-import {
-  CommonFilters,
-  SortByReceivers,
-  SortDirection,
-  SortParams,
-} from "types";
+import { CommonFilters, SortByReceivers, SortDirection, SortParams } from "types";
 
 export const Receivers = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,9 +30,7 @@ export const Receivers = () => {
   const [filters, setFilters] = useState<CommonFilters>(initFilters);
   // Using extra param to trigger API call when we want, not on every filter
   // state change
-  const [queryFilters, setQueryFilters] = useState<CommonFilters & SortParams>(
-    {},
-  );
+  const [queryFilters, setQueryFilters] = useState<CommonFilters & SortParams>({});
   const [searchQuery, setSearchQuery] = useState<{ q: string } | undefined>();
 
   const {
@@ -52,8 +45,7 @@ export const Receivers = () => {
     ...searchQuery,
   });
 
-  const isFiltersSelected =
-    Object.values(filters).filter((v) => Boolean(v)).length > 0;
+  const isFiltersSelected = Object.values(filters).filter((v) => Boolean(v)).length > 0;
 
   const navigate = useNavigate();
 
@@ -65,9 +57,7 @@ export const Receivers = () => {
     setSearchQuery(searchText ? { q: searchText } : undefined);
   };
 
-  const handleFilterChange = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-  ) => {
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setFilters({
       ...filters,
       [event.target.id]: event.target.value,
@@ -94,9 +84,7 @@ export const Receivers = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const handleExport = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleExport = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (isLoading || isFetching) {
       return;
@@ -110,9 +98,7 @@ export const Receivers = () => {
     );
   };
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const handlePageLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
 
     const pageLimit = Number(event.target.value);
@@ -202,9 +188,9 @@ export const Receivers = () => {
             </FilterMenu>
 
             <Button
-              variant="secondary"
+              variant="tertiary"
               size="sm"
-              icon={<Icon.Download />}
+              icon={<Icon.Download01 />}
               onClick={handleExport}
               disabled={isLoading || isFetching}
             >

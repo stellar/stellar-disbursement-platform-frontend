@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Button,
-  Card,
-  Input,
-  Modal,
-  Notification,
-} from "@stellar/design-system";
+import { Button, Card, Input, Modal, Notification } from "@stellar/design-system";
 
 import { InfoTooltip } from "components/InfoTooltip";
 import { DropdownMenu } from "components/DropdownMenu";
@@ -27,10 +21,7 @@ interface WalletTrustlinesProps {
   onSuccess: () => void;
 }
 
-export const WalletTrustlines = ({
-  balances,
-  onSuccess,
-}: WalletTrustlinesProps) => {
+export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps) => {
   type FormItems = {
     fassetcode?: string;
     fassetissuer?: string;
@@ -77,9 +68,7 @@ export const WalletTrustlines = ({
       onSuccess();
       setSuccessNotification({
         title: "Trustline added",
-        message: `Trustline ${ASSET_NAME[addedAsset.code]} (${
-          addedAsset.code
-        }) was added.`,
+        message: `Trustline ${ASSET_NAME[addedAsset.code]} (${addedAsset.code}) was added.`,
       });
     },
   });
@@ -96,9 +85,7 @@ export const WalletTrustlines = ({
       onSuccess();
       setSuccessNotification({
         title: "Trustline removed",
-        message: `Trustline ${ASSET_NAME[removeAsset.code]} (${
-          removeAsset.code
-        }) was removed.`,
+        message: `Trustline ${ASSET_NAME[removeAsset.code]} (${removeAsset.code}) was removed.`,
       });
     },
   });
@@ -128,9 +115,7 @@ export const WalletTrustlines = ({
   };
 
   const handleChange = (
-    event:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>,
+    event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     removeItemFromErrors(event.target.id);
     setFormItems({
@@ -144,9 +129,7 @@ export const WalletTrustlines = ({
   };
 
   const handleValidate = (
-    event:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>,
+    event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     if (!event.target.value) {
       if (!formError.includes(event.target.value)) {
@@ -174,10 +157,7 @@ export const WalletTrustlines = ({
           const isRemoveEnabled = Number(a.balance) === 0;
 
           return (
-            <div
-              className="WalletTrustlines__asset"
-              key={`${a.code}-${a.issuer}`}
-            >
+            <div className="WalletTrustlines__asset" key={`${a.code}-${a.issuer}`}>
               <div className="WalletTrustlines__asset__info">
                 {ASSET_NAME?.[a.code] && <div>{ASSET_NAME?.[a.code]}</div>}
                 <span title={`${a.code}:${a.issuer}`}>
@@ -214,8 +194,8 @@ export const WalletTrustlines = ({
 
         <div className="WalletTrustlines__button">
           <Button
-            size="xs"
-            variant="tertiary"
+            size="sm"
+            variant="secondary"
             onClick={() => {
               setIsAddModalVisible(true);
             }}
@@ -231,9 +211,7 @@ export const WalletTrustlines = ({
     const asset = trustlines?.find((a) => a.id === removeAssetId);
 
     if (asset) {
-      return `Are you sure you want to remove ${
-        ASSET_NAME[asset.code] ?? asset.code
-      }?`;
+      return `Are you sure you want to remove ${ASSET_NAME[asset.code] ?? asset.code}?`;
     }
 
     return "Something went wrong, the asset was not found.";
@@ -333,16 +311,11 @@ export const WalletTrustlines = ({
             />
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              size="sm"
-              variant="secondary"
-              type="reset"
-              isLoading={isTrustlineAddPending}
-            >
+            <Button size="md" variant="tertiary" type="reset" isLoading={isTrustlineAddPending}>
               Cancel
             </Button>
             <Button
-              size="sm"
+              size="md"
               variant="primary"
               type="submit"
               disabled={!canSubmit}
@@ -355,10 +328,7 @@ export const WalletTrustlines = ({
       </Modal>
 
       {/* Remove asset modal */}
-      <Modal
-        visible={isRemoveModalVisible && Boolean(removeAssetId)}
-        onClose={handleCloseModal}
-      >
+      <Modal visible={isRemoveModalVisible && Boolean(removeAssetId)} onClose={handleCloseModal}>
         <Modal.Heading>Remove trustline</Modal.Heading>
         <form
           onSubmit={(event) => {
@@ -380,12 +350,7 @@ export const WalletTrustlines = ({
             <div>{getRemoveAssetConfirmation()}</div>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              size="sm"
-              variant="secondary"
-              type="reset"
-              isLoading={trustlineRemoveIsPending}
-            >
+            <Button size="sm" variant="tertiary" type="reset" isLoading={trustlineRemoveIsPending}>
               Cancel
             </Button>
             <Button

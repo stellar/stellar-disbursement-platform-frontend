@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .SectionHeader {
   display: flex;
@@ -11,7 +11,7 @@
   h4 {
     margin: 0;
     padding: 0;
-    color: var(--color-gray-90);
+    color: var(--sds-clr-gray-12);
   }
 
   &__row {

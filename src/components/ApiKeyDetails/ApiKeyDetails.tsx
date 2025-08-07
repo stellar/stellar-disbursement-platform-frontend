@@ -1,12 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Button,
-  Card,
-  Heading,
-  Icon,
-  Notification,
-} from "@stellar/design-system";
+import { Button, Card, Heading, Icon, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
 import { getApiKey } from "api/getApiKey";
@@ -58,11 +52,7 @@ export const ApiKeyDetails = () => {
         const keyData = await getApiKey(userAccount.token, apiKeyId);
         setApiKey(keyData);
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to fetch API key details",
-        );
+        setError(err instanceof Error ? err.message : "Failed to fetch API key details");
       } finally {
         setIsLoading(false);
       }
@@ -151,9 +141,7 @@ export const ApiKeyDetails = () => {
     });
 
     Object.entries(permissionMap).forEach(([resource, perms]) => {
-      const resourceInfo = API_KEY_PERMISSION_RESOURCES.find(
-        (r) => r.key === resource,
-      );
+      const resourceInfo = API_KEY_PERMISSION_RESOURCES.find((r) => r.key === resource);
       const label = resourceInfo?.label || resource;
 
       if (perms.read && perms.write) {
@@ -190,7 +178,7 @@ export const ApiKeyDetails = () => {
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
-              <Heading as="h2" size="sm">
+              <Heading as="h2" size="xs">
                 <CopyWithIcon textToCopy={apiKey.name} iconSizeRem="1.5">
                   {apiKey.name}
                 </CopyWithIcon>
@@ -198,20 +186,10 @@ export const ApiKeyDetails = () => {
             </SectionHeader.Content>
 
             <SectionHeader.Content align="right">
-              <Button
-                variant="secondary"
-                size="sm"
-                icon={<Icon.Edit />}
-                onClick={handleEditKey}
-              >
+              <Button variant="tertiary" size="sm" icon={<Icon.Edit01 />} onClick={handleEditKey}>
                 Update
               </Button>
-              <Button
-                variant="error"
-                size="sm"
-                icon={<Icon.Delete />}
-                onClick={handleDeleteKey}
-              >
+              <Button variant="error" size="sm" icon={<Icon.Delete />} onClick={handleDeleteKey}>
                 Delete
               </Button>
             </SectionHeader.Content>
@@ -235,9 +213,7 @@ export const ApiKeyDetails = () => {
             </div>
             <div className="StatCards__card__column">
               <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  API Key ID
-                </label>
+                <label className="StatCards__card__item__label">API Key ID</label>
                 <div className="StatCards__card__item__value">
                   <CopyWithIcon textToCopy={apiKey.id} iconSizeRem="0.875">
                     {apiKey.id}
@@ -245,17 +221,11 @@ export const ApiKeyDetails = () => {
                 </div>
               </div>
               <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Created by
-                </label>
-                <div className="StatCards__card__item__value">
-                  {apiKey.created_by || "-"}
-                </div>
+                <label className="StatCards__card__item__label">Created by</label>
+                <div className="StatCards__card__item__value">{apiKey.created_by || "-"}</div>
               </div>
               <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Created at
-                </label>
+                <label className="StatCards__card__item__label">Created at</label>
                 <div className="StatCards__card__item__value">
                   {formatDateTime(apiKey.created_at)}
                 </div>
@@ -263,31 +233,21 @@ export const ApiKeyDetails = () => {
             </div>
             <div className="StatCards__card__column">
               <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Expiration date
-                </label>
+                <label className="StatCards__card__item__label">Expiration date</label>
                 <div className="StatCards__card__item__value">
-                  {apiKey.expiry_date
-                    ? formatDateTime(apiKey.expiry_date)
-                    : "No expiration"}
+                  {apiKey.expiry_date ? formatDateTime(apiKey.expiry_date) : "No expiration"}
                 </div>
               </div>
               <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Updated at
-                </label>
+                <label className="StatCards__card__item__label">Updated at</label>
                 <div className="StatCards__card__item__value">
                   {formatDateTime(apiKey.updated_at)}
                 </div>
               </div>
               <div className="StatCards__card__item">
-                <label className="StatCards__card__item__label">
-                  Last used
-                </label>
+                <label className="StatCards__card__item__label">Last used</label>
                 <div className="StatCards__card__item__value">
-                  {apiKey.last_used_at
-                    ? formatDateTime(apiKey.last_used_at)
-                    : "Never"}
+                  {apiKey.last_used_at ? formatDateTime(apiKey.last_used_at) : "Never"}
                 </div>
               </div>
             </div>

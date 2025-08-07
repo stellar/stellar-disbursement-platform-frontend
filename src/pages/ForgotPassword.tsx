@@ -1,12 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Recaptcha from "react-google-recaptcha";
-import {
-  Heading,
-  Input,
-  Button,
-  Notification,
-  Link,
-} from "@stellar/design-system";
+import { Heading, Input, Button, Notification, Link } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 
 import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
@@ -57,9 +51,7 @@ export const ForgotPassword = () => {
     }
   }, [isError, isSuccess]);
 
-  const goToSignIn = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-  ) => {
+  const goToSignIn = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
     navigate("/");
   };
@@ -80,7 +72,7 @@ export const ForgotPassword = () => {
         ) : null}
 
         <form onSubmit={handleForgotPassword}>
-          <Heading size="sm" as="h1">
+          <Heading size="xs" as="h1">
             Forgot password
           </Heading>
 
@@ -89,11 +81,7 @@ export const ForgotPassword = () => {
               fieldSize="sm"
               id="fp-organization-name"
               name="fp-organization-name"
-              label={
-                <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                  Organization name
-                </InfoTooltip>
-              }
+              label={<InfoTooltip infoText={ORG_NAME_INFO_TEXT}>Organization name</InfoTooltip>}
               onChange={(e) => setOrganizationName(e.target.value)}
               value={organizationName}
               type="text"
@@ -117,7 +105,7 @@ export const ForgotPassword = () => {
 
           <Button
             variant="primary"
-            size="sm"
+            size="md"
             type="submit"
             disabled={!organizationName || !email || !recaptchaToken}
             isLoading={isPending}

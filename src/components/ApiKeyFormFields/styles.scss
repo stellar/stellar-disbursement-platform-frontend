@@ -1,8 +1,8 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .ApiKeyFormFields {
   &__allowedIPs {
-    font-family: var(--font-family-mono);
+    font-family: var(--sds-ff-monospace);
   }
 
   &__permissions {
@@ -12,18 +12,18 @@
 
   &__permissionsHeading {
     margin-bottom: pxToRem(8px);
-    color: var(--color-gray-60);
+    color: var(--sds-clr-gray-09);
   }
 
   &__permissionsError {
-    color: var(--color-red-60);
+    color: var(--sds-clr-red-11);
     font-size: pxToRem(14px);
     margin-bottom: pxToRem(8px);
   }
 
   &__permissionsList {
-    border-top: pxToRem(1px) solid var(--color-gray-30);
-    border-bottom: pxToRem(1px) solid var(--color-gray-30);
+    border-top: pxToRem(1px) solid var(--sds-clr-gray-04);
+    border-bottom: pxToRem(1px) solid var(--sds-clr-gray-04);
     display: flex;
     flex-direction: column;
     gap: pxToRem(12px);
@@ -37,12 +37,12 @@
   }
 
   &__permissionLabel {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--sds-fw-medium);
     min-width: pxToRem(120px);
-    color: var(--color-gray-90);
+    color: var(--sds-clr-gray-12);
 
     &--bold {
-      font-weight: var(--font-weight-semi-bold);
+      font-weight: var(--sds-fw-semi-bold);
     }
   }
 

@@ -63,18 +63,14 @@ export const DisbursementInviteMessage = ({
     <>
       <Card>
         <div className="CardStack__card ReceiverInviteMessage">
-          <InfoTooltip
-            infoText={disabledReasonForTooltip}
-            hideTooltip={!disabledReasonForTooltip}
-          >
+          <InfoTooltip infoText={disabledReasonForTooltip} hideTooltip={!disabledReasonForTooltip}>
             <div className="CardStack__title">Customize Invite</div>
           </InfoTooltip>
 
           <div className="Note">
-            You can use the organization default message or customized text to
-            invite your receivers to set up a wallet and receive funds for this
-            disbursement. It contains a link to the appropriate wallet at the
-            end of the message. Please check all values for accuracy.
+            You can use the organization default message or customized text to invite your receivers
+            to set up a wallet and receive funds for this disbursement. It contains a link to the
+            appropriate wallet at the end of the message. Please check all values for accuracy.
           </div>
 
           {isEditMessage && (
@@ -83,7 +79,7 @@ export const DisbursementInviteMessage = ({
                 id="msg-std"
                 name="disbursement-message"
                 label="Default message"
-                fieldSize="xs"
+                fieldSize="sm"
                 value={radioValue.ORGANIZATION}
                 onChange={handleOptionChange}
                 disabled={!!disabledReasonForTooltip}
@@ -93,7 +89,7 @@ export const DisbursementInviteMessage = ({
                 id="msg-cst"
                 name="disbursement-message"
                 label="Custom message"
-                fieldSize="xs"
+                fieldSize="sm"
                 value={radioValue.CUSTOM}
                 onChange={handleOptionChange}
                 disabled={!!disabledReasonForTooltip}
@@ -124,8 +120,7 @@ export const DisbursementInviteMessage = ({
                 rows={5}
                 value={
                   isEditMessage
-                    ? (organization.data.receiverRegistrationMessageTemplate ??
-                      standardOrgMessage)
+                    ? (organization.data.receiverRegistrationMessageTemplate ?? standardOrgMessage)
                     : (draftMessage ??
                       organization.data.receiverRegistrationMessageTemplate ??
                       standardOrgMessage)

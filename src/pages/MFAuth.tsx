@@ -1,28 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import Recaptcha from "react-google-recaptcha";
-import {
-  Heading,
-  Input,
-  Button,
-  Notification,
-  Link,
-  Checkbox,
-} from "@stellar/design-system";
+import { Heading, Input, Button, Notification, Link, Checkbox } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 import { AppDispatch, resetStoreAction } from "store";
-import {
-  USE_SSO,
-  RECAPTCHA_SITE_KEY,
-  SINGLE_TENANT_MODE,
-} from "constants/envVariables";
-import {
-  Routes,
-  LOCAL_STORAGE_DEVICE_ID,
-  ORG_NAME_INFO_TEXT,
-} from "constants/settings";
+import { USE_SSO, RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "constants/envVariables";
+import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "constants/settings";
 import { useRedux } from "hooks/useRedux";
 import { mfaAction, signInAction } from "store/ducks/userAccount";
 import { getSdpTenantName } from "helpers/getSdpTenantName";
@@ -62,12 +47,7 @@ export const MFAuth = () => {
         search: location.search,
       });
     }
-  }, [
-    location.search,
-    navigate,
-    userAccount.isAuthenticated,
-    userAccount.restoredPathname,
-  ]);
+  }, [location.search, navigate, userAccount.isAuthenticated, userAccount.restoredPathname]);
 
   const onRecaptchaSubmit = (token: string | null) => {
     if (token) {
@@ -89,9 +69,7 @@ export const MFAuth = () => {
     recaptchaRef.current?.reset();
   };
 
-  const resendVerificationCode = async (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-  ) => {
+  const resendVerificationCode = async (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
     dispatch(resetStoreAction());
 
@@ -124,14 +102,8 @@ export const MFAuth = () => {
           </Heading>
 
           <div className="Note">
-            Enter the 6 digit code that was sent to your email. Didn’t get
-            anything?{" "}
-            <Link
-              role="button"
-              size="sm"
-              variant="primary"
-              onClick={resendVerificationCode}
-            >
+            Enter the 6 digit code that was sent to your email. Didn’t get anything?{" "}
+            <Link role="button" size="sm" variant="primary" onClick={resendVerificationCode}>
               Resend code
             </Link>
           </div>
@@ -143,11 +115,7 @@ export const MFAuth = () => {
                   fieldSize="sm"
                   id="2fa-organization-name"
                   name="2fa-organization-name"
-                  label={
-                    <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                      Organization name
-                    </InfoTooltip>
-                  }
+                  label={<InfoTooltip infoText={ORG_NAME_INFO_TEXT}>Organization name</InfoTooltip>}
                   onChange={(e) => setOrganizationName(e.target.value)}
                   value={organizationName}
                   type="text"
@@ -180,7 +148,7 @@ export const MFAuth = () => {
 
               <Button
                 variant="primary"
-                size="sm"
+                size="md"
                 type="submit"
                 disabled={!organizationName || !mfaCode || !recaptchaToken}
                 isLoading={userAccount.status === "PENDING"}

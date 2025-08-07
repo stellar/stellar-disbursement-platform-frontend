@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Heading, Profile, Title, Notification } from "@stellar/design-system";
+import { Card, Heading, Profile, Notification } from "@stellar/design-system";
 
 import { InfoTooltip } from "components/InfoTooltip";
 import { SectionHeader } from "components/SectionHeader";
@@ -9,6 +9,7 @@ import { LoadingContent } from "components/LoadingContent";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { BridgeIntegrationSection } from "components/BridgeIntegrationSection";
 import { BridgeOptInModal } from "components/BridgeOptInModal";
+import { Title } from "components/Title";
 
 import { useRedux } from "hooks/useRedux";
 import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
