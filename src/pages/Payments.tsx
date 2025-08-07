@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  Button,
-  Heading,
-  Icon,
-  Input,
-  Select,
-  Notification,
-} from "@stellar/design-system";
+import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -31,8 +24,7 @@ export const Payments = () => {
   const [isSearchInProgress] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
-  const [isDirectPaymentModalVisible, setIsDirectPaymentModalVisible] =
-    useState(false);
+  const [isDirectPaymentModalVisible, setIsDirectPaymentModalVisible] = useState(false);
 
   const initFilters: CommonFilters = {
     status: "",
@@ -70,8 +62,7 @@ export const Payments = () => {
     },
   });
 
-  const isFiltersSelected =
-    Object.values(filters).filter((v) => Boolean(v)).length > 0;
+  const isFiltersSelected = Object.values(filters).filter((v) => Boolean(v)).length > 0;
 
   const maxPages = payments?.pagination?.pages || 1;
 
@@ -80,9 +71,7 @@ export const Payments = () => {
     setSearchQuery(searchText ? { q: searchText } : undefined);
   };
 
-  const handleFilterChange = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-  ) => {
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setFilters({
       ...filters,
       [event.target.id]: event.target.value,
@@ -102,9 +91,7 @@ export const Payments = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const handleExport = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleExport = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (isLoading || isFetching) {
       return;
@@ -118,9 +105,7 @@ export const Payments = () => {
     );
   };
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const handlePageLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
     setCurrentPage(1);
     setPageLimit(Number(event.target.value));
@@ -135,9 +120,7 @@ export const Payments = () => {
     resetCreatePaymentQuery();
   };
 
-  const handleSubmitDirectPayment = async (
-    paymentData: CreateDirectPaymentRequest,
-  ) => {
+  const handleSubmitDirectPayment = async (paymentData: CreateDirectPaymentRequest) => {
     await createDirectPayment(paymentData);
   };
 
@@ -156,12 +139,12 @@ export const Payments = () => {
 
           <SectionHeader.Content align="right">
             <Button
-              variant="tertiary"
+              variant="primary"
               size="sm"
               onClick={handleCreateDirectPayment}
               disabled={isLoading || isFetching}
             >
-              Create Direct Payment
+              New Direct Payment
             </Button>
           </SectionHeader.Content>
         </SectionHeader.Row>

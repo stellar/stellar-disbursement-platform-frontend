@@ -507,6 +507,7 @@ export type ApiAsset = {
 
 export type ApiAssetWithTrustline = ApiAsset & {
   has_trustline: boolean;
+  balance: number;
 };
 
 export const hasTrustlineInfo = (
