@@ -405,7 +405,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
             </Button>
             <Button
               size="sm"
-              variant="destructive"
+              variant="primary"
               onClick={handleConfirmPayment}
               disabled={isLoading}
               isLoading={isLoading}
@@ -527,7 +527,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                   id="externalPaymentId"
                   name="externalPaymentId"
                   type="text"
-                  infoText="A unique identifier for the payment defined by your organization"
+                  infoText="An identifier for the payment defined by your organization"
                   label="Enter external payment ID (optional)"
                   placeholder="Enter external payment ID"
                   value={formData.externalPaymentId}
