@@ -16,6 +16,11 @@
     box-shadow: 0 pxToRem(4px) pxToRem(12px) rgba(0, 0, 0, 0.1);
     max-height: pxToRem(200px);
     margin-top: pxToRem(4px);
+
+    &__content {
+      max-height: 100%;
+      overflow-y: auto;
+    }
   }
 
   &__searchResult {
@@ -96,10 +101,15 @@
     &[data-visible="true"] {
       grid-template-rows: 1fr;
       margin-bottom: pxToRem(20px);
+
+      .DirectPaymentCreateModal__fieldWrapper__content {
+        overflow: visible;
+      }
     }
 
-    & > div {
+    &__content {
       overflow: hidden;
+      min-height: 0;
     }
 
     &:last-child[data-visible="true"] {
@@ -199,5 +209,17 @@
     font-size: pxToRem(14px);
     text-align: right;
     word-break: break-all;
+  }
+
+  &__confirmationValueProvider {
+    display: block;
+    font-weight: 500;
+    font-size: pxToRem(12px);
+    margin-bottom: pxToRem(2px);
+  }
+
+  &__confirmationValueAddress {
+    display: block;
+    font-family: monospace;
   }
 }

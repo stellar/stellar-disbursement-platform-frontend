@@ -510,12 +510,6 @@ export type ApiAssetWithTrustline = ApiAsset & {
   balance: number;
 };
 
-export const hasTrustlineInfo = (
-  asset: ApiAsset | ApiAssetWithTrustline,
-): asset is ApiAssetWithTrustline => {
-  return "has_trustline" in asset;
-};
-
 export type ApiWallet = {
   id: string;
   name: string;
