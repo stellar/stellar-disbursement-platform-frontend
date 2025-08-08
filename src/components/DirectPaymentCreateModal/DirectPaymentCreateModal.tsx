@@ -232,36 +232,38 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (searchResults?.data && searchResults.data.length > 0) {
       return (
         <div className="DirectPaymentCreateModal__searchResults">
-          {searchResults.data.slice(0, directPayment.MAX_SEARCH_RESULTS).map((receiver) => {
-            const isSelected = formData.selectedReceiver?.id === receiver.id;
-            return (
-              <div
-                key={receiver.id}
-                className="DirectPaymentCreateModal__searchResult"
-                onClick={() => handleReceiverSelect(receiver)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleReceiverSelect(receiver);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-label={`Select receiver ${getReceiverDisplayInfo(receiver, formData.receiverSearch)}`}
-              >
-                <div>
-                  <div className="DirectPaymentCreateModal__searchResultMain">
-                    {getReceiverDisplayInfo(receiver, formData.receiverSearch)}
+          <div className="DirectPaymentCreateModal__searchResults__content">
+            {searchResults.data.slice(0, directPayment.MAX_SEARCH_RESULTS).map((receiver) => {
+              const isSelected = formData.selectedReceiver?.id === receiver.id;
+              return (
+                <div
+                  key={receiver.id}
+                  className="DirectPaymentCreateModal__searchResult"
+                  onClick={() => handleReceiverSelect(receiver)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleReceiverSelect(receiver);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Select receiver ${getReceiverDisplayInfo(receiver, formData.receiverSearch)}`}
+                >
+                  <div>
+                    <div className="DirectPaymentCreateModal__searchResultMain">
+                      {getReceiverDisplayInfo(receiver, formData.receiverSearch)}
+                    </div>
+                    <div className="DirectPaymentCreateModal__searchResultSub">
+                      ID: {receiver.id.slice(0, directPayment.RECEIVER_ID_PREVIEW_LENGTH)}… •{" "}
+                      {receiver.wallets.length} wallet(s)
+                    </div>
                   </div>
-                  <div className="DirectPaymentCreateModal__searchResultSub">
-                    ID: {receiver.id.slice(0, directPayment.RECEIVER_ID_PREVIEW_LENGTH)}… •{" "}
-                    {receiver.wallets.length} wallet(s)
-                  </div>
+                  {isSelected && <Icon.CheckCircle />}
                 </div>
-                {isSelected && <Icon.CheckCircle />}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       );
     }
@@ -341,23 +343,25 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
               className="DirectPaymentCreateModal__fieldWrapper"
               data-visible={showReceiverField}
             >
-              <Input
-                fieldSize="sm"
-                id="receiverSearch"
-                label="Receiver"
-                placeholder="Search by name, email, phone, or enter wallet address (GXXX...)"
-                value={formData.receiverSearch}
-                onChange={handleInputChange}
-                error={formErrors.receiverSearch}
-                note={isReceiverWalletAddress && "Wallet address detected"}
-                required
-              />
+              <div className="DirectPaymentCreateModal__fieldWrapper__content">
+                <Input
+                  fieldSize="sm"
+                  id="receiverSearch"
+                  label="Receiver"
+                  placeholder="Search by name, email, phone, or enter wallet address (GXXX...)"
+                  value={formData.receiverSearch}
+                  onChange={handleInputChange}
+                  error={formErrors.receiverSearch}
+                  note={isReceiverWalletAddress && "Wallet address detected"}
+                  required
+                />
 
-              {formData.selectedReceiver && !isReceiverWalletAddress && (
-                <SelectedReceiverInfo receiver={formData.selectedReceiver} />
-              )}
+                {formData.selectedReceiver && !isReceiverWalletAddress && (
+                  <SelectedReceiverInfo receiver={formData.selectedReceiver} />
+                )}
 
-              {renderSearchResults()}
+                {renderSearchResults()}
+              </div>
             </div>
 
             {/* Wallet Selection */}
@@ -365,20 +369,22 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
               className="DirectPaymentCreateModal__fieldWrapper"
               data-visible={showReceiverField && showWalletField}
             >
-              <Select
-                fieldSize="sm"
-                id="walletId"
-                label="Wallet"
-                value={formData.walletId}
-                onChange={handleInputChange}
-                error={formErrors.walletId}
-                disabled={isWalletFieldDisabled}
-                note={getWalletFieldNote()}
-                required
-              >
-                <option value="">Select wallet</option>
-                {renderWalletOptions()}
-              </Select>
+              <div className="DirectPaymentCreateModal__fieldWrapper__content">
+                <Select
+                  fieldSize="sm"
+                  id="walletId"
+                  label="Wallet"
+                  value={formData.walletId}
+                  onChange={handleInputChange}
+                  error={formErrors.walletId}
+                  disabled={isWalletFieldDisabled}
+                  note={getWalletFieldNote()}
+                  required
+                >
+                  <option value="">Select wallet</option>
+                  {renderWalletOptions()}
+                </Select>
+              </div>
             </div>
 
             {/* External Payment ID */}
@@ -386,16 +392,18 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
               className="DirectPaymentCreateModal__fieldWrapper"
               data-visible={showReceiverField}
             >
-              <Input
-                fieldSize="sm"
-                id="externalPaymentId"
-                name="externalPaymentId"
-                type="text"
-                label="External Payment ID (optional)"
-                placeholder="Enter external payment ID"
-                value={formData.externalPaymentId}
-                onChange={handleInputChange}
-              />
+              <div className="DirectPaymentCreateModal__fieldWrapper__content">
+                <Input
+                  fieldSize="sm"
+                  id="externalPaymentId"
+                  name="externalPaymentId"
+                  type="text"
+                  label="External Payment ID (optional)"
+                  placeholder="Enter external payment ID"
+                  value={formData.externalPaymentId}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
           </div>
         </Modal.Body>
