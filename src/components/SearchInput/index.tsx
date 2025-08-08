@@ -49,12 +49,8 @@ export const SearchInput = ({
         disabled={Boolean(disabled)}
       />
 
-      <button
-        className="SearchInput__button"
-        disabled={isLoading || !searchText}
-        type="submit"
-      >
-        {isLoading ? <Loader /> : <Icon.Search />}
+      <button className="SearchInput__button" disabled={isLoading || !searchText} type="submit">
+        {isLoading ? <Loader /> : <Icon.SearchSm />}
       </button>
     </form>
   );

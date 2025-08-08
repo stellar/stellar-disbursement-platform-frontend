@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Button,
-  Icon,
-  Modal,
-  Notification,
-  Input,
-} from "@stellar/design-system";
+import { Button, Icon, Modal, Notification, Input } from "@stellar/design-system";
 
 import "./styles.scss";
 
@@ -43,9 +37,8 @@ export const ApiKeySuccessModal: React.FC<ApiKeySuccessModalProps> = ({
       </Modal.Heading>
       <Modal.Body>
         <Notification variant="warning" title="Important">
-          API key was successfully created! Make sure to copy and store it
-          securely, THIS KEY WILL NOT BE SHOWN AGAIN. It may take a few minutes
-          to be usable
+          API key was successfully created! Make sure to copy and store it securely, THIS KEY WILL
+          NOT BE SHOWN AGAIN. It may take a few minutes to be usable
         </Notification>
 
         <div className="ApiKeySuccessModal__keyContainer">
@@ -60,8 +53,8 @@ export const ApiKeySuccessModal: React.FC<ApiKeySuccessModalProps> = ({
           />
           <Button
             variant="tertiary"
-            size="sm"
-            icon={hasCopied ? <Icon.Check /> : <Icon.ContentCopy />}
+            size="md"
+            icon={hasCopied ? <Icon.Check /> : <Icon.Copy01 />}
             onClick={handleCopy}
           >
             {hasCopied ? "Copied!" : "Copy"}

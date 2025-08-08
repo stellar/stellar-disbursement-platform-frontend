@@ -1,4 +1,4 @@
-import { Heading, Paragraph } from "@stellar/design-system";
+import { Heading, Text } from "@stellar/design-system";
 
 export const Unauthorized = () => {
   return (
@@ -6,10 +6,10 @@ export const Unauthorized = () => {
       <Heading as="h2" size="sm">
         Unauthorized
       </Heading>
-      <Paragraph size="sm">
-        You are not authorized to view this feature. Please contact your
-        administrator with questions.
-      </Paragraph>
+      <Text size="sm" as="p">
+        You are not authorized to view this feature. Please contact your administrator with
+        questions.
+      </Text>
     </>
   );
 };

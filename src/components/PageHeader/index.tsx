@@ -11,12 +11,7 @@ type PageHeaderProps = {
   companyName?: string;
 };
 
-export const PageHeader = ({
-  username,
-  onSignOut,
-  logoImage,
-  companyName,
-}: PageHeaderProps) => {
+export const PageHeader = ({ username, onSignOut, logoImage, companyName }: PageHeaderProps) => {
   return (
     <div className={`PageHeader ${username ? "PageHeader--internal" : ""}`}>
       <div className="PageHeader__inset">
@@ -27,9 +22,7 @@ export const PageHeader = ({
                 className="CompanyBrand__logo"
                 style={{ backgroundImage: `url(${logoImage})` }}
               ></div>
-              <div className="CompanyBrand__name">
-                {companyName || "Company Name"}
-              </div>
+              <div className="CompanyBrand__name">{companyName || "Company Name"}</div>
             </div>
           )}
         </div>
@@ -51,14 +44,12 @@ export const PageHeader = ({
             {username ? (
               <DropdownMenu
                 triggerEl={
-                  <Button variant="secondary" size="xs">
+                  <Button variant="tertiary" size="sm">
                     {username}
                   </Button>
                 }
               >
-                <DropdownMenu.Item to={Routes.PROFILE}>
-                  Profile
-                </DropdownMenu.Item>
+                <DropdownMenu.Item to={Routes.PROFILE}>Profile</DropdownMenu.Item>
                 <DropdownMenu.Item to={Routes.HELP}>Help</DropdownMenu.Item>
                 <DropdownMenu.Item onClick={onSignOut} isHighlight>
                   Sign out

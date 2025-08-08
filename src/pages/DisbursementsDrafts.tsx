@@ -1,23 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  Heading,
-  Icon,
-  Link,
-  Notification,
-} from "@stellar/design-system";
+import { Card, Heading, Icon, Link, Notification } from "@stellar/design-system";
 
 import { Routes } from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
 import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
-import {
-  getDisbursementDraftsAction,
-  setDraftIdAction,
-} from "store/ducks/disbursementDrafts";
+import { getDisbursementDraftsAction, setDraftIdAction } from "store/ducks/disbursementDrafts";
 import { resetDisbursementDetailsAction } from "store/ducks/disbursementDetails";
 
 import { Breadcrumbs } from "components/Breadcrumbs";
@@ -41,13 +32,10 @@ export const DisbursementsDrafts = () => {
     }
   }, [disbursementDrafts.actionType, disbursementDrafts.status, dispatch]);
 
-  const apiError =
-    disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
+  const apiError = disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
   const isLoading =
-    disbursementDrafts.items.length === 0 &&
-    disbursementDrafts.status === "PENDING";
-  const doneLoading =
-    disbursementDrafts.status && disbursementDrafts.status !== "PENDING";
+    disbursementDrafts.items.length === 0 && disbursementDrafts.status === "PENDING";
+  const doneLoading = disbursementDrafts.status && disbursementDrafts.status !== "PENDING";
   const hasData = doneLoading && disbursementDrafts.items.length > 0;
 
   const handleEditDraft = (
@@ -80,9 +68,7 @@ export const DisbursementsDrafts = () => {
 
                 <Table.Body>
                   {disbursementDrafts.items.map((item: DisbursementDraft) => {
-                    const formattedDate = formatDateTime(
-                      item.details.createdAt,
-                    );
+                    const formattedDate = formatDateTime(item.details.createdAt);
 
                     return (
                       <Table.BodyRow key={item.details.id}>
@@ -94,32 +80,19 @@ export const DisbursementsDrafts = () => {
                             {item.details.name}
                           </Link>
                         </Table.BodyCell>
-                        <Table.BodyCell
-                          width="5rem"
-                          title={item.details.registrationContactType}
-                        >
-                          {formatRegistrationContactType(
-                            item.details.registrationContactType,
-                          )}
+                        <Table.BodyCell width="5rem" title={item.details.registrationContactType}>
+                          {formatRegistrationContactType(item.details.registrationContactType)}
                         </Table.BodyCell>
-                        <Table.BodyCell
-                          width="3.5rem"
-                          title={item.details.asset.code}
-                        >
+                        <Table.BodyCell width="3.5rem" title={item.details.asset.code}>
                           {item.details.asset.code}
                         </Table.BodyCell>
                         <Table.BodyCell width="150px" title={formattedDate}>
-                          <span className="Table-v2__cell--secondary">
-                            {formattedDate}
-                          </span>
+                          <span className="Table-v2__cell--secondary">{formattedDate}</span>
                         </Table.BodyCell>
                         <Table.BodyCell textAlign="right">
                           {item.details.fileName ? (
-                            <span
-                              className="DisbursementDrafts__icon"
-                              title="CSV uploaded"
-                            >
-                              <Icon.AttachFile />
+                            <span className="DisbursementDrafts__icon" title="CSV uploaded">
+                              <Icon.Attachment01 />
                             </span>
                           ) : null}
                         </Table.BodyCell>

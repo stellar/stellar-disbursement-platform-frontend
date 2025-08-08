@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .CopyWithIcon {
   --CopyWithIcon-icon-size: 0;
@@ -15,7 +15,7 @@
       display: block;
       width: 80%;
       height: 80%;
-      fill: var(--color-gray-50);
+      stroke: var(--sds-clr-gray-08);
     }
   }
 }

@@ -1,8 +1,8 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .BridgeAccountDetails {
-  background: var(--color-gray-00);
-  border: 1px solid var(--color-gray-30);
+  background: var(--sds-clr-gray-01);
+  border: 1px solid var(--sds-clr-gray-04);
   border-radius: pxToRem(8px);
   padding: pxToRem(16px);
 
@@ -35,19 +35,19 @@
   &__label,
   &__value,
   &__address {
-    font-family: var(--font-family-sans-serif);
+    font-family: var(--sds-ff-base);
     font-size: pxToRem(14px);
     font-weight: 500;
     line-height: pxToRem(20px);
   }
 
   &__label {
-    color: var(--color-gray-60);
+    color: var(--sds-clr-gray-09);
   }
 
   &__value,
   &__address {
-    color: var(--color-gray-90);
+    color: var(--sds-clr-gray-12);
   }
 
   &__address {

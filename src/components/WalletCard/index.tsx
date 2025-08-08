@@ -1,5 +1,6 @@
 import React from "react";
-import { Card, Icon, Toggle, Title } from "@stellar/design-system";
+import { Card, Icon, Toggle } from "@stellar/design-system";
+import { Title } from "components/Title";
 import "./styles.scss";
 
 interface WalletCardProps {
@@ -37,7 +38,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
                   target="_blank"
                   rel="noreferrer noopener"
                 >
-                  <Icon.ExternalLink className="ExternalLinkIcon" />
+                  <Icon.LinkExternal01 className="ExternalLinkIcon" />
                 </a>
               </div>
             </div>
@@ -47,6 +48,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
               checked={enabled}
               onChange={onChange}
               disabled={!editable}
+              fieldSize="sm"
             />
           </div>
         </div>
@@ -54,17 +56,15 @@ export const WalletCard: React.FC<WalletCardProps> = ({
         <div className="WalletCard__walletData">
           <div className="WalletCard--flexCols">
             <label className="WalletCard__item__label">
-              <Icon.Assets /> Supported assets
+              <Icon.Coins03 /> Supported assets
             </label>
             <div className="WalletCard__item__value">{assets?.join(", ")}</div>
           </div>
           <div className="WalletCard--flexCols">
             <label className="WalletCard__item__label">
-              <Icon.Assets /> User Managed?
+              <Icon.Coins03 /> User Managed?
             </label>
-            <div className="WalletCard__item__value">
-              {userManaged ? "Yes" : "No"}
-            </div>
+            <div className="WalletCard__item__value">{userManaged ? "Yes" : "No"}</div>
           </div>
         </div>
       </div>

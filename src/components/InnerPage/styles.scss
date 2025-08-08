@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .InnerPage {
   display: flex;
@@ -8,7 +8,7 @@
     width: pxToRem(242px);
     flex-shrink: 0;
     flex-grow: 0;
-    border-right: 1px solid var(--color-gray-40);
+    border-right: 1px solid var(--sds-clr-gray-05);
     display: flex;
     flex-direction: column;
     overflow: auto;
@@ -38,7 +38,7 @@
 
   &__content {
     padding: pxToRem(32px);
-    color: var(--color-gray-90);
+    color: var(--sds-clr-gray-12);
     width: 100%;
     max-width: pxToRem(2000px);
     margin-left: auto;
@@ -61,10 +61,10 @@
     gap: pxToRem(16px);
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-gray-60);
+    font-weight: var(--sds-fw-medium);
+    color: var(--sds-clr-gray-11);
     text-decoration: none;
-    transition: all var(--anim-transition-default);
+    transition: all var(--sds-anim-transition-default);
 
     &__icon {
       display: block;
@@ -75,18 +75,18 @@
         display: block;
         width: 100%;
         height: 100%;
-        fill: currentColor;
+        stroke: currentColor;
       }
     }
 
     @media (hover: hover) {
       &:hover {
-        color: var(--color-gray-90);
+        color: var(--sds-clr-gray-12);
       }
     }
 
     &--current {
-      color: var(--color-gray-90);
+      color: var(--sds-clr-gray-12);
       cursor: default;
     }
   }
@@ -94,7 +94,7 @@
   &__item {
     font-size: pxToRem(10px);
     line-height: pxToRem(16px);
-    font-weight: var(--font-weight-semi-bold);
-    color: var(--color-gray-60);
+    font-weight: var(--sds-fw-semi-bold);
+    color: var(--sds-clr-gray-11);
   }
 }
