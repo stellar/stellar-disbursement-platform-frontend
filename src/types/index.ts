@@ -505,6 +505,10 @@ export type ApiAsset = {
   deleted_at?: string;
 };
 
+export type ApiAssetWithTrustline = ApiAsset & {
+  enabled: boolean;
+};
+
 export type ApiWallet = {
   id: string;
   name: string;

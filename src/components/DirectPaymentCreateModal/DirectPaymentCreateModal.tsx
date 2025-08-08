@@ -48,7 +48,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     directPayment.SEARCH_DEBOUNCE_MS,
   );
   const previousVisible = usePrevious(visible);
-  const { data: allAssets } = useAllAssets();
+  const { data: allAssets } = useAllAssets({ enabled: true });
   const selectedAsset = useMemo(
     () => allAssets?.find((asset) => asset.id === formData.assetId),
     [allAssets, formData.assetId],
