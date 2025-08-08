@@ -542,6 +542,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                     name="externalPaymentId"
                     type="text"
                     infoText="An identifier for the payment defined by your organization"
+                    tooltipPlacement="top-start"
                     label="Enter external payment ID (optional)"
                     placeholder="Enter external payment ID"
                     value={formData.externalPaymentId}
