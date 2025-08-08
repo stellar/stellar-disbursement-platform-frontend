@@ -94,8 +94,8 @@
     display: grid;
     grid-template-rows: 0fr;
     transition:
-    grid-template-rows ease-in-out 300ms,
-    margin ease-in-out 300ms;
+      grid-template-rows ease-in-out 300ms,
+      margin ease-in-out 300ms;
     margin-bottom: 0;
 
     &[data-visible="true"] {
