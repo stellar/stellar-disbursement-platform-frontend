@@ -10,7 +10,7 @@ export const useAllAssets = (options?: { enabled?: boolean }) => {
       const params = options?.enabled !== undefined ? `?enabled=${options.enabled}` : "";
       return await fetchApi(`${API_URL}/assets${params}`);
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
   });
 
   return query;
