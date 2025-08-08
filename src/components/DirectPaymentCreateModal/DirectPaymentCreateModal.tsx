@@ -232,36 +232,38 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (searchResults?.data && searchResults.data.length > 0) {
       return (
         <div className="DirectPaymentCreateModal__searchResults">
-          {searchResults.data.slice(0, directPayment.MAX_SEARCH_RESULTS).map((receiver) => {
-            const isSelected = formData.selectedReceiver?.id === receiver.id;
-            return (
-              <div
-                key={receiver.id}
-                className="DirectPaymentCreateModal__searchResult"
-                onClick={() => handleReceiverSelect(receiver)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    handleReceiverSelect(receiver);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-label={`Select receiver ${getReceiverDisplayInfo(receiver, formData.receiverSearch)}`}
-              >
-                <div>
-                  <div className="DirectPaymentCreateModal__searchResultMain">
-                    {getReceiverDisplayInfo(receiver, formData.receiverSearch)}
+          <div className="DirectPaymentCreateModal__searchResults__content">
+            {searchResults.data.slice(0, directPayment.MAX_SEARCH_RESULTS).map((receiver) => {
+              const isSelected = formData.selectedReceiver?.id === receiver.id;
+              return (
+                <div
+                  key={receiver.id}
+                  className="DirectPaymentCreateModal__searchResult"
+                  onClick={() => handleReceiverSelect(receiver)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleReceiverSelect(receiver);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Select receiver ${getReceiverDisplayInfo(receiver, formData.receiverSearch)}`}
+                >
+                  <div>
+                    <div className="DirectPaymentCreateModal__searchResultMain">
+                      {getReceiverDisplayInfo(receiver, formData.receiverSearch)}
+                    </div>
+                    <div className="DirectPaymentCreateModal__searchResultSub">
+                      ID: {receiver.id.slice(0, directPayment.RECEIVER_ID_PREVIEW_LENGTH)}… •{" "}
+                      {receiver.wallets.length} wallet(s)
+                    </div>
                   </div>
-                  <div className="DirectPaymentCreateModal__searchResultSub">
-                    ID: {receiver.id.slice(0, directPayment.RECEIVER_ID_PREVIEW_LENGTH)}… •{" "}
-                    {receiver.wallets.length} wallet(s)
-                  </div>
+                  {isSelected && <Icon.CheckCircle />}
                 </div>
-                {isSelected && <Icon.CheckCircle />}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       );
     }
