@@ -101,10 +101,15 @@
     &[data-visible="true"] {
       grid-template-rows: 1fr;
       margin-bottom: pxToRem(20px);
+
+      .DirectPaymentCreateModal__fieldWrapper__content {
+        overflow: visible;
+      }
     }
 
-    & > div {
+    &__content {
       overflow: hidden;
+      min-height: 0;
     }
   }
 
@@ -143,4 +148,3 @@
     font-weight: 500;
   }
 }
-
