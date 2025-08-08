@@ -248,7 +248,7 @@ export const BridgeOptInModal: React.FC<BridgeOptInModalProps> = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose} size="sm">
+        <Button variant="tertiary" onClick={handleClose} size="md">
           Cancel
         </Button>
         <Button
@@ -257,7 +257,7 @@ export const BridgeOptInModal: React.FC<BridgeOptInModalProps> = ({
           onClick={handleSubmit}
           disabled={!canSubmit() || isLoading}
           isLoading={isLoading}
-          size="sm"
+          size="md"
         >
           Continue with Bridge
         </Button>

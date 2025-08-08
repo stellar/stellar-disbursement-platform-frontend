@@ -1,10 +1,4 @@
-import {
-  Card,
-  Input,
-  Select,
-  Title,
-  Notification,
-} from "@stellar/design-system";
+import { Card, Input, Select, Notification } from "@stellar/design-system";
 import { BigNumber } from "bignumber.js";
 
 import { useWallets } from "apiQueries/useWallets";
@@ -13,6 +7,7 @@ import { useRegistrationContactTypes } from "apiQueries/useRegistrationContactTy
 import { useVerificationTypes } from "apiQueries/useVerificationTypes";
 import { AssetAmount } from "components/AssetAmount";
 import { InfoTooltip } from "components/InfoTooltip";
+import { Title } from "components/Title";
 import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
 import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
 import { useAllBalances } from "hooks/useAllBalances";
@@ -74,11 +69,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     VERIFICATION_FIELD = "verification_field",
   }
 
-  const {
-    data: wallets,
-    error: walletsError,
-    isLoading: isWalletsLoading,
-  } = useWallets({});
+  const { data: wallets, error: walletsError, isLoading: isWalletsLoading } = useWallets({});
 
   const {
     data: registrationContactTypes,
@@ -153,9 +144,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     validateInputs(updatedState);
   };
 
-  const updateDraftDetails = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-  ) => {
+  const updateDraftDetails = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { id, value } = event.target;
 
     switch (id) {
@@ -178,8 +167,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 
         if (
           !registrationContactType ||
-          hasWallet(registrationContactType) !==
-            hasWallet(details.registrationContactType)
+          hasWallet(registrationContactType) !== hasWallet(details.registrationContactType)
         ) {
           // registrationContactType was erased or changed to a different type
           newState.asset = { id: "", code: "" };
@@ -248,10 +236,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 
   const renderVerificationTypeText = (): string => {
     if (details.verificationField) {
-      return (
-        VerificationFieldMap[details.verificationField] ||
-        details.verificationField
-      );
+      return VerificationFieldMap[details.verificationField] || details.verificationField;
     }
 
     if (hasWallet(details.registrationContactType)) {
@@ -274,45 +259,32 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 
           <div>
             <label className="Label Label--sm">Wallet provider</label>
-            <div className="DisbursementDetailsFields__value">
-              {renderWalletProviderText()}
-            </div>
+            <div className="DisbursementDetailsFields__value">{renderWalletProviderText()}</div>
           </div>
 
           <div>
             <label className="Label Label--sm">Asset</label>
-            <div className="DisbursementDetailsFields__value">
-              {details.asset.code}
-            </div>
+            <div className="DisbursementDetailsFields__value">{details.asset.code}</div>
           </div>
 
           <div>
             <label className="Label Label--sm">Verification Type</label>
-            <div className="DisbursementDetailsFields__value">
-              {renderVerificationTypeText()}
-            </div>
+            <div className="DisbursementDetailsFields__value">{renderVerificationTypeText()}</div>
           </div>
 
           <div>
             <label className="Label Label--sm">Disbursement name</label>
-            <div className="DisbursementDetailsFields__value">
-              {details.name}
-            </div>
+            <div className="DisbursementDetailsFields__value">{details.name}</div>
           </div>
 
           <div>
             <label className="Label Label--sm">Future balance</label>
             <div
               className={`DisbursementDetailsFields__value ${
-                BigNumber(futureBalance).gte(0)
-                  ? ""
-                  : "DisbursementDetailsFields__negative"
+                BigNumber(futureBalance).gte(0) ? "" : "DisbursementDetailsFields__negative"
               }`}
             >
-              <AssetAmount
-                amount={futureBalance.toString()}
-                assetCode={details.asset.code}
-              />
+              <AssetAmount amount={futureBalance.toString()} assetCode={details.asset.code} />
             </div>
           </div>
 
@@ -352,14 +324,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           {registrationContactTypes
             ?.filter(
               (registrationContactType) =>
-                !hasWallet(registrationContactType) ||
-                isWalletRegistrationEnabled,
+                !hasWallet(registrationContactType) || isWalletRegistrationEnabled,
             )
             .map((registrationContactType: RegistrationContactType) => (
-              <option
-                key={registrationContactType}
-                value={registrationContactType}
-              >
+              <option key={registrationContactType} value={registrationContactType}>
                 {formatRegistrationContactType(registrationContactType)}
               </option>
             ))}
@@ -406,8 +374,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           disabled={
             isWalletAssetsFetching ||
             (!details.wallet.id &&
-              (!hasWallet(details.registrationContactType) ||
-                !details.registrationContactType))
+              (!hasWallet(details.registrationContactType) || !details.registrationContactType))
           }
         >
           {renderDropdownDefault(isWalletAssetsFetching)}
@@ -419,9 +386,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
               }
               // Check that the asset is a non-native asset that has a distribution account balance
               return !!allBalances?.find(
-                (balance) =>
-                  balance.assetCode === wa.code &&
-                  balance.assetIssuer === wa.issuer,
+                (balance) => balance.assetCode === wa.code && balance.assetIssuer === wa.issuer,
               );
             })
             ?.map((wa: ApiAsset) => (
@@ -436,11 +401,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           label="Verification type"
           fieldSize="sm"
           onChange={updateDraftDetails}
-          value={
-            hasWallet(details.registrationContactType)
-              ? "None"
-              : details.verificationField
-          }
+          value={hasWallet(details.registrationContactType) ? "None" : details.verificationField}
           disabled={
             isVerificationTypesFetching ||
             !registrationContactTypes ||
@@ -485,9 +446,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           <Title size="md">Disbursement details</Title>
         </InfoTooltip>
 
-        <div className="DisbursementDetailsFields__inputs">
-          {renderContent()}
-        </div>
+        <div className="DisbursementDetailsFields__inputs">{renderContent()}</div>
       </Card>
     </>
   );

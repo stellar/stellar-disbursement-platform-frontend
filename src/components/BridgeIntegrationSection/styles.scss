@@ -1,10 +1,10 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .BridgeIntegration {
   display: flex;
   flex-direction: column;
   gap: pxToRem(16px);
-  
+
   &__account,
   &__virtualAccountSection {
     display: flex;
@@ -15,7 +15,7 @@
   &__virtualAccountSection {
     padding-top: pxToRem(8px);
   }
-  
+
   &__actions,
   &__faqSection,
   &__button {
@@ -44,7 +44,7 @@
       margin: 0;
       font-size: pxToRem(14px);
       line-height: 1.5;
-      color: var(--color-gray-80);
+      color: var(--sds-clr-gray-11);
     }
   }
 }

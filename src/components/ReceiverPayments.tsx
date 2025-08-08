@@ -27,9 +27,7 @@ export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {
 
   const maxPages = receiverPayments?.pagination?.pages || 1;
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const handlePageLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
     setCurrentPage(1);
     setPageLimit(Number(event.target.value));
@@ -40,12 +38,8 @@ export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {
       <SectionHeader>
         <SectionHeader.Row>
           <SectionHeader.Content>
-            <Heading as="h3" size="sm">
-              {renderTextWithCount(
-                receiverPayments?.pagination?.total || 0,
-                "Payment",
-                "Payments",
-              )}
+            <Heading as="h3" size="xs">
+              {renderTextWithCount(receiverPayments?.pagination?.total || 0, "Payment", "Payments")}
             </Heading>
           </SectionHeader.Content>
 

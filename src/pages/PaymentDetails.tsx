@@ -15,15 +15,8 @@ import { usePaymentsPaymentId } from "apiQueries/usePaymentsPaymentId";
 import { useCancelPayment } from "apiQueries/useCancelPayment";
 import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
 import { STELLAR_EXPERT_URL } from "constants/envVariables";
-import {
-  Routes,
-  CANCELED_PAYMENT_STATUS,
-  READY_PAYMENT_STATUS,
-} from "constants/settings";
-import {
-  formatDateTime,
-  formatDateTimeWithSeconds,
-} from "helpers/formatIntlDateTime";
+import { Routes, CANCELED_PAYMENT_STATUS, READY_PAYMENT_STATUS } from "constants/settings";
+import { formatDateTime, formatDateTimeWithSeconds } from "helpers/formatIntlDateTime";
 import { shortenString } from "helpers/shortenString";
 import { formatPaymentDetails } from "helpers/formatPaymentDetails";
 import {
@@ -91,23 +84,17 @@ export const PaymentDetails = () => {
     navigate(`${Routes.RECEIVERS}/${receiverId}`);
   };
 
-  const showModal = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const showModal = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     setIsModalVisible(true);
   };
 
-  const hideModal = (
-    event?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const hideModal = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event?.preventDefault();
     setIsModalVisible(false);
   };
 
-  const handleCancelPayment = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleCancelPayment = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (formattedPayment) {
       cancelPayment({ paymentId: formattedPayment.id });
@@ -172,7 +159,7 @@ export const PaymentDetails = () => {
                 <Button
                   variant="error"
                   size="sm"
-                  icon={<Icon.Block />}
+                  icon={<Icon.SlashCircle01 />}
                   onClick={showModal}
                   disabled={formattedPayment.status !== READY_PAYMENT_STATUS}
                 >
@@ -186,9 +173,7 @@ export const PaymentDetails = () => {
                 <div className="PaymentDetails__wrapper">
                   <div className="PaymentDetails__info">
                     <label className="Label">Created at</label>
-                    <div>
-                      {formatDateTimeWithSeconds(formattedPayment.createdAt)}
-                    </div>
+                    <div>{formatDateTimeWithSeconds(formattedPayment.createdAt)}</div>
                   </div>
 
                   <div className="PaymentDetails__info">
@@ -196,10 +181,7 @@ export const PaymentDetails = () => {
                     <div>
                       <Link
                         onClick={(event) =>
-                          goToDisbursement(
-                            event,
-                            formattedPayment.disbursementId,
-                          )
+                          goToDisbursement(event, formattedPayment.disbursementId)
                         }
                       >
                         {formattedPayment.disbursementName}
@@ -248,7 +230,7 @@ export const PaymentDetails = () => {
                       {formattedPayment.senderAddress ? (
                         <Profile
                           publicAddress={formattedPayment.senderAddress}
-                          size="sm"
+                          size="md"
                           isCopy
                           isShort
                           hideAvatar
@@ -264,10 +246,7 @@ export const PaymentDetails = () => {
                     <div>
                       {formattedPayment.externalPaymentId
                         ? formattedPayment.externalPaymentId.length > 20
-                          ? shortenString(
-                              formattedPayment.externalPaymentId,
-                              10,
-                            )
+                          ? shortenString(formattedPayment.externalPaymentId, 10)
                           : formattedPayment.externalPaymentId
                         : "-"}
                     </div>
@@ -286,7 +265,7 @@ export const PaymentDetails = () => {
 
           {/* Status history */}
           <div className="DetailsSection">
-            <Heading as="h2" size="sm">
+            <Heading as="h2" size="xs">
               Status history
             </Heading>
 
@@ -295,9 +274,7 @@ export const PaymentDetails = () => {
                 <Table.Header>
                   <Table.HeaderCell>Status</Table.HeaderCell>
                   <Table.HeaderCell>Message</Table.HeaderCell>
-                  <Table.HeaderCell textAlign="right">
-                    Updated at
-                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="right">Updated at</Table.HeaderCell>
                 </Table.Header>
 
                 <Table.Body>
@@ -307,9 +284,7 @@ export const PaymentDetails = () => {
                         <PaymentStatus status={h.status} />
                       </Table.BodyCell>
                       <Table.BodyCell title={h.message}>
-                        <span className="Table-v2__cell--secondary">
-                          {h.message || "-"}
-                        </span>
+                        <span className="Table-v2__cell--secondary">{h.message || "-"}</span>
                       </Table.BodyCell>
                       <Table.BodyCell textAlign="right">
                         <span className="Table-v2__cell--secondary">
@@ -325,7 +300,7 @@ export const PaymentDetails = () => {
 
           {/* Receiver */}
           <div className="DetailsSection">
-            <Heading as="h2" size="sm">
+            <Heading as="h2" size="xs">
               Receiver
             </Heading>
 
@@ -349,9 +324,7 @@ export const PaymentDetails = () => {
                     Successful
                   </Table.HeaderCell>
                   <Table.HeaderCell>Created at</Table.HeaderCell>
-                  <Table.HeaderCell textAlign="right">
-                    Amount(s) received
-                  </Table.HeaderCell>
+                  <Table.HeaderCell textAlign="right">Amount(s) received</Table.HeaderCell>
                   <Table.HeaderCell textAlign="right">Status</Table.HeaderCell>
                 </Table.Header>
 
@@ -366,21 +339,11 @@ export const PaymentDetails = () => {
                 </Table.BodyCell> */}
                     <Table.BodyCell
                       wrap={true}
-                      title={getReceiverContactInfoTitle(
-                        receiver?.phoneNumber,
-                        receiver?.email,
-                      )}
+                      title={getReceiverContactInfoTitle(receiver?.phoneNumber, receiver?.email)}
                     >
                       {receiver?.phoneNumber || receiver?.email ? (
-                        <Link
-                          onClick={(event) =>
-                            goToReceiverDetails(event, receiver.id)
-                          }
-                        >
-                          {renderReceiverContactInfoItems(
-                            receiver?.phoneNumber,
-                            receiver?.email,
-                          )}
+                        <Link onClick={(event) => goToReceiverDetails(event, receiver.id)}>
+                          {renderReceiverContactInfoItems(receiver?.phoneNumber, receiver?.email)}
                         </Link>
                       ) : (
                         "-"
@@ -390,7 +353,7 @@ export const PaymentDetails = () => {
                       {receiver?.walletAddress ? (
                         <Profile
                           publicAddress={receiver.walletAddress}
-                          size="sm"
+                          size="md"
                           isCopy
                           isShort
                           hideAvatar
@@ -399,9 +362,7 @@ export const PaymentDetails = () => {
                         "-"
                       )}
                     </Table.BodyCell>
-                    <Table.BodyCell width="6rem">
-                      {receiver?.provider || "-"}
-                    </Table.BodyCell>
+                    <Table.BodyCell width="6rem">{receiver?.provider || "-"}</Table.BodyCell>
                     <Table.BodyCell width="5.5rem" textAlign="right">
                       {receiver?.totalPaymentsCount || "-"}
                     </Table.BodyCell>
@@ -410,22 +371,14 @@ export const PaymentDetails = () => {
                     </Table.BodyCell>
                     <Table.BodyCell width="10rem">
                       <span className="Table-v2__cell--secondary">
-                        {receiver?.createdAt
-                          ? formatDateTime(receiver.createdAt)
-                          : "-"}
+                        {receiver?.createdAt ? formatDateTime(receiver.createdAt) : "-"}
                       </span>
                     </Table.BodyCell>
                     <Table.BodyCell textAlign="right">
-                      <MultipleAmounts
-                        amounts={receiver?.amountsReceived || []}
-                      />
+                      <MultipleAmounts amounts={receiver?.amountsReceived || []} />
                     </Table.BodyCell>
                     <Table.BodyCell textAlign="right">
-                      {receiver?.status ? (
-                        <ReceiverStatus status={receiver.status} />
-                      ) : (
-                        "-"
-                      )}
+                      {receiver?.status ? <ReceiverStatus status={receiver.status} /> : "-"}
                     </Table.BodyCell>
                   </Table.BodyRow>
                 </Table.Body>
@@ -459,21 +412,21 @@ export const PaymentDetails = () => {
         <Modal.Heading>Cancel payment permanently?</Modal.Heading>
         <Modal.Body>
           <div>
-            Clicking 'Cancel payment' will prevent this payment from being
-            processed even if the receiver tries to claim funds.
+            Clicking 'Cancel payment' will prevent this payment from being processed even if the
+            receiver tries to claim funds.
           </div>
         </Modal.Body>
         <Modal.Footer>
           <Button
-            size="sm"
-            variant="secondary"
+            size="md"
+            variant="tertiary"
             onClick={hideModal}
             isLoading={isCancelPaymentPending}
           >
             Not now
           </Button>
           <Button
-            size="sm"
+            size="md"
             variant="error"
             onClick={(event) => handleCancelPayment(event)}
             isLoading={isCancelPaymentPending}

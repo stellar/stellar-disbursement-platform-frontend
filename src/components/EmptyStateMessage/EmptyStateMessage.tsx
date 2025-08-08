@@ -7,10 +7,7 @@ interface EmptyStateMessageProps {
   message: string;
 }
 
-export const EmptyStateMessage = ({
-  icon = <Icon.Key />,
-  message,
-}: EmptyStateMessageProps) => (
+export const EmptyStateMessage = ({ icon = <Icon.Key01 />, message }: EmptyStateMessageProps) => (
   <div className="EmptyStateMessage">
     {icon}
     {message}

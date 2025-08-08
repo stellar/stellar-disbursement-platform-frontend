@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .Table-v2__container {
   width: 100%;
@@ -12,7 +12,7 @@
     }
 
     .Loader {
-      --Loader-color: var(--color-gray-60);
+      --Loader-color: var(--sds-clr-gray-09);
       --Loader-size: 2rem;
 
       position: absolute;
@@ -25,7 +25,7 @@
 
 .Table-v2__wrapper {
   opacity: 1;
-  transition: opacity var(--anim-transition-default);
+  transition: opacity var(--sds-anim-transition-default);
 
   &[data-scrollable="true"] {
     overflow-x: auto;
@@ -38,11 +38,11 @@ table.Table-v2 {
 
   thead tr,
   tr:not(:last-child) {
-    border-bottom: 1px solid var(--color-gray-30);
-    transition: background-color var(--anim-transition-default);
+    border-bottom: 1px solid var(--sds-clr-gray-04);
+    transition: background-color var(--sds-anim-transition-default);
 
     &.Table-v2__row--highlighted {
-      background-color: var(--color-gray-10);
+      background-color: var(--sds-clr-gray-02);
     }
   }
 
@@ -66,8 +66,8 @@ table.Table-v2 {
   th {
     font-size: pxToRem(12px);
     line-height: pxToRem(20px);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-gray-60);
+    font-weight: var(--sds-fw-medium);
+    color: var(--sds-clr-gray-09);
     text-align: left;
     white-space: nowrap;
 
@@ -79,15 +79,15 @@ table.Table-v2 {
       &[role="button"] {
         cursor: pointer;
         transition:
-          color var(--anim-transition-default),
-          fill var(--anim-transition-default);
+          color var(--sds-anim-transition-default),
+          fill var(--sds-anim-transition-default);
 
         @media (hover: hover) {
           &:hover {
-            color: var(--color-gray-90);
+            color: var(--sds-clr-gray-);
 
             .Table-v2__header__cell__sortIcon svg {
-              fill: var(--color-gray-90);
+              stroke: var(--sds-clr-gray-12);
             }
           }
         }
@@ -95,7 +95,7 @@ table.Table-v2 {
 
       svg {
         display: block;
-        fill: currentColor;
+        stroke: currentColor;
         width: pxToRem(12px);
         height: pxToRem(12px);
       }
@@ -108,10 +108,10 @@ table.Table-v2 {
 
         svg {
           width: 100%;
-          fill: currentColor;
+          stroke: currentColor;
           position: absolute;
           left: 0;
-          transition: fill var(--anim-transition-default);
+          transition: fill var(--sds-anim-transition-default);
 
           &:nth-child(1) {
             top: 0;
@@ -134,13 +134,13 @@ table.Table-v2 {
 
     &[aria-sort="ascending"],
     &[aria-sort="descending"] {
-      color: var(--color-gray-90);
+      color: var(--sds-clr-gray-12);
     }
 
     &[aria-sort="ascending"] {
       .Table-v2__header__cell__sortIcon {
         svg:nth-child(2) {
-          fill: var(--color-gray-60);
+          stroke: var(--sds-clr-gray-09);
         }
       }
     }
@@ -148,7 +148,7 @@ table.Table-v2 {
     &[aria-sort="descending"] {
       .Table-v2__header__cell__sortIcon {
         svg:nth-child(1) {
-          fill: var(--color-gray-60);
+          stroke: var(--sds-clr-gray-09);
         }
       }
     }
@@ -157,8 +157,8 @@ table.Table-v2 {
   td {
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
-    font-weight: var(--font-weight-regular);
-    color: var(--color-gray-80);
+    font-weight: var(--sds-fw-regular);
+    color: var(--sds-clr-gray-12);
 
     &[data-text-align="right"] {
       text-align: right;

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Button, Heading, Paragraph } from "@stellar/design-system";
+import { Button, Heading, Text } from "@stellar/design-system";
 import { Routes } from "constants/settings";
 
 export const NotFound = () => {
@@ -14,8 +14,10 @@ export const NotFound = () => {
       <Heading as="h1" size="lg">
         Error 404
       </Heading>
-      <Paragraph size="sm">Sorry, that page couldn’t be found.</Paragraph>
-      <Button size="sm" variant="secondary" onClick={handleBack}>
+      <Text size="sm" as="p">
+        Sorry, that page couldn’t be found.
+      </Text>
+      <Button size="md" variant="tertiary" onClick={handleBack}>
         Back to home
       </Button>
     </div>

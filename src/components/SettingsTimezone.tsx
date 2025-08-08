@@ -110,9 +110,7 @@ export const SettingsTimezone = () => {
                 name="timezone"
                 disabled={!isEdit}
                 note="All times will be reflected in this timezone"
-                value={
-                  isEdit ? newTimezone : organization.data.timezoneUtcOffset
-                }
+                value={isEdit ? newTimezone : organization.data.timezoneUtcOffset}
                 onChange={(event) => {
                   setNewTimezone(event.target.value);
                 }}
@@ -127,12 +125,12 @@ export const SettingsTimezone = () => {
 
             {isEdit ? (
               <div className="CardStack__buttons">
-                <Button variant="secondary" size="xs" type="reset">
+                <Button variant="tertiary" size="sm" type="reset">
                   Cancel
                 </Button>
                 <Button
                   variant="primary"
-                  size="xs"
+                  size="sm"
                   type="submit"
                   isLoading={organization.status === "PENDING"}
                   disabled={newTimezone === organization.data.timezoneUtcOffset}

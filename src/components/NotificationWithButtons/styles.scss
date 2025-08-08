@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .Notification {
   &__buttons {
@@ -9,9 +9,9 @@
     margin-top: pxToRem(8px);
 
     .Link--primary {
-      --Link-color-default: var(--color-gray-90);
-      --Link-color-hover: var(--color-gray-80);
-      --Link-color-disabled: var(--color-gray-70);
+      --Link-color-default: var(--sds-clr-gray-12);
+      --Link-color-hover: var(--sds-clr-gray-11);
+      --Link-color-disabled: var(--sds-clr-gray-10);
     }
   }
 }

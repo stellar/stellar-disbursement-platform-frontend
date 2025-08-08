@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "styles-utils.scss" as *;
 
 .AssetAmount {
   display: inline-flex !important;
@@ -10,8 +10,8 @@
     width: pxToRem(12px);
     height: pxToRem(12px);
     border-radius: pxToRem(6px);
-    background-color: var(--color-gray-30);
-    border: 1px solid var(--color-gray-30);
+    background-color: var(--sds-clr-gray-04);
+    border: 1px solid var(--sds-clr-gray-04);
     overflow: hidden;
     flex-shrink: 0;
 
