@@ -506,13 +506,7 @@ export type ApiAsset = {
 };
 
 export type ApiAssetWithTrustline = ApiAsset & {
-  has_trustline: boolean;
-};
-
-export const hasTrustlineInfo = (
-  asset: ApiAsset | ApiAssetWithTrustline,
-): asset is ApiAssetWithTrustline => {
-  return "has_trustline" in asset;
+  enabled: boolean;
 };
 
 export type ApiWallet = {
