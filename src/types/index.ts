@@ -940,6 +940,7 @@ export type ApiKeysInitialState = {
   items: ApiKey[];
   status: ActionStatus | undefined;
   errorString?: string;
+  errorExtras?: AnyObject;
 };
 
 export type ApiKeysResponse = {
@@ -965,6 +966,7 @@ export type ApiKeyDetailsInitialState = {
   details: ApiKey | null;
   status: ActionStatus | undefined;
   errorString?: string;
+  errorExtras?: AnyObject;
 };
 
 export type CreateDirectPaymentRequest = {

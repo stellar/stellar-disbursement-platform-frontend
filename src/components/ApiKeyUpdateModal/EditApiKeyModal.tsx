@@ -15,7 +15,7 @@ import { formatDateTime } from "helpers/formatIntlDateTime";
 import { parseAllowedIPs } from "helpers/parseIPs";
 
 import { UpdateApiKeyRequest } from "api/updateApiKey";
-import { ApiKey } from "types";
+import { AppError, ApiKey } from "types";
 
 import "./styles.scss";
 
@@ -25,7 +25,7 @@ interface EditApiKeyModalProps {
   onSubmit: (apiKeyId: string, updateData: UpdateApiKeyRequest) => void;
   onResetQuery: () => void;
   isLoading: boolean;
-  errorMessage?: string;
+  appError?: AppError;
   apiKey?: ApiKey;
 }
 
@@ -35,7 +35,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
   onSubmit,
   onResetQuery,
   isLoading,
-  errorMessage,
+  appError,
   apiKey,
 }) => {
   const {
@@ -49,7 +49,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
     isFormValid,
     resetForm,
     setForm,
-  } = useApiKeyForm({ onResetQuery, errorMessage });
+  } = useApiKeyForm({ onResetQuery, appError });
 
   const previousVisible = usePrevious(visible);
 
@@ -110,13 +110,9 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
           <div className="EditApiKeyModal__description">
             Update the permissions and IP restrictions for this API key.
           </div>
-          {errorMessage && (
+          {appError && (
             <Notification variant="error" title="Error">
-              <ErrorWithExtras
-                appError={{
-                  message: errorMessage,
-                }}
-              />
+              <ErrorWithExtras appError={appError} />
             </Notification>
           )}
 
