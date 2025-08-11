@@ -34,9 +34,7 @@ export const ApiKeys = () => {
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [createdApiKey, setCreatedApiKey] = useState<
-    { name: string; key: string } | undefined
-  >();
+  const [createdApiKey, setCreatedApiKey] = useState<{ name: string; key: string } | undefined>();
   const [selectedApiKey, setSelectedApiKey] = useState<ApiKey | undefined>();
   const [editingApiKey, setEditingApiKey] = useState<ApiKey | undefined>();
 
@@ -50,7 +48,8 @@ export const ApiKeys = () => {
 
   const handleCloseCreateModal = useCallback(() => {
     setIsCreateModalVisible(false);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleCloseSuccessModal = useCallback(() => {
     setIsSuccessModalVisible(false);
@@ -60,12 +59,14 @@ export const ApiKeys = () => {
   const handleCloseDeleteModal = useCallback(() => {
     setIsDeleteModalVisible(false);
     setSelectedApiKey(undefined);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleCloseEditModal = useCallback(() => {
     setIsEditModalVisible(false);
     setEditingApiKey(undefined);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleSubmitCreateApiKey = useCallback(
     async (apiKeyData: CreateApiKeyRequest) => {
@@ -132,24 +133,23 @@ export const ApiKeys = () => {
   );
 
   const renderPageContent = () => {
-    if (apiKeys.errorString) {
-      return (
-        <Notification variant="error" title="Error">
-          <ErrorWithExtras
-            appError={{
-              message: apiKeys.errorString,
-            }}
-          />
-        </Notification>
-      );
-    }
-
     if (apiKeys.status === "PENDING" && apiKeys.items.length === 0) {
       return <div className="Note">Loading…</div>;
     }
 
     return (
       <div className="CardStack">
+        {apiKeys.errorString ? (
+          <Notification variant="error" title="Error">
+            <ErrorWithExtras
+              appError={{
+                message: apiKeys.errorString,
+                extras: apiKeys.errorExtras,
+              }}
+            />
+          </Notification>
+        ) : null}
+
         <div className="CardStack__card">
           <ApiKeysTable
             apiKeys={apiKeys.items}
@@ -169,9 +169,7 @@ export const ApiKeys = () => {
 
   return (
     <>
-      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
-        {renderPageContent()}
-      </ShowForRoles>
+      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>{renderPageContent()}</ShowForRoles>
 
       {/* Modals - rendered once outside of conditional logic */}
       <CreateApiKeyModal
@@ -180,7 +178,11 @@ export const ApiKeys = () => {
         onSubmit={handleSubmitCreateApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
       />
 
       <ApiKeySuccessModal
@@ -195,7 +197,11 @@ export const ApiKeys = () => {
         onSubmit={deleteApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={selectedApiKey}
       />
 
@@ -205,7 +211,11 @@ export const ApiKeys = () => {
         onSubmit={handleSubmitEditApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={editingApiKey}
       />
     </>

@@ -8,6 +8,7 @@
 
   &__form {
     display: flex;
+    min-height: pxToRem(600px);
     flex-direction: column;
     gap: pxToRem(16px);
   }

@@ -6,10 +6,11 @@ import {
   hasAnyPermissions,
 } from "components/ApiKeyFormFields/ApiKeyFormFields";
 import { validateAllowedIPs } from "helpers/validateIPs";
+import { AppError } from "types";
 
 interface UseApiKeyFormProps {
   onResetQuery: () => void;
-  errorMessage?: string;
+  appError?: AppError;
 }
 
 export interface ApiKeyFormState {
@@ -17,10 +18,7 @@ export interface ApiKeyFormState {
   permissions: PermissionState;
 }
 
-export const useApiKeyForm = ({
-  onResetQuery,
-  errorMessage,
-}: UseApiKeyFormProps) => {
+export const useApiKeyForm = ({ onResetQuery, appError }: UseApiKeyFormProps) => {
   const [formData, setFormData] = useState<ApiKeyFormState>({
     allowedIPs: "",
     permissions: { ...INITIAL_PERMISSIONS },
@@ -33,7 +31,7 @@ export const useApiKeyForm = ({
 
   const handleAllowedIPsChange = useCallback(
     (value: string) => {
-      if (errorMessage) {
+      if (appError) {
         onResetQuery();
       }
       removeItemFromErrors("allowedIPs");
@@ -45,12 +43,12 @@ export const useApiKeyForm = ({
         allowedIPs: value,
       }));
     },
-    [errorMessage, onResetQuery, removeItemFromErrors],
+    [appError, onResetQuery, removeItemFromErrors],
   );
 
   const handlePermissionChange = useCallback(
     (resource: keyof PermissionState, level: PermissionLevel) => {
-      if (errorMessage) {
+      if (appError) {
         onResetQuery();
       }
       removeItemFromErrors("permissions");
@@ -64,10 +62,7 @@ export const useApiKeyForm = ({
               newPermissions[key as keyof PermissionState] = "none";
             }
           });
-        } else if (
-          resource !== "all" &&
-          prev.permissions.all === "read_write"
-        ) {
+        } else if (resource !== "all" && prev.permissions.all === "read_write") {
           newPermissions.all = "none";
         }
 
@@ -79,17 +74,14 @@ export const useApiKeyForm = ({
         };
       });
     },
-    [errorMessage, onResetQuery, removeItemFromErrors],
+    [appError, onResetQuery, removeItemFromErrors],
   );
 
   const handleAllowedIPsBlur = useCallback(() => {
     if (formData.allowedIPs.trim()) {
       const { isValid } = validateAllowedIPs(formData.allowedIPs);
       if (!isValid) {
-        setFormErrors((prev) => [
-          ...prev.filter((e) => e !== "allowedIPs"),
-          "allowedIPs",
-        ]);
+        setFormErrors((prev) => [...prev.filter((e) => e !== "allowedIPs"), "allowedIPs"]);
       }
     }
   }, [formData.allowedIPs]);
@@ -116,9 +108,7 @@ export const useApiKeyForm = ({
   }, [formErrors, formData.allowedIPs]);
 
   const getPermissionsError = useCallback((): string | undefined => {
-    return formErrors.includes("permissions")
-      ? "At least one permission is required"
-      : undefined;
+    return formErrors.includes("permissions") ? "At least one permission is required" : undefined;
   }, [formErrors]);
 
   const addError = useCallback((error: string) => {
