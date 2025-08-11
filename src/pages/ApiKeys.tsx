@@ -48,7 +48,8 @@ export const ApiKeys = () => {
 
   const handleCloseCreateModal = useCallback(() => {
     setIsCreateModalVisible(false);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleCloseSuccessModal = useCallback(() => {
     setIsSuccessModalVisible(false);
@@ -58,12 +59,14 @@ export const ApiKeys = () => {
   const handleCloseDeleteModal = useCallback(() => {
     setIsDeleteModalVisible(false);
     setSelectedApiKey(undefined);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleCloseEditModal = useCallback(() => {
     setIsEditModalVisible(false);
     setEditingApiKey(undefined);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleSubmitCreateApiKey = useCallback(
     async (apiKeyData: CreateApiKeyRequest) => {
@@ -130,25 +133,23 @@ export const ApiKeys = () => {
   );
 
   const renderPageContent = () => {
-    if (apiKeys.errorString) {
-      return (
-        <Notification variant="error" title="Error">
-          <ErrorWithExtras
-            appError={{
-              message: apiKeys.errorString,
-              extras: apiKeys.errorExtras,
-            }}
-          />
-        </Notification>
-      );
-    }
-
     if (apiKeys.status === "PENDING" && apiKeys.items.length === 0) {
       return <div className="Note">Loading…</div>;
     }
 
     return (
       <div className="CardStack">
+        {apiKeys.errorString ? (
+          <Notification variant="error" title="Error">
+            <ErrorWithExtras
+              appError={{
+                message: apiKeys.errorString,
+                extras: apiKeys.errorExtras,
+              }}
+            />
+          </Notification>
+        ) : null}
+
         <div className="CardStack__card">
           <ApiKeysTable
             apiKeys={apiKeys.items}

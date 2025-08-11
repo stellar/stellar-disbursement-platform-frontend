@@ -113,7 +113,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
   return (
     <Modal visible={visible} onClose={handleClose}>
       <Modal.Heading>Create new key</Modal.Heading>
-      <form onSubmit={handleSubmit} onReset={handleClose}>
+      <form onSubmit={handleSubmit} onReset={handleClose} className="CreateApiKeyModal__form">
         <Modal.Body>
           <div className="CreateApiKeyModal__description">
             Generate an API key for authenticating with our API.
