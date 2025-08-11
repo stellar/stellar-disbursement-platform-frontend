@@ -49,6 +49,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   const [paymentDataToConfirm, setPaymentDataToConfirm] =
     useState<CreateDirectPaymentRequest | null>(null);
   const queryClient = useQueryClient();
+  const isWalletAddress = (input: string) => input.startsWith("G") && input.length === 56;
   const debouncedReceiverSearch = useDebounce(
     formData.receiverSearch,
     directPayment.SEARCH_DEBOUNCE_MS,
@@ -89,6 +90,18 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (filteredWallets.length === 0) return "No compatible wallets available for this receiver";
     return `${filteredWallets.length} compatible wallet(s) available`;
   };
+
+  const isAmountValid =
+    formData.amount.trim() !== "" && !isNaN(Number(formData.amount)) && Number(formData.amount) > 0;
+  const isReceiverValid =
+    formData.receiverSearch.trim() !== "" &&
+    (isWalletAddress(formData.receiverSearch) || Boolean(formData.selectedReceiver));
+  const isWalletValid = isWalletAddress(formData.receiverSearch)
+    ? true
+    : Boolean(formData.walletId);
+  const isSubmitEnabled = Boolean(
+    formData.assetId && isAmountValid && isReceiverValid && isWalletValid,
+  );
 
   useEffect(() => {
     if (previousVisible && !visible) {
@@ -209,8 +222,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (receiver.external_id?.toLowerCase().includes(query)) return receiver.external_id;
     return receiver.phone_number || receiver.email || receiver.external_id || "";
   };
-
-  const isWalletAddress = (input: string) => input.startsWith("G") && input.length === 56;
 
   const showReceiverField = Boolean(formData.assetId);
   const isReceiverWalletAddress = isWalletAddress(formData.receiverSearch);
@@ -502,7 +513,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
               size="md"
               variant="primary"
               type="submit"
-              disabled={isLoading}
+              disabled={!isSubmitEnabled}
               isLoading={isLoading}
             >
               Submit
