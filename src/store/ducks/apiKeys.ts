@@ -9,97 +9,86 @@ import { postApiKey } from "api/postApiKey";
 import { deleteApiKey } from "api/deleteApiKey";
 import { updateApiKey, UpdateApiKeyRequest } from "api/updateApiKey";
 
-import {
-  ApiKey,
-  ApiKeysInitialState,
-  ApiError,
-  RejectMessage,
-  CreateApiKeyRequest,
-} from "types";
+import { ApiKey, ApiKeysInitialState, ApiError, RejectMessage, CreateApiKeyRequest } from "types";
 
 export const apiKeysInitialState: ApiKeysInitialState = {
   items: [],
   status: undefined,
   errorString: undefined,
+  errorExtras: undefined,
 };
 
 export const getApiKeysAction = createAsyncThunk<
   ApiKey[],
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "apiKeys/getApiKeysAction",
-  async (_, { rejectWithValue, getState, dispatch }) => {
-    const { token } = getState().userAccount;
+>("apiKeys/getApiKeysAction", async (_, { rejectWithValue, getState, dispatch }) => {
+  const { token } = getState().userAccount;
 
-    try {
-      const response = await getApiKeys(token);
-      refreshSessionToken(dispatch);
+  try {
+    const response = await getApiKeys(token);
+    refreshSessionToken(dispatch);
 
-      return Array.isArray(response) ? response : response.data || [];
-    } catch (error: unknown) {
-      const apiError = normalizeApiError(error as ApiError);
-      const errorString = apiError.message;
-      endSessionIfTokenInvalid(errorString, dispatch);
+    return Array.isArray(response) ? response : response.data || [];
+  } catch (error: unknown) {
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error fetching API keys: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error fetching API keys: ${errorString}`,
+      errorExtras: apiError?.extras,
+    });
+  }
+});
 
 export const createApiKeyAction = createAsyncThunk<
   ApiKey,
   CreateApiKeyRequest,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "apiKeys/createApiKeyAction",
-  async (apiKeyData, { rejectWithValue, getState, dispatch }) => {
-    const { token } = getState().userAccount;
+>("apiKeys/createApiKeyAction", async (apiKeyData, { rejectWithValue, getState, dispatch }) => {
+  const { token } = getState().userAccount;
 
-    try {
-      const response = await postApiKey(token, apiKeyData);
-      refreshSessionToken(dispatch);
+  try {
+    const response = await postApiKey(token, apiKeyData);
+    refreshSessionToken(dispatch);
 
-      return response;
-    } catch (error: unknown) {
-      const apiError = normalizeApiError(error as ApiError);
-      const errorString = apiError.message;
-      endSessionIfTokenInvalid(errorString, dispatch);
+    return response;
+  } catch (error: unknown) {
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error creating API key: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error creating API key: ${errorString}`,
+      errorExtras: apiError?.extras,
+    });
+  }
+});
 
 export const deleteApiKeyAction = createAsyncThunk<
   string,
   string,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "apiKeys/deleteApiKeyAction",
-  async (apiKeyId, { rejectWithValue, getState, dispatch }) => {
-    const { token } = getState().userAccount;
+>("apiKeys/deleteApiKeyAction", async (apiKeyId, { rejectWithValue, getState, dispatch }) => {
+  const { token } = getState().userAccount;
 
-    try {
-      await deleteApiKey(token, apiKeyId);
-      refreshSessionToken(dispatch);
+  try {
+    await deleteApiKey(token, apiKeyId);
+    refreshSessionToken(dispatch);
 
-      return apiKeyId;
-    } catch (error: unknown) {
-      const apiError = normalizeApiError(error as ApiError);
-      const errorString = apiError.message;
-      endSessionIfTokenInvalid(errorString, dispatch);
+    return apiKeyId;
+  } catch (error: unknown) {
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error deleting API key: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error deleting API key: ${errorString}`,
+      errorExtras: apiError?.extras,
+    });
+  }
+});
 
 export const updateApiKeyAction = createAsyncThunk<
   string,
@@ -122,6 +111,7 @@ export const updateApiKeyAction = createAsyncThunk<
 
       return rejectWithValue({
         errorString: `Error updating API key: ${errorString}`,
+        errorExtras: apiError?.extras,
       });
     }
   },
@@ -134,6 +124,7 @@ const apiKeysSlice = createSlice({
     resetApiKeysAction: () => apiKeysInitialState,
     clearApiKeysErrorAction: (state) => {
       state.errorString = undefined;
+      state.errorExtras = undefined;
       state.status = "SUCCESS";
     },
   },
@@ -142,48 +133,58 @@ const apiKeysSlice = createSlice({
       .addCase(getApiKeysAction.pending, (state = apiKeysInitialState) => {
         state.status = "PENDING";
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(getApiKeysAction.fulfilled, (state, action) => {
         state.status = "SUCCESS";
         state.items = action.payload;
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(getApiKeysAction.rejected, (state, action) => {
         state.status = "ERROR";
         state.errorString = action.payload?.errorString;
+        state.errorExtras = action.payload?.errorExtras;
       })
       // Create API Key
       .addCase(createApiKeyAction.pending, (state) => {
         state.status = "PENDING";
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(createApiKeyAction.fulfilled, (state, action) => {
         state.status = "SUCCESS";
         state.items.unshift(action.payload); // Add new key to the beginning
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(createApiKeyAction.rejected, (state, action) => {
         state.status = "ERROR";
         state.errorString = action.payload?.errorString;
+        state.errorExtras = action.payload?.errorExtras;
       })
       // Delete API Key
       .addCase(deleteApiKeyAction.pending, (state) => {
         state.status = "PENDING";
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(deleteApiKeyAction.fulfilled, (state, action) => {
         state.status = "SUCCESS";
         state.items = state.items.filter((item) => item.id !== action.payload);
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(deleteApiKeyAction.rejected, (state, action) => {
         state.status = "ERROR";
         state.errorString = action.payload?.errorString;
+        state.errorExtras = action.payload?.errorExtras;
       })
       // Update API Key
       .addCase(updateApiKeyAction.pending, (state) => {
         state.status = "PENDING";
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(updateApiKeyAction.fulfilled, (state, action) => {
         state.status = "SUCCESS";
@@ -198,14 +199,15 @@ const apiKeysSlice = createSlice({
           };
         }
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(updateApiKeyAction.rejected, (state, action) => {
         state.status = "ERROR";
         state.errorString = action.payload?.errorString;
+        state.errorExtras = action.payload?.errorExtras;
       });
   },
 });
 
-export const { resetApiKeysAction, clearApiKeysErrorAction } =
-  apiKeysSlice.actions;
+export const { resetApiKeysAction, clearApiKeysErrorAction } = apiKeysSlice.actions;
 export const { reducer } = apiKeysSlice;

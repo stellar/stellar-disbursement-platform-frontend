@@ -16,6 +16,7 @@ import { ValuesList } from "components/ValueList/ValueList";
 import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
 import { Routes } from "constants/settings";
 import { formatDateTime } from "helpers/formatIntlDateTime";
+import { normalizeApiError } from "helpers/normalizeApiError";
 import { useRedux } from "hooks/useRedux";
 import { AppDispatch } from "store";
 import {
@@ -23,7 +24,7 @@ import {
   updateApiKeyAction,
   clearApiKeysErrorAction,
 } from "store/ducks/apiKeys";
-import { ApiKey, UserRole } from "types";
+import { ApiKey, UserRole, ApiError, AppError } from "types";
 
 import "./styles.scss";
 
@@ -37,7 +38,7 @@ export const ApiKeyDetails = () => {
 
   const [apiKey, setApiKey] = useState<ApiKey | undefined>();
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | undefined>();
+  const [error, setError] = useState<AppError | undefined>();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
@@ -52,7 +53,11 @@ export const ApiKeyDetails = () => {
         const keyData = await getApiKey(userAccount.token, apiKeyId);
         setApiKey(keyData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch API key details");
+        const apiError = normalizeApiError(err as ApiError);
+        setError({
+          message: `Error fetching API key details: ${apiError.message}`,
+          extras: apiError.extras,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -158,7 +163,7 @@ export const ApiKeyDetails = () => {
     if (error) {
       return (
         <Notification variant="error" title="Error">
-          <ErrorWithExtras appError={{ message: error }} />
+          <ErrorWithExtras appError={error} />
         </Notification>
       );
     }
@@ -326,7 +331,11 @@ export const ApiKeyDetails = () => {
         onSubmit={handleSubmitEditApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={apiKey}
       />
 
@@ -336,7 +345,11 @@ export const ApiKeyDetails = () => {
         onSubmit={handleDeleteApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={apiKey}
       />
     </>

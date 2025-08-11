@@ -34,9 +34,7 @@ export const ApiKeys = () => {
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [createdApiKey, setCreatedApiKey] = useState<
-    { name: string; key: string } | undefined
-  >();
+  const [createdApiKey, setCreatedApiKey] = useState<{ name: string; key: string } | undefined>();
   const [selectedApiKey, setSelectedApiKey] = useState<ApiKey | undefined>();
   const [editingApiKey, setEditingApiKey] = useState<ApiKey | undefined>();
 
@@ -138,6 +136,7 @@ export const ApiKeys = () => {
           <ErrorWithExtras
             appError={{
               message: apiKeys.errorString,
+              extras: apiKeys.errorExtras,
             }}
           />
         </Notification>
@@ -169,9 +168,7 @@ export const ApiKeys = () => {
 
   return (
     <>
-      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>
-        {renderPageContent()}
-      </ShowForRoles>
+      <ShowForRoles acceptedRoles={ACCEPTED_ROLES}>{renderPageContent()}</ShowForRoles>
 
       {/* Modals - rendered once outside of conditional logic */}
       <CreateApiKeyModal
@@ -180,7 +177,11 @@ export const ApiKeys = () => {
         onSubmit={handleSubmitCreateApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
       />
 
       <ApiKeySuccessModal
@@ -195,7 +196,11 @@ export const ApiKeys = () => {
         onSubmit={deleteApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={selectedApiKey}
       />
 
@@ -205,7 +210,11 @@ export const ApiKeys = () => {
         onSubmit={handleSubmitEditApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={editingApiKey}
       />
     </>

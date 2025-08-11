@@ -5,12 +5,7 @@ import { refreshSessionToken } from "helpers/refreshSessionToken";
 import { normalizeApiError } from "helpers/normalizeApiError";
 import { getApiKey } from "api/getApiKey";
 
-import {
-  ApiKey,
-  ApiKeyDetailsInitialState,
-  ApiError,
-  RejectMessage,
-} from "types";
+import { ApiKey, ApiKeyDetailsInitialState, ApiError, RejectMessage } from "types";
 
 import { RootState } from "store";
 
@@ -18,6 +13,7 @@ export const apiKeyDetailsInitialState: ApiKeyDetailsInitialState = {
   details: null,
   status: undefined,
   errorString: undefined,
+  errorExtras: undefined,
 };
 
 export const getApiKeyDetailsAction = createAsyncThunk<
@@ -41,6 +37,7 @@ export const getApiKeyDetailsAction = createAsyncThunk<
 
       return rejectWithValue({
         errorString: `Error fetching API key details: ${errorString}`,
+        errorExtras: apiError?.extras,
       });
     }
   },
@@ -53,6 +50,7 @@ const apiKeyDetailsSlice = createSlice({
     resetApiKeyDetailsAction: () => apiKeyDetailsInitialState,
     clearApiKeyDetailsErrorAction: (state) => {
       state.errorString = undefined;
+      state.errorExtras = undefined;
       state.status = "SUCCESS";
     },
     setApiKeyDetailsAction: (state, action) => {
@@ -71,21 +69,21 @@ const apiKeyDetailsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(
-        getApiKeyDetailsAction.pending,
-        (state = apiKeyDetailsInitialState) => {
-          state.status = "PENDING";
-          state.errorString = undefined;
-        },
-      )
+      .addCase(getApiKeyDetailsAction.pending, (state = apiKeyDetailsInitialState) => {
+        state.status = "PENDING";
+        state.errorString = undefined;
+        state.errorExtras = undefined;
+      })
       .addCase(getApiKeyDetailsAction.fulfilled, (state, action) => {
         state.status = "SUCCESS";
         state.details = action.payload;
         state.errorString = undefined;
+        state.errorExtras = undefined;
       })
       .addCase(getApiKeyDetailsAction.rejected, (state, action) => {
         state.status = "ERROR";
         state.errorString = action.payload?.errorString;
+        state.errorExtras = action.payload?.errorExtras;
       });
   },
 });

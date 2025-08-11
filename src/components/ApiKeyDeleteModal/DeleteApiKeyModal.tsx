@@ -4,7 +4,7 @@ import { Button, Input, Modal, Notification } from "@stellar/design-system";
 import { usePrevious } from "hooks/usePrevious";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 
-import { ApiKey } from "types";
+import { AppError, ApiKey } from "types";
 
 import "./styles.scss";
 
@@ -14,7 +14,7 @@ interface DeleteApiKeyModalProps {
   onSubmit: (apiKeyId: string) => void;
   onResetQuery: () => void;
   isLoading: boolean;
-  errorMessage?: string;
+  appError?: AppError;
   apiKey?: ApiKey;
 }
 
@@ -24,7 +24,7 @@ export const DeleteApiKeyModal: React.FC<DeleteApiKeyModalProps> = ({
   onSubmit,
   onResetQuery,
   isLoading,
-  errorMessage,
+  appError,
   apiKey,
 }) => {
   const [confirmationName, setConfirmationName] = useState<string>("");
@@ -41,7 +41,7 @@ export const DeleteApiKeyModal: React.FC<DeleteApiKeyModalProps> = ({
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (errorMessage) {
+    if (appError) {
       onResetQuery();
     }
     setConfirmationName(event.target.value);
@@ -62,13 +62,9 @@ export const DeleteApiKeyModal: React.FC<DeleteApiKeyModalProps> = ({
       <Modal.Heading>Delete API Key</Modal.Heading>
       <form onSubmit={handleSubmit} onReset={handleClose}>
         <Modal.Body>
-          {errorMessage && (
+          {appError && (
             <Notification variant="error" title="Error">
-              <ErrorWithExtras
-                appError={{
-                  message: errorMessage,
-                }}
-              />
+              <ErrorWithExtras appError={appError} />
             </Notification>
           )}
 
