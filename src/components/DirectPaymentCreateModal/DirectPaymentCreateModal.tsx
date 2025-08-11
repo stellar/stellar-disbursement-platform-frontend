@@ -333,15 +333,15 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
           </Modal.Body>
           <Modal.Footer>
             <Button
-              size="sm"
-              variant="secondary"
+              size="md"
+              variant="tertiary"
               onClick={() => setShowConfirmation(false)}
               disabled={isLoading}
             >
               Back
             </Button>
             <Button
-              size="sm"
+              size="md"
               variant="primary"
               onClick={handleConfirmPayment}
               disabled={isLoading}
@@ -481,11 +481,11 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button size="sm" variant="secondary" type="reset" disabled={isLoading}>
+            <Button size="md" variant="tertiary" type="reset" disabled={isLoading}>
               Cancel
             </Button>
             <Button
-              size="sm"
+              size="md"
               variant="primary"
               type="submit"
               disabled={isLoading}
