@@ -1,17 +1,18 @@
-import { useEffect, useState, useMemo } from "react";
-import { Button, Input, Modal, Notification, Select, Icon } from "@stellar/design-system";
+import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
 import { useDebounce } from "hooks/useDebounce";
 import { usePrevious } from "hooks/usePrevious";
+import { useEffect, useMemo, useState } from "react";
 
 import { useAllAssets } from "apiQueries/useAllAssets";
-import { useWallets } from "apiQueries/useWallets";
 import { useSearchReceivers } from "apiQueries/useSearchReceivers";
+import { useWallets } from "apiQueries/useWallets";
 
+import { DirectPaymentConfirmation } from "components/DirectPaymentConfirmation/DirectPaymentConfirmation";
 import { ErrorWithExtras } from "components/ErrorWithExtras";
 import { SelectedReceiverInfo } from "components/SelectedReceiverInfo/SelectedReceiverInfo";
 
 import { directPayment } from "constants/directPayment";
-import { CreateDirectPaymentRequest, ApiReceiver, ApiAssetWithTrustline } from "types";
+import { ApiAssetWithTrustline, ApiReceiver, CreateDirectPaymentRequest } from "types";
 
 import "./styles.scss";
 
@@ -309,89 +310,10 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     });
   };
 
-  const renderConfirmationScreen = () => {
-    if (!paymentDataToConfirm) return null;
-
-    // Helper function to shorten wallet addresses
-    const shortenAddress = (
-      address: string,
-      startChars: number = 6,
-      endChars: number = 8,
-    ): string => {
-      if (!address || address.length <= startChars + endChars + 3) return address;
-      return `${address.slice(0, startChars)}...${address.slice(-endChars)}`;
-    };
-
-    const isWalletAddress = paymentDataToConfirm.receiver.wallet_address;
-    const receiverInfo = isWalletAddress
-      ? `Wallet Address: ${shortenAddress(paymentDataToConfirm.receiver.wallet_address || "")}`
-      : formData.selectedReceiver
-        ? getReceiverDisplayInfo(formData.selectedReceiver, formData.receiverSearch)
-        : "Unknown Receiver";
-
-    // Get the selected wallet address for non-wallet address payments
-    const selectedWallet =
-      !isWalletAddress && formData.selectedReceiver && formData.walletId
-        ? formData.selectedReceiver.wallets.find((w) => w.wallet.id === formData.walletId)
-        : null;
-    const walletAddress = selectedWallet?.stellar_address || paymentDataToConfirm.wallet?.address;
-
-    return (
-      <div className="DirectPaymentCreateModal__confirmation">
-        <div className="DirectPaymentCreateModal__confirmationContent">
-          <div className="DirectPaymentCreateModal__confirmationWarning">
-            <p>Please review the payment details below. This action cannot be undone.</p>
-          </div>
-
-          <div className="DirectPaymentCreateModal__confirmationDetails">
-            <div className="DirectPaymentCreateModal__confirmationRow">
-              <span className="DirectPaymentCreateModal__confirmationLabel">Amount:</span>
-              <span className="DirectPaymentCreateModal__confirmationValue">
-                {paymentDataToConfirm.amount} {paymentDataToConfirm.asset.code}
-              </span>
-            </div>
-
-            <div className="DirectPaymentCreateModal__confirmationRow">
-              <span className="DirectPaymentCreateModal__confirmationLabel">Receiver:</span>
-              <span className="DirectPaymentCreateModal__confirmationValue">{receiverInfo}</span>
-            </div>
-
-            {walletAddress && (
-              <div className="DirectPaymentCreateModal__confirmationRow">
-                <span className="DirectPaymentCreateModal__confirmationLabel">Wallet:</span>
-                <span className="DirectPaymentCreateModal__confirmationValue">
-                  {selectedWallet?.wallet?.name && (
-                    <span className="DirectPaymentCreateModal__confirmationValueProvider">
-                      {selectedWallet.wallet.name}
-                    </span>
-                  )}
-                  <span className="DirectPaymentCreateModal__confirmationValueAddress">
-                    {shortenAddress(walletAddress)}
-                  </span>
-                </span>
-              </div>
-            )}
-
-            {paymentDataToConfirm.external_payment_id && (
-              <div className="DirectPaymentCreateModal__confirmationRow">
-                <span className="DirectPaymentCreateModal__confirmationLabel">
-                  External Payment ID:
-                </span>
-                <span className="DirectPaymentCreateModal__confirmationValue">
-                  {paymentDataToConfirm.external_payment_id}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <Modal visible={visible} onClose={handleClose}>
       <Modal.Heading>
-        {showConfirmation ? "Confirm Direct Payment" : "Create a direct payment"}
+        {showConfirmation ? "Confirm Direct Payment" : "Create A Direct Payment"}
       </Modal.Heading>
       {showConfirmation ? (
         <>
@@ -401,7 +323,13 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                 <ErrorWithExtras appError={{ message: errorMessage }} />
               </Notification>
             )}
-            {renderConfirmationScreen()}
+            {paymentDataToConfirm && (
+              <DirectPaymentConfirmation
+                paymentData={paymentDataToConfirm}
+                selectedReceiver={formData.selectedReceiver}
+                receiverSearch={formData.receiverSearch}
+              />
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -558,7 +486,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
             </Button>
             <Button
               size="sm"
-              variant="tertiary"
+              variant="primary"
               type="submit"
               disabled={isLoading}
               isLoading={isLoading}
