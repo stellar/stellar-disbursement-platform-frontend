@@ -137,6 +137,8 @@ export const Receivers = () => {
                 onSubmit={handleSearchChange}
                 onClear={handleSearchChange}
                 isLoading={isSearchInProgress}
+                infoText="Search results appear after entering at least 3 characters"
+                tooltipPlacement="top-start"
               />
             </div>
 

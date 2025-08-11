@@ -1,4 +1,5 @@
 import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
+import { useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "hooks/useDebounce";
 import { usePrevious } from "hooks/usePrevious";
 import { useEffect, useMemo, useState } from "react";
@@ -47,6 +48,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [paymentDataToConfirm, setPaymentDataToConfirm] =
     useState<CreateDirectPaymentRequest | null>(null);
+  const queryClient = useQueryClient();
   const debouncedReceiverSearch = useDebounce(
     formData.receiverSearch,
     directPayment.SEARCH_DEBOUNCE_MS,
@@ -65,7 +67,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   });
   const { data: searchResults, isLoading: searchLoading } = useSearchReceivers(
     debouncedReceiverSearch,
-    debouncedReceiverSearch.replace(/^\+/, "").length >= 3,
+    true,
   );
   const filteredWallets = useMemo(() => {
     if (!supportedWallets.length || !formData.assetId || !formData.selectedReceiver) {
@@ -80,7 +82,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   const isWalletFieldDisabled = !formData.selectedReceiver || walletsLoading;
   const isWalletFieldLoading = walletsLoading && Boolean(formData.selectedReceiver);
   const isReceiverSearchLoading =
-    searchLoading && debouncedReceiverSearch.replace(/^\+/, "").length >= 3;
+    searchLoading && debouncedReceiverSearch.trim().length >= directPayment.SEARCH_MIN_CHARS;
   const getWalletFieldNote = (): string => {
     if (!formData.selectedReceiver) return "Select a receiver first";
     if (isWalletFieldLoading) return "Loading compatible wallets…";
@@ -130,6 +132,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
         receiverSearch: "",
         walletId: "",
       }));
+      // Clear any cached receiver search results when changing asset or clearing the field
+      queryClient.removeQueries({ queryKey: ["receivers", "search"] });
       return;
     }
 
@@ -143,6 +147,10 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
         walletId: "",
       }));
       setFormErrors((prev) => ({ ...prev, walletId: "" }));
+      if (value.trim().length < directPayment.SEARCH_MIN_CHARS) {
+        // Proactively remove cached results so we don't show stale data
+        queryClient.removeQueries({ queryKey: ["receivers", "search"] });
+      }
       return;
     }
 
@@ -243,7 +251,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (
       !isReceiverWalletAddress &&
       formData.receiverSearch &&
-      debouncedReceiverSearch &&
+      debouncedReceiverSearch.trim().length >= directPayment.SEARCH_MIN_CHARS &&
       searchResults?.data?.length === 0
     ) {
       return (
@@ -253,7 +261,11 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       );
     }
 
-    if (searchResults?.data && searchResults.data.length > 0) {
+    if (
+      debouncedReceiverSearch.trim().length >= directPayment.SEARCH_MIN_CHARS &&
+      searchResults?.data &&
+      searchResults.data.length > 0
+    ) {
       return (
         <div className="DirectPaymentCreateModal__searchResults">
           <div className="DirectPaymentCreateModal__searchResults__content">
@@ -420,6 +432,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                     id="receiverSearch"
                     label="Receiver"
                     placeholder="Search by email, phone, or enter wallet address (GXXX...)"
+                    infoText="Search results appear after entering at least 3 characters"
+                    tooltipPlacement="top-start"
                     value={formData.receiverSearch}
                     onChange={handleInputChange}
                     error={formErrors.receiverSearch}
