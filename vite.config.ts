@@ -101,6 +101,8 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: "build",
       sourcemap: true,
+      // Target browsers that support top-level await
+      target: ["chrome89", "firefox89", "safari15", "edge89"],
       rollupOptions: {
         output: {
           manualChunks: {
