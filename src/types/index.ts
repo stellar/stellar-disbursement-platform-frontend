@@ -506,7 +506,8 @@ export type ApiAsset = {
 };
 
 export type ApiAssetWithTrustline = ApiAsset & {
-  enabled: boolean;
+  has_trustline: boolean;
+  balance: number;
 };
 
 export type ApiWallet = {
