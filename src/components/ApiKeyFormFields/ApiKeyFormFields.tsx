@@ -1,5 +1,5 @@
 import { Heading, Select, Textarea } from "@stellar/design-system";
-import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
+import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
 
 import "./styles.scss";
 
@@ -34,10 +34,7 @@ interface ApiKeyFormFieldsProps {
   permissions: PermissionState;
   onAllowedIPsChange: (value: string) => void;
   onAllowedIPsBlur: () => void;
-  onPermissionChange: (
-    resource: keyof PermissionState,
-    level: PermissionLevel,
-  ) => void;
+  onPermissionChange: (resource: keyof PermissionState, level: PermissionLevel) => void;
   allowedIPsError?: string;
   permissionsError?: string;
 }
@@ -71,18 +68,12 @@ export const ApiKeyFormFields: React.FC<ApiKeyFormFieldsProps> = ({
       />
 
       <div className="ApiKeyFormFields__permissions">
-        <Heading
-          as="h4"
-          size="xs"
-          className="ApiKeyFormFields__permissionsHeading"
-        >
+        <Heading as="h4" size="xs" className="ApiKeyFormFields__permissionsHeading">
           Permissions
         </Heading>
 
         {permissionsError && (
-          <div className="ApiKeyFormFields__permissionsError">
-            {permissionsError}
-          </div>
+          <div className="ApiKeyFormFields__permissionsError">{permissionsError}</div>
         )}
 
         <div className="ApiKeyFormFields__permissionsList">
@@ -95,9 +86,7 @@ export const ApiKeyFormFields: React.FC<ApiKeyFormFieldsProps> = ({
                 id="permission-all"
                 fieldSize="sm"
                 value={permissions.all}
-                onChange={(e) =>
-                  onPermissionChange("all", e.target.value as PermissionLevel)
-                }
+                onChange={(e) => onPermissionChange("all", e.target.value as PermissionLevel)}
               >
                 <option value="none">None</option>
                 <option value="read">Read</option>
@@ -108,16 +97,12 @@ export const ApiKeyFormFields: React.FC<ApiKeyFormFieldsProps> = ({
 
           <div
             className={`ApiKeyFormFields__resourcePermissions ${
-              isAllReadWrite
-                ? "ApiKeyFormFields__resourcePermissions--disabled"
-                : ""
+              isAllReadWrite ? "ApiKeyFormFields__resourcePermissions--disabled" : ""
             }`}
           >
             {API_KEY_PERMISSION_RESOURCES.map(({ key, label, hasWrite }) => (
               <div key={key} className="ApiKeyFormFields__permissionRow">
-                <span className="ApiKeyFormFields__permissionLabel">
-                  {label}
-                </span>
+                <span className="ApiKeyFormFields__permissionLabel">{label}</span>
                 <div className="ApiKeyFormFields__permissionSelect">
                   <Select
                     id={`permission-${key}`}
@@ -133,9 +118,7 @@ export const ApiKeyFormFields: React.FC<ApiKeyFormFieldsProps> = ({
                   >
                     <option value="none">None</option>
                     <option value="read">Read</option>
-                    {hasWrite && (
-                      <option value="read_write">Read & Write</option>
-                    )}
+                    {hasWrite && <option value="read_write">Read & Write</option>}
                   </Select>
                 </div>
               </div>
@@ -147,9 +130,7 @@ export const ApiKeyFormFields: React.FC<ApiKeyFormFieldsProps> = ({
   );
 };
 
-export const convertToApiPermissions = (
-  permissions: PermissionState,
-): string[] => {
+export const convertToApiPermissions = (permissions: PermissionState): string[] => {
   const apiPermissions: string[] = [];
 
   if (permissions.all === "read") {
@@ -180,9 +161,7 @@ export const hasAnyPermissions = (permissions: PermissionState): boolean => {
   return Object.values(permissions).some((level) => level !== "none");
 };
 
-export const parseExistingPermissions = (
-  permissions: string[],
-): PermissionState => {
+export const parseExistingPermissions = (permissions: string[]): PermissionState => {
   const state = { ...INITIAL_PERMISSIONS };
 
   const hasReadAll = permissions.includes("read:all");

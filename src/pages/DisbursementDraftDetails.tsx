@@ -2,16 +2,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Badge, Heading, Link, Button, Icon, Modal } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
-import { useRedux } from "hooks/useRedux";
-import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
-import { useAllBalances } from "hooks/useAllBalances";
+import { useRedux } from "@/hooks/useRedux";
+import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+import { useAllBalances } from "@/hooks/useAllBalances";
 import { BigNumber } from "bignumber.js";
 
-import { AppDispatch } from "store";
+import { AppDispatch } from "@/store";
 import {
   getDisbursementDetailsAction,
   setDisbursementDetailsAction,
-} from "store/ducks/disbursementDetails";
+} from "@/store/ducks/disbursementDetails";
 import {
   clearCsvUpdatedAction,
   clearDisbursementDraftsErrorAction,
@@ -20,21 +20,21 @@ import {
   saveNewCsvFileAction,
   setDraftIdAction,
   submitDisbursementSavedDraftAction,
-} from "store/ducks/disbursementDrafts";
+} from "@/store/ducks/disbursementDrafts";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { Routes } from "constants/settings";
-import { DisbursementButtons } from "components/DisbursementButtons";
-import { DisbursementDetails } from "components/DisbursementDetails";
-import { DisbursementInstructions } from "components/DisbursementInstructions";
-import { DisbursementInviteMessage } from "components/DisbursementInviteMessage";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { SectionHeader } from "components/SectionHeader";
-import { Toast } from "components/Toast";
-import { csvTotalAmount } from "helpers/csvTotalAmount";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Routes } from "@/constants/settings";
+import { DisbursementButtons } from "@/components/DisbursementButtons";
+import { DisbursementDetails } from "@/components/DisbursementDetails";
+import { DisbursementInstructions } from "@/components/DisbursementInstructions";
+import { DisbursementInviteMessage } from "@/components/DisbursementInviteMessage";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Toast } from "@/components/Toast";
+import { csvTotalAmount } from "@/helpers/csvTotalAmount";
 
-import { DisbursementDraft, DisbursementStep, hasWallet } from "types";
+import { DisbursementDraft, DisbursementStep, hasWallet } from "@/types";
 
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();

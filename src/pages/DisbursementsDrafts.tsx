@@ -3,20 +3,20 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Card, Heading, Icon, Link, Notification } from "@stellar/design-system";
 
-import { Routes } from "constants/settings";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
-import { getDisbursementDraftsAction, setDraftIdAction } from "store/ducks/disbursementDrafts";
-import { resetDisbursementDetailsAction } from "store/ducks/disbursementDetails";
+import { Routes } from "@/constants/settings";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { getDisbursementDraftsAction, setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { NewDisbursementButton } from "components/NewDisbursementButton";
-import { SectionHeader } from "components/SectionHeader";
-import { Table } from "components/Table";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { DisbursementDraft } from "types";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { NewDisbursementButton } from "@/components/NewDisbursementButton";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Table } from "@/components/Table";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { DisbursementDraft } from "@/types";
 
 export const DisbursementsDrafts = () => {
   const { disbursementDrafts } = useRedux("disbursementDrafts");

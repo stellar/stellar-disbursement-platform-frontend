@@ -1,20 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import { Card, Link, Notification } from "@stellar/design-system";
-import { Routes } from "constants/settings";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { renderNumberOrDash } from "helpers/renderNumberOrDash";
-import { useSort } from "hooks/useSort";
-import { AssetAmount } from "components/AssetAmount";
-import { DisbursementStatus } from "components/DisbursementStatus";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { Table } from "components/Table";
+import { Routes } from "@/constants/settings";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+import { useSort } from "@/hooks/useSort";
+import { AssetAmount } from "@/components/AssetAmount";
+import { DisbursementStatus } from "@/components/DisbursementStatus";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { Table } from "@/components/Table";
 import {
   ActionStatus,
   Disbursement,
   DisbursementsSearchParams,
   SortByDisbursements,
   SortDirection,
-} from "types";
+} from "@/types";
 
 interface DisbursementsTableProps {
   disbursementItems: Disbursement[];
@@ -78,18 +78,12 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
       }
 
       return (
-        <div className="Note">
-          {`There are no disbursements matching "${searchParams.q}"`}
-        </div>
+        <div className="Note">{`There are no disbursements matching "${searchParams.q}"`}</div>
       );
     }
 
     if (isFiltersSelected) {
-      return (
-        <div className="Note">
-          There are no disbursements matching selected filters
-        </div>
-      );
+      return <div className="Note">There are no disbursements matching selected filters</div>;
     }
 
     return <div className="Note">There are no disbursements</div>;
@@ -118,9 +112,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
             <Table.HeaderCell textAlign="right">Canceled</Table.HeaderCell>
             <Table.HeaderCell textAlign="right">Remaining</Table.HeaderCell>
             <Table.HeaderCell
-              sortDirection={
-                sortBy === "created_at" ? sortDir : defaultSortDirection
-              }
+              sortDirection={sortBy === "created_at" ? sortDir : defaultSortDirection}
               onSort={() => handleSort("created_at")}
             >
               Created at
@@ -142,11 +134,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                 <Checkbox id={`disbursement-${d.id}`} fieldSize="xs" />
               </Table.BodyCell> */}
                 <Table.BodyCell title={d.name} wrap={true}>
-                  <Link
-                    onClick={(event) => handleDisbursementClicked(event, d)}
-                  >
-                    {d.name}
-                  </Link>
+                  <Link onClick={(event) => handleDisbursementClicked(event, d)}>{d.name}</Link>
                 </Table.BodyCell>
                 <Table.BodyCell textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsTotalCount)}
@@ -164,9 +152,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                   {renderNumberOrDash(d.stats?.paymentsRemainingCount)}
                 </Table.BodyCell>
                 <Table.BodyCell width="9.5rem">
-                  <span className="Table-v2__cell--secondary">
-                    {formatDateTime(d.createdAt)}
-                  </span>
+                  <span className="Table-v2__cell--secondary">{formatDateTime(d.createdAt)}</span>
                 </Table.BodyCell>
 
                 <Table.BodyCell textAlign="right">

@@ -3,20 +3,20 @@ import { Card, Heading, Input, Button, Notification } from "@stellar/design-syst
 import { useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 
-import { SectionHeader } from "components/SectionHeader";
-import { InfoTooltip } from "components/InfoTooltip";
-import { Box } from "components/Box";
-import { LoadingContent } from "components/LoadingContent";
-import { AssetAmount } from "components/AssetAmount";
-import { DropdownMenu } from "components/DropdownMenu";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { Box } from "@/components/Box";
+import { LoadingContent } from "@/components/LoadingContent";
+import { AssetAmount } from "@/components/AssetAmount";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 
-import { AppDispatch } from "store";
-import { getOrgCircleInfoAction } from "store/ducks/organization";
-import { useRedux } from "hooks/useRedux";
-import { useCircleBalances } from "apiQueries/useCircleBalances";
-import { useUpdateCircleConfig } from "apiQueries/useUpdateCircleConfig";
+import { AppDispatch } from "@/store";
+import { getOrgCircleInfoAction } from "@/store/ducks/organization";
+import { useRedux } from "@/hooks/useRedux";
+import { useCircleBalances } from "@/apiQueries/useCircleBalances";
+import { useUpdateCircleConfig } from "@/apiQueries/useUpdateCircleConfig";
 
 export const DistributionAccountCircle = () => {
   const CIRCLE_API_MASKED_VALUE = "**************";

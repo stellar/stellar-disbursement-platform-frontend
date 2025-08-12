@@ -3,19 +3,19 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Heading } from "@stellar/design-system";
 
-import { AppDispatch } from "store";
-import { getDisbursementsAction } from "store/ducks/disbursements";
-import { resetDisbursementDetailsAction } from "store/ducks/disbursementDetails";
-import { setDraftIdAction } from "store/ducks/disbursementDrafts";
-import { useRedux } from "hooks/useRedux";
-import { Routes } from "constants/settings";
+import { AppDispatch } from "@/store";
+import { getDisbursementsAction } from "@/store/ducks/disbursements";
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
+import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+import { useRedux } from "@/hooks/useRedux";
+import { Routes } from "@/constants/settings";
 
-import { SectionHeader } from "components/SectionHeader";
-import { ShowForRoles } from "components/ShowForRoles";
-import { DisbursementsTable } from "components/DisbursementsTable";
-import { DashboardAnalytics } from "components/DashboardAnalytics";
-import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
-import { NewDisbursementButton } from "components/NewDisbursementButton";
+import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "@/components/ShowForRoles";
+import { DisbursementsTable } from "@/components/DisbursementsTable";
+import { DashboardAnalytics } from "@/components/DashboardAnalytics";
+import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 
 export const Home = () => {
   const { disbursements, userAccount } = useRedux("disbursements", "userAccount");

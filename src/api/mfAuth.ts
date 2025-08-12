@@ -1,4 +1,4 @@
-import { API_URL } from "constants/envVariables";
+import { API_URL } from "@/constants/envVariables";
 
 export const mfAuth = async (
   mfaCode: string,

@@ -1,5 +1,5 @@
-import { GENERIC_ERROR_MESSAGE } from "constants/settings";
-import { ApiError, AppError } from "types";
+import { GENERIC_ERROR_MESSAGE } from "@/constants/settings";
+import { ApiError, AppError } from "@/types";
 
 export const normalizeApiError = (
   error: ApiError,

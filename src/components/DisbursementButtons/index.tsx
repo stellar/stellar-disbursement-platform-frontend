@@ -1,7 +1,7 @@
 import { Button, Icon } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
-import { Routes } from "constants/settings";
-import { DisbursementDraftAction, DisbursementStep } from "types";
+import { Routes } from "@/constants/settings";
+import { DisbursementDraftAction, DisbursementStep } from "@/types";
 import "./styles.scss";
 
 interface DisbursementButtonsPros {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Icon, Toggle } from "@stellar/design-system";
-import { Title } from "components/Title";
+import { Title } from "@/components/Title";
 import "./styles.scss";
 
 interface WalletCardProps {

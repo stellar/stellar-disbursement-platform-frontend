@@ -29,41 +29,55 @@ declare global {
 
 const WINDOW_ENV_PATH = "/settings/env-config.js";
 
-const generateEnvConfig = async () => {
-  if (process?.env?.REACT_APP_DISABLE_WINDOW_ENV !== "true") {
-    const response = await fetch(WINDOW_ENV_PATH);
-    const text = await response.text();
+let windowEnvLoaded = false;
 
-    const script = new Function(text);
-    script.apply(null);
+const loadWindowEnvConfig = async () => {
+  if (windowEnvLoaded || process?.env?.REACT_APP_DISABLE_WINDOW_ENV === "true") {
+    return;
   }
 
+  try {
+    // Try to fetch and load the window env config
+    const response = await fetch(WINDOW_ENV_PATH);
+    if (response.ok) {
+      const text = await response.text();
+      // Execute the script to populate window._env_
+      const script = new Function(text);
+      script.apply(null);
+      windowEnvLoaded = true;
+    }
+  } catch (error) {
+    console.warn("Failed to load window env config from", WINDOW_ENV_PATH, ":", error);
+    // Fall back to process.env if window config fails
+  }
+};
+
+// Initialize window config loading (non-blocking)
+if (typeof window !== "undefined") {
+  loadWindowEnvConfig();
+}
+
+const getEnvConfig = () => {
   return {
-    API_URL: process?.env?.REACT_APP_API_URL || window._env_.API_URL,
+    API_URL: process?.env?.REACT_APP_API_URL || window?._env_?.API_URL || "",
     DISABLE_TENANT_PREFIL_FROM_DOMAIN:
       process?.env?.REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN ||
-      window._env_.DISABLE_TENANT_PREFIL_FROM_DOMAIN,
+      window?._env_?.DISABLE_TENANT_PREFIL_FROM_DOMAIN ||
+      "",
     STELLAR_EXPERT_URL:
-      process?.env?.REACT_APP_STELLAR_EXPERT_URL ||
-      window._env_.STELLAR_EXPERT_URL,
-    HORIZON_URL:
-      process?.env?.REACT_APP_HORIZON_URL || window._env_.HORIZON_URL,
+      process?.env?.REACT_APP_STELLAR_EXPERT_URL || window?._env_?.STELLAR_EXPERT_URL || "",
+    HORIZON_URL: process?.env?.REACT_APP_HORIZON_URL || window?._env_?.HORIZON_URL || "",
     RECAPTCHA_SITE_KEY:
-      process?.env?.REACT_APP_RECAPTCHA_SITE_KEY ||
-      window._env_.RECAPTCHA_SITE_KEY,
+      process?.env?.REACT_APP_RECAPTCHA_SITE_KEY || window?._env_?.RECAPTCHA_SITE_KEY || "",
     SINGLE_TENANT_MODE: Boolean(
-      process?.env?.REACT_APP_SINGLE_TENANT_MODE ||
-        window._env_.SINGLE_TENANT_MODE,
+      process?.env?.REACT_APP_SINGLE_TENANT_MODE || window?._env_?.SINGLE_TENANT_MODE,
     ),
     USE_SSO: Boolean(process?.env?.REACT_APP_USE_SSO || window?._env_?.USE_SSO),
-    OIDC_AUTHORITY:
-      process?.env?.REACT_APP_OIDC_AUTHORITY || window?._env_?.OIDC_AUTHORITY,
-    OIDC_CLIENT_ID:
-      process?.env?.REACT_APP_OIDC_CLIENT_ID || window?._env_?.OIDC_CLIENT_ID,
+    OIDC_AUTHORITY: process?.env?.REACT_APP_OIDC_AUTHORITY || window?._env_?.OIDC_AUTHORITY || "",
+    OIDC_CLIENT_ID: process?.env?.REACT_APP_OIDC_CLIENT_ID || window?._env_?.OIDC_CLIENT_ID || "",
     OIDC_REDIRECT_URI:
-      process?.env?.REACT_APP_OIDC_REDIRECT_URI ||
-      window?._env_?.OIDC_REDIRECT_URI,
-    OIDC_SCOPE: process?.env?.REACT_APP_OIDC_SCOPE || window?._env_?.OIDC_SCOPE,
+      process?.env?.REACT_APP_OIDC_REDIRECT_URI || window?._env_?.OIDC_REDIRECT_URI || "",
+    OIDC_SCOPE: process?.env?.REACT_APP_OIDC_SCOPE || window?._env_?.OIDC_SCOPE || "",
     OIDC_USERNAME_MAPPING:
       ((process?.env?.REACT_APP_OIDC_USERNAME_MAPPING ||
         window?._env_?.OIDC_USERNAME_MAPPING) as OidcUsername) || undefined,
@@ -83,4 +97,4 @@ export const {
   OIDC_REDIRECT_URI,
   OIDC_SCOPE,
   OIDC_USERNAME_MAPPING,
-} = await generateEnvConfig();
+} = getEnvConfig();

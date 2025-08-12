@@ -1,42 +1,34 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "store";
-import { getProfileInfo } from "api/getProfileInfo";
-import { patchProfileInfo } from "api/patchProfileInfo";
-import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "helpers/refreshSessionToken";
-import { normalizeApiError } from "helpers/normalizeApiError";
-import {
-  ApiError,
-  ApiProfileInfo,
-  ProfileInitialState,
-  RejectMessage,
-} from "types";
+import { RootState } from "@/store";
+import { getProfileInfo } from "@/api/getProfileInfo";
+import { patchProfileInfo } from "@/api/patchProfileInfo";
+import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { ApiError, ApiProfileInfo, ProfileInitialState, RejectMessage } from "@/types";
 
 export const getProfileInfoAction = createAsyncThunk<
   ApiProfileInfo,
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "profile/getProfileInfoAction",
-  async (_, { rejectWithValue, getState, dispatch }) => {
-    const { token } = getState().userAccount;
+>("profile/getProfileInfoAction", async (_, { rejectWithValue, getState, dispatch }) => {
+  const { token } = getState().userAccount;
 
-    try {
-      const profileInfo = await getProfileInfo(token);
-      refreshSessionToken(dispatch);
+  try {
+    const profileInfo = await getProfileInfo(token);
+    refreshSessionToken(dispatch);
 
-      return profileInfo;
-    } catch (error: unknown) {
-      const apiError = normalizeApiError(error as ApiError);
-      const errorString = apiError.message;
-      endSessionIfTokenInvalid(errorString, dispatch);
+    return profileInfo;
+  } catch (error: unknown) {
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error fetching profile info: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error fetching profile info: ${errorString}`,
+    });
+  }
+});
 
 export const updateProfileInfoAction = createAsyncThunk<
   string,
@@ -44,10 +36,7 @@ export const updateProfileInfoAction = createAsyncThunk<
   { rejectValue: RejectMessage; state: RootState }
 >(
   "profile/updateProfileInfoAction",
-  async (
-    { firstName, lastName, email },
-    { rejectWithValue, getState, dispatch },
-  ) => {
+  async ({ firstName, lastName, email }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
 
     try {
@@ -140,5 +129,4 @@ const profileSlice = createSlice({
 
 export const profileSelector = (state: RootState) => state.profile;
 export const { reducer } = profileSlice;
-export const { clearUpdateMessageAction, clearErrorAction } =
-  profileSlice.actions;
+export const { clearUpdateMessageAction, clearErrorAction } = profileSlice.actions;

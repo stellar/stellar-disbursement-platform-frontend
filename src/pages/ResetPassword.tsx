@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Button, Heading, Input, Link, Loader, Notification } from "@stellar/design-system";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { SINGLE_TENANT_MODE } from "constants/envVariables";
-import { ORG_NAME_INFO_TEXT } from "constants/settings";
-import { useResetPassword } from "apiQueries/useResetPassword";
-import { validateNewPassword } from "helpers/validateNewPassword";
-import { validatePasswordMatch } from "helpers/validatePasswordMatch";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { InfoTooltip } from "components/InfoTooltip";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { SINGLE_TENANT_MODE } from "@/constants/envVariables";
+import { ORG_NAME_INFO_TEXT } from "@/constants/settings";
+import { useResetPassword } from "@/apiQueries/useResetPassword";
+import { validateNewPassword } from "@/helpers/validateNewPassword";
+import { validatePasswordMatch } from "@/helpers/validatePasswordMatch";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 export const ResetPassword = () => {
   // Get token from URL params

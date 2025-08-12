@@ -1,8 +1,8 @@
 import { Card, Heading } from "@stellar/design-system";
 
-import { Table } from "components/Table";
+import { Table } from "@/components/Table";
 
-import { API_KEY_FIELD_DESCRIPTIONS } from "constants/apiKeyDescriptionFields";
+import { API_KEY_FIELD_DESCRIPTIONS } from "@/constants/apiKeyDescriptionFields";
 
 import "./styles.scss";
 

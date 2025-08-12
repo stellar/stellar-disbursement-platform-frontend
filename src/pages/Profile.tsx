@@ -13,36 +13,36 @@ import {
   Checkbox,
 } from "@stellar/design-system";
 
-import { DropdownMenu } from "components/DropdownMenu";
-import { FileUpload } from "components/FileUpload";
-import { InfoTooltip } from "components/InfoTooltip";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { SectionHeader } from "components/SectionHeader";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { FileUpload } from "@/components/FileUpload";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { USE_SSO } from "constants/envVariables";
-import { Routes } from "constants/settings";
-import { singleUserStore } from "helpers/singleSingOn";
-import { userRoleText } from "helpers/userRoleText";
-import { localStorageSessionToken } from "helpers/localStorageSessionToken";
-import { useRedux } from "hooks/useRedux";
-import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
-import { AppDispatch, resetStoreAction } from "store";
+import { USE_SSO } from "@/constants/envVariables";
+import { Routes } from "@/constants/settings";
+import { singleUserStore } from "@/helpers/singleSingOn";
+import { userRoleText } from "@/helpers/userRoleText";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { useRedux } from "@/hooks/useRedux";
+import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+import { AppDispatch, resetStoreAction } from "@/store";
 import {
   getOrgInfoAction,
   updateOrgInfoAction,
   clearErrorAction as orgClearErrorAction,
   clearUpdateMessageAction as orgClearUpdateMessageAction,
   getOrgLogoAction,
-} from "store/ducks/organization";
+} from "@/store/ducks/organization";
 import {
   clearErrorAction,
   clearUpdateMessageAction,
   getProfileInfoAction,
   updateProfileInfoAction,
-} from "store/ducks/profile";
-import { AccountProfile } from "types";
+} from "@/store/ducks/profile";
+import { AccountProfile } from "@/types";
 
 export const Profile = () => {
   const { profile, organization } = useRedux("profile", "organization");

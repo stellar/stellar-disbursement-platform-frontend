@@ -1,5 +1,5 @@
-import { AssetAmount } from "components/AssetAmount";
-import { AccountBalanceItem } from "types";
+import { AssetAmount } from "@/components/AssetAmount";
+import { AccountBalanceItem } from "@/types";
 
 interface AccountBalancesProps {
   accountBalances: AccountBalanceItem[] | undefined;

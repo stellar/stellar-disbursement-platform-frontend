@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { sanitizeObject } from "helpers/sanitizeObject";
-import { AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { sanitizeObject } from "@/helpers/sanitizeObject";
+import { AppError } from "@/types";
 
 type NewPasswordFields = {
   currentPassword?: string;
@@ -18,9 +18,7 @@ export const useNewPassword = () => {
       });
 
       if (Object.keys(fieldsToSubmit).length < 2) {
-        throw Error(
-          "Update profile password requires current password and new password.",
-        );
+        throw Error("Update profile password requires current password and new password.");
       }
 
       return fetchApi(`${API_URL}/profile/reset-password`, {
@@ -34,10 +32,7 @@ export const useNewPassword = () => {
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as { message: string },
-    mutateAsync: async ({
-      currentPassword,
-      newPassword,
-    }: NewPasswordFields) => {
+    mutateAsync: async ({ currentPassword, newPassword }: NewPasswordFields) => {
       try {
         await mutation.mutateAsync({ currentPassword, newPassword });
       } catch {

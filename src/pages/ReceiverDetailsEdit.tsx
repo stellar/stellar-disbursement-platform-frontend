@@ -2,16 +2,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Heading, Button, Input, Icon, Notification } from "@stellar/design-system";
 
-import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
-import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { CopyWithIcon } from "components/CopyWithIcon";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { InfoTooltip } from "components/InfoTooltip";
-import { LoadingContent } from "components/LoadingContent";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { SectionHeader } from "components/SectionHeader";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
 
 import {
   DisbursementVerificationField,
@@ -19,8 +19,8 @@ import {
   ReceiverEditFields,
   ReceiverVerification,
   VerificationFieldMap,
-} from "types";
-import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
+} from "@/types";
+import { useUpdateReceiverDetails } from "@/apiQueries/useUpdateReceiverDetails";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();

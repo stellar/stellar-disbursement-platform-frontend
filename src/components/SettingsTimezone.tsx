@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Card, Select, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "components/InfoTooltip";
-import { DropdownMenu } from "components/DropdownMenu";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { TIME_ZONES } from "constants/settings";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { TIME_ZONES } from "@/constants/settings";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
 import {
   updateOrgInfoAction,
   clearUpdateMessageAction,
   getOrgInfoAction,
-} from "store/ducks/organization";
+} from "@/store/ducks/organization";
 
 export const SettingsTimezone = () => {
   const { organization } = useRedux("organization");

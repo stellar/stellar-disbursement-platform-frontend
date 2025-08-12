@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { AppError } from "@/types";
 
 type UpdateReceiverWalletStatusParams = {
   receiverWalletId: string;
@@ -10,17 +10,11 @@ type UpdateReceiverWalletStatusParams = {
 
 export const useUpdateReceiverWalletStatus = () => {
   const mutation = useMutation({
-    mutationFn: ({
-      receiverWalletId,
-      status,
-    }: UpdateReceiverWalletStatusParams) => {
-      return fetchApi(
-        `${API_URL}/receivers/wallets/${receiverWalletId}/status`,
-        {
-          method: "PATCH",
-          body: JSON.stringify({ status }),
-        },
-      );
+    mutationFn: ({ receiverWalletId, status }: UpdateReceiverWalletStatusParams) => {
+      return fetchApi(`${API_URL}/receivers/wallets/${receiverWalletId}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
     },
   });
 
@@ -28,10 +22,7 @@ export const useUpdateReceiverWalletStatus = () => {
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as { message: string },
-    mutateAsync: async ({
-      receiverWalletId,
-      status,
-    }: UpdateReceiverWalletStatusParams) => {
+    mutateAsync: async ({ receiverWalletId, status }: UpdateReceiverWalletStatusParams) => {
       try {
         await mutation.mutateAsync({ receiverWalletId, status });
       } catch {

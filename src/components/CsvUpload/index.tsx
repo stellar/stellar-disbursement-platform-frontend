@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { CsvUploadButton } from "components/CsvUploadButton";
-import { FileUpload } from "components/FileUpload";
+import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
+import { CsvUploadButton } from "@/components/CsvUploadButton";
+import { FileUpload } from "@/components/FileUpload";
 import "./styles.scss";
 
 interface CsvUploadProps {

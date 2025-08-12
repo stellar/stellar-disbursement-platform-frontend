@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { AppError, BridgeIntegration, BridgeIntegrationUpdate } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { AppError, BridgeIntegration, BridgeIntegrationUpdate } from "@/types";
 
 export const useUpdateBridgeIntegration = () => {
   const queryClient = useQueryClient();

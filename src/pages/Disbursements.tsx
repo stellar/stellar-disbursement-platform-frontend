@@ -3,26 +3,26 @@ import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { FilterMenu } from "components/FilterMenu";
-import { DisbursementsTable } from "components/DisbursementsTable";
-import { NewDisbursementButton } from "components/NewDisbursementButton";
-import { Pagination } from "components/Pagination";
-import { SearchInput } from "components/SearchInput";
-import { SectionHeader } from "components/SectionHeader";
-import { ShowForRoles } from "components/ShowForRoles";
+import { FilterMenu } from "@/components/FilterMenu";
+import { DisbursementsTable } from "@/components/DisbursementsTable";
+import { NewDisbursementButton } from "@/components/NewDisbursementButton";
+import { Pagination } from "@/components/Pagination";
+import { SearchInput } from "@/components/SearchInput";
+import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "@/components/ShowForRoles";
 
-import { PAGE_LIMIT_OPTIONS, Routes, UI_STATUS_DISBURSEMENT } from "constants/settings";
-import { number } from "helpers/formatIntlNumber";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
+import { PAGE_LIMIT_OPTIONS, Routes, UI_STATUS_DISBURSEMENT } from "@/constants/settings";
+import { number } from "@/helpers/formatIntlNumber";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
 import {
   getDisbursementsAction,
   getDisbursementsWithParamsAction,
-} from "store/ducks/disbursements";
-import { exportDataAction } from "store/ducks/dataExport";
-import { resetDisbursementDetailsAction } from "store/ducks/disbursementDetails";
-import { setDraftIdAction } from "store/ducks/disbursementDrafts";
-import { CommonFilters, SortByDisbursements, SortDirection } from "types";
+} from "@/store/ducks/disbursements";
+import { exportDataAction } from "@/store/ducks/dataExport";
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
+import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+import { CommonFilters, SortByDisbursements, SortDirection } from "@/types";
 
 export const Disbursements = () => {
   const { disbursements } = useRedux("disbursements");

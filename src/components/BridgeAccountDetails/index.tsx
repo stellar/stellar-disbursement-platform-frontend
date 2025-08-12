@@ -1,6 +1,6 @@
-import { CopyWithIcon } from "components/CopyWithIcon";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
 
-import { BridgeIntegration } from "types";
+import { BridgeIntegration } from "@/types";
 
 import "./styles.scss";
 
