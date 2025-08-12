@@ -30,6 +30,7 @@ declare global {
 const WINDOW_ENV_PATH = "/settings/env-config.js";
 
 let windowEnvLoaded = false;
+let windowEnvPromise: Promise<void> | null = null;
 
 const loadWindowEnvConfig = async () => {
   if (windowEnvLoaded || process?.env?.REACT_APP_DISABLE_WINDOW_ENV === "true") {
@@ -52,10 +53,17 @@ const loadWindowEnvConfig = async () => {
   }
 };
 
-// Initialize window config loading (non-blocking)
+// Initialize window config loading and store the promise
 if (typeof window !== "undefined") {
-  loadWindowEnvConfig();
+  windowEnvPromise = loadWindowEnvConfig();
 }
+
+// Function to ensure window config is loaded before accessing env vars
+export const ensureWindowEnvLoaded = async () => {
+  if (windowEnvPromise) {
+    await windowEnvPromise;
+  }
+};
 
 const getEnvConfig = () => {
   return {
