@@ -67,8 +67,22 @@ const getEnvConfig = () => {
     STELLAR_EXPERT_URL:
       process?.env?.REACT_APP_STELLAR_EXPERT_URL || window?._env_?.STELLAR_EXPERT_URL || "",
     HORIZON_URL: process?.env?.REACT_APP_HORIZON_URL || window?._env_?.HORIZON_URL || "",
-    RECAPTCHA_SITE_KEY:
-      process?.env?.REACT_APP_RECAPTCHA_SITE_KEY || window?._env_?.RECAPTCHA_SITE_KEY || "",
+    RECAPTCHA_SITE_KEY: (() => {
+      const processEnv = process?.env?.REACT_APP_RECAPTCHA_SITE_KEY;
+      const windowEnv = window?._env_?.RECAPTCHA_SITE_KEY;
+      const result = processEnv || windowEnv || "";
+
+      // Debug logging for production issues
+      if (!result) {
+        console.warn("ReCaptcha site key not found:", {
+          processEnv,
+          windowEnv,
+          hasWindowEnv: !!window?._env_,
+        });
+      }
+
+      return result;
+    })(),
     SINGLE_TENANT_MODE: Boolean(
       process?.env?.REACT_APP_SINGLE_TENANT_MODE || window?._env_?.SINGLE_TENANT_MODE,
     ),

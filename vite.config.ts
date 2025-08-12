@@ -82,11 +82,22 @@ export default defineConfig(({ mode }) => {
       host: true,
       hmr: {
         overlay: true,
+        clientPort: undefined, // Use same port as dev server
+      },
+      // Improve file watching
+      watch: {
+        usePolling: false,
+        interval: 100,
+        ignored: ["**/node_modules/**", "**/.git/**", "**/build/**"],
       },
     },
     css: {
       devSourcemap: mode === "development",
+      // Improve CSS HMR
+      hmr: mode === "development",
     },
+    // Improve dependency pre-bundling for faster HMR
+    cacheDir: "node_modules/.vite",
     build: {
       outDir: "build",
       sourcemap: true,
@@ -138,6 +149,10 @@ export default defineConfig(({ mode }) => {
       define: {
         global: "globalThis",
       },
+      // Faster rebuilds in development
+      ...(mode === "development" && {
+        keepNames: true,
+      }),
     },
   };
 });
