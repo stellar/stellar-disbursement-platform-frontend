@@ -1,6 +1,6 @@
 import { Button, Icon, Badge } from "@stellar/design-system";
 
-import { BridgeIntegration } from "types";
+import { BridgeIntegration } from "@/types";
 
 import "./styles.scss";
 

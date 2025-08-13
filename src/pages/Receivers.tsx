@@ -4,28 +4,28 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { AppDispatch } from "store";
-import { exportDataAction } from "store/ducks/dataExport";
+import { AppDispatch } from "@/store";
+import { exportDataAction } from "@/store/ducks/dataExport";
 
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { FilterMenu } from "components/FilterMenu";
-import { Pagination } from "components/Pagination";
-import { ReceiverCreateModal } from "components/ReceiverCreateModal/ReceiverCreateModal";
-import { ReceiversTable } from "components/ReceiversTable";
-import { SearchInput } from "components/SearchInput";
-import { SectionHeader } from "components/SectionHeader";
+import { FilterMenu } from "@/components/FilterMenu";
+import { SearchInput } from "@/components/SearchInput";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Pagination } from "@/components/Pagination";
+import { ReceiversTable } from "@/components/ReceiversTable";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { ReceiverCreateModal } from "@/components/ReceiverCreateModal/ReceiverCreateModal";
 
-import { useCreateReceiver } from "apiQueries/useCreateReceiver";
-import { useReceivers } from "apiQueries/useReceivers";
-import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
-import { number } from "helpers/formatIntlNumber";
+import { useCreateReceiver } from "@/apiQueries/useCreateReceiver";
+import { useReceivers } from "@/apiQueries/useReceivers";
+import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
+import { number } from "@/helpers/formatIntlNumber";
 import {
   CommonFilters,
   CreateReceiverRequest,
   SortByReceivers,
   SortDirection,
   SortParams,
-} from "types";
+} from "@/types";
 
 export const Receivers = () => {
   const [currentPage, setCurrentPage] = useState(1);

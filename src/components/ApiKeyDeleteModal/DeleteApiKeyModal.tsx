@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
-import { usePrevious } from "hooks/usePrevious";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { usePrevious } from "@/hooks/usePrevious";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { AppError, ApiKey } from "types";
+import { AppError, ApiKey } from "@/types";
 
 import "./styles.scss";
 

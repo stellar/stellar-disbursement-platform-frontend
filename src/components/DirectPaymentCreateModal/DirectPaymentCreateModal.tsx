@@ -1,19 +1,19 @@
 import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
 import { useQueryClient } from "@tanstack/react-query";
-import { useDebounce } from "hooks/useDebounce";
-import { usePrevious } from "hooks/usePrevious";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePrevious } from "@/hooks/usePrevious";
 import { useEffect, useMemo, useState } from "react";
 
-import { useAllAssets } from "apiQueries/useAllAssets";
-import { useSearchReceivers } from "apiQueries/useSearchReceivers";
-import { useWallets } from "apiQueries/useWallets";
+import { useAllAssets } from "@/apiQueries/useAllAssets";
+import { useSearchReceivers } from "@/apiQueries/useSearchReceivers";
+import { useWallets } from "@/apiQueries/useWallets";
 
-import { DirectPaymentConfirmation } from "components/DirectPaymentConfirmation/DirectPaymentConfirmation";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { SelectedReceiverInfo } from "components/SelectedReceiverInfo/SelectedReceiverInfo";
+import { DirectPaymentConfirmation } from "@/components/DirectPaymentConfirmation/DirectPaymentConfirmation";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { SelectedReceiverInfo } from "@/components/SelectedReceiverInfo/SelectedReceiverInfo";
 
-import { directPayment } from "constants/directPayment";
-import { ApiAssetWithTrustline, ApiReceiver, CreateDirectPaymentRequest } from "types";
+import { directPayment } from "@/constants/directPayment";
+import { ApiAssetWithTrustline, ApiReceiver, CreateDirectPaymentRequest } from "@/types";
 
 import "./styles.scss";
 

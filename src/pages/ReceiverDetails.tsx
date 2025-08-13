@@ -11,31 +11,31 @@ import {
   Modal,
 } from "@stellar/design-system";
 
-import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
+import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
-import { CopyWithIcon } from "components/CopyWithIcon";
-import { AssetAmount } from "components/AssetAmount";
-import { InfoTooltip } from "components/InfoTooltip";
-import { ReceiverWalletBalance } from "components/ReceiverWalletBalance";
-import { ReceiverWalletHistory } from "components/ReceiverWalletHistory";
-import { LoadingContent } from "components/LoadingContent";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { ReceiverPayments } from "components/ReceiverPayments";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SectionHeader } from "@/components/SectionHeader";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { AssetAmount } from "@/components/AssetAmount";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { ReceiverWalletBalance } from "@/components/ReceiverWalletBalance";
+import { ReceiverWalletHistory } from "@/components/ReceiverWalletHistory";
+import { LoadingContent } from "@/components/LoadingContent";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { ReceiverPayments } from "@/components/ReceiverPayments";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
-import { useReceiverWalletInviteSmsRetry } from "apiQueries/useReceiverWalletInviteSmsRetry";
-import { useUpdateReceiverWalletStatus } from "apiQueries/useUpdateReceiverWalletStatus";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { useReceiverWalletInviteSmsRetry } from "@/apiQueries/useReceiverWalletInviteSmsRetry";
+import { useUpdateReceiverWalletStatus } from "@/apiQueries/useUpdateReceiverWalletStatus";
 
-import { percent } from "helpers/formatIntlNumber";
-import { renderNumberOrDash } from "helpers/renderNumberOrDash";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { shortenAccountKey } from "helpers/shortenAccountKey";
-import { renderTextWithCount } from "helpers/renderTextWithCount";
+import { percent } from "@/helpers/formatIntlNumber";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { shortenAccountKey } from "@/helpers/shortenAccountKey";
+import { renderTextWithCount } from "@/helpers/renderTextWithCount";
 
-import { ReceiverWallet, ReceiverDetails as ReceiverDetailsType } from "types";
+import { ReceiverWallet, ReceiverDetails as ReceiverDetailsType } from "@/types";
 
 export const ReceiverDetails = () => {
   const { id: receiverId } = useParams();

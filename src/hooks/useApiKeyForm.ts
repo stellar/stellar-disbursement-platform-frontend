@@ -4,9 +4,9 @@ import {
   PermissionLevel,
   PermissionState,
   hasAnyPermissions,
-} from "components/ApiKeyFormFields/ApiKeyFormFields";
-import { validateAllowedIPs } from "helpers/validateIPs";
-import { AppError } from "types";
+} from "@/components/ApiKeyFormFields/ApiKeyFormFields";
+import { validateAllowedIPs } from "@/helpers/validateIPs";
+import { AppError } from "@/types";
 
 interface UseApiKeyFormProps {
   onResetQuery: () => void;

@@ -1,15 +1,15 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "store";
-import { deleteDisbursementDraft } from "api/deleteDisbursementDraft";
-import { getDisbursementDrafts } from "api/getDisbursementDrafts";
-import { postDisbursement } from "api/postDisbursement";
-import { postDisbursementFile } from "api/postDisbursementFile";
-import { postDisbursementWithInstructions } from "api/postDisbursementWithInstructions";
-import { patchDisbursementStatus } from "api/patchDisbursementStatus";
-import { formatDisbursement } from "helpers/formatDisbursements";
-import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "helpers/refreshSessionToken";
-import { normalizeApiError } from "helpers/normalizeApiError";
+import { RootState } from "@/store";
+import { deleteDisbursementDraft } from "@/api/deleteDisbursementDraft";
+import { getDisbursementDrafts } from "@/api/getDisbursementDrafts";
+import { postDisbursement } from "@/api/postDisbursement";
+import { postDisbursementFile } from "@/api/postDisbursementFile";
+import { postDisbursementWithInstructions } from "@/api/postDisbursementWithInstructions";
+import { patchDisbursementStatus } from "@/api/patchDisbursementStatus";
+import { formatDisbursement } from "@/helpers/formatDisbursements";
+import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
 import {
   ApiError,
   Disbursement,
@@ -18,7 +18,7 @@ import {
   DisbursementDraftsInitialState,
   Pagination,
   RejectMessage,
-} from "types";
+} from "@/types";
 
 export const getDisbursementDraftsAction = createAsyncThunk<
   {
@@ -73,16 +73,11 @@ export const saveDisbursementDraftAction = createAsyncThunk<
 
     try {
       if (file) {
-        const newDisbursement = await postDisbursementWithInstructions(
-          token,
-          details,
-          file,
-        );
+        const newDisbursement = await postDisbursementWithInstructions(token, details, file);
         refreshSessionToken(dispatch);
         return newDisbursement.id;
       } else {
-        const draftId =
-          newDraftId ?? (await postDisbursement(token, details)).id;
+        const draftId = newDraftId ?? (await postDisbursement(token, details)).id;
         refreshSessionToken(dispatch);
         return draftId;
       }
@@ -117,11 +112,7 @@ export const submitDisbursementNewDraftAction = createAsyncThunk<
 
     try {
       if (!draftId) {
-        const newDisbursement = await postDisbursementWithInstructions(
-          token,
-          details,
-          file,
-        );
+        const newDisbursement = await postDisbursementWithInstructions(token, details, file);
         draftId = newDisbursement.id;
       }
 
@@ -184,10 +175,7 @@ export const submitDisbursementSavedDraftAction = createAsyncThunk<
   { rejectValue: DisbursementDraftRejectMessage; state: RootState }
 >(
   "disbursementDrafts/submitDisbursementSavedDraftAction",
-  async (
-    { details, file, savedDraftId },
-    { rejectWithValue, getState, dispatch },
-  ) => {
+  async ({ details, file, savedDraftId }, { rejectWithValue, getState, dispatch }) => {
     const { isApprovalRequired } = getState().organization.data;
     const { token } = getState().userAccount;
     const { id } = getState().disbursementDetails.details;
@@ -282,12 +270,9 @@ const disbursementDraftsSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Get disbursement drafts
-    builder.addCase(
-      getDisbursementDraftsAction.pending,
-      (state = initialState) => {
-        state.status = "PENDING";
-      },
-    );
+    builder.addCase(getDisbursementDraftsAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+    });
     builder.addCase(getDisbursementDraftsAction.fulfilled, (state, action) => {
       state.items = action.payload.items;
       state.pagination = action.payload.pagination;
@@ -302,13 +287,10 @@ const disbursementDraftsSlice = createSlice({
       state.errorString = action.payload?.errorString;
     });
     // Save disbursement draft
-    builder.addCase(
-      saveDisbursementDraftAction.pending,
-      (state = initialState) => {
-        state.status = "PENDING";
-        state.actionType = "save";
-      },
-    );
+    builder.addCase(saveDisbursementDraftAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+      state.actionType = "save";
+    });
     builder.addCase(saveDisbursementDraftAction.fulfilled, (state, action) => {
       state.newDraftId = action.payload;
       state.status = "SUCCESS";
@@ -322,30 +304,21 @@ const disbursementDraftsSlice = createSlice({
       state.newDraftId = action.payload?.newDraftId;
     });
     // Submit new disbursement
-    builder.addCase(
-      submitDisbursementNewDraftAction.pending,
-      (state = initialState) => {
-        state.status = "PENDING";
-        state.actionType = "submit";
-      },
-    );
-    builder.addCase(
-      submitDisbursementNewDraftAction.fulfilled,
-      (state, action) => {
-        state.newDraftId = action.payload;
-        state.status = "SUCCESS";
-        state.errorString = undefined;
-      },
-    );
-    builder.addCase(
-      submitDisbursementNewDraftAction.rejected,
-      (state, action) => {
-        state.status = "ERROR";
-        state.errorString = action.payload?.errorString;
-        state.errorExtras = action.payload?.errorExtras;
-        state.newDraftId = action.payload?.newDraftId;
-      },
-    );
+    builder.addCase(submitDisbursementNewDraftAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+      state.actionType = "submit";
+    });
+    builder.addCase(submitDisbursementNewDraftAction.fulfilled, (state, action) => {
+      state.newDraftId = action.payload;
+      state.status = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(submitDisbursementNewDraftAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+      state.errorExtras = action.payload?.errorExtras;
+      state.newDraftId = action.payload?.newDraftId;
+    });
     // Submit new CSV file
     builder.addCase(saveNewCsvFileAction.pending, (state = initialState) => {
       state.status = "PENDING";
@@ -361,30 +334,21 @@ const disbursementDraftsSlice = createSlice({
       state.errorExtras = action.payload?.errorExtras;
     });
     // Submit saved disbursement
-    builder.addCase(
-      submitDisbursementSavedDraftAction.pending,
-      (state = initialState) => {
-        state.status = "PENDING";
-        state.actionType = "submit";
-      },
-    );
-    builder.addCase(
-      submitDisbursementSavedDraftAction.fulfilled,
-      (state, action) => {
-        state.newDraftId = action.payload;
-        state.status = "SUCCESS";
-        state.errorString = undefined;
-      },
-    );
-    builder.addCase(
-      submitDisbursementSavedDraftAction.rejected,
-      (state, action) => {
-        state.status = "ERROR";
-        state.errorString = action.payload?.errorString;
-        state.errorExtras = action.payload?.errorExtras;
-        state.newDraftId = action.payload?.newDraftId;
-      },
-    );
+    builder.addCase(submitDisbursementSavedDraftAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+      state.actionType = "submit";
+    });
+    builder.addCase(submitDisbursementSavedDraftAction.fulfilled, (state, action) => {
+      state.newDraftId = action.payload;
+      state.status = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(submitDisbursementSavedDraftAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+      state.errorExtras = action.payload?.errorExtras;
+      state.newDraftId = action.payload?.newDraftId;
+    });
     // Delete disbursement draft
     builder.addCase(deleteDisbursementDraftAction.pending, (state) => {
       state.status = "PENDING";
@@ -402,8 +366,7 @@ const disbursementDraftsSlice = createSlice({
   },
 });
 
-export const disbursementDraftsSelector = (state: RootState) =>
-  state.disbursementDrafts;
+export const disbursementDraftsSelector = (state: RootState) => state.disbursementDrafts;
 export const { reducer } = disbursementDraftsSlice;
 export const {
   resetDisbursementDraftsAction,

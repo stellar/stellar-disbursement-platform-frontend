@@ -1,17 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { AppError } from "@/types";
 
 export const useUpdateSmsTemplate = () => {
   const mutation = useMutation({
     mutationFn: (template: string) => {
       const formData = new FormData();
 
-      formData.append(
-        "data",
-        `{"receiver_registration_message_template": "${template}"}`,
-      );
+      formData.append("data", `{"receiver_registration_message_template": "${template}"}`);
 
       return fetchApi(
         `${API_URL}/organization`,

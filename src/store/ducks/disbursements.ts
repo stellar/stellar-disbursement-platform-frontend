@@ -1,43 +1,40 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "store";
-import { getDisbursements } from "api/getDisbursements";
-import { formatDisbursements } from "helpers/formatDisbursements";
-import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "helpers/refreshSessionToken";
-import { normalizeApiError } from "helpers/normalizeApiError";
+import { RootState } from "@/store";
+import { getDisbursements } from "@/api/getDisbursements";
+import { formatDisbursements } from "@/helpers/formatDisbursements";
+import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
 import {
   ApiDisbursements,
   ApiError,
   DisbursementsInitialState,
   DisbursementsSearchParams,
   RejectMessage,
-} from "types";
+} from "@/types";
 
 export const getDisbursementsAction = createAsyncThunk<
   ApiDisbursements,
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "disbursements/getDisbursementsAction",
-  async (_, { rejectWithValue, getState, dispatch }) => {
-    const { token } = getState().userAccount;
+>("disbursements/getDisbursementsAction", async (_, { rejectWithValue, getState, dispatch }) => {
+  const { token } = getState().userAccount;
 
-    try {
-      const disbursements = await getDisbursements(token);
-      refreshSessionToken(dispatch);
+  try {
+    const disbursements = await getDisbursements(token);
+    refreshSessionToken(dispatch);
 
-      return disbursements;
-    } catch (error: unknown) {
-      const apiError = normalizeApiError(error as ApiError);
-      const errorString = apiError.message;
-      endSessionIfTokenInvalid(errorString, dispatch);
+    return disbursements;
+  } catch (error: unknown) {
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error fetching disbursements: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error fetching disbursements: ${errorString}`,
+    });
+  }
+});
 
 export const getDisbursementsWithParamsAction = createAsyncThunk<
   {
@@ -103,29 +100,20 @@ const disbursementsSlice = createSlice({
       state.errorString = action.payload?.errorString;
     });
     // Disbursements with search params
-    builder.addCase(
-      getDisbursementsWithParamsAction.pending,
-      (state = initialState) => {
-        state.status = "PENDING";
-      },
-    );
-    builder.addCase(
-      getDisbursementsWithParamsAction.fulfilled,
-      (state, action) => {
-        state.items = formatDisbursements(action.payload.disbursements.data);
-        state.pagination = action.payload.disbursements.pagination;
-        state.status = "SUCCESS";
-        state.errorString = undefined;
-        state.searchParams = action.payload.searchParams;
-      },
-    );
-    builder.addCase(
-      getDisbursementsWithParamsAction.rejected,
-      (state, action) => {
-        state.status = "ERROR";
-        state.errorString = action.payload?.errorString;
-      },
-    );
+    builder.addCase(getDisbursementsWithParamsAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+    });
+    builder.addCase(getDisbursementsWithParamsAction.fulfilled, (state, action) => {
+      state.items = formatDisbursements(action.payload.disbursements.data);
+      state.pagination = action.payload.disbursements.pagination;
+      state.status = "SUCCESS";
+      state.errorString = undefined;
+      state.searchParams = action.payload.searchParams;
+    });
+    builder.addCase(getDisbursementsWithParamsAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+    });
   },
 });
 

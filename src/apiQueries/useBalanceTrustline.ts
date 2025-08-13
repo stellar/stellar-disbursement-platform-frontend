@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { ApiAsset, AppError, AccountBalanceItem } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { ApiAsset, AppError, AccountBalanceItem } from "@/types";
 
 type Trustline = {
   id: string | null;
@@ -11,9 +11,7 @@ type Trustline = {
   isNative: boolean;
 };
 
-export const useBalanceTrustline = (
-  balances?: AccountBalanceItem[] | undefined,
-) => {
+export const useBalanceTrustline = (balances?: AccountBalanceItem[] | undefined) => {
   const query = useQuery<Trustline[] | undefined, AppError>({
     queryKey: ["trustlines", { balances }],
     queryFn: async () => {
@@ -21,10 +19,8 @@ export const useBalanceTrustline = (
 
       return balances?.map((b) => {
         const id =
-          response?.find(
-            (a: ApiAsset) =>
-              a.code === b?.assetCode && a.issuer === b?.assetIssuer,
-          )?.id || null;
+          response?.find((a: ApiAsset) => a.code === b?.assetCode && a.issuer === b?.assetIssuer)
+            ?.id || null;
 
         return {
           id,

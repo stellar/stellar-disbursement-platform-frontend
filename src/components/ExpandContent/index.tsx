@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, Icon } from "@stellar/design-system";
-import { Title } from "components/Title";
+import { Title } from "@/components/Title";
 import "./styles.scss";
 
 interface ExpandContentProps {

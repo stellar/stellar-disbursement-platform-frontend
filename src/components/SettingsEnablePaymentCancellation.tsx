@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Button, Card, Input, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { DropdownMenu } from "components/DropdownMenu";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useUpdateOrgPaymentCancellationPeriodDays } from "apiQueries/useUpdateOrgPaymentCancellationPeriodDays";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
-import { getOrgInfoAction } from "store/ducks/organization";
+import { useUpdateOrgPaymentCancellationPeriodDays } from "@/apiQueries/useUpdateOrgPaymentCancellationPeriodDays";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { getOrgInfoAction } from "@/store/ducks/organization";
 
 export const SettingsEnablePaymentCancellation = () => {
   const { organization } = useRedux("organization");

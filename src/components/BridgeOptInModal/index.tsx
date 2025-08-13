@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button, Input, Modal, Notification, Select } from "@stellar/design-system";
 
-import { usePrevious } from "hooks/usePrevious";
-import { useRedux } from "hooks/useRedux";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { usePrevious } from "@/hooks/usePrevious";
+import { useRedux } from "@/hooks/useRedux";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { bridgeFieldLabels, bridgeFieldDescriptions } from "constants/bridgeIntegration";
+import { bridgeFieldLabels, bridgeFieldDescriptions } from "@/constants/bridgeIntegration";
 
-import { BridgeIntegrationUpdate } from "types";
+import { BridgeIntegrationUpdate } from "@/types";
 
 import "./styles.scss";
 

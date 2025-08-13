@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, Icon, Input, Modal, Select, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "components/InfoTooltip";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { USER_ROLES_ARRAY } from "constants/settings";
-import { userRoleText } from "helpers/userRoleText";
-import { usePrevious } from "hooks/usePrevious";
-import { NewUser, UserRole } from "types";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { USER_ROLES_ARRAY } from "@/constants/settings";
+import { userRoleText } from "@/helpers/userRoleText";
+import { usePrevious } from "@/hooks/usePrevious";
+import { NewUser, UserRole } from "@/types";
 
 interface NewUserModalProps {
   visible: boolean;

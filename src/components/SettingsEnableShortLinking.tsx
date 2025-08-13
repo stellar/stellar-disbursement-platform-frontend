@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useUpdateOrgShortLinkEnabled } from "apiQueries/useUpdateOrgShortLinkEnabled";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
-import { getOrgInfoAction } from "store/ducks/organization";
+import { useUpdateOrgShortLinkEnabled } from "@/apiQueries/useUpdateOrgShortLinkEnabled";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { getOrgInfoAction } from "@/store/ducks/organization";
 
 export const SettingsEnableShortLinking = () => {
   const { organization } = useRedux("organization");

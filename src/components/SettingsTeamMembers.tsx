@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Icon, Modal, Notification } from "@stellar/design-system";
 
-import { InfoTooltip } from "components/InfoTooltip";
-import { DropdownMenu } from "components/DropdownMenu";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { Table } from "components/Table";
-import { NewUserModal } from "components/NewUserModal";
-import { LoadingContent } from "components/LoadingContent";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { Table } from "@/components/Table";
+import { NewUserModal } from "@/components/NewUserModal";
+import { LoadingContent } from "@/components/LoadingContent";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { USER_ROLES_ARRAY } from "constants/settings";
-import { userRoleText } from "helpers/userRoleText";
+import { USER_ROLES_ARRAY } from "@/constants/settings";
+import { userRoleText } from "@/helpers/userRoleText";
 
-import { useUsers } from "apiQueries/useUsers";
-import { useUpdateUserRole } from "apiQueries/useUpdateUserRole";
-import { useUpdateUserStatus } from "apiQueries/useUpdateUserStatus";
-import { useCreateNewUser } from "apiQueries/useCreateNewUser";
+import { useUsers } from "@/apiQueries/useUsers";
+import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
+import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
+import { useCreateNewUser } from "@/apiQueries/useCreateNewUser";
 
-import { ApiUser, NewUser, UserRole } from "types";
+import { ApiUser, NewUser, UserRole } from "@/types";
 
 export const SettingsTeamMembers = () => {
   const [selectedUser, setSelectedUser] = useState<ApiUser | null>(null);

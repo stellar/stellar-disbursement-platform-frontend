@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { sanitizeObject } from "helpers/sanitizeObject";
-import { AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { sanitizeObject } from "@/helpers/sanitizeObject";
+import { AppError } from "@/types";
 
 interface ReceiverDetailsUpdate {
   email: string;
@@ -30,8 +30,7 @@ export const useUpdateReceiverDetails = (receiverId: string | undefined) => {
       if (Object.keys(fieldsToSubmit).length === 0) {
         return new Promise((_, reject) =>
           reject({
-            message:
-              "Update receiver info requires at least one field to submit",
+            message: "Update receiver info requires at least one field to submit",
           }),
         );
       }

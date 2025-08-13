@@ -1,4 +1,4 @@
-import { PaymentStatus as PaymentStatusType } from "types";
+import { PaymentStatus as PaymentStatusType } from "@/types";
 import "./styles.scss";
 
 export const PaymentStatus = ({ status }: { status: PaymentStatusType }) => {
@@ -16,9 +16,7 @@ export const PaymentStatus = ({ status }: { status: PaymentStatusType }) => {
     case "READY":
       return <span className="PaymentStatus PaymentStatus--accent">Ready</span>;
     case "SUCCESS":
-      return (
-        <span className="PaymentStatus PaymentStatus--accent">Success</span>
-      );
+      return <span className="PaymentStatus PaymentStatus--accent">Success</span>;
     default:
       return null;
   }

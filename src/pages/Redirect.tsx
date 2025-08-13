@@ -1,8 +1,8 @@
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { AppDispatch } from "store";
-import { singleSignOnAction } from "store/ducks/singleSignOnUserAccount";
+import { AppDispatch } from "@/store";
+import { singleSignOnAction } from "@/store/ducks/singleSignOnUserAccount";
 
 export function SigninOidc() {
   const dispatch: AppDispatch = useDispatch();

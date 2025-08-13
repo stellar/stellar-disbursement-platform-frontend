@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { handleSearchParams } from "api/handleSearchParams";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { ApiPayments, AppError, PaymentsSearchParams } from "types";
+import { handleSearchParams } from "@/api/handleSearchParams";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { ApiPayments, AppError, PaymentsSearchParams } from "@/types";
 
 export const usePayments = (searchParams?: PaymentsSearchParams) => {
   // ALL status is for UI only

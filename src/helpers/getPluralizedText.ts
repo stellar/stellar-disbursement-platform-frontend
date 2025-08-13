@@ -1,4 +1,4 @@
-import { capitalizeString } from "helpers/capitalizeString";
+import { capitalizeString } from "@/helpers/capitalizeString";
 
 export const getPluralizedText = ({
   count,

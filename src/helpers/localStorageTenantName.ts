@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE_TENANT_NAME } from "constants/settings";
+import { LOCAL_STORAGE_TENANT_NAME } from "@/constants/settings";
 
 export const localStorageTenantName = {
   get: () => {
