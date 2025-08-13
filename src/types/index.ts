@@ -978,6 +978,20 @@ export type CreateDirectPaymentRequest = {
   external_payment_id?: string;
 };
 
+export type CreateReceiverRequest = {
+  email: string;
+  phone_number: string;
+  external_id: string;
+  verifications: {
+    type: string;
+    value: string;
+  }[];
+  wallets: {
+    address: string;
+    memo?: string;
+  }[];
+};
+
 export type DirectPaymentAsset = {
   id?: string;
   type?: "native" | "classic" | "contract" | "fiat";
