@@ -16,6 +16,7 @@
     box-shadow: 0 pxToRem(4px) pxToRem(12px) rgba(0, 0, 0, 0.1);
     max-height: pxToRem(200px);
     margin-top: pxToRem(4px);
+    overflow-y: auto;
 
     &__content {
       max-height: 100%;
