@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { Badge, Button, Card, Notification, Icon } from "@stellar/design-system";
 
-import { InfoTooltip } from "components/InfoTooltip";
-import { LoadingContent } from "components/LoadingContent";
-import { BridgeFaqModal } from "components/BridgeFaqModal";
-import { BridgeStatusTracker } from "components/BridgeStatusTracker";
-import { BridgeAccountDetails } from "components/BridgeAccountDetails";
-import { BridgePaymentMethods } from "components/BridgePaymentMethods";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { BridgeFaqModal } from "@/components/BridgeFaqModal";
+import { BridgeStatusTracker } from "@/components/BridgeStatusTracker";
+import { BridgeAccountDetails } from "@/components/BridgeAccountDetails";
+import { BridgePaymentMethods } from "@/components/BridgePaymentMethods";
 
-import { useBridgeIntegration } from "apiQueries/useBridgeIntegration";
-import { getBridgeErrorMessage } from "constants/bridgeIntegration";
+import { useBridgeIntegration } from "@/apiQueries/useBridgeIntegration";
+import { getBridgeErrorMessage } from "@/constants/bridgeIntegration";
 
-import { BridgeIntegration, BridgeIntegrationStatusType } from "types";
+import { BridgeIntegration, BridgeIntegrationStatusType } from "@/types";
 
 import "./styles.scss";
 

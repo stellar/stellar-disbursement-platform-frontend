@@ -1,8 +1,8 @@
 import { Banner, Icon, Link } from "@stellar/design-system";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { Routes } from "constants/settings";
-import { useCircleAccount } from "hooks/useCircleAccount";
+import { Routes } from "@/constants/settings";
+import { useCircleAccount } from "@/hooks/useCircleAccount";
 
 export const GlobalBanner = () => {
   const navigate = useNavigate();
@@ -19,8 +19,7 @@ export const GlobalBanner = () => {
       <div className="CircleDistributionAccountPending">
         <Banner variant="warning">
           <div>
-            You must configure your Circle Account to continue. One or more
-            fields are incomplete.
+            You must configure your Circle Account to continue. One or more fields are incomplete.
           </div>
           <Link
             onClick={() => {

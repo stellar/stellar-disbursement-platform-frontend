@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { handleSearchParams } from "api/handleSearchParams";
-import { directPayment } from "constants/directPayment";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { handleSearchParams } from "@/api/handleSearchParams";
+import { directPayment } from "@/constants/directPayment";
 
-import { ApiReceivers, AppError } from "types";
+import { ApiReceivers, AppError } from "@/types";
 
 export const useSearchReceivers = (searchQuery: string, enabled: boolean = true) => {
   const canRun = Boolean(enabled && searchQuery.trim().length >= directPayment.SEARCH_MIN_CHARS);

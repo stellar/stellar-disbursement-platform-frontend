@@ -1,70 +1,64 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "store";
-import { getOrgInfo } from "api/getOrgInfo";
-import { patchOrgInfo } from "api/patchOrgInfo";
-import { getOrgLogo } from "api/getOrgLogo";
-import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "helpers/refreshSessionToken";
-import { normalizeApiError } from "helpers/normalizeApiError";
+import { RootState } from "@/store";
+import { getOrgInfo } from "@/api/getOrgInfo";
+import { patchOrgInfo } from "@/api/patchOrgInfo";
+import { getOrgLogo } from "@/api/getOrgLogo";
+import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
 import {
   ApiError,
   ApiOrgInfo,
   OrgUpdateInfo,
   OrganizationInitialState,
   RejectMessage,
-} from "types";
+} from "@/types";
 
 export const getOrgInfoAction = createAsyncThunk<
   ApiOrgInfo,
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "organization/getOrgInfoAction",
-  async (_, { rejectWithValue, getState, dispatch }) => {
-    const { token } = getState().userAccount;
+>("organization/getOrgInfoAction", async (_, { rejectWithValue, getState, dispatch }) => {
+  const { token } = getState().userAccount;
 
-    try {
-      const orgInfo = await getOrgInfo(token);
-      refreshSessionToken(dispatch);
+  try {
+    const orgInfo = await getOrgInfo(token);
+    refreshSessionToken(dispatch);
 
-      return orgInfo;
-    } catch (error: unknown) {
-      const apiError = normalizeApiError(error as ApiError);
-      const errorString = apiError.message;
-      endSessionIfTokenInvalid(errorString, dispatch);
+    return orgInfo;
+  } catch (error: unknown) {
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error fetching organization info: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error fetching organization info: ${errorString}`,
+    });
+  }
+});
 
 export const getOrgCircleInfoAction = createAsyncThunk<
   ApiOrgInfo,
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "organization/getOrgCircleInfoAction",
-  async (_, { rejectWithValue, getState, dispatch }) => {
-    const { token } = getState().userAccount;
+>("organization/getOrgCircleInfoAction", async (_, { rejectWithValue, getState, dispatch }) => {
+  const { token } = getState().userAccount;
 
-    try {
-      const orgInfo = await getOrgInfo(token);
-      refreshSessionToken(dispatch);
+  try {
+    const orgInfo = await getOrgInfo(token);
+    refreshSessionToken(dispatch);
 
-      return orgInfo;
-    } catch (error: unknown) {
-      const apiError = normalizeApiError(error as ApiError);
-      const errorString = apiError.message;
-      endSessionIfTokenInvalid(errorString, dispatch);
+    return orgInfo;
+  } catch (error: unknown) {
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error fetching organization info: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error fetching organization info: ${errorString}`,
+    });
+  }
+});
 
 export const updateOrgInfoAction = createAsyncThunk<
   string,
@@ -104,23 +98,20 @@ export const getOrgLogoAction = createAsyncThunk<
   string,
   undefined,
   { rejectValue: RejectMessage; state: RootState }
->(
-  "organization/getOrgLogoAction",
-  async (_, { rejectWithValue, getState, dispatch }) => {
-    const { token } = getState().userAccount;
-    try {
-      return await getOrgLogo(token);
-    } catch (error: unknown) {
-      const apiError = normalizeApiError(error as ApiError);
-      const errorString = apiError.message;
-      endSessionIfTokenInvalid(errorString, dispatch);
+>("organization/getOrgLogoAction", async (_, { rejectWithValue, getState, dispatch }) => {
+  const { token } = getState().userAccount;
+  try {
+    return await getOrgLogo(token);
+  } catch (error: unknown) {
+    const apiError = normalizeApiError(error as ApiError);
+    const errorString = apiError.message;
+    endSessionIfTokenInvalid(errorString, dispatch);
 
-      return rejectWithValue({
-        errorString: `Error fetching organization logo: ${errorString}`,
-      });
-    }
-  },
-);
+    return rejectWithValue({
+      errorString: `Error fetching organization logo: ${errorString}`,
+    });
+  }
+});
 
 const initialState: OrganizationInitialState = {
   data: {
@@ -166,24 +157,19 @@ const organizationSlice = createSlice({
         ...state.data,
         name: action.payload.name,
         privacyPolicyLink: action.payload.privacy_policy_link,
-        distributionAccountPublicKey:
-          action.payload.distribution_account_public_key,
+        distributionAccountPublicKey: action.payload.distribution_account_public_key,
         timezoneUtcOffset: action.payload.timezone_utc_offset,
         isApprovalRequired: action.payload.is_approval_required,
-        receiverRegistrationMessageTemplate:
-          action.payload.receiver_registration_message_template,
+        receiverRegistrationMessageTemplate: action.payload.receiver_registration_message_template,
         isLinkShortenerEnabled: action.payload.is_link_shortener_enabled,
         isMemoTracingEnabled: action.payload.is_memo_tracing_enabled,
         baseUrl: action.payload.base_url,
         receiverInvitationResendInterval: Number(
           action.payload.receiver_invitation_resend_interval_days || 0,
         ),
-        paymentCancellationPeriodDays: Number(
-          action.payload.payment_cancellation_period_days || 0,
-        ),
+        paymentCancellationPeriodDays: Number(action.payload.payment_cancellation_period_days || 0),
         distributionAccount: {
-          circleWalletId:
-            action.payload.distribution_account?.circle_wallet_id || "",
+          circleWalletId: action.payload.distribution_account?.circle_wallet_id || "",
           status: action.payload.distribution_account?.status || "",
           type: action.payload.distribution_account?.type || "",
         },
@@ -205,8 +191,7 @@ const organizationSlice = createSlice({
       state.data = {
         ...state.data,
         distributionAccount: {
-          circleWalletId:
-            action.payload.distribution_account?.circle_wallet_id || "",
+          circleWalletId: action.payload.distribution_account?.circle_wallet_id || "",
           status: action.payload.distribution_account?.status || "",
           type: action.payload.distribution_account?.type || "",
         },
@@ -252,5 +237,4 @@ const organizationSlice = createSlice({
 
 export const organizationSelector = (state: RootState) => state.organization;
 export const { reducer } = organizationSlice;
-export const { clearUpdateMessageAction, clearErrorAction } =
-  organizationSlice.actions;
+export const { clearUpdateMessageAction, clearErrorAction } = organizationSlice.actions;

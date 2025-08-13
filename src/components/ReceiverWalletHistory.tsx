@@ -1,11 +1,11 @@
 import { Card, Link, Profile, Notification } from "@stellar/design-system";
-import { STELLAR_EXPERT_URL } from "constants/envVariables";
-import { useStellarAccountPayments } from "apiQueries/useStellarAccountPayments";
-import { formatDateTime } from "helpers/formatIntlDateTime";
+import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
+import { useStellarAccountPayments } from "@/apiQueries/useStellarAccountPayments";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
 
-import { Table } from "components/Table";
-import { AssetAmount } from "components/AssetAmount";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { Table } from "@/components/Table";
+import { AssetAmount } from "@/components/AssetAmount";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 interface ReceiverWalletHistoryProps {
   stellarAddress: string | undefined;

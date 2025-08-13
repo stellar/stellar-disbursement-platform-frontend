@@ -5,14 +5,14 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-import { AppDispatch, resetStoreAction } from "store";
-import { USE_SSO, RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "constants/envVariables";
-import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "constants/settings";
-import { useRedux } from "hooks/useRedux";
-import { mfaAction, signInAction } from "store/ducks/userAccount";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { InfoTooltip } from "components/InfoTooltip";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { AppDispatch, resetStoreAction } from "@/store";
+import { USE_SSO, RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "@/constants/envVariables";
+import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "@/constants/settings";
+import { useRedux } from "@/hooks/useRedux";
+import { mfaAction, signInAction } from "@/store/ducks/userAccount";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 export const MFAuth = () => {
   const dispatch: AppDispatch = useDispatch();

@@ -3,15 +3,15 @@ import { Heading, Input, Button, Notification, Link } from "@stellar/design-syst
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { USE_SSO } from "constants/envVariables";
-import { singleUserStore } from "helpers/singleSingOn";
-import { validateNewPassword } from "helpers/validateNewPassword";
-import { validatePasswordMatch } from "helpers/validatePasswordMatch";
-import { localStorageSessionToken } from "helpers/localStorageSessionToken";
+import { USE_SSO } from "@/constants/envVariables";
+import { singleUserStore } from "@/helpers/singleSingOn";
+import { validateNewPassword } from "@/helpers/validateNewPassword";
+import { validatePasswordMatch } from "@/helpers/validatePasswordMatch";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 
-import { useNewPassword } from "apiQueries/useNewPassword";
-import { AppDispatch, resetStoreAction } from "store";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { useNewPassword } from "@/apiQueries/useNewPassword";
+import { AppDispatch, resetStoreAction } from "@/store";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 export const SetNewPassword = () => {
   const { isSuccess, isPending, error, mutateAsync: submitNewPassword } = useNewPassword();

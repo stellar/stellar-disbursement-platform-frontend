@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { Card, Heading, Notification, Modal, Button, Loader } from "@stellar/design-system";
 
-import { InfoTooltip } from "components/InfoTooltip";
-import { SectionHeader } from "components/SectionHeader";
-import { LoadingContent } from "components/LoadingContent";
-import { WalletCard } from "components/WalletCard";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { SectionHeader } from "@/components/SectionHeader";
+import { LoadingContent } from "@/components/LoadingContent";
+import { WalletCard } from "@/components/WalletCard";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useWallets } from "apiQueries/useWallets";
-import { useUpdateWallet } from "apiQueries/useUpdateWallet";
-import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
-import { ApiWallet } from "types";
+import { useWallets } from "@/apiQueries/useWallets";
+import { useUpdateWallet } from "@/apiQueries/useUpdateWallet";
+import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+import { ApiWallet } from "@/types";
 
 export const WalletProviders = () => {
   const [selectedWallet, setSelectedWallet] = useState<

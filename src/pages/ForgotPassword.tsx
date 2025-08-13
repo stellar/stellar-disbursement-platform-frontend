@@ -3,12 +3,12 @@ import Recaptcha from "react-google-recaptcha";
 import { Heading, Input, Button, Notification, Link } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 
-import { useForgotPasswordLink } from "apiQueries/useForgotPasswordLink";
-import { ORG_NAME_INFO_TEXT } from "constants/settings";
-import { RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "constants/envVariables";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { InfoTooltip } from "components/InfoTooltip";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { useForgotPasswordLink } from "@/apiQueries/useForgotPasswordLink";
+import { ORG_NAME_INFO_TEXT } from "@/constants/settings";
+import { RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "@/constants/envVariables";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 
 export const ForgotPassword = () => {
   const {

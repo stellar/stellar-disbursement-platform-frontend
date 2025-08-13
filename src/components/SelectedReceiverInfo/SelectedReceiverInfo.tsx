@@ -1,4 +1,4 @@
-import { ApiReceiver } from "types";
+import { ApiReceiver } from "@/types";
 
 interface SelectedReceiverInfoProps {
   receiver: ApiReceiver;

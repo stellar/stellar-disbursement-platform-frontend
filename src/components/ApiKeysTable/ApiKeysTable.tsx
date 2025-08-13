@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { Card, Icon, Heading, Button, Link } from "@stellar/design-system";
 
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { Table } from "components/Table";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { DropdownMenu } from "components/DropdownMenu";
-import { EmptyStateMessage } from "components/EmptyStateMessage/EmptyStateMessage";
-import { Routes } from "constants/settings";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { Table } from "@/components/Table";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
+import { Routes } from "@/constants/settings";
 
-import { ApiKey } from "types";
+import { ApiKey } from "@/types";
 
 import "./styles.scss";
 

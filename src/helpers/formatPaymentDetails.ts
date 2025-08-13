@@ -1,4 +1,4 @@
-import { ApiPayment, PaymentDetails } from "types";
+import { ApiPayment, PaymentDetails } from "@/types";
 
 export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
   return {
@@ -16,10 +16,7 @@ export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
     circleTransferRequestId: payment?.circle_transfer_request_id,
     status: payment.status,
     statusHistory: payment?.status_history
-      .sort(
-        (a, b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-      )
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .map((h) => {
         return {
           updatedAt: h.timestamp,

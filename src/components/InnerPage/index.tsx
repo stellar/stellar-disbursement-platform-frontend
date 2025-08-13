@@ -3,14 +3,14 @@ import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@stellar/design-system";
 
-import { PageHeader } from "components/PageHeader";
-import { USE_SSO } from "constants/envVariables";
-import { Routes } from "constants/settings";
-import { AppDispatch, resetStoreAction } from "store";
-import { useRedux } from "hooks/useRedux";
-import { singleUserStore } from "helpers/singleSingOn";
-import { getAppVersion } from "helpers/getAppVersion";
-import { localStorageSessionToken } from "helpers/localStorageSessionToken";
+import { PageHeader } from "@/components/PageHeader";
+import { USE_SSO } from "@/constants/envVariables";
+import { Routes } from "@/constants/settings";
+import { AppDispatch, resetStoreAction } from "@/store";
+import { useRedux } from "@/hooks/useRedux";
+import { singleUserStore } from "@/helpers/singleSingOn";
+import { getAppVersion } from "@/helpers/getAppVersion";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 
 import "./styles.scss";
 

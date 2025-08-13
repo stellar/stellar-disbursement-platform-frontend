@@ -1,4 +1,4 @@
-import { ApiReceiver, ReceiverDetails } from "types";
+import { ApiReceiver, ReceiverDetails } from "@/types";
 
 export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
   id: receiver.id,

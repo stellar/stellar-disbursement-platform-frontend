@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { Link, Profile, Notification, Card } from "@stellar/design-system";
-import { Routes } from "constants/settings";
+import { Routes } from "@/constants/settings";
 
-import { AssetAmount } from "components/AssetAmount";
-import { PaymentStatus } from "components/PaymentStatus";
-import { Table } from "components/Table";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { ApiPayment } from "types";
+import { AssetAmount } from "@/components/AssetAmount";
+import { PaymentStatus } from "@/components/PaymentStatus";
+import { Table } from "@/components/Table";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { ApiPayment } from "@/types";
 
 interface PaymentsTableProps {
   paymentItems: ApiPayment[];

@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useUpdateOrgMemoTrackingEnabled } from "apiQueries/useUpdateOrgMemoTrackingEnabled";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
-import { getOrgInfoAction } from "store/ducks/organization";
+import { useUpdateOrgMemoTrackingEnabled } from "@/apiQueries/useUpdateOrgMemoTrackingEnabled";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { getOrgInfoAction } from "@/store/ducks/organization";
 
 export const SettingsEnableMemoTracking = () => {
   const { organization } = useRedux("organization");

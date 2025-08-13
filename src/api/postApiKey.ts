@@ -1,7 +1,7 @@
-import { handleApiResponse } from "api/handleApiResponse";
-import { API_URL } from "constants/envVariables";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { ApiKey, CreateApiKeyRequest } from "types";
+import { handleApiResponse } from "@/api/handleApiResponse";
+import { API_URL } from "@/constants/envVariables";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { ApiKey, CreateApiKeyRequest } from "@/types";
 
 export const postApiKey = async (
   token: string,

@@ -3,28 +3,28 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Heading, Icon, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { getApiKey } from "api/getApiKey";
-import { UpdateApiKeyRequest } from "api/updateApiKey";
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
-import { CopyWithIcon } from "components/CopyWithIcon";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { ShowForRoles } from "components/ShowForRoles";
-import { EditApiKeyModal } from "components/ApiKeyUpdateModal/EditApiKeyModal";
-import { DeleteApiKeyModal } from "components/ApiKeyDeleteModal/DeleteApiKeyModal";
-import { ValuesList } from "components/ValueList/ValueList";
-import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
-import { Routes } from "constants/settings";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { normalizeApiError } from "helpers/normalizeApiError";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
+import { getApiKey } from "@/api/getApiKey";
+import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SectionHeader } from "@/components/SectionHeader";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { ShowForRoles } from "@/components/ShowForRoles";
+import { EditApiKeyModal } from "@/components/ApiKeyUpdateModal/EditApiKeyModal";
+import { DeleteApiKeyModal } from "@/components/ApiKeyDeleteModal/DeleteApiKeyModal";
+import { ValuesList } from "@/components/ValueList/ValueList";
+import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
+import { Routes } from "@/constants/settings";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
 import {
   deleteApiKeyAction,
   updateApiKeyAction,
   clearApiKeysErrorAction,
-} from "store/ducks/apiKeys";
-import { ApiKey, UserRole, ApiError, AppError } from "types";
+} from "@/store/ducks/apiKeys";
+import { ApiKey, UserRole, ApiError, AppError } from "@/types";
 
 import "./styles.scss";
 

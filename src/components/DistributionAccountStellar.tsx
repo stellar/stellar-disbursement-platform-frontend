@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { Card, Heading, Profile, Notification } from "@stellar/design-system";
 
-import { InfoTooltip } from "components/InfoTooltip";
-import { SectionHeader } from "components/SectionHeader";
-import { AccountBalances } from "components/AccountBalances";
-import { WalletTrustlines } from "components/WalletTrustlines";
-import { LoadingContent } from "components/LoadingContent";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { BridgeIntegrationSection } from "components/BridgeIntegrationSection";
-import { BridgeOptInModal } from "components/BridgeOptInModal";
-import { Title } from "components/Title";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { SectionHeader } from "@/components/SectionHeader";
+import { AccountBalances } from "@/components/AccountBalances";
+import { WalletTrustlines } from "@/components/WalletTrustlines";
+import { LoadingContent } from "@/components/LoadingContent";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { BridgeIntegrationSection } from "@/components/BridgeIntegrationSection";
+import { BridgeOptInModal } from "@/components/BridgeOptInModal";
+import { Title } from "@/components/Title";
 
-import { useRedux } from "hooks/useRedux";
-import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
-import { useUpdateBridgeIntegration } from "apiQueries/useUpdateBridgeIntegration";
+import { useRedux } from "@/hooks/useRedux";
+import { useOrgAccountInfo } from "@/hooks/useOrgAccountInfo";
+import { useUpdateBridgeIntegration } from "@/apiQueries/useUpdateBridgeIntegration";
 
-import { BridgeIntegrationUpdate } from "types";
+import { BridgeIntegrationUpdate } from "@/types";
 import { ShowForRoles } from "./ShowForRoles";
 
 export const DistributionAccountStellar = () => {

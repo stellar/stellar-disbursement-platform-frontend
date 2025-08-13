@@ -1,4 +1,4 @@
-import { useRedux } from "hooks/useRedux";
+import { useRedux } from "@/hooks/useRedux";
 
 export const useSessionToken = () => {
   const { userAccount } = useRedux("userAccount");

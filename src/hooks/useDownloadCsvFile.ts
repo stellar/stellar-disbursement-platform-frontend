@@ -1,15 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { useRedux } from "hooks/useRedux";
-import { getInstructionsFile } from "helpers/getInstructionsFile";
+import { useRedux } from "@/hooks/useRedux";
+import { getInstructionsFile } from "@/helpers/getInstructionsFile";
 
-export const useDownloadCsvFile = (
-  callback: (file: File) => void,
-  enableUseEffect?: boolean,
-) => {
-  const { userAccount, disbursementDetails } = useRedux(
-    "userAccount",
-    "disbursementDetails",
-  );
+export const useDownloadCsvFile = (callback: (file: File) => void, enableUseEffect?: boolean) => {
+  const { userAccount, disbursementDetails } = useRedux("userAccount", "disbursementDetails");
   const [isLoading, setIsLoading] = useState(false);
 
   const getFile = useCallback(async () => {

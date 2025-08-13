@@ -12,37 +12,37 @@ import {
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "store";
+import { AppDispatch } from "@/store";
 import {
   getDisbursementDetailsAction,
   getDisbursementReceiversAction,
   pauseOrStartDisbursementAction,
   setDisbursementDetailsAction,
-} from "store/ducks/disbursementDetails";
-import { useRedux } from "hooks/useRedux";
-import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
-import { STELLAR_EXPERT_URL } from "constants/envVariables";
-import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
+} from "@/store/ducks/disbursementDetails";
+import { useRedux } from "@/hooks/useRedux";
+import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
+import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
-import { CopyWithIcon } from "components/CopyWithIcon";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { AssetAmount } from "components/AssetAmount";
-import { Pagination } from "components/Pagination";
-import { Table } from "components/Table";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { PaymentStatus } from "components/PaymentStatus";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SectionHeader } from "@/components/SectionHeader";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { AssetAmount } from "@/components/AssetAmount";
+import { Pagination } from "@/components/Pagination";
+import { Table } from "@/components/Table";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { PaymentStatus } from "@/components/PaymentStatus";
 
-import { renderNumberOrDash } from "helpers/renderNumberOrDash";
-import { number } from "helpers/formatIntlNumber";
-import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
-import { saveFile } from "helpers/saveFile";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+import { number } from "@/helpers/formatIntlNumber";
+import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
+import { saveFile } from "@/helpers/saveFile";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
-} from "helpers/receiverContactInfo";
-import { VerificationFieldMap } from "types";
+} from "@/helpers/receiverContactInfo";
+import { VerificationFieldMap } from "@/types";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();

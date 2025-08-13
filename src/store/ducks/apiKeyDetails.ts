@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "helpers/refreshSessionToken";
-import { normalizeApiError } from "helpers/normalizeApiError";
-import { getApiKey } from "api/getApiKey";
+import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { getApiKey } from "@/api/getApiKey";
 
-import { ApiKey, ApiKeyDetailsInitialState, ApiError, RejectMessage } from "types";
+import { ApiKey, ApiKeyDetailsInitialState, ApiError, RejectMessage } from "@/types";
 
-import { RootState } from "store";
+import { RootState } from "@/store";
 
 export const apiKeyDetailsInitialState: ApiKeyDetailsInitialState = {
   details: null,

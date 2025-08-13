@@ -4,32 +4,32 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { BigNumber } from "bignumber.js";
 
-import { AppDispatch } from "store";
+import { AppDispatch } from "@/store";
 import {
   clearDisbursementDraftsErrorAction,
   resetDisbursementDraftsAction,
   saveDisbursementDraftAction,
   submitDisbursementNewDraftAction,
-} from "store/ducks/disbursementDrafts";
-import { useRedux } from "hooks/useRedux";
-import { useAllBalances } from "hooks/useAllBalances";
-import { Routes } from "constants/settings";
-import { csvTotalAmount } from "helpers/csvTotalAmount";
+} from "@/store/ducks/disbursementDrafts";
+import { useRedux } from "@/hooks/useRedux";
+import { useAllBalances } from "@/hooks/useAllBalances";
+import { Routes } from "@/constants/settings";
+import { csvTotalAmount } from "@/helpers/csvTotalAmount";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
-import { Toast } from "components/Toast";
-import { DisbursementDetails } from "components/DisbursementDetails";
-import { DisbursementInviteMessage } from "components/DisbursementInviteMessage";
-import { DisbursementInstructions } from "components/DisbursementInstructions";
-import { DisbursementButtons } from "components/DisbursementButtons";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { InfoTooltip } from "components/InfoTooltip";
-import { AccountBalances } from "components/AccountBalances";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { Title } from "components/Title";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Toast } from "@/components/Toast";
+import { DisbursementDetails } from "@/components/DisbursementDetails";
+import { DisbursementInviteMessage } from "@/components/DisbursementInviteMessage";
+import { DisbursementInstructions } from "@/components/DisbursementInstructions";
+import { DisbursementButtons } from "@/components/DisbursementButtons";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { AccountBalances } from "@/components/AccountBalances";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { Title } from "@/components/Title";
 
-import { Disbursement, DisbursementStep, hasWallet } from "types";
+import { Disbursement, DisbursementStep, hasWallet } from "@/types";
 
 export const DisbursementsNew = () => {
   const { disbursementDrafts, organization } = useRedux("disbursementDrafts", "organization");

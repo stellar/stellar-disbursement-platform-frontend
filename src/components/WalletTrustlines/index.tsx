@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { Button, Card, Input, Modal, Notification } from "@stellar/design-system";
 
-import { InfoTooltip } from "components/InfoTooltip";
-import { DropdownMenu } from "components/DropdownMenu";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useBalanceTrustline } from "apiQueries/useBalanceTrustline";
-import { useAssetsAdd } from "apiQueries/useAssetsAdd";
-import { useAssetsDelete } from "apiQueries/useAssetsDelete";
-import { parseApiError } from "helpers/parseApiError";
+import { useBalanceTrustline } from "@/apiQueries/useBalanceTrustline";
+import { useAssetsAdd } from "@/apiQueries/useAssetsAdd";
+import { useAssetsDelete } from "@/apiQueries/useAssetsDelete";
+import { parseApiError } from "@/helpers/parseApiError";
 
-import { ApiError, AccountBalanceItem } from "types";
+import { ApiError, AccountBalanceItem } from "@/types";
 
 import "./styles.scss";
 

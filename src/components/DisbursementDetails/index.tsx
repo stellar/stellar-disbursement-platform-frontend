@@ -1,16 +1,16 @@
 import { Card, Input, Select, Notification } from "@stellar/design-system";
 import { BigNumber } from "bignumber.js";
 
-import { useWallets } from "apiQueries/useWallets";
-import { useAssetsByWallet } from "apiQueries/useAssetsByWallet";
-import { useRegistrationContactTypes } from "apiQueries/useRegistrationContactTypes";
-import { useVerificationTypes } from "apiQueries/useVerificationTypes";
-import { AssetAmount } from "components/AssetAmount";
-import { InfoTooltip } from "components/InfoTooltip";
-import { Title } from "components/Title";
-import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
-import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { useAllBalances } from "hooks/useAllBalances";
+import { useWallets } from "@/apiQueries/useWallets";
+import { useAssetsByWallet } from "@/apiQueries/useAssetsByWallet";
+import { useRegistrationContactTypes } from "@/apiQueries/useRegistrationContactTypes";
+import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
+import { AssetAmount } from "@/components/AssetAmount";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { Title } from "@/components/Title";
+import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
+import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
+import { useAllBalances } from "@/hooks/useAllBalances";
 import {
   ApiAsset,
   ApiWallet,
@@ -20,7 +20,7 @@ import {
   isUserManagedWalletEnabled,
   RegistrationContactType,
   VerificationFieldMap,
-} from "types";
+} from "@/types";
 
 import "./styles.scss";
 

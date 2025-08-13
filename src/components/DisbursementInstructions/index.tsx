@@ -1,15 +1,15 @@
 import { Button, Card } from "@stellar/design-system";
 
-import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { saveFile } from "helpers/saveFile";
+import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
+import { saveFile } from "@/helpers/saveFile";
 
-import { CsvUpload } from "components/CsvUpload";
-import { CsvUploadButton } from "components/CsvUploadButton";
-import { CsvPreview } from "components/CsvPreview";
-import { InfoTooltip } from "components/InfoTooltip";
-import { Title } from "components/Title";
+import { CsvUpload } from "@/components/CsvUpload";
+import { CsvUploadButton } from "@/components/CsvUploadButton";
+import { CsvPreview } from "@/components/CsvPreview";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { Title } from "@/components/Title";
 
-import { RegistrationContactType } from "types";
+import { RegistrationContactType } from "@/types";
 
 import "./styles.scss";
 

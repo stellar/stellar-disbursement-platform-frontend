@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useStellarAccountInfo } from "apiQueries/useStellarAccountInfo";
-import { AccountBalanceItem } from "types";
+import { useStellarAccountInfo } from "@/apiQueries/useStellarAccountInfo";
+import { AccountBalanceItem } from "@/types";
 
 export const useOrgAccountInfo = (
   distributionAccountPublicKey: string | undefined,

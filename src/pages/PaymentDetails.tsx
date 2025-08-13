@@ -11,30 +11,30 @@ import {
   Profile,
 } from "@stellar/design-system";
 
-import { usePaymentsPaymentId } from "apiQueries/usePaymentsPaymentId";
-import { useCancelPayment } from "apiQueries/useCancelPayment";
-import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
-import { STELLAR_EXPERT_URL } from "constants/envVariables";
-import { Routes, CANCELED_PAYMENT_STATUS, READY_PAYMENT_STATUS } from "constants/settings";
-import { formatDateTime, formatDateTimeWithSeconds } from "helpers/formatIntlDateTime";
-import { shortenString } from "helpers/shortenString";
-import { formatPaymentDetails } from "helpers/formatPaymentDetails";
+import { usePaymentsPaymentId } from "@/apiQueries/usePaymentsPaymentId";
+import { useCancelPayment } from "@/apiQueries/useCancelPayment";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
+import { Routes, CANCELED_PAYMENT_STATUS, READY_PAYMENT_STATUS } from "@/constants/settings";
+import { formatDateTime, formatDateTimeWithSeconds } from "@/helpers/formatIntlDateTime";
+import { shortenString } from "@/helpers/shortenString";
+import { formatPaymentDetails } from "@/helpers/formatPaymentDetails";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
-} from "helpers/receiverContactInfo";
+} from "@/helpers/receiverContactInfo";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
-import { Table } from "components/Table";
-import { PaymentStatus } from "components/PaymentStatus";
-import { ReceiverStatus } from "components/ReceiverStatus";
-import { AssetAmount } from "components/AssetAmount";
-import { MultipleAmounts } from "components/MultipleAmounts";
-import { RetryFailedPayment } from "components/RetryFailedPayment";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Table } from "@/components/Table";
+import { PaymentStatus } from "@/components/PaymentStatus";
+import { ReceiverStatus } from "@/components/ReceiverStatus";
+import { AssetAmount } from "@/components/AssetAmount";
+import { MultipleAmounts } from "@/components/MultipleAmounts";
+import { RetryFailedPayment } from "@/components/RetryFailedPayment";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { PaymentDetailsReceiver } from "types";
+import { PaymentDetailsReceiver } from "@/types";
 
 // TODO: handle loading/fetching state (create component that handles it
 // everywhere)

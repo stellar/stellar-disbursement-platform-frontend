@@ -1,5 +1,5 @@
 import { Notification } from "@stellar/design-system";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 interface QueryStatusHandlerProps {
   isLoading?: boolean;
