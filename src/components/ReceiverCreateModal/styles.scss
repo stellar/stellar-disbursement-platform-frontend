@@ -1,20 +1,9 @@
-@use "styles-utils.scss" as *;
+@use "../../styles/styles-utils.scss" as *;
 
 .ReceiverCreateModal {
   &__form {
     display: flex;
     flex-direction: column;
-  }
-
-  &__instructions {
-    margin-bottom: pxToRem(16px);
-
-    p {
-      margin: 0;
-      font-size: pxToRem(14px);
-      color: var(--sds-clr-gray-11);
-      line-height: pxToRem(20px);
-    }
   }
 
   &__form-row {
@@ -23,10 +12,6 @@
     gap: pxToRem(16px);
     align-items: end;
     margin-bottom: pxToRem(24px);
-  }
-
-  &__form-full-width {
-    grid-column: 1 / -1;
   }
 
   &__description {
@@ -54,7 +39,7 @@
     }
 
     &--wallet {
-      grid-template-columns: 2fr 1fr auto;
+      grid-template-columns: 3fr 0.8fr auto;
     }
   }
 
@@ -83,36 +68,9 @@
     gap: pxToRem(4px);
   }
 
-  &__wallet-list {
-    display: flex;
-    flex-direction: column;
-    gap: pxToRem(8px);
-    margin-bottom: pxToRem(8px);
-  }
-
-  &__wallet-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: pxToRem(8px) pxToRem(12px);
-    background-color: var(--sds-clr-gray-01);
-    border: 1px solid var(--sds-clr-gray-04);
-    border-radius: pxToRem(4px);
-    gap: pxToRem(8px);
-  }
-
-  &__wallet-address,
-  &__wallet-memo {
-    font-family: var(--sds-ff-monospace);
-    font-size: pxToRem(14px);
-  }
-
-  &__wallet-address {
-    color: var(--sds-clr-gray-11);
-  }
-
-  &__wallet-memo {
-    color: var(--sds-clr-gray-09);
+  &__wallet-memo-field {
+    min-width: pxToRem(100px);
+    max-width: pxToRem(120px);
   }
 
   &__confirmation {

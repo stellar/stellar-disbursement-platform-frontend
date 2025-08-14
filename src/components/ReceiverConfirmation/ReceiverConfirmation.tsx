@@ -1,5 +1,5 @@
-import { shortenAccountKey } from "helpers/shortenAccountKey";
-import { CreateReceiverRequest, VerificationFieldMap } from "types";
+import { shortenAccountKey } from "@/helpers/shortenAccountKey";
+import { CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
 interface ReceiverConfirmationProps {
   receiverData: CreateReceiverRequest;

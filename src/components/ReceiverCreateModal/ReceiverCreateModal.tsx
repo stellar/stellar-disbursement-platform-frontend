@@ -1,16 +1,14 @@
 import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
 
-import { usePrevious } from "hooks/usePrevious";
+import { usePrevious } from "@/hooks/usePrevious";
 import { useEffect, useState } from "react";
 
-import { useVerificationTypes } from "apiQueries/useVerificationTypes";
-
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { ReceiverConfirmation } from "components/ReceiverConfirmation/ReceiverConfirmation";
-
-import { shortenAccountKey } from "helpers/shortenAccountKey";
-import { isValidWalletAddress } from "helpers/walletValidate";
-import { CreateReceiverRequest, VerificationFieldMap } from "types";
+import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { ReceiverConfirmation } from "@/components/ReceiverConfirmation/ReceiverConfirmation";
+import { shortenAccountKey } from "@/helpers/shortenAccountKey";
+import { isValidWalletAddress } from "@/helpers/walletValidate";
+import { AppError, CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
 import "./styles.scss";
 
@@ -20,7 +18,7 @@ interface ReceiverCreateModalProps {
   onSubmit: (receiverData: CreateReceiverRequest) => void;
   onResetQuery: () => void;
   isLoading: boolean;
-  errorMessage?: string;
+  appError?: AppError;
 }
 
 interface VerificationEntry {
@@ -65,7 +63,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   onSubmit,
   onResetQuery,
   isLoading,
-  errorMessage,
+  appError,
 }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -96,7 +94,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    if (errorMessage) {
+    if (appError) {
       onResetQuery();
     }
 
@@ -359,7 +357,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             error={formErrors.currentVerificationType}
             infoText="Supported verifications: PIN: 4-8 characters, National ID Number: <50 characters, Date of Birth: YYYY-MM-DD or YYYY-MM"
           >
-            <option value="">Select verification type</option>
+            <option value="">Select type</option>
             {getAvailableVerificationTypes().map((type) => (
               <option key={type} value={type}>
                 {VerificationFieldMap[type] || type}
@@ -463,6 +461,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             placeholder="Memo"
             value={formData.currentWallet.memo}
             onChange={(e) => handleWalletMemoChange(e.target.value)}
+            className="ReceiverCreateModal__wallet-memo-field"
           />
 
           <Button
@@ -515,9 +514,9 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       {showConfirmation ? (
         <>
           <Modal.Body>
-            {errorMessage && (
+            {appError && (
               <Notification variant="error" title="Error">
-                <ErrorWithExtras appError={{ message: errorMessage }} />
+                <ErrorWithExtras appError={appError} />
               </Notification>
             )}
             {receiverDataToConfirm && <ReceiverConfirmation receiverData={receiverDataToConfirm} />}
@@ -545,15 +544,15 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       ) : (
         <form onSubmit={handleSubmit} onReset={handleClose}>
           <Modal.Body>
-            {errorMessage && (
+            {appError && (
               <Notification variant="error" title="Error">
-                <ErrorWithExtras appError={{ message: errorMessage }} />
+                <ErrorWithExtras appError={appError} />
               </Notification>
             )}
 
             <div className="ReceiverCreateModal__form">
               {/* Instructions */}
-              <div className="ReceiverCreateModal__instructions">
+              <div className="ReceiverCreateModal__description">
                 <p>
                   Email or phone number is required to create a receiver. Both must be unique across
                   all receivers.
@@ -610,7 +609,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
 
               {/* Verifications Section */}
               <div className="ReceiverCreateModal__section">
-                <h4>Verifications</h4>
+                <h4>Identity Verification</h4>
                 <div className="ReceiverCreateModal__description">
                   Add at least one verification or wallet address to create a receiver.
                 </div>

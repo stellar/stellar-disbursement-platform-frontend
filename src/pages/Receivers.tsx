@@ -7,13 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "@/store";
 import { exportDataAction } from "@/store/ducks/dataExport";
 
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { FilterMenu } from "@/components/FilterMenu";
+import { Pagination } from "@/components/Pagination";
+import { ReceiverCreateModal } from "@/components/ReceiverCreateModal/ReceiverCreateModal";
+import { ReceiversTable } from "@/components/ReceiversTable";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
-import { Pagination } from "@/components/Pagination";
-import { ReceiversTable } from "@/components/ReceiversTable";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { ReceiverCreateModal } from "@/components/ReceiverCreateModal/ReceiverCreateModal";
 
 import { useCreateReceiver } from "@/apiQueries/useCreateReceiver";
 import { useReceivers } from "@/apiQueries/useReceivers";
@@ -277,11 +277,7 @@ export const Receivers = () => {
 
       {createReceiverError && (
         <Notification variant="error" title="Error">
-          <ErrorWithExtras
-            appError={{
-              message: createReceiverError.message,
-            }}
-          />
+          <ErrorWithExtras appError={createReceiverError} />
         </Notification>
       )}
 
@@ -301,7 +297,7 @@ export const Receivers = () => {
         onSubmit={handleSubmitReceiver}
         onResetQuery={resetCreateReceiverQuery}
         isLoading={isCreatingReceiver}
-        errorMessage={createReceiverError?.message}
+        appError={createReceiverError}
       />
     </>
   );
