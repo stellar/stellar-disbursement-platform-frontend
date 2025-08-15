@@ -527,7 +527,6 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
               size="md"
               variant="primary"
               onClick={handleConfirmReceiver}
-              disabled={isLoading}
               isLoading={isLoading}
             >
               Confirm
