@@ -7,7 +7,7 @@ export type OidcUsername = keyof Pick<
 
 declare global {
   // ATTENTION: when adding a new environment variable, make sure to add it to the `generateEnvConfig` method below and
-  // `new DefinePlugin({"process.env": ...})` in the webpack config ad well.
+  // ensure it’s surfaced via Vite (see vite.config.ts `define`) or use import.meta.env if you switch to that pattern.
   interface Window {
     _env_: {
       DISABLE_TENANT_PREFIL_FROM_DOMAIN: string;

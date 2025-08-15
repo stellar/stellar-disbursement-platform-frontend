@@ -129,7 +129,7 @@ export const FileUpload = ({
     <div ref={dropareaElRef} className={containerClasses}>
       {uploadButton ? (
         <div className="FileUpload__button">
-          {cloneElement(uploadButton, {
+          {cloneElement(uploadButton as React.ReactElement<any>, {
             onChange: handleChange,
             disabled: Boolean(disabled),
           })}
