@@ -1,13 +1,13 @@
-import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
-
-import { usePrevious } from "@/hooks/usePrevious";
 import { useEffect, useState } from "react";
+
+import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
 
 import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { ReceiverConfirmation } from "@/components/ReceiverConfirmation/ReceiverConfirmation";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
+import { usePrevious } from "@/hooks/usePrevious";
 import { AppError, CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
 import "./styles.scss";
@@ -165,6 +165,17 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
     return availableTypes;
   };
 
+  const getVerificationInputConfig = (verificationType: string) => {
+    switch (verificationType) {
+      case "DATE_OF_BIRTH":
+        return { type: "date" as const, placeholder: "YYYY-MM-DD" };
+      case "YEAR_MONTH":
+        return { type: "month" as const, placeholder: "YYYY-MM" };
+      default:
+        return { type: "text" as const, placeholder: "Enter value" };
+    }
+  };
+
   const handleWalletAddressChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -186,15 +197,14 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
     }));
   };
 
+  const getCurrentWalletAddress = () => formData?.currentWallet?.address?.trim();
+
   const addWallet = () => {
-    if (
-      !formData.currentWallet.address.trim() ||
-      !isValidWalletAddress(formData.currentWallet.address.trim())
-    ) {
+    const walletAddress = getCurrentWalletAddress();
+
+    if (!walletAddress || !isValidWalletAddress(walletAddress)) {
       return;
     }
-
-    const walletAddress = formData.currentWallet.address.trim();
 
     const isDuplicate = formData.addedWallets.some(
       (wallet) => wallet.address.toLowerCase() === walletAddress.toLowerCase(),
@@ -365,37 +375,14 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             ))}
           </Select>
 
-          {formData.currentVerification.type === "DATE_OF_BIRTH" ? (
-            <Input
-              id="current-verification-value"
-              fieldSize="sm"
-              type="date"
-              placeholder="YYYY-MM-DD"
-              value={formData.currentVerification.value}
-              onChange={(e) => handleVerificationValueChange(e.target.value)}
-              error={formErrors.currentVerificationValue}
-            />
-          ) : formData.currentVerification.type === "YEAR_MONTH" ? (
-            <Input
-              id="current-verification-value"
-              fieldSize="sm"
-              type="month"
-              placeholder="YYYY-MM"
-              value={formData.currentVerification.value}
-              onChange={(e) => handleVerificationValueChange(e.target.value)}
-              error={formErrors.currentVerificationValue}
-            />
-          ) : (
-            <Input
-              id="current-verification-value"
-              fieldSize="sm"
-              type="text"
-              placeholder="Enter value"
-              value={formData.currentVerification.value}
-              onChange={(e) => handleVerificationValueChange(e.target.value)}
-              error={formErrors.currentVerificationValue}
-            />
-          )}
+          <Input
+            id="current-verification-value"
+            fieldSize="sm"
+            {...getVerificationInputConfig(formData.currentVerification.type)}
+            value={formData.currentVerification.value}
+            onChange={(e) => handleVerificationValueChange(e.target.value)}
+            error={formErrors.currentVerificationValue}
+          />
 
           <Button
             size="sm"
@@ -411,7 +398,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
         </div>
 
         {/* Added verifications as badges */}
-        {formData.addedVerifications.length > 0 && (
+        {formData.addedVerifications.length > 0 ? (
           <>
             <div className="ReceiverCreateModal__provided">
               <p>Verifications provided:</p>
@@ -432,7 +419,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
               ))}
             </div>
           </>
-        )}
+        ) : null}
       </div>
     );
   };
@@ -479,7 +466,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
         </div>
 
         {/* Added wallets as list */}
-        {formData.addedWallets.length > 0 && (
+        {formData.addedWallets.length > 0 ? (
           <>
             <div className="ReceiverCreateModal__provided">
               <p>Wallets provided:</p>
@@ -495,13 +482,13 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
                     onClick={() => removeWallet(wallet.id)}
                   >
                     {shortenAccountKey(wallet.address, 8, 8)}
-                    {wallet.memo && ` (Memo: ${wallet.memo})`}
+                    {wallet.memo ? ` (Memo: ${wallet.memo})` : null}
                   </Button>
                 </div>
               ))}
             </div>
           </>
-        )}
+        ) : null}
       </>
     );
   };
@@ -514,12 +501,14 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       {showConfirmation ? (
         <>
           <Modal.Body>
-            {appError && (
+            {appError ? (
               <Notification variant="error" title="Error">
                 <ErrorWithExtras appError={appError} />
               </Notification>
-            )}
-            {receiverDataToConfirm && <ReceiverConfirmation receiverData={receiverDataToConfirm} />}
+            ) : null}
+            {receiverDataToConfirm ? (
+              <ReceiverConfirmation receiverData={receiverDataToConfirm} />
+            ) : null}
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -544,11 +533,11 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       ) : (
         <form onSubmit={handleSubmit} onReset={handleClose}>
           <Modal.Body>
-            {appError && (
+            {appError ? (
               <Notification variant="error" title="Error">
                 <ErrorWithExtras appError={appError} />
               </Notification>
-            )}
+            ) : null}
 
             <div className="ReceiverCreateModal__form">
               {/* Instructions */}

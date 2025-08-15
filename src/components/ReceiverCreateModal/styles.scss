@@ -94,9 +94,6 @@
     }
 
     &__label {
-      font-size: pxToRem(14px);
-      font-weight: 600;
-      color: var(--sds-clr-gray-12);
       margin-bottom: pxToRem(4px);
     }
 
@@ -115,28 +112,19 @@
     }
 
     &__field {
-      font-size: pxToRem(14px);
-      font-weight: 500;
-      color: var(--sds-clr-gray-10);
       min-width: fit-content;
     }
 
     &__value {
-      font-size: pxToRem(14px);
-      color: var(--sds-clr-gray-11);
       line-height: pxToRem(20px);
     }
 
     &__memo {
-      font-size: pxToRem(14px);
-      color: var(--sds-clr-gray-09);
-      font-family: var(--sds-ff-monospace);
+      // Font family handled by inline style in component
     }
 
     &__empty {
-      font-size: pxToRem(14px);
-      color: var(--sds-clr-gray-08);
-      font-style: italic;
+      // Font style handled by inline style in component
     }
   }
 }

@@ -1,7 +1,8 @@
+import { useMutation } from "@tanstack/react-query";
+
 import { API_URL } from "@/constants/envVariables";
 import { fetchApi } from "@/helpers/fetchApi";
 import { ApiReceiver, AppError, CreateReceiverRequest } from "@/types";
-import { useMutation } from "@tanstack/react-query";
 
 export const useCreateReceiver = ({
   onSuccess,

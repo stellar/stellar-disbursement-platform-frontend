@@ -17,8 +17,7 @@ export const API_KEY_FIELD_DESCRIPTIONS: ApiKeyFieldDescription[] = [
   },
   {
     name: "key",
-    description:
-      "API Key. Only returned during creation, then stored as hashed format.",
+    description: "API Key. Only returned during creation, then stored as hashed format.",
     example: `"sdp_123abc..a87c9f8370a8480a3c26bb29e0f6f8b2"`,
   },
   {
@@ -28,20 +27,17 @@ export const API_KEY_FIELD_DESCRIPTIONS: ApiKeyFieldDescription[] = [
   },
   {
     name: "permissions",
-    description:
-      "Array of read and write permissions associated with this key.",
+    description: "Array of read and write permissions associated with this key.",
     example: `["read:statistics", "read:exports", "read:payments"]`,
   },
   {
     name: "allowed_ips",
-    description:
-      "IPs and IP ranges allowed. Empty array means no restrictions.",
+    description: "IPs and IP ranges allowed. Empty array means no restrictions.",
     example: `["203.0.113.5", "198.51.100.0/24"]`,
   },
   {
     name: "enabled",
-    description:
-      "Whether the API key is active and can be used for authentication.",
+    description: "Whether the API key is active and can be used for authentication.",
     example: "true",
   },
   {
