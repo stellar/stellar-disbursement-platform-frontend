@@ -251,7 +251,7 @@ export const SettingsTeamMembers = () => {
           </div>
 
           {usersError || roleError || statusError ? (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras appError={usersError || roleError || statusError} />
             </Notification>
           ) : null}

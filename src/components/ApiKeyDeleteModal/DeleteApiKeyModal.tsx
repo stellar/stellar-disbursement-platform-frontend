@@ -63,7 +63,7 @@ export const DeleteApiKeyModal: React.FC<DeleteApiKeyModalProps> = ({
       <form onSubmit={handleSubmit} onReset={handleClose}>
         <Modal.Body>
           {appError && (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras appError={appError} />
             </Notification>
           )}

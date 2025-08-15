@@ -117,15 +117,19 @@ export const SignIn = () => {
     <>
       <div className="CardLayout">
         {showPasswordResetSuccess && (
-          <Notification variant="success" title="Password Reset Successful">
+          <Notification variant="success" title="Password Reset Successful" isFilled={true}>
             Your password has been reset successfully. Please log in with your new password.
           </Notification>
         )}
         {isSessionExpired && (
-          <Notification variant="primary" title="Session expired, please sign in again" />
+          <Notification
+            variant="primary"
+            title="Session expired, please sign in again"
+            isFilled={true}
+          />
         )}
         {!isSessionExpired && userAccount.errorString && (
-          <Notification variant="error" title="Sign in error">
+          <Notification variant="error" title="Sign in error" isFilled={true}>
             <ErrorWithExtras
               appError={{
                 message: userAccount.errorString,

@@ -173,7 +173,7 @@ export const ReceiverDetailsEdit = () => {
 
     if (receiverDetailsError || !receiverDetails) {
       return (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras appError={receiverDetailsError || { message: GENERIC_ERROR_MESSAGE }} />
         </Notification>
       );
@@ -215,7 +215,7 @@ export const ReceiverDetailsEdit = () => {
 
         <div className="CardStack">
           {updateError ? (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras appError={updateError} />
             </Notification>
           ) : null}

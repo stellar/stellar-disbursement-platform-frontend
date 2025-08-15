@@ -36,7 +36,7 @@ export const ApiKeySuccessModal: React.FC<ApiKeySuccessModalProps> = ({
         </div>
       </Modal.Heading>
       <Modal.Body>
-        <Notification variant="warning" title="Important">
+        <Notification variant="warning" title="Important" isFilled={true}>
           API key was successfully created! Make sure to copy and store it securely, THIS KEY WILL
           NOT BE SHOWN AGAIN. It may take a few minutes to be usable
         </Notification>

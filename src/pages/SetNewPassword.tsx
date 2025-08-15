@@ -70,14 +70,14 @@ export const SetNewPassword = () => {
     <>
       <div className="CardLayout">
         {isSuccess ? (
-          <Notification variant="success" title="Password reset">
+          <Notification variant="success" title="Password reset" isFilled={true}>
             Password reset successfully. You can <Link onClick={goToSignIn}>sign in</Link> using
             your new password.
           </Notification>
         ) : null}
 
         {error ? (
-          <Notification variant="error" title="Reset password error">
+          <Notification variant="error" title="Reset password error" isFilled={true}>
             <ErrorWithExtras appError={error} />
           </Notification>
         ) : null}

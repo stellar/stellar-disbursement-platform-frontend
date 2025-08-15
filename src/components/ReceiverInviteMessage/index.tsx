@@ -168,7 +168,7 @@ export const ReceiverInviteMessage = () => {
   return (
     <>
       {isError ? (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras appError={error} />
         </Notification>
       ) : null}

@@ -486,7 +486,7 @@ export const Profile = () => {
 
       <div className="CardStack">
         {profile.errorString ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             <ErrorWithExtras
               appError={{
                 message: profile.errorString,
@@ -497,7 +497,7 @@ export const Profile = () => {
         ) : null}
 
         {organization.errorString ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             <ErrorWithExtras
               appError={{
                 message: organization.errorString,

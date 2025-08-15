@@ -120,7 +120,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
           </div>
           <div className="CreateApiKeyModal__permissionsDivider" />
           {appError && (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras appError={appError} />
             </Notification>
           )}
