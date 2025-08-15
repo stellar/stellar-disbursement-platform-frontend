@@ -14,13 +14,6 @@
     margin-bottom: pxToRem(24px);
   }
 
-  &__description {
-    color: var(--sds-clr-gray-09);
-    font-size: pxToRem(14px);
-    line-height: pxToRem(22px);
-    margin-top: pxToRem(24px);
-  }
-
   &__input-row {
     display: grid;
     gap: pxToRem(12px);
@@ -39,45 +32,23 @@
     }
 
     &--wallet {
-      grid-template-columns: 3fr 0.8fr auto;
+      grid-template-columns: 3fr 0.5fr auto;
     }
   }
 
-  &__provided {
-    margin-top: pxToRem(8px);
-    margin-bottom: pxToRem(16px);
-
-    p {
-      margin: 0;
-      font-size: pxToRem(14px);
-      font-weight: 500;
-      color: var(--sds-clr-gray-11);
-    }
-  }
-
-  &__verification-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: pxToRem(8px);
+  &__section {
     margin-bottom: pxToRem(8px);
   }
 
-  &__verification-badge {
-    display: flex;
-    align-items: center;
-    gap: pxToRem(4px);
-  }
-
   &__wallet-memo-field {
-    min-width: pxToRem(100px);
+    min-width: pxToRem(50px);
     max-width: pxToRem(120px);
   }
 
   &__confirmation {
     h4 {
-      margin: 0 0 pxToRem(16px) 0;
-      font-size: pxToRem(16px);
-      font-weight: 600;
+      font-size: var(--sds-fs-primary);
+      font-weight: var(--sds-fw-semi-bold);
       color: var(--sds-clr-gray-12);
     }
 
@@ -85,12 +56,6 @@
       display: flex;
       flex-direction: column;
       gap: pxToRem(16px);
-    }
-
-    &__section {
-      display: flex;
-      flex-direction: column;
-      gap: pxToRem(8px);
     }
 
     &__label {
@@ -117,14 +82,6 @@
 
     &__value {
       line-height: pxToRem(20px);
-    }
-
-    &__memo {
-      // Font family handled by inline style in component
-    }
-
-    &__empty {
-      // Font style handled by inline style in component
     }
   }
 }

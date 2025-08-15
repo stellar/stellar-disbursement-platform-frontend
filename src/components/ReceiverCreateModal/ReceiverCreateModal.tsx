@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
+import { Button, Icon, Input, Modal, Notification, Select, Text } from "@stellar/design-system";
 
 import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
@@ -199,6 +199,12 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
 
   const getCurrentWalletAddress = () => formData?.currentWallet?.address?.trim();
 
+  const isWalletDuplicate = (walletAddress: string, existingWallets: AddedWallet[]) => {
+    return existingWallets.some(
+      (wallet) => wallet.address.toLowerCase() === walletAddress.toLowerCase(),
+    );
+  };
+
   const addWallet = () => {
     const walletAddress = getCurrentWalletAddress();
 
@@ -206,11 +212,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       return;
     }
 
-    const isDuplicate = formData.addedWallets.some(
-      (wallet) => wallet.address.toLowerCase() === walletAddress.toLowerCase(),
-    );
-
-    if (isDuplicate) {
+    if (isWalletDuplicate(walletAddress, formData.addedWallets)) {
       setFormErrors((prev) => ({
         ...prev,
         walletAddress: "This wallet address is already added to the list",
@@ -355,7 +357,9 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   const renderVerificationFields = () => {
     return (
       <div className="ReceiverCreateModal__section">
-        <h4>Verifications</h4>
+        <Text size="md" as="h4" className="ReceiverCreateModal__section">
+          Verifications
+        </Text>
 
         {/* Current verification input row */}
         <div className="ReceiverCreateModal__input-row ReceiverCreateModal__input-row--verification">
@@ -400,9 +404,9 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
         {/* Added verifications as badges */}
         {formData.addedVerifications.length > 0 ? (
           <>
-            <div className="ReceiverCreateModal__provided">
-              <p>Verifications provided:</p>
-            </div>
+            <Text size="sm" as="p" className="ReceiverCreateModal__provided">
+              Verifications provided:
+            </Text>
             <div className="ReceiverCreateModal__verification-badges">
               {formData.addedVerifications.map((verification) => (
                 <div key={verification.id} className="ReceiverCreateModal__verification-badge">
@@ -468,9 +472,9 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
         {/* Added wallets as list */}
         {formData.addedWallets.length > 0 ? (
           <>
-            <div className="ReceiverCreateModal__provided">
-              <p>Wallets provided:</p>
-            </div>
+            <Text size="sm" as="p" className="ReceiverCreateModal__provided">
+              Wallets provided:
+            </Text>
             <div className="ReceiverCreateModal__verification-badges">
               {formData.addedWallets.map((wallet) => (
                 <div key={wallet.id} className="ReceiverCreateModal__verification-badge">
@@ -540,17 +544,17 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             ) : null}
 
             <div className="ReceiverCreateModal__form">
-              {/* Instructions */}
-              <div className="ReceiverCreateModal__description">
-                <p>
-                  Email or phone number is required to create a receiver. Both must be unique across
-                  all receivers.
-                </p>
-              </div>
-
               {/* Contact Information */}
               <div className="ReceiverCreateModal__section">
-                <h4>Contact Information</h4>
+                <Text size="md" as="h4" className="ReceiverCreateModal__section">
+                  Contact Information
+                </Text>
+                {/* Instructions */}
+                <Text size="sm" as="p" className="ReceiverCreateModal__description">
+                  Email or phone number is required to create a receiver. Both must be unique across
+                  all receivers.
+                </Text>
+
                 <div className="ReceiverCreateModal__form-row">
                   <Input
                     fieldSize="md"
@@ -598,16 +602,20 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
 
               {/* Verifications Section */}
               <div className="ReceiverCreateModal__section">
-                <h4>Identity Verification</h4>
-                <div className="ReceiverCreateModal__description">
+                <Text size="md" as="h4" className="ReceiverCreateModal__section">
+                  Identity Verification
+                </Text>
+                <Text size="sm" as="p" className="ReceiverCreateModal__section-description">
                   Add at least one verification or wallet address to create a receiver.
-                </div>
+                </Text>
                 {renderVerificationFields()}
               </div>
 
               {/* Wallet Addresses */}
               <div className="ReceiverCreateModal__section">
-                <h4>Wallet Addresses</h4>
+                <Text size="md" as="h4" className="ReceiverCreateModal__section">
+                  Wallet Addresses
+                </Text>
                 {renderWalletFields()}
               </div>
             </div>
@@ -620,7 +628,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
               size="md"
               variant="primary"
               type="submit"
-              disabled={!hasMinimumRequirements || isLoading}
+              disabled={!hasMinimumRequirements}
               isLoading={isLoading}
             >
               Confirm
