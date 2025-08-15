@@ -111,7 +111,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
             Update the permissions and IP restrictions for this API key.
           </div>
           {appError && (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras appError={appError} />
             </Notification>
           )}

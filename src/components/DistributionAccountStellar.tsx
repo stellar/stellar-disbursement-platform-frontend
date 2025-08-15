@@ -72,7 +72,7 @@ export const DistributionAccountStellar = () => {
 
     if (organization.errorString) {
       return (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras
             appError={{
               message: organization.errorString,

@@ -84,7 +84,7 @@ export const BridgeIntegrationSection = ({
       <Card>
         <div className="CardStack__card">
           <div className="CardStack__title">{renderInfoTooltip()}</div>
-          <Notification variant="error" title="Error loading Bridge integration">
+          <Notification variant="error" title="Error loading Bridge integration" isFilled={true}>
             <div className="BridgeIntegration__error">
               <p>{getBridgeErrorMessage(error)}</p>
               <Button
@@ -132,7 +132,11 @@ export const BridgeIntegrationSection = ({
 
             {canCreateVirtualAccount && (
               <div className="BridgeIntegration__virtualAccountSection">
-                <Notification variant="success" title="Ready to Create Virtual Account">
+                <Notification
+                  variant="success"
+                  title="Ready to Create Virtual Account"
+                  isFilled={true}
+                >
                   Congratulations, you're ready to create your virtual USD bank account with Bridge!
                   Click the button below to create account details and start accepting USD payments.
                 </Notification>
@@ -153,7 +157,7 @@ export const BridgeIntegrationSection = ({
 
         if (!virtualAccount) {
           return (
-            <Notification variant="error" title="Virtual account data unavailable">
+            <Notification variant="error" title="Virtual account data unavailable" isFilled={true}>
               Please try refreshing the page or contact support.
             </Notification>
           );
@@ -201,7 +205,7 @@ export const BridgeIntegrationSection = ({
 
       case "ERROR":
         return (
-          <Notification variant="error" title="Bridge integration error">
+          <Notification variant="error" title="Bridge integration error" isFilled={true}>
             There was an issue with your Bridge integration. Please try again or contact support.
           </Notification>
         );

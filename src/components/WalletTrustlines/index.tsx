@@ -220,7 +220,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
   return (
     <>
       {trustlinesError ? (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras appError={trustlinesError} />
         </Notification>
       ) : null}
@@ -274,7 +274,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
         >
           <Modal.Body>
             {isTrustlineAddError ? (
-              <Notification variant="error" title="Error">
+              <Notification variant="error" title="Error" isFilled={true}>
                 {parseApiError(trustlineAddError as ApiError)}
               </Notification>
             ) : null}
@@ -342,7 +342,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
         >
           <Modal.Body>
             {trustlineRemoveIsError ? (
-              <Notification variant="error" title="Error">
+              <Notification variant="error" title="Error" isFilled={true}>
                 {parseApiError(trustlineRemoveError as ApiError)}
               </Notification>
             ) : null}
