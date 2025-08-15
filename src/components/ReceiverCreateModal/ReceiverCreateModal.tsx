@@ -546,7 +546,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
         <>
           <Modal.Body>
             {appError ? (
-              <Notification variant="error" title="Error">
+              <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras appError={appError} />
               </Notification>
             ) : null}
@@ -578,7 +578,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
           <div className="ReceiverCreateModal__content">
             <Modal.Body>
               {appError ? (
-                <Notification variant="error" title="Error">
+                <Notification variant="error" title="Error" isFilled={true}>
                   <ErrorWithExtras appError={appError} />
                 </Notification>
               ) : null}

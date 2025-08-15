@@ -1,5 +1,6 @@
 import { Text } from "@stellar/design-system";
 
+import { generateId } from "@/helpers/generateId";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
@@ -90,7 +91,7 @@ export const ReceiverConfirmation: React.FC<ReceiverConfirmationProps> = ({ rece
           <ConfirmationSection label="Wallet(s):">
             {receiverData.wallets.map((wallet, index) => (
               <ConfirmationItem
-                key={index}
+                key={generateId(`wallet-${index}`)}
                 value={
                   <>
                     {shortenAccountKey(wallet.address, 8, 8)}
@@ -118,7 +119,7 @@ export const ReceiverConfirmation: React.FC<ReceiverConfirmationProps> = ({ rece
           <ConfirmationSection label="Verification(s):">
             {receiverData.verifications.map((v, index) => (
               <ConfirmationItem
-                key={index}
+                key={generateId(`verification-${index}`)}
                 field={`${VerificationFieldMap[v.type] || v.type}:`}
                 value={v.value}
               />
