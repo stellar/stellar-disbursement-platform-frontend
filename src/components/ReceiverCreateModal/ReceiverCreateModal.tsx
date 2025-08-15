@@ -8,6 +8,8 @@ import { ReceiverConfirmation } from "@/components/ReceiverConfirmation/Receiver
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
 import { usePrevious } from "@/hooks/usePrevious";
+import { ErrorDisplay } from "./ErrorDisplay";
+
 import { AppError, CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
 import "./styles.scss";
@@ -114,17 +116,70 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
     }));
   };
 
+  const validateVerificationValue = (type: string, value: string): string | null => {
+    const trimmedValue = value.trim();
+
+    switch (type) {
+      case "DATE_OF_BIRTH":
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
+          return "Date of birth must be in YYYY-MM-DD format";
+        }
+        break;
+      case "YEAR_MONTH":
+        if (!/^\d{4}-\d{2}$/.test(trimmedValue)) {
+          return "Year-month must be in YYYY-MM format";
+        }
+        break;
+      case "PIN":
+        if (trimmedValue.length < 4 || trimmedValue.length > 8) {
+          return "PIN must be between 4 and 8 characters";
+        }
+        if (!/^\d+$/.test(trimmedValue)) {
+          return "PIN must contain only digits";
+        }
+        break;
+      case "NATIONAL_ID_NUMBER":
+        if (trimmedValue.length > 50) {
+          return "National ID must be at most 50 characters";
+        }
+        break;
+    }
+    return null;
+  };
+
   const handleVerificationValueChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
       currentVerification: { ...prev.currentVerification, value },
     }));
+
+    // Clear existing error if there was one
+    if (formErrors.currentVerificationValue) {
+      setFormErrors((prev) => ({ ...prev, currentVerificationValue: "" }));
+    }
   };
 
   const addVerification = () => {
     if (!formData.currentVerification.type || !formData.currentVerification.value.trim()) {
       return;
     }
+
+    // Validate the verification value before adding
+    const validationError = validateVerificationValue(
+      formData.currentVerification.type,
+      formData.currentVerification.value,
+    );
+
+    if (validationError) {
+      setFormErrors((prev) => ({
+        ...prev,
+        currentVerificationValue: validationError,
+      }));
+      return;
+    }
+
+    // Clear any existing validation errors
+    setFormErrors((prev) => ({ ...prev, currentVerificationValue: "" }));
 
     const newVerification: AddedVerification = {
       id: `verification-${Date.now()}`,
@@ -295,30 +350,12 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
 
     // Validate current verification value based on type
     if (formData.currentVerification.type && formData.currentVerification.value.trim()) {
-      switch (formData.currentVerification.type) {
-        case "DATE_OF_BIRTH":
-          if (!/^\d{4}-\d{2}-\d{2}$/.test(formData.currentVerification.value.trim())) {
-            errors.currentVerificationValue = "Date of birth must be in YYYY-MM-DD format";
-          }
-          break;
-        case "YEAR_MONTH":
-          if (!/^\d{4}-\d{2}$/.test(formData.currentVerification.value.trim())) {
-            errors.currentVerificationValue = "Year-month must be in YYYY-MM format";
-          }
-          break;
-        case "PIN":
-          if (
-            formData.currentVerification.value.trim().length < 4 ||
-            formData.currentVerification.value.trim().length > 8
-          ) {
-            errors.currentVerificationValue = "PIN must be between 4 and 8 characters";
-          }
-          break;
-        case "NATIONAL_ID_NUMBER":
-          if (formData.currentVerification.value.trim().length > 50) {
-            errors.currentVerificationValue = "National ID must be at most 50 characters";
-          }
-          break;
+      const validationError = validateVerificationValue(
+        formData.currentVerification.type,
+        formData.currentVerification.value,
+      );
+      if (validationError) {
+        errors.currentVerificationValue = validationError;
       }
     }
 
@@ -368,8 +405,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             fieldSize="sm"
             value={formData.currentVerification.type}
             onChange={(e) => handleVerificationTypeChange(e.target.value)}
-            error={formErrors.currentVerificationType}
-            infoText="Supported verifications: PIN: 4-8 characters, National ID Number: <50 characters, Date of Birth: YYYY-MM-DD or YYYY-MM"
+            infoText="Supported verifications: PIN: 4-8 digits only, National ID Number: <50 characters, Date of Birth: YYYY-MM-DD or YYYY-MM"
           >
             <option value="">Select type</option>
             {getAvailableVerificationTypes().map((type) => (
@@ -385,7 +421,6 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             {...getVerificationInputConfig(formData.currentVerification.type)}
             value={formData.currentVerification.value}
             onChange={(e) => handleVerificationValueChange(e.target.value)}
-            error={formErrors.currentVerificationValue}
           />
 
           <Button
@@ -400,6 +435,10 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             Add
           </Button>
         </div>
+
+        <ErrorDisplay
+          error={formErrors.currentVerificationType || formErrors.currentVerificationValue}
+        />
 
         {/* Added verifications as badges */}
         {formData.addedVerifications.length > 0 ? (
@@ -441,7 +480,6 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             placeholder="Enter Stellar wallet address (GXXX...)"
             value={formData.currentWallet.address}
             onChange={(e) => handleWalletAddressChange(e.target.value)}
-            error={formErrors.walletAddress}
           />
 
           <Input
@@ -468,6 +506,8 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             Add
           </Button>
         </div>
+
+        <ErrorDisplay error={formErrors.walletAddress} />
 
         {/* Added wallets as list */}
         {formData.addedWallets.length > 0 ? (
@@ -535,90 +575,89 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
         </>
       ) : (
         <form onSubmit={handleSubmit} onReset={handleClose}>
-          <Modal.Body>
-            {appError ? (
-              <Notification variant="error" title="Error">
-                <ErrorWithExtras appError={appError} />
-              </Notification>
-            ) : null}
+          <div className="ReceiverCreateModal__content">
+            <Modal.Body>
+              {appError ? (
+                <Notification variant="error" title="Error">
+                  <ErrorWithExtras appError={appError} />
+                </Notification>
+              ) : null}
 
-            <div className="ReceiverCreateModal__form">
-              {/* Contact Information */}
-              <div className="ReceiverCreateModal__section">
-                <Text size="md" as="h4" className="ReceiverCreateModal__section">
-                  Contact Information
-                </Text>
-                {/* Instructions */}
-                <Text size="sm" as="p" className="ReceiverCreateModal__description">
-                  Email or phone number is required to create a receiver. Both must be unique across
-                  all receivers.
-                </Text>
+              <div className="ReceiverCreateModal__form">
+                {/* Contact Information */}
+                <div className="ReceiverCreateModal__section">
+                  <Text size="md" as="h4" className="ReceiverCreateModal__section">
+                    Contact Information
+                  </Text>
+                  {/* Instructions */}
+                  <Text size="sm" as="p" className="ReceiverCreateModal__description">
+                    Email or phone number is required to create a receiver. Both must be unique
+                    across all receivers.
+                  </Text>
 
-                <div className="ReceiverCreateModal__form-row">
-                  <Input
-                    fieldSize="md"
-                    id="email"
-                    name="email"
-                    type="email"
-                    label="Email"
-                    placeholder="Enter email address"
-                    infoText="Email must be unique across all receivers"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    error={formErrors.email}
-                  />
+                  <div className="ReceiverCreateModal__contact-inputs">
+                    <Input
+                      fieldSize="md"
+                      id="email"
+                      name="email"
+                      type="email"
+                      label="Email"
+                      placeholder="Enter email address"
+                      infoText="Email must be unique across all receivers"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      error={formErrors.email}
+                    />
 
-                  <Input
-                    fieldSize="md"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    type="tel"
-                    label="Phone Number"
-                    placeholder="Enter phone number"
-                    infoText="Phone number must be unique across all receivers"
-                    value={formData.phoneNumber}
-                    onChange={handleInputChange}
-                    error={formErrors.phoneNumber}
-                  />
+                    <Input
+                      fieldSize="md"
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      type="tel"
+                      label="Phone Number"
+                      placeholder="Enter phone number"
+                      infoText="Phone number must be unique across all receivers"
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      error={formErrors.phoneNumber}
+                    />
+
+                    <Input
+                      fieldSize="md"
+                      id="externalId"
+                      name="externalId"
+                      type="text"
+                      label="External ID"
+                      placeholder="Enter external ID"
+                      infoText="An identifier for the receiver defined by your organization"
+                      value={formData.externalId}
+                      onChange={handleInputChange}
+                      error={formErrors.externalId}
+                    />
+                  </div>
+                </div>
+
+                {/* Verifications Section */}
+                <div className="ReceiverCreateModal__section">
+                  <Text size="md" as="h4" className="ReceiverCreateModal__section">
+                    Identity Verification
+                  </Text>
+                  <Text size="sm" as="p" className="ReceiverCreateModal__section-description">
+                    Add at least one verification or wallet address to create a receiver.
+                  </Text>
+                  {renderVerificationFields()}
+                </div>
+
+                {/* Wallet Addresses */}
+                <div className="ReceiverCreateModal__section">
+                  <Text size="md" as="h4" className="ReceiverCreateModal__section">
+                    Wallet Addresses
+                  </Text>
+                  {renderWalletFields()}
                 </div>
               </div>
-
-              {/* External ID */}
-              <div className="ReceiverCreateModal__section">
-                <Input
-                  fieldSize="md"
-                  id="externalId"
-                  name="externalId"
-                  type="text"
-                  label="External ID"
-                  placeholder="Enter external ID"
-                  infoText="An identifier for the receiver defined by your organization"
-                  value={formData.externalId}
-                  onChange={handleInputChange}
-                  error={formErrors.externalId}
-                />
-              </div>
-
-              {/* Verifications Section */}
-              <div className="ReceiverCreateModal__section">
-                <Text size="md" as="h4" className="ReceiverCreateModal__section">
-                  Identity Verification
-                </Text>
-                <Text size="sm" as="p" className="ReceiverCreateModal__section-description">
-                  Add at least one verification or wallet address to create a receiver.
-                </Text>
-                {renderVerificationFields()}
-              </div>
-
-              {/* Wallet Addresses */}
-              <div className="ReceiverCreateModal__section">
-                <Text size="md" as="h4" className="ReceiverCreateModal__section">
-                  Wallet Addresses
-                </Text>
-                {renderWalletFields()}
-              </div>
-            </div>
-          </Modal.Body>
+            </Modal.Body>
+          </div>
           <Modal.Footer>
             <Button size="md" variant="tertiary" type="reset" disabled={isLoading}>
               Cancel
