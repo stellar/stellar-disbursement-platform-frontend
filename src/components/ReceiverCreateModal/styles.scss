@@ -1,0 +1,156 @@
+@use "../../styles/styles-utils.scss" as *;
+
+// Spacing scale - consistent spacing values throughout the component
+$spacing-xs: pxToRem(4px);
+$spacing-sm: pxToRem(8px);
+$spacing-md: pxToRem(12px);
+$spacing-lg: pxToRem(16px);
+$spacing-xl: pxToRem(24px);
+
+// Layout constants
+$modal-max-height: 70vh;
+$input-min-width-small: pxToRem(120px);
+$input-min-width-medium: pxToRem(150px);
+$input-min-width-large: pxToRem(200px);
+
+.ReceiverCreateModal {
+  // LAYOUT & STRUCTURE
+  &__content {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: $modal-max-height;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__form-row {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
+  }
+
+  &__section {
+    margin-bottom: $spacing-sm;
+  }
+
+  // FORM INPUTS & CONTROLS
+  &__contact-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  &__input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+    align-items: flex-end;
+    padding-top: pxToRem(5px);
+    padding-bottom: pxToRem(5px);
+
+    .Button {
+      flex-shrink: 0;
+      min-width: fit-content;
+      white-space: nowrap;
+    }
+
+    &--verification {
+      .Select {
+        flex: 1;
+      }
+
+      .Input {
+        flex: 2;
+      }
+    }
+
+    &--wallet {
+      .Input {
+        flex: 1;
+      }
+
+      .Input:first-child {
+        flex: 3;
+        max-width: 100%;
+      }
+    }
+  }
+
+  &__wallet-memo-field {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  // VERIFICATION & BADGES
+
+  &__verification-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-top: $spacing-sm;
+  }
+
+  &__verification-badge {
+    flex-shrink: 0;
+  }
+
+  &__provided {
+    margin-top: $spacing-lg;
+    margin-bottom: $spacing-sm;
+  }
+
+  // ERROR STATES
+
+  &__error-row {
+    margin-top: $spacing-sm;
+    margin-bottom: $spacing-lg;
+    color: var(--sds-clr-red-09);
+  }
+
+  // CONFIRMATION SECTION
+
+  &__confirmation {
+    contain: layout style;
+  }
+
+  &__confirmation-title {
+    font-size: var(--sds-fs-primary);
+    font-weight: var(--sds-fw-semi-bold);
+  }
+
+  &__confirmation-details {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  &__confirmation-label {
+    margin-bottom: $spacing-xs;
+  }
+
+  &__confirmation-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    padding-left: $spacing-lg;
+  }
+
+  &__confirmation-item {
+    display: flex;
+    gap: $spacing-sm;
+    align-items: baseline;
+    min-height: pxToRem(20px);
+  }
+
+  &__confirmation-field {
+    min-width: fit-content;
+  }
+
+  &__confirmation-value {
+    line-height: pxToRem(20px);
+  }
+}

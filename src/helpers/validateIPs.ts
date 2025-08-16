@@ -32,9 +32,7 @@ const isValidIPAddress = (ip: string): boolean => {
   return false;
 };
 
-export const validateAllowedIPs = (
-  allowedIPs: string,
-): { isValid: boolean; error?: string } => {
+export const validateAllowedIPs = (allowedIPs: string): { isValid: boolean; error?: string } => {
   const ips = parseAllowedIPs(allowedIPs);
 
   if (ips.length === 0) {
