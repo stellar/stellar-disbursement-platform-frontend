@@ -33,7 +33,7 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
 
   if (apiError) {
     return (
-      <Notification variant="error" title="Error">
+      <Notification variant="error" title="Error" isFilled={true}>
         <ErrorWithExtras
           appError={{
             message: apiError,

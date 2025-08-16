@@ -366,7 +366,7 @@ export const DisbursementDetails = () => {
   const renderContent = () => {
     if (disbursementDetails.errorString) {
       return (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras
             appError={{
               message: disbursementDetails.errorString,
@@ -388,7 +388,7 @@ export const DisbursementDetails = () => {
       <>
         {isPaused ? (
           <div className="SectionBlock">
-            <Notification variant="error" title="Disbursement paused">
+            <Notification variant="error" title="Disbursement paused" isFilled={true}>
               Payments are on hold until the disbursement is started again.
             </Notification>
           </div>

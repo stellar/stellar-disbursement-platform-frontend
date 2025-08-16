@@ -24,7 +24,7 @@ export const DashboardAnalytics = () => {
 
   if (error) {
     return (
-      <Notification variant="error" title="Error">
+      <Notification variant="error" title="Error" isFilled={true}>
         <ErrorWithExtras appError={error} />
       </Notification>
     );

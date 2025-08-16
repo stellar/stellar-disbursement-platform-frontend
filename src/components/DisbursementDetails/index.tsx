@@ -434,7 +434,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   return (
     <>
       {sanitizedApiErrors && sanitizedApiErrors.length > 0 ? (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           {sanitizedApiErrors.map((e) => (
             <div key={`error-${e}`}>{e}</div>
           ))}

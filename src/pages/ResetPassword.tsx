@@ -76,7 +76,7 @@ export const ResetPassword = () => {
     <>
       <div className="CardLayout">
         {isSuccess ? (
-          <Notification variant="success" title="Password Reset Successful">
+          <Notification variant="success" title="Password Reset Successful" isFilled={true}>
             Your password has been updated. Redirecting to the sign in page{" "}
             <span style={{ verticalAlign: "middle", display: "inline-block" }}>
               <Loader size="1rem" />
@@ -85,7 +85,7 @@ export const ResetPassword = () => {
         ) : null}
 
         {error ? (
-          <Notification variant="error" title="Reset password error">
+          <Notification variant="error" title="Reset password error isFilled={true}">
             <ErrorWithExtras appError={error} />
           </Notification>
         ) : null}

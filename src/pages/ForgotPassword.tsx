@@ -60,13 +60,13 @@ export const ForgotPassword = () => {
     <>
       <div className="CardLayout">
         {isSuccess ? (
-          <Notification variant="success" title="Password Reset Requested">
+          <Notification variant="success" title="Password Reset Requested" isFilled={true}>
             {data?.message}
           </Notification>
         ) : null}
 
         {error ? (
-          <Notification variant="error" title="Forgot password error">
+          <Notification variant="error" title="Forgot password error" isFilled={true}>
             <ErrorWithExtras appError={error} />
           </Notification>
         ) : null}

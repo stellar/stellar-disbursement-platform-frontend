@@ -188,7 +188,7 @@ export const BridgeOptInModal: React.FC<BridgeOptInModalProps> = ({
       <Modal.Body>
         <div className="BridgeOptInModal">
           {error && (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras appError={error} />
             </Notification>
           )}

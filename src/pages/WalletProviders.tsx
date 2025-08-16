@@ -104,7 +104,7 @@ export const WalletProviders = () => {
 
       <div className="CardStack">
         {walletsError || walletUpdateError ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             <ErrorWithExtras appError={walletsError || walletUpdateError} />
           </Notification>
         ) : null}
@@ -167,6 +167,7 @@ export const WalletProviders = () => {
               <Notification
                 variant="warning"
                 title="This will disable all new disbursements to this provider"
+                isFilled={true}
               ></Notification>
             </Modal.Body>
           ) : (
@@ -178,6 +179,7 @@ export const WalletProviders = () => {
               <Notification
                 variant="warning"
                 title="This will allow ANY disbursement to this provider"
+                isFilled={true}
               ></Notification>
             </Modal.Body>
           )}

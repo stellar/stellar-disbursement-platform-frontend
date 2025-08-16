@@ -136,7 +136,7 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
       >
         <Modal.Body>
           {errorMessage ? (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras
                 appError={{
                   message: errorMessage,

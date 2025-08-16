@@ -196,7 +196,7 @@ export const DistributionAccountCircle = () => {
 
       <div className="CardStack">
         {configResponse?.message && configResponse?.type === "error" ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             {configResponse.message}
           </Notification>
         ) : null}

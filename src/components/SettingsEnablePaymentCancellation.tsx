@@ -141,7 +141,7 @@ export const SettingsEnablePaymentCancellation = () => {
   return (
     <>
       {error ? (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras appError={error} />
         </Notification>
       ) : null}

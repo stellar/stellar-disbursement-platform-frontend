@@ -53,7 +53,7 @@ export const DirectPaymentConfirmation: React.FC<DirectPaymentConfirmationProps>
   return (
     <div className="DirectPaymentConfirmation">
       <div className="DirectPaymentConfirmation__content">
-        <Notification variant="warning" title="Warning">
+        <Notification variant="warning" title="Warning" isFilled={true}>
           <p>Please review the payment details below. This action cannot be undone.</p>
         </Notification>
 

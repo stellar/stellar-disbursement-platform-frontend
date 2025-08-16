@@ -115,7 +115,7 @@ export const PaymentDetails = () => {
   const renderContent = () => {
     if (paymentError) {
       return (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras
             appError={{
               message: `Error fetching payment details: ${paymentError.message}`,
@@ -130,14 +130,14 @@ export const PaymentDetails = () => {
         <>
           {formattedPayment.status === CANCELED_PAYMENT_STATUS && (
             <div className="SectionBlock">
-              <Notification variant="error" title="Payment canceled">
+              <Notification variant="error" title="Payment canceled" isFilled={true}>
                 This payment is permanently canceled.
               </Notification>
             </div>
           )}
 
           {cancelPaymentError && (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               {cancelPaymentError.message}
             </Notification>
           )}

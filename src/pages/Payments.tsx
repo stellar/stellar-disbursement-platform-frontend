@@ -246,7 +246,7 @@ export const Payments = () => {
       </SectionHeader>
 
       {createPaymentError && (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras
             appError={{
               message: createPaymentError.message,

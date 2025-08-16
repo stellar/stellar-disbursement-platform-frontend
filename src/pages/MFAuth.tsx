@@ -88,7 +88,7 @@ export const MFAuth = () => {
     <>
       <div className="CardLayout">
         {userAccount.errorString && (
-          <Notification variant="error" title="MFA error">
+          <Notification variant="error" title="MFA error" isFilled={true}>
             <ErrorWithExtras
               appError={{
                 message: userAccount.errorString,

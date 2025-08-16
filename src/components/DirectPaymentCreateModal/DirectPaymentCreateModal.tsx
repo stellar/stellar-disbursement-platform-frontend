@@ -342,7 +342,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
         <>
           <Modal.Body>
             {errorMessage && (
-              <Notification variant="error" title="Error">
+              <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras appError={{ message: errorMessage }} />
               </Notification>
             )}
@@ -382,7 +382,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
               address.
             </div>
             {errorMessage && (
-              <Notification variant="error" title="Error">
+              <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras appError={{ message: errorMessage }} />
               </Notification>
             )}

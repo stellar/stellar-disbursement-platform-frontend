@@ -140,7 +140,7 @@ export const ApiKeys = () => {
     return (
       <div className="CardStack">
         {apiKeys.errorString ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             <ErrorWithExtras
               appError={{
                 message: apiKeys.errorString,
