@@ -1,0 +1,32 @@
+@use "../../styles/styles-utils.scss" as *;
+
+$spacing-xs: pxToRem(4px);
+$spacing-sm: pxToRem(8px);
+
+.CustomDateInput {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  width: 100%;
+
+  &__formatted {
+    color: var(--sds-clr-gray-07);
+    font-style: italic;
+    margin: 0;
+    padding-left: $spacing-sm;
+  }
+}
+
+.CustomYearMonthInput {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  width: 100%;
+
+  &__formatted {
+    color: var(--sds-clr-gray-07);
+    font-style: italic;
+    margin: 0;
+    padding-left: $spacing-sm;
+  }
+}

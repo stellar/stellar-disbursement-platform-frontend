@@ -86,34 +86,6 @@ export const ReceiverConfirmation: React.FC<ReceiverConfirmationProps> = ({ rece
           </ConfirmationSection>
         ) : null}
 
-        {/* Wallets */}
-        {hasWallets ? (
-          <ConfirmationSection label="Wallet(s):">
-            {receiverData.wallets.map((wallet, index) => (
-              <ConfirmationItem
-                key={generateId(`wallet-${index}`)}
-                value={
-                  <>
-                    {shortenAccountKey(wallet.address, 8, 8)}
-                    {wallet.memo ? (
-                      <Text
-                        size="sm"
-                        color="gray-09"
-                        as="span"
-                        className="ReceiverCreateModal__confirmation__memo"
-                        style={{ fontFamily: "var(--sds-ff-monospace)" }}
-                      >
-                        {" "}
-                        (Memo: {wallet.memo})
-                      </Text>
-                    ) : null}
-                  </>
-                }
-              />
-            ))}
-          </ConfirmationSection>
-        ) : null}
-
         {/* Verifications */}
         {hasVerifications ? (
           <ConfirmationSection label="Verification(s):">
@@ -122,6 +94,28 @@ export const ReceiverConfirmation: React.FC<ReceiverConfirmationProps> = ({ rece
                 key={generateId(`verification-${index}`)}
                 field={`${VerificationFieldMap[v.type] || v.type}:`}
                 value={v.value}
+              />
+            ))}
+          </ConfirmationSection>
+        ) : null}
+
+        {/* Wallets */}
+        {hasWallets ? (
+          <ConfirmationSection label="Wallet(s):">
+            {receiverData.wallets.map((wallet, index) => (
+              <ConfirmationItem
+                key={generateId(`wallet-${index}`)}
+                value={
+                  <>
+                    {shortenAccountKey(wallet.address, 10, 10)}
+                    {wallet.memo ? (
+                      <Text size="sm" color="gray-09" as="span">
+                        {" "}
+                        (Memo: {wallet.memo})
+                      </Text>
+                    ) : null}
+                  </>
+                }
               />
             ))}
           </ConfirmationSection>

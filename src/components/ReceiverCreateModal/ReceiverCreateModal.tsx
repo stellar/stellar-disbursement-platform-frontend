@@ -3,12 +3,15 @@ import { useEffect, useState } from "react";
 import { Button, Icon, Input, Modal, Notification, Select, Text } from "@stellar/design-system";
 
 import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
+import {
+  CustomDateInput,
+  CustomYearMonthInput,
+} from "@/components/CustomDateInputs/CustomDateInputs";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { ReceiverConfirmation } from "@/components/ReceiverConfirmation/ReceiverConfirmation";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
 import { usePrevious } from "@/hooks/usePrevious";
-import { ErrorDisplay } from "./ErrorDisplay";
 
 import { AppError, CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
@@ -84,7 +87,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       setShowConfirmation(false);
       setReceiverDataToConfirm(null);
     }
-  }, [visible, previousVisible]);
+  }, [visible, previousVisible, onResetQuery]);
 
   const handleClose = () => {
     if (showConfirmation) {
@@ -114,23 +117,63 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       ...prev,
       currentVerification: { ...prev.currentVerification, type, value: "" },
     }));
+
+    // Clear verification value error when type changes
+    if (formErrors.currentVerificationValue) {
+      setFormErrors((prev) => ({ ...prev, currentVerificationValue: "" }));
+    }
   };
 
   const validateVerificationValue = (type: string, value: string): string | null => {
     const trimmedValue = value.trim();
 
     switch (type) {
-      case "DATE_OF_BIRTH":
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmedValue)) {
-          return "Date of birth must be in YYYY-MM-DD format";
+      case "DATE_OF_BIRTH": {
+        // Handle both formats: YYYY-MM-DD and YYYY MM DD
+        const dateValue = (() => {
+          if (/^\d{4}\s\d{1,2}\s\d{1,2}$/.test(trimmedValue)) {
+            const [year, month, day] = trimmedValue.split(/\s+/);
+            return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+          }
+          return trimmedValue;
+        })();
+
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+          return "Date of birth must be in YYYY-MM-DD or YYYY MM DD format";
+        }
+        // Additional validation for reasonable date range
+        const date = new Date(dateValue);
+        const now = new Date();
+        const minDate = new Date(now.getFullYear() - 120, now.getMonth(), now.getDate());
+        const maxDate = new Date(now.getFullYear() - 13, now.getMonth(), now.getDate());
+
+        if (date < minDate || date > maxDate) {
+          return "Date of birth must be between 1900 and 2010";
         }
         break;
-      case "YEAR_MONTH":
-        if (!/^\d{4}-\d{2}$/.test(trimmedValue)) {
-          return "Year-month must be in YYYY-MM format";
+      }
+      case "YEAR_MONTH": {
+        // Handle both formats: YYYY-MM and YYYY MM
+        const yearMonthValue = (() => {
+          if (/^\d{4}\s\d{1,2}$/.test(trimmedValue)) {
+            const [year, month] = trimmedValue.split(/\s+/);
+            return `${year}-${month.padStart(2, "0")}`;
+          }
+          return trimmedValue;
+        })();
+
+        if (!/^\d{4}-\d{2}$/.test(yearMonthValue)) {
+          return "Year-month must be in YYYY-MM or YYYY MM format";
+        }
+        // Validate month is between 01-12
+        const [, monthStr] = yearMonthValue.split("-");
+        const monthNum = parseInt(monthStr, 10);
+        if (monthNum < 1 || monthNum > 12) {
+          return "Month must be between 01 and 12";
         }
         break;
-      case "PIN":
+      }
+      case "PIN": {
         if (trimmedValue.length < 4 || trimmedValue.length > 8) {
           return "PIN must be between 4 and 8 characters";
         }
@@ -138,11 +181,13 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
           return "PIN must contain only digits";
         }
         break;
-      case "NATIONAL_ID_NUMBER":
+      }
+      case "NATIONAL_ID_NUMBER": {
         if (trimmedValue.length > 50) {
           return "National ID must be at most 50 characters";
         }
         break;
+      }
     }
     return null;
   };
@@ -223,9 +268,9 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   const getVerificationInputConfig = (verificationType: string) => {
     switch (verificationType) {
       case "DATE_OF_BIRTH":
-        return { type: "date" as const, placeholder: "YYYY-MM-DD" };
+        return { type: "text" as const, placeholder: "YYYY-MM-DD" };
       case "YEAR_MONTH":
-        return { type: "month" as const, placeholder: "YYYY-MM" };
+        return { type: "text" as const, placeholder: "YYYY-MM" };
       default:
         return { type: "text" as const, placeholder: "Enter value" };
     }
@@ -398,14 +443,14 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
           Verifications
         </Text>
 
-        {/* Current verification input row */}
-        <div className="ReceiverCreateModal__input-row ReceiverCreateModal__input-row--verification">
+        {/* Verification type selection row */}
+        <div className="ReceiverCreateModal__input-row ReceiverCreateModal__input-row--verification-type">
           <Select
             id="current-verification-type"
             fieldSize="sm"
             value={formData.currentVerification.type}
             onChange={(e) => handleVerificationTypeChange(e.target.value)}
-            infoText="Supported verifications: PIN: 4-8 digits only, National ID Number: <50 characters, Date of Birth: YYYY-MM-DD or YYYY-MM"
+            infoText="Supported verifications: PIN: 4-8 digits only, National ID Number: <50 characters, Date of Birth: YYYY-MM-DD or YYYY MM DD, Year-Month: YYYY-MM or YYYY MM"
           >
             <option value="">Select type</option>
             {getAvailableVerificationTypes().map((type) => (
@@ -414,14 +459,37 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
               </option>
             ))}
           </Select>
+        </div>
 
-          <Input
-            id="current-verification-value"
-            fieldSize="sm"
-            {...getVerificationInputConfig(formData.currentVerification.type)}
-            value={formData.currentVerification.value}
-            onChange={(e) => handleVerificationValueChange(e.target.value)}
-          />
+        {/* Verification value input row - always visible but disabled until type selected */}
+        <div className="ReceiverCreateModal__input-row ReceiverCreateModal__input-row--verification-value">
+          {formData.currentVerification.type === "DATE_OF_BIRTH" ? (
+            <CustomDateInput
+              value={formData.currentVerification.value}
+              onChange={handleVerificationValueChange}
+              placeholder="YYYY-MM-DD"
+              error={formErrors.currentVerificationValue}
+              disabled={!formData.currentVerification.type}
+            />
+          ) : formData.currentVerification.type === "YEAR_MONTH" ? (
+            <CustomYearMonthInput
+              value={formData.currentVerification.value}
+              onChange={handleVerificationValueChange}
+              placeholder="YYYY-MM"
+              error={formErrors.currentVerificationValue}
+              disabled={!formData.currentVerification.type}
+            />
+          ) : (
+            <Input
+              id="current-verification-value"
+              fieldSize="sm"
+              {...getVerificationInputConfig(formData.currentVerification.type)}
+              value={formData.currentVerification.value}
+              onChange={(e) => handleVerificationValueChange(e.target.value)}
+              error={formErrors.currentVerificationValue}
+              disabled={!formData.currentVerification.type}
+            />
+          )}
 
           <Button
             size="sm"
@@ -435,10 +503,6 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             Add
           </Button>
         </div>
-
-        <ErrorDisplay
-          error={formErrors.currentVerificationType || formErrors.currentVerificationValue}
-        />
 
         {/* Added verifications as badges */}
         {formData.addedVerifications.length > 0 ? (
@@ -456,7 +520,12 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
                     isRounded={true}
                     onClick={() => removeVerification(verification.id)}
                   >
-                    {`${VerificationFieldMap[verification.type] || verification.type}: ${verification.value}`}
+                    <span className="ReceiverCreateModal__verification-label">
+                      {VerificationFieldMap[verification.type] || verification.type}:
+                    </span>
+                    <span className="ReceiverCreateModal__verification-value">
+                      {verification.value}
+                    </span>
                   </Button>
                 </div>
               ))}
@@ -470,8 +539,8 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   const renderWalletFields = () => {
     return (
       <>
-        {/* Current wallet input row */}
-        <div className="ReceiverCreateModal__input-row ReceiverCreateModal__input-row--wallet">
+        {/* Wallet address input row */}
+        <div className="ReceiverCreateModal__input-row ReceiverCreateModal__input-row--wallet-address">
           <Input
             id="current-wallet-address"
             fieldSize="sm"
@@ -480,8 +549,12 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             placeholder="Enter Stellar wallet address (GXXX...)"
             value={formData.currentWallet.address}
             onChange={(e) => handleWalletAddressChange(e.target.value)}
+            error={formErrors.walletAddress}
           />
+        </div>
 
+        {/* Wallet memo input row */}
+        <div className="ReceiverCreateModal__input-row ReceiverCreateModal__input-row--wallet-memo">
           <Input
             id="current-wallet-memo"
             fieldSize="sm"
@@ -506,8 +579,6 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             Add
           </Button>
         </div>
-
-        <ErrorDisplay error={formErrors.walletAddress} />
 
         {/* Added wallets as list */}
         {formData.addedWallets.length > 0 ? (

@@ -26,15 +26,12 @@ $input-min-width-large: pxToRem(200px);
     flex-direction: column;
   }
 
-  &__form-row {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-lg;
-    margin-bottom: $spacing-xl;
-  }
-
   &__section {
     margin-bottom: $spacing-sm;
+  }
+
+  &__section-description {
+    margin-bottom: $spacing-md;
   }
 
   // FORM INPUTS & CONTROLS
@@ -58,23 +55,36 @@ $input-min-width-large: pxToRem(200px);
       white-space: nowrap;
     }
 
-    &--verification {
+    &--verification-type {
       .Select {
         flex: 1;
-      }
-
-      .Input {
-        flex: 2;
+        max-width: 100%;
       }
     }
 
-    &--wallet {
-      .Input {
+    &--verification-value {
+      .Input,
+      .CustomDateInput,
+      .CustomYearMonthInput {
         flex: 1;
+        max-width: 100%;
       }
 
-      .Input:first-child {
-        flex: 3;
+      .Button {
+        align-self: baseline;
+      }
+    }
+
+    &--wallet-address {
+      .Input {
+        flex: 1;
+        max-width: 100%;
+      }
+    }
+
+    &--wallet-memo {
+      .Input {
+        flex: 1;
         max-width: 100%;
       }
     }
@@ -98,6 +108,15 @@ $input-min-width-large: pxToRem(200px);
     flex-shrink: 0;
   }
 
+  &__verification-label {
+    font-weight: var(--sds-fw-medium);
+    margin-right: $spacing-xs;
+  }
+
+  &__verification-value {
+    font-weight: var(--sds-fw-regular);
+  }
+
   &__provided {
     margin-top: $spacing-lg;
     margin-bottom: $spacing-sm;
@@ -117,40 +136,47 @@ $input-min-width-large: pxToRem(200px);
     contain: layout style;
   }
 
-  &__confirmation-title {
-    font-size: var(--sds-fs-primary);
-    font-weight: var(--sds-fw-semi-bold);
-  }
-
-  &__confirmation-details {
+  &__confirmation__section {
     display: flex;
     flex-direction: column;
-    gap: $spacing-lg;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
-  &__confirmation-label {
+  &__confirmation__label {
     margin-bottom: $spacing-xs;
+    border-bottom: 1px solid var(--sds-clr-gray-05);
+    padding-bottom: $spacing-xs;
   }
 
-  &__confirmation-content {
+  &__confirmation__content {
     display: flex;
     flex-direction: column;
     gap: $spacing-sm;
     padding-left: $spacing-lg;
   }
 
-  &__confirmation-item {
+  &__confirmation__item {
     display: flex;
     gap: $spacing-sm;
     align-items: baseline;
     min-height: pxToRem(20px);
   }
 
-  &__confirmation-field {
+  &__confirmation__field {
     min-width: fit-content;
   }
 
-  &__confirmation-value {
+  &__confirmation__value {
     line-height: pxToRem(20px);
+  }
+
+  &__confirmation__empty {
+    font-style: italic;
+    color: var(--sds-clr-gray-08);
   }
 }
