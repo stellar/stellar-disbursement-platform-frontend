@@ -17,7 +17,9 @@ const formatPaymentMethodName = (rail: string): string => {
   }
 };
 
-export const BridgePaymentMethods = ({ paymentRails }: BridgePaymentMethodsProps) => {
+export const BridgePaymentMethods = ({
+  paymentRails,
+}: BridgePaymentMethodsProps) => {
   return (
     <div className="BridgePaymentMethods">
       <label className="Label Label--sm">Supported Payment Methods</label>

@@ -1,36 +1,25 @@
-import { Button, Heading, Icon, Input, Notification, Select } from "@stellar/design-system";
-import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+import { useDispatch } from "react-redux";
 
 import { AppDispatch } from "@/store";
 import { exportDataAction } from "@/store/ducks/dataExport";
 
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { FilterMenu } from "@/components/FilterMenu";
-import { Pagination } from "@/components/Pagination";
-import { ReceiverCreateModal } from "@/components/ReceiverCreateModal/ReceiverCreateModal";
-import { ReceiversTable } from "@/components/ReceiversTable";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
+import { Pagination } from "@/components/Pagination";
+import { ReceiversTable } from "@/components/ReceiversTable";
 
-import { useCreateReceiver } from "@/apiQueries/useCreateReceiver";
 import { useReceivers } from "@/apiQueries/useReceivers";
 import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
 import { number } from "@/helpers/formatIntlNumber";
-import {
-  CommonFilters,
-  CreateReceiverRequest,
-  SortByReceivers,
-  SortDirection,
-  SortParams,
-} from "@/types";
+import { CommonFilters, SortByReceivers, SortDirection, SortParams } from "@/types";
 
 export const Receivers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
-  const [isReceiverCreateModalVisible, setIsReceiverCreateModalVisible] = useState(false);
 
   const initFilters: CommonFilters = {
     status: "",
@@ -44,8 +33,6 @@ export const Receivers = () => {
   const [queryFilters, setQueryFilters] = useState<CommonFilters & SortParams>({});
   const [searchQuery, setSearchQuery] = useState<{ q: string } | undefined>();
 
-  const queryClient = useQueryClient();
-
   const {
     data: receivers,
     error,
@@ -56,18 +43,6 @@ export const Receivers = () => {
     page_limit: pageLimit.toString(),
     ...queryFilters,
     ...searchQuery,
-  });
-
-  const {
-    mutateAsync: createReceiver,
-    isPending: isCreatingReceiver,
-    error: createReceiverError,
-    reset: resetCreateReceiverQuery,
-  } = useCreateReceiver({
-    onSuccess: () => {
-      setIsReceiverCreateModalVisible(false);
-      queryClient.invalidateQueries({ queryKey: ["receivers"] });
-    },
   });
 
   const isFiltersSelected = Object.values(filters).filter((v) => Boolean(v)).length > 0;
@@ -139,19 +114,6 @@ export const Receivers = () => {
     navigate(`${Routes.RECEIVERS}/${receiverId}`);
   };
 
-  const handleCreateReceiver = () => {
-    setIsReceiverCreateModalVisible(true);
-  };
-
-  const handleCloseReceiverCreateModal = () => {
-    setIsReceiverCreateModalVisible(false);
-    resetCreateReceiverQuery();
-  };
-
-  const handleSubmitReceiver = async (receiverData: CreateReceiverRequest) => {
-    await createReceiver(receiverData);
-  };
-
   return (
     <>
       <SectionHeader>
@@ -163,17 +125,6 @@ export const Receivers = () => {
                 : ""}
               Receivers
             </Heading>
-          </SectionHeader.Content>
-
-          <SectionHeader.Content align="right">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleCreateReceiver}
-              disabled={isLoading || isFetching}
-            >
-              New Receiver
-            </Button>
           </SectionHeader.Content>
         </SectionHeader.Row>
 
@@ -275,12 +226,6 @@ export const Receivers = () => {
         </SectionHeader.Row>
       </SectionHeader>
 
-      {createReceiverError && (
-        <Notification variant="error" title="Error">
-          <ErrorWithExtras appError={createReceiverError} />
-        </Notification>
-      )}
-
       <ReceiversTable
         receiversItems={receivers?.data || []}
         onReceiverClicked={handleReceiverClicked}
@@ -289,15 +234,6 @@ export const Receivers = () => {
         isFiltersSelected={isFiltersSelected}
         isLoading={isLoading || isFetching}
         onSort={handleSort}
-      />
-
-      <ReceiverCreateModal
-        visible={isReceiverCreateModalVisible}
-        onClose={handleCloseReceiverCreateModal}
-        onSubmit={handleSubmitReceiver}
-        onResetQuery={resetCreateReceiverQuery}
-        isLoading={isCreatingReceiver}
-        appError={createReceiverError}
       />
     </>
   );

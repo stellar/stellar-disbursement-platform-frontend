@@ -15,7 +15,11 @@ const SectionHeaderContent = ({
     ...(align !== "left" ? [`SectionHeader__container--${align}`] : []),
   ].join(" ");
 
-  return <div className={`SectionHeader__container ${additionalClasses}`}>{children}</div>;
+  return (
+    <div className={`SectionHeader__container ${additionalClasses}`}>
+      {children}
+    </div>
+  );
 };
 
 export const SectionHeader = ({ children }: { children: React.ReactNode }) => {
