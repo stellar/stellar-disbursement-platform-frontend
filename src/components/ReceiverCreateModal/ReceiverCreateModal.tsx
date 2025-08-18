@@ -10,6 +10,7 @@ import {
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { ReceiverConfirmation } from "@/components/ReceiverConfirmation/ReceiverConfirmation";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
+import { validateVerificationField } from "@/helpers/validateVerificationFields";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
 import { usePrevious } from "@/hooks/usePrevious";
 
@@ -125,71 +126,8 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   };
 
   const validateVerificationValue = (type: string, value: string): string | null => {
-    const trimmedValue = value.trim();
-
-    switch (type) {
-      case "DATE_OF_BIRTH": {
-        // Handle both formats: YYYY-MM-DD and YYYY MM DD
-        const dateValue = (() => {
-          if (/^\d{4}\s\d{1,2}\s\d{1,2}$/.test(trimmedValue)) {
-            const [year, month, day] = trimmedValue.split(/\s+/);
-            return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-          }
-          return trimmedValue;
-        })();
-
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
-          return "Date of birth must be in YYYY-MM-DD or YYYY MM DD format";
-        }
-        // Additional validation for reasonable date range
-        const date = new Date(dateValue);
-        const now = new Date();
-        const minDate = new Date(now.getFullYear() - 120, now.getMonth(), now.getDate());
-        const maxDate = new Date(now.getFullYear() - 13, now.getMonth(), now.getDate());
-
-        if (date < minDate || date > maxDate) {
-          return "Date of birth must be between 1900 and 2010";
-        }
-        break;
-      }
-      case "YEAR_MONTH": {
-        // Handle both formats: YYYY-MM and YYYY MM
-        const yearMonthValue = (() => {
-          if (/^\d{4}\s\d{1,2}$/.test(trimmedValue)) {
-            const [year, month] = trimmedValue.split(/\s+/);
-            return `${year}-${month.padStart(2, "0")}`;
-          }
-          return trimmedValue;
-        })();
-
-        if (!/^\d{4}-\d{2}$/.test(yearMonthValue)) {
-          return "Year-month must be in YYYY-MM or YYYY MM format";
-        }
-        // Validate month is between 01-12
-        const [, monthStr] = yearMonthValue.split("-");
-        const monthNum = parseInt(monthStr, 10);
-        if (monthNum < 1 || monthNum > 12) {
-          return "Month must be between 01 and 12";
-        }
-        break;
-      }
-      case "PIN": {
-        if (trimmedValue.length < 4 || trimmedValue.length > 8) {
-          return "PIN must be between 4 and 8 characters";
-        }
-        if (!/^\d+$/.test(trimmedValue)) {
-          return "PIN must contain only digits";
-        }
-        break;
-      }
-      case "NATIONAL_ID_NUMBER": {
-        if (trimmedValue.length > 50) {
-          return "National ID must be at most 50 characters";
-        }
-        break;
-      }
-    }
-    return null;
+    const result = validateVerificationField(type as any, value);
+    return result.errorMessage || null;
   };
 
   const handleVerificationValueChange = (value: string) => {

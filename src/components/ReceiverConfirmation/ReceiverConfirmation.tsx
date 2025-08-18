@@ -23,7 +23,7 @@ const ConfirmationSection: React.FC<ConfirmationSectionProps> = ({ label, childr
     <Text
       size="sm"
       weight="semi-bold"
-      color="gray-12"
+      color="var(--sds-clr-gray-12)"
       as="div"
       className="ReceiverCreateModal__confirmation__label"
     >
@@ -39,14 +39,19 @@ const ConfirmationItem: React.FC<ConfirmationItemProps> = ({ field, value }) => 
       <Text
         size="sm"
         weight="medium"
-        color="gray-10"
+        color="var(--sds-clr-gray-10)"
         as="span"
         className="ReceiverCreateModal__confirmation__field"
       >
         {field}
       </Text>
     )}
-    <Text size="sm" color="gray-11" as="span" className="ReceiverCreateModal__confirmation__value">
+    <Text
+      size="sm"
+      color="var(--sds-clr-gray-11)"
+      as="span"
+      className="ReceiverCreateModal__confirmation__value"
+    >
       {value}
     </Text>
   </div>
@@ -69,7 +74,7 @@ export const ReceiverConfirmation: React.FC<ReceiverConfirmationProps> = ({ rece
           {!hasEmail && !hasPhone ? (
             <Text
               size="sm"
-              color="gray-08"
+              color="var(--sds-clr-gray-08)"
               as="div"
               className="ReceiverCreateModal__confirmation__empty"
               style={{ fontStyle: "italic" }}
@@ -109,7 +114,7 @@ export const ReceiverConfirmation: React.FC<ReceiverConfirmationProps> = ({ rece
                   <>
                     {shortenAccountKey(wallet.address, 10, 10)}
                     {wallet.memo ? (
-                      <Text size="sm" color="gray-09" as="span">
+                      <Text size="sm" color="var(--sds-clr-gray-09)" as="span">
                         {" "}
                         (Memo: {wallet.memo})
                       </Text>

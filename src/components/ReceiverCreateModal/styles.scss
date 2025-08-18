@@ -1,11 +1,12 @@
 @use "../../styles/styles-utils.scss" as *;
 
-// Spacing scale - consistent spacing values throughout the component
-$spacing-xs: pxToRem(4px);
-$spacing-sm: pxToRem(8px);
-$spacing-md: pxToRem(12px);
-$spacing-lg: pxToRem(16px);
-$spacing-xl: pxToRem(24px);
+:root {
+  --sdp-receiver-modal-spacing-xs: #{pxToRem(4px)};
+  --sdp-receiver-modal-spacing-sm: #{pxToRem(8px)};
+  --sdp-receiver-modal-spacing-md: #{pxToRem(12px)};
+  --sdp-receiver-modal-spacing-lg: #{pxToRem(16px)};
+  --sdp-receiver-modal-spacing-xl: #{pxToRem(24px)};
+}
 
 // Layout constants
 $modal-max-height: 70vh;
@@ -27,24 +28,24 @@ $input-min-width-large: pxToRem(200px);
   }
 
   &__section {
-    margin-bottom: $spacing-sm;
+    margin-bottom: var(--sdp-receiver-modal-spacing-sm);
   }
 
   &__section-description {
-    margin-bottom: $spacing-md;
+    margin-bottom: var(--sdp-receiver-modal-spacing-md);
   }
 
   // FORM INPUTS & CONTROLS
   &__contact-inputs {
     display: flex;
     flex-direction: column;
-    gap: $spacing-lg;
+    gap: var(--sdp-receiver-modal-spacing-lg);
   }
 
   &__input-row {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-md;
+    gap: var(--sdp-receiver-modal-spacing-md);
     align-items: flex-end;
     padding-top: pxToRem(5px);
     padding-bottom: pxToRem(5px);
@@ -100,8 +101,8 @@ $input-min-width-large: pxToRem(200px);
   &__verification-badges {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-sm;
-    margin-top: $spacing-sm;
+    gap: var(--sdp-receiver-modal-spacing-sm);
+    margin-top: var(--sdp-receiver-modal-spacing-sm);
   }
 
   &__verification-badge {
@@ -110,7 +111,7 @@ $input-min-width-large: pxToRem(200px);
 
   &__verification-label {
     font-weight: var(--sds-fw-medium);
-    margin-right: $spacing-xs;
+    margin-right: var(--sdp-receiver-modal-spacing-xs);
   }
 
   &__verification-value {
@@ -118,15 +119,15 @@ $input-min-width-large: pxToRem(200px);
   }
 
   &__provided {
-    margin-top: $spacing-lg;
-    margin-bottom: $spacing-sm;
+    margin-top: var(--sdp-receiver-modal-spacing-lg);
+    margin-bottom: var(--sdp-receiver-modal-spacing-sm);
   }
 
   // ERROR STATES
 
   &__error-row {
-    margin-top: $spacing-sm;
-    margin-bottom: $spacing-lg;
+    margin-top: var(--sdp-receiver-modal-spacing-sm);
+    margin-bottom: var(--sdp-receiver-modal-spacing-lg);
     color: var(--sds-clr-red-09);
   }
 
@@ -139,8 +140,8 @@ $input-min-width-large: pxToRem(200px);
   &__confirmation__section {
     display: flex;
     flex-direction: column;
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
+    gap: var(--sdp-receiver-modal-spacing-md);
+    margin-bottom: var(--sdp-receiver-modal-spacing-lg);
 
     &:last-child {
       margin-bottom: 0;
@@ -148,21 +149,21 @@ $input-min-width-large: pxToRem(200px);
   }
 
   &__confirmation__label {
-    margin-bottom: $spacing-xs;
+    margin-bottom: var(--sdp-receiver-modal-spacing-xs);
     border-bottom: 1px solid var(--sds-clr-gray-05);
-    padding-bottom: $spacing-xs;
+    padding-bottom: var(--sdp-receiver-modal-spacing-xs);
   }
 
   &__confirmation__content {
     display: flex;
     flex-direction: column;
-    gap: $spacing-sm;
-    padding-left: $spacing-lg;
+    gap: var(--sdp-receiver-modal-spacing-sm);
+    padding-left: var(--sdp-receiver-modal-spacing-lg);
   }
 
   &__confirmation__item {
     display: flex;
-    gap: $spacing-sm;
+    gap: var(--sdp-receiver-modal-spacing-sm);
     align-items: baseline;
     min-height: pxToRem(20px);
   }
