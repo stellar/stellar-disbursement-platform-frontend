@@ -224,10 +224,10 @@ export const PaymentDetails = () => {
 
               <Card>
                 <div className="PaymentDetails__wrapper">
-                  <div className="PaymentDetails__info">
-                    <label className="Label">Sender</label>
-                    <div>
-                      {formattedPayment.senderAddress ? (
+                  {formattedPayment.senderAddress ? (
+                    <div className="PaymentDetails__info">
+                      <label className="Label">Sender</label>
+                      <div>
                         <Profile
                           publicAddress={formattedPayment.senderAddress}
                           size="md"
@@ -235,11 +235,9 @@ export const PaymentDetails = () => {
                           isShort
                           hideAvatar
                         />
-                      ) : (
-                        "-"
-                      )}
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
 
                   <div className="PaymentDetails__info">
                     <label className="Label">External Payment ID</label>
