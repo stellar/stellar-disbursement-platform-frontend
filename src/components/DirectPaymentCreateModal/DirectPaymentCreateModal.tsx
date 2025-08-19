@@ -13,6 +13,8 @@ import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { SelectedReceiverInfo } from "@/components/SelectedReceiverInfo/SelectedReceiverInfo";
 
 import { directPayment } from "@/constants/directPayment";
+import { isValidWalletAddress } from "@/helpers/walletValidate";
+
 import { ApiAssetWithTrustline, ApiReceiver, CreateDirectPaymentRequest } from "@/types";
 
 import "./styles.scss";
@@ -49,7 +51,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   const [paymentDataToConfirm, setPaymentDataToConfirm] =
     useState<CreateDirectPaymentRequest | null>(null);
   const queryClient = useQueryClient();
-  const isWalletAddress = (input: string) => input.startsWith("G") && input.length === 56;
   const debouncedReceiverSearch = useDebounce(
     formData.receiverSearch,
     directPayment.SEARCH_DEBOUNCE_MS,
@@ -95,8 +96,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     formData.amount.trim() !== "" && !isNaN(Number(formData.amount)) && Number(formData.amount) > 0;
   const isReceiverValid =
     formData.receiverSearch.trim() !== "" &&
-    (isWalletAddress(formData.receiverSearch) || Boolean(formData.selectedReceiver));
-  const isWalletValid = isWalletAddress(formData.receiverSearch)
+    (isValidWalletAddress(formData.receiverSearch) || Boolean(formData.selectedReceiver));
+  const isWalletValid = isValidWalletAddress(formData.receiverSearch)
     ? true
     : Boolean(formData.walletId);
   const isSubmitEnabled = Boolean(
@@ -184,7 +185,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     event.preventDefault();
     if (!validateForm()) return;
 
-    const isAddr = isWalletAddress(formData.receiverSearch);
+    const isAddr = isValidWalletAddress(formData.receiverSearch);
     const selectedWallet = supportedWallets.find((w) => w.id === formData.walletId);
 
     const paymentData: CreateDirectPaymentRequest = {
@@ -224,7 +225,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   };
 
   const showReceiverField = Boolean(formData.assetId);
-  const isReceiverWalletAddress = isWalletAddress(formData.receiverSearch);
+  const isReceiverWalletAddress = isValidWalletAddress(formData.receiverSearch);
   const showWalletField = formData.assetId && !isReceiverWalletAddress;
 
   const validateForm = (): boolean => {
@@ -237,11 +238,11 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     }
     if (!formData.receiverSearch.trim()) {
       errors.receiverSearch = "Receiver is required";
-    } else if (!isWalletAddress(formData.receiverSearch) && !formData.selectedReceiver) {
+    } else if (!isValidWalletAddress(formData.receiverSearch) && !formData.selectedReceiver) {
       errors.receiverSearch =
         "Please select a receiver from search results or enter a valid wallet address";
     }
-    if (!isWalletAddress(formData.receiverSearch) && !formData.walletId) {
+    if (!isValidWalletAddress(formData.receiverSearch) && !formData.walletId) {
       errors.walletId = "Wallet selection is required";
     }
     setFormErrors(errors);
