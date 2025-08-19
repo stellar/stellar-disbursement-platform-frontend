@@ -59,7 +59,7 @@ export const Home = () => {
             </Heading>
           </SectionHeader.Content>
           <SectionHeader.Content align="right">
-            <Button size="sm" variant="tertiary" onClick={goToAnalytics}>
+            <Button size="md" variant="tertiary" onClick={goToAnalytics}>
               View analytics
             </Button>
           </SectionHeader.Content>
@@ -79,11 +79,11 @@ export const Home = () => {
               </Heading>
             </SectionHeader.Content>
             <SectionHeader.Content align="right">
-              <Button size="sm" variant="tertiary" onClick={goToDisbursements}>
+              <Button size="md" variant="tertiary" onClick={goToDisbursements}>
                 View all
               </Button>
               <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
-                <NewDisbursementButton size="sm" />
+                <NewDisbursementButton />
               </ShowForRoles>
             </SectionHeader.Content>
           </SectionHeader.Row>

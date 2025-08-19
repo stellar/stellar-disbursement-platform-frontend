@@ -31,7 +31,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
           <div className="WalletCard__item">
             <div>
               <div className="WalletCard__item">
-                <Title size="lg">{walletName}</Title>
+                <Title size="md">{walletName}</Title>
                 <a
                   className="WalletCard__ExternalLink"
                   href={homepageUrl}

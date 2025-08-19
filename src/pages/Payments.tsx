@@ -140,7 +140,7 @@ export const Payments = () => {
           <SectionHeader.Content align="right">
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               onClick={handleCreateDirectPayment}
               disabled={isLoading || isFetching}
             >
@@ -212,7 +212,7 @@ export const Payments = () => {
 
             <Button
               variant="tertiary"
-              size="sm"
+              size="md"
               icon={<Icon.Download01 />}
               onClick={handleExport}
               disabled={isLoading || isFetching}
@@ -225,7 +225,7 @@ export const Payments = () => {
             <div className="FiltersWithSearch__pageLimit">
               <Select
                 id="payments-page-limit"
-                fieldSize="sm"
+                fieldSize="md"
                 value={pageLimit}
                 onChange={handlePageLimitChange}
               >

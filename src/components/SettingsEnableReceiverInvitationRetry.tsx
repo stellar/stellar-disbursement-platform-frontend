@@ -111,12 +111,12 @@ export const SettingsEnableReceiverInvitationRetry = () => {
               </div>
               {isEditMode ? (
                 <div className="SdpSettings__form__buttons">
-                  <Button variant="tertiary" size="sm" type="reset" isLoading={isPending}>
+                  <Button variant="tertiary" size="md" type="reset" isLoading={isPending}>
                     Cancel
                   </Button>
                   <Button
                     variant="primary"
-                    size="sm"
+                    size="md"
                     type="submit"
                     isLoading={isPending}
                     disabled={

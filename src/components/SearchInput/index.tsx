@@ -44,7 +44,7 @@ export const SearchInput = ({
   return (
     <form className="SearchInput" onSubmit={handleSubmit}>
       <Input
-        fieldSize="sm"
+        fieldSize="md"
         id={id}
         placeholder={placeholder}
         onChange={handleChange}

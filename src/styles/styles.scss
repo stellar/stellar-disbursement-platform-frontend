@@ -110,6 +110,10 @@ body {
 
   &__pageLimit {
     width: pxToRem(160px);
+
+    .Select select {
+      height: pxToRem(30px);
+    }
   }
 }
 

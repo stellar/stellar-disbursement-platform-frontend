@@ -2,7 +2,7 @@
 
 .SearchInput {
   width: 100%;
-  height: pxToRem(28px);
+  height: pxToRem(32px);
   position: relative;
 
   &__button {
@@ -43,6 +43,8 @@
 
     &[type="search"] {
       outline-offset: 0;
+      height: pxToRem(30px);
+      line-height: pxToRem(30px);
     }
   }
 }

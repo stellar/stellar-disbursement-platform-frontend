@@ -168,7 +168,7 @@ export const Receivers = () => {
           <SectionHeader.Content align="right">
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               onClick={handleCreateReceiver}
               disabled={isLoading || isFetching}
             >
@@ -240,7 +240,7 @@ export const Receivers = () => {
 
             <Button
               variant="tertiary"
-              size="sm"
+              size="md"
               icon={<Icon.Download01 />}
               onClick={handleExport}
               disabled={isLoading || isFetching}
@@ -253,7 +253,7 @@ export const Receivers = () => {
             <div className="FiltersWithSearch__pageLimit">
               <Select
                 id="receivers-page-limit"
-                fieldSize="sm"
+                fieldSize="md"
                 value={pageLimit}
                 onChange={handlePageLimitChange}
               >

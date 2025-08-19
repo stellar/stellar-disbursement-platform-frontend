@@ -110,7 +110,7 @@ export const ApiKeysTable = ({
         </Heading>
         <Button
           variant="secondary"
-          size="sm"
+          size="md"
           icon={<Icon.Plus />}
           iconPosition="right"
           onClick={onCreateKey}

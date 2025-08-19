@@ -101,7 +101,7 @@ export const DisbursementButtons = ({
         <>
           <Button
             variant="error"
-            size="sm"
+            size="md"
             icon={<Icon.Trash01 />}
             iconPosition="right"
             onClick={handleDiscard}
@@ -113,7 +113,7 @@ export const DisbursementButtons = ({
           <div className="DisbursementButtons--continue">
             <Button
               variant="tertiary"
-              size="sm"
+              size="md"
               onClick={handleSaveDraft}
               disabled={isDraftDisabled}
               {...(isDraftDisabled
@@ -127,7 +127,7 @@ export const DisbursementButtons = ({
             </Button>
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               icon={<Icon.ArrowRight />}
               iconPosition="right"
               type="submit"
@@ -145,7 +145,7 @@ export const DisbursementButtons = ({
         <>
           <Button
             variant="tertiary"
-            size="sm"
+            size="md"
             icon={<Icon.ArrowLeft />}
             iconPosition="left"
             onClick={handleGoBack}
@@ -157,7 +157,7 @@ export const DisbursementButtons = ({
           <div className="DisbursementButtons--continue">
             <Button
               variant="tertiary"
-              size="sm"
+              size="md"
               onClick={handleSaveDraft}
               isLoading={isSavePending}
               disabled={isDraftDisabled || isSubmitPending}
@@ -166,7 +166,7 @@ export const DisbursementButtons = ({
             </Button>
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               icon={<Icon.CheckCircle />}
               iconPosition="right"
               type="submit"
@@ -186,7 +186,7 @@ export const DisbursementButtons = ({
       <>
         <Button
           variant="tertiary"
-          size="sm"
+          size="md"
           icon={<Icon.ArrowLeft />}
           iconPosition="left"
           onClick={handleGoToDisbursements}
@@ -195,7 +195,7 @@ export const DisbursementButtons = ({
         </Button>
 
         <div className="DisbursementButtons--continue">
-          <Button variant="tertiary" size="sm" onClick={handleGoToDrafts}>
+          <Button variant="tertiary" size="md" onClick={handleGoToDrafts}>
             Go to drafts
           </Button>
           <Button

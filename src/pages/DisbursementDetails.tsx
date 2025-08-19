@@ -408,7 +408,7 @@ export const DisbursementDetails = () => {
               {isPaused ? (
                 <Button
                   variant="success"
-                  size="sm"
+                  size="md"
                   icon={<Icon.PlayCircle />}
                   onClick={showModal}
                   isLoading={disbursementDetails.status === "PENDING"}
@@ -418,7 +418,7 @@ export const DisbursementDetails = () => {
               ) : (
                 <Button
                   variant="error"
-                  size="sm"
+                  size="md"
                   icon={<Icon.PauseCircle />}
                   onClick={showModal}
                   isLoading={disbursementDetails.status === "PENDING"}
@@ -430,7 +430,7 @@ export const DisbursementDetails = () => {
 
               <Button
                 variant="tertiary"
-                size="sm"
+                size="md"
                 icon={<Icon.Download01 />}
                 onClick={handleDownloadFile}
                 isLoading={csvDownloadIsLoading}

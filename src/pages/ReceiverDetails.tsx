@@ -158,7 +158,7 @@ export const ReceiverDetails = () => {
     return (
       <Button
         variant="tertiary"
-        size="sm"
+        size="md"
         onClick={(e) => {
           e.preventDefault();
           retryReceiverInvitation();
@@ -178,7 +178,7 @@ export const ReceiverDetails = () => {
     return (
       <Button
         variant="tertiary"
-        size="sm"
+        size="md"
         onClick={showUnregisterModal}
         isLoading={isUnregisterWalletPending}
         title="Unregister this wallet"
@@ -535,7 +535,7 @@ export const ReceiverDetails = () => {
               </SectionHeader.Content>
               <Button
                 variant="tertiary"
-                size="sm"
+                size="md"
                 type="reset"
                 onClick={(e) => {
                   e.preventDefault();

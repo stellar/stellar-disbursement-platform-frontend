@@ -4,7 +4,7 @@ import { ShowForRoles } from "@/components/ShowForRoles";
 import { Routes } from "@/constants/settings";
 import { useCircleAccount } from "@/hooks/useCircleAccount";
 
-export const NewDisbursementButton = ({ size = "sm" }: { size?: "sm" | "md" }) => {
+export const NewDisbursementButton = () => {
   const navigate = useNavigate();
   const { isCircleAccount, isCircleAccountPending } = useCircleAccount();
 
@@ -19,7 +19,7 @@ export const NewDisbursementButton = ({ size = "sm" }: { size?: "sm" | "md" }) =
     <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
       <Button
         variant="primary"
-        size={size}
+        size="md"
         icon={<Icon.Plus />}
         iconPosition="right"
         onClick={goToNewDisbursement}
