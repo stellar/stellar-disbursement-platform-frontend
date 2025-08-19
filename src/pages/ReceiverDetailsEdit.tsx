@@ -373,7 +373,7 @@ export const ReceiverDetailsEdit = () => {
             <div className="CardStack__buttons CardStack__buttons--spaceBetween">
               <Button
                 variant="error"
-                size="sm"
+                size="md"
                 type="reset"
                 icon={<Icon.Trash01 />}
                 isLoading={isUpdatePending}
@@ -382,7 +382,7 @@ export const ReceiverDetailsEdit = () => {
               </Button>
               <Button
                 variant="primary"
-                size="sm"
+                size="md"
                 type="submit"
                 isLoading={isUpdatePending}
                 disabled={isSubmitDisabled}

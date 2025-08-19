@@ -109,7 +109,7 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
 
         <div className="DisbursementInstructions__buttons">
           <Button
-            size="sm"
+            size="md"
             variant="tertiary"
             onClick={handleDownloadTemplate}
             disabled={!csvTemplateName}

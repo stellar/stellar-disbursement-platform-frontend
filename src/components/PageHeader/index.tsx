@@ -41,10 +41,12 @@ export const PageHeader = ({ username, onSignOut, logoImage, companyName }: Page
             </div>
           ) : null}
           <div className="PageHeader--right">
+            <ThemeSwitch storageKeyId={`stellarTheme:${PROJECT_NAME}`} />
+
             {username ? (
               <DropdownMenu
                 triggerEl={
-                  <Button variant="tertiary" size="sm">
+                  <Button variant="tertiary" size="md">
                     {username}
                   </Button>
                 }
@@ -56,8 +58,6 @@ export const PageHeader = ({ username, onSignOut, logoImage, companyName }: Page
                 </DropdownMenu.Item>
               </DropdownMenu>
             ) : null}
-
-            <ThemeSwitch storageKeyId={`stellarTheme:${PROJECT_NAME}`} />
           </div>
         </div>
       </div>

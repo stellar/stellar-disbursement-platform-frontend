@@ -191,10 +191,10 @@ export const ApiKeyDetails = () => {
             </SectionHeader.Content>
 
             <SectionHeader.Content align="right">
-              <Button variant="tertiary" size="sm" icon={<Icon.Edit01 />} onClick={handleEditKey}>
+              <Button variant="tertiary" size="md" icon={<Icon.Edit01 />} onClick={handleEditKey}>
                 Update
               </Button>
-              <Button variant="error" size="sm" icon={<Icon.Delete />} onClick={handleDeleteKey}>
+              <Button variant="error" size="md" icon={<Icon.Delete />} onClick={handleDeleteKey}>
                 Delete
               </Button>
             </SectionHeader.Content>

@@ -125,12 +125,12 @@ export const SettingsTimezone = () => {
 
             {isEdit ? (
               <div className="CardStack__buttons">
-                <Button variant="tertiary" size="sm" type="reset">
+                <Button variant="tertiary" size="md" type="reset">
                   Cancel
                 </Button>
                 <Button
                   variant="primary"
-                  size="sm"
+                  size="md"
                   type="submit"
                   isLoading={organization.status === "PENDING"}
                   disabled={newTimezone === organization.data.timezoneUtcOffset}

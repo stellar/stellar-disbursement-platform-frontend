@@ -355,12 +355,12 @@ export const Profile = () => {
 
         {isEditAccount ? (
           <div className="CardStack__buttons">
-            <Button variant="tertiary" size="sm" type="reset">
+            <Button variant="tertiary" size="md" type="reset">
               Cancel
             </Button>
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               type="submit"
               isLoading={profile.status === "PENDING"}
               disabled={isSubmitDisabled}
@@ -449,12 +449,12 @@ export const Profile = () => {
 
         {isEditOrganization ? (
           <div className="CardStack__buttons">
-            <Button variant="tertiary" size="sm" type="reset">
+            <Button variant="tertiary" size="md" type="reset">
               Cancel
             </Button>
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               type="submit"
               disabled={
                 organizationDetails.name === organization.data.name &&

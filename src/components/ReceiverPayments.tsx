@@ -47,7 +47,7 @@ export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {
             <div className="FiltersWithSearch__pageLimit">
               <Select
                 id="receiver-payments-page-limit"
-                fieldSize="sm"
+                fieldSize="md"
                 value={pageLimit}
                 onChange={handlePageLimitChange}
               >

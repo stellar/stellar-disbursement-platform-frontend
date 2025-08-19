@@ -123,7 +123,7 @@ export const ReceiverInviteMessage = () => {
             disabled={isPending}
           ></Textarea>
           <div className="ReceiverInviteMessage__form__buttons">
-            <Button variant="tertiary" size="sm" type="reset" isLoading={isPending}>
+            <Button variant="tertiary" size="md" type="reset" isLoading={isPending}>
               Cancel
             </Button>
             <Button

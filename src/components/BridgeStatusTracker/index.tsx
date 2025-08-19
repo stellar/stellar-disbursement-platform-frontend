@@ -66,7 +66,7 @@ export const BridgeStatusTracker = ({ kycStatus, onRefresh }: BridgeStatusTracke
       <div className="BridgeStatusTracker__header">
         <div className="Note">Complete Bridge Setup</div>
         {!canCreateVirtualAccount && (
-          <Button size="sm" variant="tertiary" onClick={onRefresh} icon={<Icon.RefreshCcw04 />}>
+          <Button size="md" variant="tertiary" onClick={onRefresh} icon={<Icon.RefreshCcw04 />}>
             Refresh status
           </Button>
         )}
@@ -82,12 +82,12 @@ export const BridgeStatusTracker = ({ kycStatus, onRefresh }: BridgeStatusTracke
               </Badge>
             </div>
             {tosApproved ? (
-              <Button size="sm" variant="tertiary" disabled icon={<Icon.CheckCircle />}>
+              <Button size="md" variant="tertiary" disabled icon={<Icon.CheckCircle />}>
                 Approved
               </Button>
             ) : kycStatus.tos_link ? (
               <Button
-                size="sm"
+                size="md"
                 variant="tertiary"
                 onClick={() => window.open(kycStatus.tos_link, "_blank", "noopener,noreferrer")}
                 icon={<Icon.LinkExternal01 />}
@@ -107,7 +107,7 @@ export const BridgeStatusTracker = ({ kycStatus, onRefresh }: BridgeStatusTracke
               </Badge>
             </div>
             {kycApproved ? (
-              <Button size="sm" variant="tertiary" disabled icon={<Icon.CheckCircle />}>
+              <Button size="md" variant="tertiary" disabled icon={<Icon.CheckCircle />}>
                 Approved
               </Button>
             ) : kycStatus.kyc_link ? (

@@ -64,7 +64,7 @@ export const FilterMenu: React.FC<FilterMenuProps> = ({
     <Floater
       triggerEl={
         <div ref={buttonRef}>
-          <Button variant="tertiary" size="sm" icon={<Icon.FilterLines />} onClick={toggleOpen}>
+          <Button variant="tertiary" size="md" icon={<Icon.FilterLines />} onClick={toggleOpen}>
             Filter
           </Button>
         </div>
@@ -77,10 +77,10 @@ export const FilterMenu: React.FC<FilterMenuProps> = ({
         <div className="FilterMenu__inputs">{children}</div>
 
         <div className="FilterMenu__buttons">
-          <Button size="sm" variant="tertiary" type="reset" disabled={isResetDisabled}>
+          <Button size="md" variant="tertiary" type="reset" disabled={isResetDisabled}>
             Reset
           </Button>
-          <Button size="sm" variant="primary" type="submit" disabled={isSubmitDisabled}>
+          <Button size="md" variant="primary" type="submit" disabled={isSubmitDisabled}>
             Apply
           </Button>
         </div>

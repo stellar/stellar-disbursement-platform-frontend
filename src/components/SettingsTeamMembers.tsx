@@ -354,11 +354,11 @@ export const SettingsTeamMembers = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button size="sm" variant="tertiary" onClick={hideModal} isLoading={isRolePending}>
+          <Button size="md" variant="tertiary" onClick={hideModal} isLoading={isRolePending}>
             Cancel
           </Button>
           <Button
-            size="sm"
+            size="md"
             variant="primary"
             onClick={() => {
               if (selectedUser?.id && newRole) {

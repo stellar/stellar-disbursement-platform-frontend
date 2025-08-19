@@ -158,7 +158,7 @@ export const PaymentDetails = () => {
 
                 <Button
                   variant="error"
-                  size="sm"
+                  size="md"
                   icon={<Icon.SlashCircle01 />}
                   onClick={showModal}
                   disabled={formattedPayment.status !== READY_PAYMENT_STATUS}

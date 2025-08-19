@@ -180,7 +180,7 @@ export const Disbursements = () => {
             <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
               <Button
                 variant="tertiary"
-                size="sm"
+                size="md"
                 icon={<Icon.Edit05 />}
                 iconPosition="right"
                 onClick={goToDrafts}
@@ -251,7 +251,7 @@ export const Disbursements = () => {
 
             <Button
               variant="tertiary"
-              size="sm"
+              size="md"
               icon={<Icon.Download01 />}
               onClick={handleExport}
               isLoading={disbursements.status === "PENDING"}
@@ -264,7 +264,7 @@ export const Disbursements = () => {
             <div className="FiltersWithSearch__pageLimit">
               <Select
                 id="disbursements-page-limit"
-                fieldSize="sm"
+                fieldSize="md"
                 value={pageLimit}
                 onChange={handlePageLimitChange}
               >

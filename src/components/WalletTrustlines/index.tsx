@@ -194,7 +194,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
 
         <div className="WalletTrustlines__button">
           <Button
-            size="sm"
+            size="md"
             variant="secondary"
             onClick={() => {
               setIsAddModalVisible(true);
@@ -350,11 +350,11 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
             <div>{getRemoveAssetConfirmation()}</div>
           </Modal.Body>
           <Modal.Footer>
-            <Button size="sm" variant="tertiary" type="reset" isLoading={trustlineRemoveIsPending}>
+            <Button size="md" variant="tertiary" type="reset" isLoading={trustlineRemoveIsPending}>
               Cancel
             </Button>
             <Button
-              size="sm"
+              size="md"
               variant="destructive"
               type="submit"
               isLoading={trustlineRemoveIsPending}
