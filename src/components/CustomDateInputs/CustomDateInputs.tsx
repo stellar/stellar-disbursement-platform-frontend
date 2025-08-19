@@ -22,7 +22,11 @@ interface BaseCustomInputProps {
 const BaseCustomInput: React.FC<{
   props: BaseCustomInputProps;
   formatValue: (value: string) => string;
-  validateAndFormat: (value: string) => { isValid: boolean; formattedValue: string };
+  validateAndFormat: (value: string) => {
+    isValid: boolean;
+    formattedValue: string;
+    errorMessage?: string;
+  };
   minLength: number;
   infoText: string;
   className: string;
@@ -30,6 +34,7 @@ const BaseCustomInput: React.FC<{
   const { value, onChange, placeholder, error, disabled } = props;
   const [displayValue, setDisplayValue] = useState(value);
   const [isValidating, setIsValidating] = useState(false);
+  const [validationError, setValidationError] = useState<string>("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -37,36 +42,42 @@ const BaseCustomInput: React.FC<{
 
     if (inputValue.length < minLength) {
       onChange(inputValue);
+      setValidationError("");
       return;
     }
 
     setIsValidating(true);
+    setValidationError("");
   };
 
-  const handleBlur = () => {
-    const trimmedValue = displayValue.trim();
-    const { isValid, formattedValue } = validateAndFormat(trimmedValue);
-
-    if (isValid) {
-      setDisplayValue(formatValue(formattedValue));
+  useEffect(() => {
+    setDisplayValue(value);
+    if (value) {
+      const { isValid, errorMessage } = validateAndFormat(value);
+      setValidationError(isValid ? "" : errorMessage || "Invalid format");
+    } else {
+      setValidationError("");
     }
-  };
+  }, [value, validateAndFormat]);
 
   useEffect(() => {
     if (displayValue.length < minLength) {
       setIsValidating(false);
+      setValidationError("");
       return;
     }
 
     const timeoutId = setTimeout(() => {
       const trimmedValue = displayValue.trim();
-      const { isValid, formattedValue } = validateAndFormat(trimmedValue);
+      const { isValid, formattedValue, errorMessage } = validateAndFormat(trimmedValue);
 
       if (isValid) {
         onChange(formattedValue);
         setDisplayValue(formattedValue);
+        setValidationError("");
       } else {
         onChange(displayValue);
+        setValidationError(errorMessage || "Invalid format");
       }
       setIsValidating(false);
     }, 500);
@@ -83,12 +94,11 @@ const BaseCustomInput: React.FC<{
         placeholder={placeholder}
         value={displayValue}
         onChange={handleInputChange}
-        onBlur={handleBlur}
-        error={error}
+        error={error || validationError}
         disabled={disabled}
         infoText={isValidating ? "Validating..." : infoText}
       />
-      {value && !isValidating && (
+      {value && !isValidating && !error && !validationError && (
         <Text size="xs" as="p" className={`${className}__formatted`}>
           {formatValue(value)}
         </Text>
@@ -99,12 +109,20 @@ const BaseCustomInput: React.FC<{
 
 const validateAndFormatDate = (value: string) => {
   const result = validateDateOfBirth(value);
-  return { isValid: result.isValid, formattedValue: result.formattedValue };
+  return {
+    isValid: result.isValid,
+    formattedValue: result.formattedValue,
+    errorMessage: result.errorMessage,
+  };
 };
 
 const validateAndFormatYearMonth = (value: string) => {
   const result = validateYearMonth(value);
-  return { isValid: result.isValid, formattedValue: result.formattedValue };
+  return {
+    isValid: result.isValid,
+    formattedValue: result.formattedValue,
+    errorMessage: result.errorMessage,
+  };
 };
 
 export const CustomDateInput: React.FC<BaseCustomInputProps> = (props) => (

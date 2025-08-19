@@ -12,6 +12,7 @@ import { ReceiverConfirmation } from "@/components/ReceiverConfirmation/Receiver
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { validateVerificationField } from "@/helpers/validateVerificationFields";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
+import { useDebounce } from "@/hooks/useDebounce";
 import { usePrevious } from "@/hooks/usePrevious";
 
 import { AppError, CreateReceiverRequest, VerificationFieldMap } from "@/types";
@@ -81,6 +82,8 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   const previousVisible = usePrevious(visible);
   const { data: verificationTypes = [] } = useVerificationTypes();
 
+  const debouncedWalletAddress = useDebounce(formData.currentWallet.address, 500);
+
   useEffect(() => {
     if (previousVisible && !visible) {
       setFormData(INITIAL_FORM_DATA);
@@ -89,6 +92,24 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       setReceiverDataToConfirm(null);
     }
   }, [visible, previousVisible, onResetQuery]);
+
+  useEffect(() => {
+    if (!debouncedWalletAddress.trim()) {
+      setFormErrors((prev) => ({ ...prev, walletAddress: "" }));
+      return;
+    }
+
+    const isValid = isValidWalletAddress(debouncedWalletAddress);
+
+    if (!isValid) {
+      setFormErrors((prev) => ({
+        ...prev,
+        walletAddress: "Please enter a valid Stellar wallet address (GXXX... format)",
+      }));
+    } else {
+      setFormErrors((prev) => ({ ...prev, walletAddress: "" }));
+    }
+  }, [debouncedWalletAddress]);
 
   const handleClose = () => {
     if (showConfirmation) {
@@ -140,6 +161,14 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
     if (formErrors.currentVerificationValue) {
       setFormErrors((prev) => ({ ...prev, currentVerificationValue: "" }));
     }
+
+    // Real-time validation when both type and value are present
+    if (formData.currentVerification.type && value.trim()) {
+      const validationError = validateVerificationValue(formData.currentVerification.type, value);
+      if (validationError) {
+        setFormErrors((prev) => ({ ...prev, currentVerificationValue: validationError }));
+      }
+    }
   };
 
   const addVerification = () => {
@@ -161,7 +190,6 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       return;
     }
 
-    // Clear any existing validation errors
     setFormErrors((prev) => ({ ...prev, currentVerificationValue: "" }));
 
     const newVerification: AddedVerification = {
@@ -219,13 +247,6 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
       ...prev,
       currentWallet: { ...prev.currentWallet, address: value },
     }));
-
-    if (formErrors.walletAddress) {
-      setFormErrors((prev) => ({
-        ...prev,
-        walletAddress: "",
-      }));
-    }
   };
 
   const handleWalletMemoChange = (value: string) => {
@@ -435,7 +456,9 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             type="button"
             onClick={addVerification}
             disabled={
-              !formData.currentVerification.type || !formData.currentVerification.value.trim()
+              !formData.currentVerification.type ||
+              !formData.currentVerification.value.trim() ||
+              !!formErrors.currentVerificationValue
             }
           >
             Add
