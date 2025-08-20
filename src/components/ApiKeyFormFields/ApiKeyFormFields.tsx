@@ -172,7 +172,6 @@ export const parseExistingPermissions = (permissions: string[]): PermissionState
     return state;
   } else if (hasReadAll) {
     state.all = "read";
-    return state;
   }
 
   const resourceMap: Record<string, keyof PermissionState> = {
