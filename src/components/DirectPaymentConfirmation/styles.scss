@@ -21,12 +21,12 @@
 
   &__label {
     font-weight: var(--sds-fw-medium);
-    font-size: pxToRem(14px);
+    font-size: var(--sds-fs-secondary);
   }
 
   &__value {
     font-weight: var(--sds-fw-semi-bold);
-    font-size: pxToRem(14px);
+    font-size: var(--sds-fs-secondary);
     text-align: right;
     word-break: break-all;
   }
@@ -34,11 +34,14 @@
   &__valueProvider {
     display: block;
     font-weight: var(--sds-fw-medium);
-    font-size: pxToRem(12px);
+    font-size: var(--sds-fs-secondary);
     margin-bottom: pxToRem(2px);
   }
 
-  &__valueAddress {
-    font-family: monospace;
+  &__valueMemo {
+    display: block;
+    font-weight: var(--sds-fw-medium);
+    font-size: var(--sds-fs-secondary);
+    margin-top: pxToRem(2px);
   }
 }

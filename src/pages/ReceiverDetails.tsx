@@ -1,41 +1,41 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 import {
+  Button,
   Card,
   Heading,
+  Modal,
   Notification,
   Profile,
   Select,
-  Button,
-  Modal,
 } from "@stellar/design-system";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SectionHeader } from "@/components/SectionHeader";
-import { CopyWithIcon } from "@/components/CopyWithIcon";
 import { AssetAmount } from "@/components/AssetAmount";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
-import { ReceiverWalletBalance } from "@/components/ReceiverWalletBalance";
-import { ReceiverWalletHistory } from "@/components/ReceiverWalletHistory";
 import { LoadingContent } from "@/components/LoadingContent";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ReceiverPayments } from "@/components/ReceiverPayments";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { ReceiverWalletBalance } from "@/components/ReceiverWalletBalance";
+import { ReceiverWalletHistory } from "@/components/ReceiverWalletHistory";
+import { SectionHeader } from "@/components/SectionHeader";
 
 import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
 import { useReceiverWalletInviteSmsRetry } from "@/apiQueries/useReceiverWalletInviteSmsRetry";
 import { useUpdateReceiverWalletStatus } from "@/apiQueries/useUpdateReceiverWalletStatus";
 
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import { percent } from "@/helpers/formatIntlNumber";
 import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
-import { formatDateTime } from "@/helpers/formatIntlDateTime";
-import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { renderTextWithCount } from "@/helpers/renderTextWithCount";
+import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 
-import { ReceiverWallet, ReceiverDetails as ReceiverDetailsType } from "@/types";
+import { ReceiverDetails as ReceiverDetailsType, ReceiverWallet } from "@/types";
 
 export const ReceiverDetails = () => {
   const { id: receiverId } = useParams();
@@ -155,6 +155,12 @@ export const ReceiverDetails = () => {
   };
 
   const renderRetryInvitationButton = () => {
+    const isWalletRegistered = Boolean(selectedWallet?.stellarAddress);
+    const hasVerificationChannel = receiverDetails?.verifications?.some(
+      (verification) => verification.verificationChannel != null,
+    );
+    const shouldDisableButton = isWalletRegistered || !hasVerificationChannel;
+
     return (
       <Button
         variant="tertiary"
@@ -164,10 +170,12 @@ export const ReceiverDetails = () => {
           retryReceiverInvitation();
         }}
         isLoading={isInvitationRetryFetching}
-        disabled={Boolean(selectedWallet?.stellarAddress)}
-        {...(selectedWallet?.stellarAddress
+        disabled={shouldDisableButton}
+        {...(isWalletRegistered
           ? { title: "This wallet has already been registered" }
-          : {})}
+          : !hasVerificationChannel
+            ? { title: "No verification channel available for this receiver" }
+            : {})}
       >
         Retry invitation message
       </Button>

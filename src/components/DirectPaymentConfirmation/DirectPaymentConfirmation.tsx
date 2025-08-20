@@ -2,7 +2,7 @@ import { Notification } from "@stellar/design-system";
 
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 
-import { CreateDirectPaymentRequest, ApiReceiver } from "@/types";
+import { ApiReceiver, CreateDirectPaymentRequest } from "@/types";
 
 import "./styles.scss";
 
@@ -49,6 +49,7 @@ export const DirectPaymentConfirmation: React.FC<DirectPaymentConfirmationProps>
       ? selectedReceiver.wallets.find((w) => w.wallet.id === paymentData.wallet?.id)
       : null;
   const walletAddress = selectedWallet?.stellar_address || paymentData.wallet?.address;
+  const walletMemo = selectedWallet?.stellar_memo;
 
   return (
     <div className="DirectPaymentConfirmation">
@@ -71,9 +72,10 @@ export const DirectPaymentConfirmation: React.FC<DirectPaymentConfirmationProps>
                   {selectedWallet.wallet.name}
                 </span>
               )}
-              <span className="DirectPaymentConfirmation__valueAddress">
-                {shortenAccountKey(walletAddress, 6, 8)}
-              </span>
+              <span>{shortenAccountKey(walletAddress, 10, 10)}</span>
+              {walletMemo && (
+                <span className="DirectPaymentConfirmation__valueMemo">Memo: {walletMemo}</span>
+              )}
             </ConfirmationRow>
           )}
 

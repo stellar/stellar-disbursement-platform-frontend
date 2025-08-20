@@ -701,7 +701,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
               disabled={!hasMinimumRequirements}
               isLoading={isLoading}
             >
-              Confirm
+              Review
             </Button>
           </Modal.Footer>
         </form>

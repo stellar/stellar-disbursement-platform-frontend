@@ -35,71 +35,116 @@ export const validateVerificationField = (
 };
 
 export const validateDateOfBirth = (value: string): ValidationResult => {
-  // Handle both formats: YYYY-MM-DD and YYYY MM DD
-  let formattedValue = value;
-  if (/^\d{4}\s\d{1,2}\s\d{1,2}$/.test(value)) {
-    const [year, month, day] = value.split(/\s+/);
-    formattedValue = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-  }
+  const normalizedValue = value
+    .trim()
+    .replace(/[/.\s]+/g, "-")
+    .replace(
+      /^(\d{4})-(\d{1,2})-(\d{1,2})$/,
+      (_, year, month, day) => `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`,
+    );
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(formattedValue)) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)) {
     return {
       isValid: false,
-      formattedValue,
-      errorMessage: "Date of birth must be in YYYY-MM-DD or YYYY MM DD format",
+      formattedValue: normalizedValue,
+      errorMessage: "Date must be in YYYY-MM-DD format (e.g., 1990-01-15)",
     };
   }
 
-  // Additional validation for reasonable date range
-  const date = new Date(formattedValue);
-  const now = new Date();
-  const minDate = new Date(now.getFullYear() - 120, now.getMonth(), now.getDate());
-  const maxDate = new Date(now.getFullYear() - 13, now.getMonth(), now.getDate());
+  const [year, month, day] = normalizedValue.split("-").map(Number);
 
-  if (date < minDate || date > maxDate) {
+  if (month < 1 || month > 12) {
     return {
       isValid: false,
-      formattedValue,
-      errorMessage: "Date of birth must be between 1900 and 2010",
-    };
-  }
-
-  return {
-    isValid: true,
-    formattedValue,
-  };
-};
-
-export const validateYearMonth = (value: string): ValidationResult => {
-  // Handle both formats: YYYY-MM and YYYY MM
-  let formattedValue = value;
-  if (/^\d{4}\s\d{1,2}$/.test(value)) {
-    const [year, month] = value.split(/\s+/);
-    formattedValue = `${year}-${month.padStart(2, "0")}`;
-  }
-
-  if (!/^\d{4}-\d{2}$/.test(formattedValue)) {
-    return {
-      isValid: false,
-      formattedValue,
-      errorMessage: "Year-month must be in YYYY-MM or YYYY MM format",
-    };
-  }
-
-  // Validate month is between 01-12
-  const [, monthStr] = formattedValue.split("-");
-  const monthNum = parseInt(monthStr, 10);
-  if (monthNum < 1 || monthNum > 12) {
-    return {
-      isValid: false,
-      formattedValue,
+      formattedValue: normalizedValue,
       errorMessage: "Month must be between 01 and 12",
     };
   }
 
+  const date = new Date(year, month - 1, day);
+  const isValidDate =
+    date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+
+  if (!isValidDate) {
+    return {
+      isValid: false,
+      formattedValue: normalizedValue,
+      errorMessage: `Invalid date: ${year}-${month.toString().padStart(2, "0")} has no day ${day}`,
+    };
+  }
+
+  const minDate = new Date(1900, 0, 1);
+  const today = new Date();
+  const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+  if (date < minDate) {
+    return {
+      isValid: false,
+      formattedValue: normalizedValue,
+      errorMessage: "Date cannot be before 1900",
+    };
+  }
+
+  if (date > maxDate) {
+    return {
+      isValid: false,
+      formattedValue: normalizedValue,
+      errorMessage: "You must be at least 18 years old",
+    };
+  }
+
   return {
     isValid: true,
-    formattedValue,
+    formattedValue: normalizedValue,
+  };
+};
+
+export const validateYearMonth = (value: string): ValidationResult => {
+  const normalizedValue = value
+    .trim()
+    .replace(/[/.\s]+/g, "-")
+    .replace(/^(\d{4})-(\d{1,2})$/, (_, year, month) => `${year}-${month.padStart(2, "0")}`);
+
+  if (!/^\d{4}-\d{2}$/.test(normalizedValue)) {
+    return {
+      isValid: false,
+      formattedValue: normalizedValue,
+      errorMessage: "Format must be YYYY-MM (e.g., 2024-01)",
+    };
+  }
+
+  const [year, month] = normalizedValue.split("-").map(Number);
+  const currentYear = new Date().getFullYear();
+  const minDate = new Date(1900, 0, 1);
+  const maxDate = new Date(currentYear - 18, 0, 1);
+
+  if (month < 1 || month > 12) {
+    return {
+      isValid: false,
+      formattedValue: normalizedValue,
+      errorMessage: "Month must be between 01 and 12",
+    };
+  }
+
+  if (year < minDate.getFullYear()) {
+    return {
+      isValid: false,
+      formattedValue: normalizedValue,
+      errorMessage: "Year cannot be before 1900",
+    };
+  }
+
+  if (year > maxDate.getFullYear()) {
+    return {
+      isValid: false,
+      formattedValue: normalizedValue,
+      errorMessage: "You must be at least 18 years old",
+    };
+  }
+
+  return {
+    isValid: true,
+    formattedValue: normalizedValue,
   };
 };
 

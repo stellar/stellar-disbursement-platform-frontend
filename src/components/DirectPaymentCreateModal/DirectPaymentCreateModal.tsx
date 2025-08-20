@@ -1,7 +1,7 @@
-import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
-import { useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePrevious } from "@/hooks/usePrevious";
+import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
 import { useAllAssets } from "@/apiQueries/useAllAssets";
@@ -517,7 +517,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
               disabled={!isSubmitEnabled}
               isLoading={isLoading}
             >
-              Submit
+              Review
             </Button>
           </Modal.Footer>
         </form>
