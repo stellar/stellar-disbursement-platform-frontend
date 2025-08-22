@@ -380,6 +380,7 @@ export type ReceiverVerification = {
   verificationField: string;
   value: string;
   confirmedAt?: string;
+  verificationChannel?: string | null;
 };
 
 export type ReceiverWalletBalance = {
@@ -759,6 +760,7 @@ export type ApiReceiverVerification = {
   verification_field: string;
   hashed_value: string;
   confirmed_at: string;
+  verification_channel?: string | null;
 };
 
 export type ApiReceiver = {
