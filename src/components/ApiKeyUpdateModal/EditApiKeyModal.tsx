@@ -1,5 +1,5 @@
-import { Button, Input, Modal, Notification } from "@stellar/design-system";
 import { useEffect } from "react";
+import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
 import {
   ApiKeyFormFields,
