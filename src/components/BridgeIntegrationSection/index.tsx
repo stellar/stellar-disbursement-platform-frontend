@@ -107,7 +107,7 @@ export const BridgeIntegrationSection = ({
       case "NOT_OPTED_IN":
         return (
           <div>
-            <div className="Note Note--small">
+            <div className="Note">
               Create a virtual bank account with Bridge to fund your distribution account and accept
               USD payments via bank transfer. Funds sent to this virtual account are automatically
               converted to USDC on Stellar and deposited into your distribution account.

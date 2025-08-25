@@ -90,12 +90,12 @@ export const DistributionAccountStellar = () => {
     return (
       <>
         <div>
-          <Profile publicAddress={distributionAccountPublicKey} size="sm" isCopy hideAvatar />
-          <div className="Note Note--small">
+          <Profile publicAddress={distributionAccountPublicKey} size="md" isCopy hideAvatar />
+          <div className="Note">
             Add funds to your distribution account by sending Stellar-based digital assets to the
             public key above.
           </div>
-          <div className="Note Note--small">
+          <div className="Note">
             It is strongly recommended that you only fund the distribution account when you are
             ready to send disbursements. It is not meant to be a long-term store of value, as any
             SDP user with permission to send disbursements can trigger payments from this account.
