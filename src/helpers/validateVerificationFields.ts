@@ -189,7 +189,19 @@ export const validateNationalId = (value: string): ValidationResult => {
 // Formatting helpers for display purposes
 export const formatDateForDisplay = (dateString: string): string => {
   try {
-    const date = new Date(dateString);
+    // Parse the date components manually to avoid timezone issues
+    // This function expects dates in YYYY-MM-DD format from validateDateOfBirth
+    const parts = dateString.split("-");
+    if (parts.length !== 3) {
+      return dateString;
+    }
+
+    const [year, month, day] = parts.map(Number);
+    if (!year || !month || !day || month < 1 || month > 12 || day < 1 || day > 31) {
+      return dateString;
+    }
+
+    const date = new Date(year, month - 1, day);
     if (isNaN(date.getTime())) {
       return dateString;
     }
