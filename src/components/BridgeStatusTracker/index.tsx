@@ -112,7 +112,7 @@ export const BridgeStatusTracker = ({ kycStatus, onRefresh }: BridgeStatusTracke
               </Button>
             ) : kycStatus.kyc_link ? (
               <Button
-                size="sm"
+                size="md"
                 variant="tertiary"
                 onClick={() => window.open(kycStatus.kyc_link, "_blank", "noopener,noreferrer")}
                 icon={<Icon.LinkExternal01 />}
