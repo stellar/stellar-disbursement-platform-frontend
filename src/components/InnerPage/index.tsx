@@ -3,14 +3,14 @@ import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Icon } from "@stellar/design-system";
 
-import { PageHeader } from "components/PageHeader";
-import { USE_SSO } from "constants/envVariables";
-import { Routes } from "constants/settings";
-import { AppDispatch, resetStoreAction } from "store";
-import { useRedux } from "hooks/useRedux";
-import { singleUserStore } from "helpers/singleSingOn";
-import { getAppVersion } from "helpers/getAppVersion";
-import { localStorageSessionToken } from "helpers/localStorageSessionToken";
+import { PageHeader } from "@/components/PageHeader";
+import { USE_SSO } from "@/constants/envVariables";
+import { Routes } from "@/constants/settings";
+import { AppDispatch, resetStoreAction } from "@/store";
+import { useRedux } from "@/hooks/useRedux";
+import { singleUserStore } from "@/helpers/singleSingOn";
+import { getAppVersion } from "@/helpers/getAppVersion";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 
 import "./styles.scss";
 
@@ -21,16 +21,8 @@ interface InnerPageProps {
   isCardLayout?: boolean;
 }
 
-export const InnerPage = ({
-  children,
-  isNarrow,
-  isCardLayout,
-}: InnerPageProps) => {
-  const { userAccount, organization, profile } = useRedux(
-    "userAccount",
-    "organization",
-    "profile",
-  );
+export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) => {
+  const { userAccount, organization, profile } = useRedux("userAccount", "organization", "profile");
   const dispatch: AppDispatch = useDispatch();
 
   const handleSignOut = () => {
@@ -54,58 +46,64 @@ export const InnerPage = ({
       id: "nav-home",
       label: "Home",
       route: Routes.HOME,
-      icon: <Icon.Home />,
+      icon: <Icon.Home02 />,
     },
     {
       id: "nav-disbursements",
       label: "Disbursements",
       route: Routes.DISBURSEMENTS,
-      icon: <Icon.AllInbox />,
+      icon: <Icon.Inbox01 />,
     },
     {
       id: "nav-receivers",
       label: "Receivers",
       route: Routes.RECEIVERS,
-      icon: <Icon.Users />,
+      icon: <Icon.Users02 />,
     },
     {
       id: "nav-payments",
       label: "Payments",
       route: Routes.PAYMENTS,
-      icon: <Icon.Payments />,
+      icon: <Icon.BankNote01 />,
     },
     {
       id: "nav-wallet-providers",
       label: "Wallet Providers",
       route: Routes.WALLET_PROVIDERS,
-      icon: <Icon.AccountBalanceWallet />,
+      icon: <Icon.Wallet01 />,
     },
     {
       id: "nav-distribution-account",
       label: "Distribution Account",
       route: Routes.DISTRIBUTION_ACCOUNT,
-      icon: <Icon.Wallet />,
+      icon: <Icon.Dataflow01 />,
     },
     {
       id: "nav-analytics",
       label: "Analytics",
       route: Routes.ANALYTICS,
-      icon: <Icon.Insights />,
+      icon: <Icon.LineChartUp01 />,
     },
   ];
 
   const ITEMS_BOTTOM: NavItem[] = [
     {
+      id: "nav-api-keys",
+      label: "API Keys",
+      route: Routes.API_KEYS,
+      icon: <Icon.Key01 />,
+    },
+    {
       id: "nav-profile",
       label: "Profile",
       route: Routes.PROFILE,
-      icon: <Icon.AccountCircle />,
+      icon: <Icon.UserCircle />,
     },
     {
       id: "nav-settings",
       label: "Settings",
       route: Routes.SETTINGS,
-      icon: <Icon.Settings />,
+      icon: <Icon.Settings01 />,
     },
   ];
 
@@ -125,9 +123,7 @@ export const InnerPage = ({
   const userNameText = () => {
     if (profile.data.firstName) {
       if (profile.data.lastName) {
-        return `${profile.data.firstName} ${profile.data.lastName
-          .charAt(0)
-          .toUpperCase()}.`;
+        return `${profile.data.firstName} ${profile.data.lastName.charAt(0).toUpperCase()}.`;
       }
 
       return profile.data.firstName;
@@ -142,9 +138,7 @@ export const InnerPage = ({
         <PageHeader />
         <div className="InnerPage">
           <div className="InnerPage__container">
-            <div className="InnerPage__content InnerPage--cardLayout">
-              {children}
-            </div>
+            <div className="InnerPage__content InnerPage--cardLayout">{children}</div>
           </div>
         </div>
       </>
@@ -175,11 +169,7 @@ export const InnerPage = ({
           </div>
         </div>
         <div className="InnerPage__container">
-          <div
-            className={`InnerPage__content ${
-              isNarrow ? "InnerPage__content--narrow" : ""
-            }`}
-          >
+          <div className={`InnerPage__content ${isNarrow ? "InnerPage__content--narrow" : ""}`}>
             {children}
           </div>
         </div>

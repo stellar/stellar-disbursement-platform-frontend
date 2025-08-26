@@ -1,4 +1,4 @@
-import { UserRole } from "types";
+import { UserRole } from "@/types";
 
 export const userRoleText = (role?: UserRole | null) => {
   switch (role) {

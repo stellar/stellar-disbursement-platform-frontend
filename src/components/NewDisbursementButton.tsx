@@ -1,14 +1,10 @@
 import { Button, Icon } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
-import { ShowForRoles } from "components/ShowForRoles";
-import { Routes } from "constants/settings";
-import { useCircleAccount } from "hooks/useCircleAccount";
+import { ShowForRoles } from "@/components/ShowForRoles";
+import { Routes } from "@/constants/settings";
+import { useCircleAccount } from "@/hooks/useCircleAccount";
 
-export const NewDisbursementButton = ({
-  size = "sm",
-}: {
-  size?: "sm" | "md" | "xs";
-}) => {
+export const NewDisbursementButton = () => {
   const navigate = useNavigate();
   const { isCircleAccount, isCircleAccountPending } = useCircleAccount();
 
@@ -17,16 +13,14 @@ export const NewDisbursementButton = ({
   };
 
   const inactiveCircleAccount = isCircleAccount && isCircleAccountPending;
-  const disableMessage = inactiveCircleAccount
-    ? "Circle Account is not active"
-    : "";
+  const disableMessage = inactiveCircleAccount ? "Circle Account is not active" : "";
 
   return (
     <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
       <Button
         variant="primary"
-        size={size}
-        icon={<Icon.Add />}
+        size="md"
+        icon={<Icon.Plus />}
         iconPosition="right"
         onClick={goToNewDisbursement}
         disabled={inactiveCircleAccount}

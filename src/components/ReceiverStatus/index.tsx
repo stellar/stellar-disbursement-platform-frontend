@@ -1,4 +1,4 @@
-import { ReceiverStatus as ReceiverStatusType } from "types";
+import { ReceiverStatus as ReceiverStatusType } from "@/types";
 import "./styles.scss";
 
 export const ReceiverStatus = ({ status }: { status: ReceiverStatusType }) => {
@@ -8,15 +8,9 @@ export const ReceiverStatus = ({ status }: { status: ReceiverStatusType }) => {
     case "FLAGGED":
       return <span className="ReceiverStatus">Flagged</span>;
     case "READY":
-      return (
-        <span className="ReceiverStatus ReceiverStatus--accent">Ready</span>
-      );
+      return <span className="ReceiverStatus ReceiverStatus--accent">Ready</span>;
     case "REGISTERED":
-      return (
-        <span className="ReceiverStatus ReceiverStatus--accent">
-          Registered
-        </span>
-      );
+      return <span className="ReceiverStatus ReceiverStatus--accent">Registered</span>;
     default:
       return null;
   }

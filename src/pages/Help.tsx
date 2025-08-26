@@ -1,11 +1,10 @@
 import { Heading } from "@stellar/design-system";
-import { ExpandContent } from "components/ExpandContent";
-import { SectionHeader } from "components/SectionHeader";
+import { ExpandContent } from "@/components/ExpandContent";
+import { SectionHeader } from "@/components/SectionHeader";
 
 const FAQ = [
   {
-    question:
-      "What information do I need to upload to create a new disbursement?",
+    question: "What information do I need to upload to create a new disbursement?",
     answer:
       "First select the 'Registration Contact Type', then 'Wallet Provider', 'Asset' and 'Verification Type' for your disbursement. Then download the CSV sample and use it as a model to upload a list of receivers in CSV format with the fields. Keep in mind that phone number should be in international format with the plus sign. ID is a unique identifier per receiver. This should be a consistent identifier you use to track individuals in your internal systems. Amount is denominated in the asset you chose in the dropdown and should only contain the number, not the asset name. Verification is a piece of additional information the receiver will verify when signing up for a wallet in order to receive their funds. This could be date of birth, national ID number, or a personal PIN. It should be something the receiver knows and has provided to your organization.",
   },

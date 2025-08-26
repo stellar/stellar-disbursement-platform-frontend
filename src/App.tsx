@@ -3,43 +3,45 @@ import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import GitInfo from "generated/gitInfo";
+import GitInfo from "@/generated/gitInfo";
 
-import { store } from "store";
-import { Routes } from "constants/settings";
-import { PrivateRoute } from "components/PrivateRoute";
-import { InnerPage } from "components/InnerPage";
-import { UserSession } from "components/UserSession";
-import { GlobalBanner } from "components/GlobalBanner";
-import { SessionTokenRefresher } from "components/SessionTokenRefresher";
+import { store } from "@/store";
+import { Routes } from "@/constants/settings";
+import { ApiKeyDetails } from "@/components/ApiKeyDetails/ApiKeyDetails";
+import { PrivateRoute } from "@/components/PrivateRoute";
+import { InnerPage } from "@/components/InnerPage";
+import { UserSession } from "@/components/UserSession";
+import { GlobalBanner } from "@/components/GlobalBanner";
+import { SessionTokenRefresher } from "@/components/SessionTokenRefresher";
 
-import { SignIn } from "pages/SignIn";
-import { MFAuth } from "pages/MFAuth";
-import { ForgotPassword } from "pages/ForgotPassword";
-import { ResetPassword } from "pages/ResetPassword";
-import { SetNewPassword } from "pages/SetNewPassword";
-import { Home } from "pages/Home";
-import { Disbursements } from "pages/Disbursements";
-import { DisbursementDetails } from "pages/DisbursementDetails";
-import { DisbursementsNew } from "pages/DisbursementsNew";
-import { DisbursementDraftDetails } from "pages/DisbursementDraftDetails";
-import { DisbursementsDrafts } from "pages/DisbursementsDrafts";
-import { Receivers } from "pages/Receivers";
-import { ReceiverDetails } from "pages/ReceiverDetails";
-import { ReceiverDetailsEdit } from "pages/ReceiverDetailsEdit";
-import { PaymentDetails } from "pages/PaymentDetails";
-import { Payments } from "pages/Payments";
-import { DistributionAccount } from "pages/DistributionAccount";
-import { WalletProviders } from "pages/WalletProviders";
-import { Analytics } from "pages/Analytics";
-import { Profile } from "pages/Profile";
-import { Settings } from "pages/Settings";
-import { Help } from "pages/Help";
-import { NotFound } from "pages/NotFound";
-import { Unauthorized } from "pages/Unauthorized";
-import { SigninOidc } from "pages/Redirect";
+import { SignIn } from "@/pages/SignIn";
+import { MFAuth } from "@/pages/MFAuth";
+import { ForgotPassword } from "@/pages/ForgotPassword";
+import { ResetPassword } from "@/pages/ResetPassword";
+import { SetNewPassword } from "@/pages/SetNewPassword";
+import { Home } from "@/pages/Home";
+import { Disbursements } from "@/pages/Disbursements";
+import { DisbursementDetails } from "@/pages/DisbursementDetails";
+import { DisbursementsNew } from "@/pages/DisbursementsNew";
+import { DisbursementDraftDetails } from "@/pages/DisbursementDraftDetails";
+import { DisbursementsDrafts } from "@/pages/DisbursementsDrafts";
+import { Receivers } from "@/pages/Receivers";
+import { ReceiverDetails } from "@/pages/ReceiverDetails";
+import { ReceiverDetailsEdit } from "@/pages/ReceiverDetailsEdit";
+import { PaymentDetails } from "@/pages/PaymentDetails";
+import { Payments } from "@/pages/Payments";
+import { DistributionAccount } from "@/pages/DistributionAccount";
+import { WalletProviders } from "@/pages/WalletProviders";
+import { Analytics } from "@/pages/Analytics";
+import { Profile } from "@/pages/Profile";
+import { Settings } from "@/pages/Settings";
+import { Help } from "@/pages/Help";
+import { NotFound } from "@/pages/NotFound";
+import { Unauthorized } from "@/pages/Unauthorized";
+import { SigninOidc } from "@/pages/Redirect";
+import { ApiKeys } from "@/pages/ApiKeys";
 
-import "styles.scss";
+import "@/styles/styles.scss";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -125,9 +127,7 @@ export const App = () => {
             <Route
               path={Routes.DISBURSEMENTS}
               element={
-                <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "business"]}
-                >
+                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
                   <InnerPage>
                     <Disbursements />
                   </InnerPage>
@@ -137,9 +137,7 @@ export const App = () => {
             <Route
               path={`${Routes.DISBURSEMENTS}/:id`}
               element={
-                <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "business"]}
-                >
+                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
                   <InnerPage>
                     <DisbursementDetails />
                   </InnerPage>
@@ -180,9 +178,7 @@ export const App = () => {
             <Route
               path={Routes.RECEIVERS}
               element={
-                <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "business"]}
-                >
+                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
                   <InnerPage>
                     <Receivers />
                   </InnerPage>
@@ -192,9 +188,7 @@ export const App = () => {
             <Route
               path={`${Routes.RECEIVERS}/:id`}
               element={
-                <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "business"]}
-                >
+                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
                   <InnerPage>
                     <ReceiverDetails />
                   </InnerPage>
@@ -215,9 +209,7 @@ export const App = () => {
             <Route
               path={`${Routes.PAYMENTS}/:id`}
               element={
-                <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "business"]}
-                >
+                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
                   <InnerPage>
                     <PaymentDetails />
                   </InnerPage>
@@ -227,9 +219,7 @@ export const App = () => {
             <Route
               path={Routes.PAYMENTS}
               element={
-                <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "business"]}
-                >
+                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
                   <InnerPage>
                     <Payments />
                   </InnerPage>
@@ -265,6 +255,28 @@ export const App = () => {
                 <PrivateRoute>
                   <InnerPage>
                     <Analytics />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            {/* Api Keys */}
+            <Route
+              path={Routes.API_KEYS}
+              element={
+                <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                  <InnerPage>
+                    <ApiKeys />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            {/* Api Key Details */}
+            <Route
+              path={`${Routes.API_KEYS}/:id`}
+              element={
+                <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                  <InnerPage>
+                    <ApiKeyDetails />
                   </InnerPage>
                 </PrivateRoute>
               }

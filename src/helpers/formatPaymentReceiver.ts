@@ -1,4 +1,4 @@
-import { ApiReceiver, PaymentDetailsReceiver } from "types";
+import { ApiReceiver, PaymentDetailsReceiver } from "@/types";
 
 export const formatPaymentReceiver = (
   receiver: ApiReceiver,

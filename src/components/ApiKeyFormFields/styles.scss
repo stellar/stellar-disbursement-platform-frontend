@@ -1,0 +1,64 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.ApiKeyFormFields {
+  &__allowedIPs {
+    font-family: var(--sds-ff-monospace);
+  }
+
+  &__permissions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__permissionsHeading {
+    margin-bottom: pxToRem(8px);
+    color: var(--sds-clr-gray-09);
+  }
+
+  &__permissionsError {
+    color: var(--sds-clr-red-11);
+    font-size: pxToRem(14px);
+    margin-bottom: pxToRem(8px);
+  }
+
+  &__permissionsList {
+    border-top: pxToRem(1px) solid var(--sds-clr-gray-04);
+    border-bottom: pxToRem(1px) solid var(--sds-clr-gray-04);
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(12px);
+    padding: pxToRem(16px) 0;
+  }
+
+  &__permissionRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__permissionLabel {
+    font-weight: var(--sds-fw-medium);
+    min-width: pxToRem(120px);
+    color: var(--sds-clr-gray-12);
+
+    &--bold {
+      font-weight: var(--sds-fw-semi-bold);
+    }
+  }
+
+  &__permissionSelect {
+    flex-shrink: 0;
+    min-width: pxToRem(150px);
+  }
+
+  &__resourcePermissions {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(12px);
+
+    &--disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+}

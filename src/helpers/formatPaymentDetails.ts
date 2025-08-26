@@ -1,11 +1,11 @@
-import { ApiPayment, PaymentDetails } from "types";
+import { ApiPayment, PaymentDetails } from "@/types";
 
 export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
   return {
     id: payment.id,
     createdAt: payment.created_at,
-    disbursementName: payment.disbursement.name,
-    disbursementId: payment.disbursement.id,
+    disbursementName: payment.disbursement?.name || "Direct Payment",
+    disbursementId: payment.disbursement?.id || "",
     receiverId: payment?.receiver_wallet?.receiver?.id,
     receiverWalletId: payment?.receiver_wallet?.id,
     transactionId: payment.stellar_transaction_id,
@@ -16,10 +16,7 @@ export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
     circleTransferRequestId: payment?.circle_transfer_request_id,
     status: payment.status,
     statusHistory: payment?.status_history
-      .sort(
-        (a, b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-      )
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .map((h) => {
         return {
           updatedAt: h.timestamp,

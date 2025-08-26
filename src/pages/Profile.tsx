@@ -13,43 +13,40 @@ import {
   Checkbox,
 } from "@stellar/design-system";
 
-import { DropdownMenu } from "components/DropdownMenu";
-import { FileUpload } from "components/FileUpload";
-import { InfoTooltip } from "components/InfoTooltip";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { SectionHeader } from "components/SectionHeader";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { FileUpload } from "@/components/FileUpload";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { USE_SSO } from "constants/envVariables";
-import { Routes } from "constants/settings";
-import { singleUserStore } from "helpers/singleSingOn";
-import { userRoleText } from "helpers/userRoleText";
-import { localStorageSessionToken } from "helpers/localStorageSessionToken";
-import { useRedux } from "hooks/useRedux";
-import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
-import { AppDispatch, resetStoreAction } from "store";
+import { USE_SSO } from "@/constants/envVariables";
+import { Routes } from "@/constants/settings";
+import { singleUserStore } from "@/helpers/singleSingOn";
+import { userRoleText } from "@/helpers/userRoleText";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { useRedux } from "@/hooks/useRedux";
+import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+import { AppDispatch, resetStoreAction } from "@/store";
 import {
   getOrgInfoAction,
   updateOrgInfoAction,
   clearErrorAction as orgClearErrorAction,
   clearUpdateMessageAction as orgClearUpdateMessageAction,
   getOrgLogoAction,
-} from "store/ducks/organization";
+} from "@/store/ducks/organization";
 import {
   clearErrorAction,
   clearUpdateMessageAction,
   getProfileInfoAction,
   updateProfileInfoAction,
-} from "store/ducks/profile";
-import { AccountProfile } from "types";
+} from "@/store/ducks/profile";
+import { AccountProfile } from "@/types";
 
 export const Profile = () => {
   const { profile, organization } = useRedux("profile", "organization");
-  const { isRoleAccepted } = useIsUserRoleAccepted([
-    "owner",
-    "financial_controller",
-  ]);
+  const { isRoleAccepted } = useIsUserRoleAccepted(["owner", "financial_controller"]);
   const [isEditAccount, setIsEditAccount] = useState(false);
   const [isEditOrganization, setIsEditOrganization] = useState(false);
   const [imageFile, setImageFile] = useState<File>();
@@ -121,9 +118,7 @@ export const Profile = () => {
         return organization.data.name;
       }
 
-      return imageFile
-        ? imageFile.name
-        : "Drop your file here or click the button";
+      return imageFile ? imageFile.name : "Drop your file here or click the button";
     };
 
     const getDisplayImage = () => {
@@ -152,21 +147,13 @@ export const Profile = () => {
           uploadButton={
             isReadOnly ? undefined : (
               <div className="CsvUploadButton">
-                <label
-                  className="Button Button--secondary Button--xs"
-                  htmlFor="upload-org-image"
-                >
+                <label className="Button Button--tertiary Button--sm" htmlFor="upload-org-image">
                   Upload image
                   <span className="Button__icon">
-                    <Icon.Backup />
+                    <Icon.UploadCloud01 />
                   </span>
                 </label>
-                <input
-                  type="file"
-                  id="upload-org-image"
-                  accept="image/png, image/jpeg"
-                  hidden
-                />
+                <input type="file" id="upload-org-image" accept="image/png, image/jpeg" hidden />
               </div>
             )
           }
@@ -174,11 +161,7 @@ export const Profile = () => {
           acceptedType={["image/png", "image/jpeg"]}
           infoMessage={getInfoMessage()}
           disabled={Boolean(isReadOnly)}
-          extraInfo={
-            <div className="CardStack__imageUpload__image">
-              {getDisplayImage()}
-            </div>
-          }
+          extraInfo={<div className="CardStack__imageUpload__image">{getDisplayImage()}</div>}
         />
       </div>
     );
@@ -218,9 +201,7 @@ export const Profile = () => {
     dispatch(clearErrorAction());
   };
 
-  const handleOrganizationEditSubmit = (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
+  const handleOrganizationEditSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (
@@ -231,10 +212,7 @@ export const Profile = () => {
     ) {
       dispatch(
         updateOrgInfoAction({
-          name: emptyValueIfNotChanged(
-            organizationDetails.name,
-            organization.data.name,
-          ),
+          name: emptyValueIfNotChanged(organizationDetails.name, organization.data.name),
           privacyPolicyLink: emptyValueIfNotChanged(
             organizationDetails.privacyPolicyLink,
             organization.data.privacyPolicyLink,
@@ -246,9 +224,7 @@ export const Profile = () => {
     }
   };
 
-  const handleOrganizationEditCancel = (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
+  const handleOrganizationEditCancel = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsEditOrganization(false);
     setImageFile(undefined);
@@ -264,9 +240,7 @@ export const Profile = () => {
       URL.revokeObjectURL(imageFileUrl);
     }
   };
-  const handleAccountDetailsChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleAccountDetailsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAccountDetails({
       ...accountDetails,
       [event.target.name]: event.target.value,
@@ -277,9 +251,7 @@ export const Profile = () => {
     setImageFile(file);
   };
 
-  const handleOrgDetailsChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleOrgDetailsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOrganizationDetails({
       ...organizationDetails,
       [event.target.name]: event.target.value,
@@ -343,13 +315,7 @@ export const Profile = () => {
                 value={accountDetails.email}
                 onChange={handleAccountDetailsChange}
               />
-              <Select
-                id="role"
-                name="role"
-                label="Role"
-                fieldSize="sm"
-                disabled
-              >
+              <Select id="role" name="role" label="Role" fieldSize="sm" disabled>
                 <option>{userRoleText(accountDetails.role)}</option>
               </Select>
             </div>
@@ -359,30 +325,22 @@ export const Profile = () => {
             <div className="CardStack__grid">
               <div className="CardStack__infoItem">
                 <label className="Label Label--sm">First name</label>
-                <div className="CardStack__infoItem__value">
-                  {profile.data.firstName}
-                </div>
+                <div className="CardStack__infoItem__value">{profile.data.firstName}</div>
               </div>
 
               <div className="CardStack__infoItem">
                 <label className="Label Label--sm">Last name</label>
-                <div className="CardStack__infoItem__value">
-                  {profile.data.lastName}
-                </div>
+                <div className="CardStack__infoItem__value">{profile.data.lastName}</div>
               </div>
 
               <div className="CardStack__infoItem">
                 <label className="Label Label--sm">Email</label>
-                <div className="CardStack__infoItem__value">
-                  {profile.data.email}
-                </div>
+                <div className="CardStack__infoItem__value">{profile.data.email}</div>
               </div>
 
               <div className="CardStack__infoItem">
                 <label className="Label Label--sm">Role</label>
-                <div className="CardStack__infoItem__value">
-                  {userRoleText(profile.data.role)}
-                </div>
+                <div className="CardStack__infoItem__value">{userRoleText(profile.data.role)}</div>
               </div>
 
               <div className="CardStack__infoItem">
@@ -397,12 +355,12 @@ export const Profile = () => {
 
         {isEditAccount ? (
           <div className="CardStack__buttons">
-            <Button variant="secondary" size="xs" type="reset">
+            <Button variant="tertiary" size="md" type="reset">
               Cancel
             </Button>
             <Button
               variant="primary"
-              size="xs"
+              size="md"
               type="submit"
               isLoading={profile.status === "PENDING"}
               disabled={isSubmitDisabled}
@@ -450,19 +408,14 @@ export const Profile = () => {
           <div className="CardStack__grid">
             <div className="CardStack__infoItem">
               <label className="Label Label--sm">Name</label>
-              <div className="CardStack__infoItem__value">
-                {organization.data.name}
-              </div>
+              <div className="CardStack__infoItem__value">{organization.data.name}</div>
             </div>
 
             <div className="CardStack__infoItem">
               <label className="Label Label--sm">Privacy Policy Link</label>
               <div className="CardStack__infoItem__value">
                 {organization.data.privacyPolicyLink ? (
-                  <Link
-                    href={organization.data.privacyPolicyLink}
-                    target="_blank"
-                  >
+                  <Link href={organization.data.privacyPolicyLink} target="_blank">
                     {organization.data.privacyPolicyLink}
                   </Link>
                 ) : (
@@ -485,9 +438,7 @@ export const Profile = () => {
               label="Approval required"
               disabled={
                 !isEditOrganization ||
-                !["owner", "financial_controller"].includes(
-                  profile.data.role || "",
-                )
+                !["owner", "financial_controller"].includes(profile.data.role || "")
               }
               checked={isApprovalRequired}
               onChange={(e) => setIsApprovalRequired(e.target.checked)}
@@ -498,17 +449,16 @@ export const Profile = () => {
 
         {isEditOrganization ? (
           <div className="CardStack__buttons">
-            <Button variant="secondary" size="xs" type="reset">
+            <Button variant="tertiary" size="md" type="reset">
               Cancel
             </Button>
             <Button
               variant="primary"
-              size="xs"
+              size="md"
               type="submit"
               disabled={
                 organizationDetails.name === organization.data.name &&
-                organizationDetails.privacyPolicyLink ===
-                  organization.data.privacyPolicyLink &&
+                organizationDetails.privacyPolicyLink === organization.data.privacyPolicyLink &&
                 !imageFile &&
                 isApprovalRequired === organization.data.isApprovalRequired
               }
@@ -536,7 +486,7 @@ export const Profile = () => {
 
       <div className="CardStack">
         {profile.errorString ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             <ErrorWithExtras
               appError={{
                 message: profile.errorString,
@@ -547,7 +497,7 @@ export const Profile = () => {
         ) : null}
 
         {organization.errorString ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             <ErrorWithExtras
               appError={{
                 message: organization.errorString,
@@ -560,9 +510,7 @@ export const Profile = () => {
         {profile.updateMessage || organization.updateMessage ? (
           <NotificationWithButtons
             variant="success"
-            title={
-              profile.updateMessage ? "Profile updated" : "Organization updated"
-            }
+            title={profile.updateMessage ? "Profile updated" : "Organization updated"}
             buttons={[
               {
                 label: "Dismiss",
@@ -625,9 +573,7 @@ export const Profile = () => {
                         privacyPolicyLink: organization.data.privacyPolicyLink,
                         logo: organization.data.logo,
                       });
-                      setIsApprovalRequired(
-                        Boolean(organization.data.isApprovalRequired),
-                      );
+                      setIsApprovalRequired(Boolean(organization.data.isApprovalRequired));
                     }}
                   >
                     Edit details
@@ -646,8 +592,8 @@ export const Profile = () => {
 
             <div className="CardStack__body">
               <div className="Note">
-                <Link onClick={handleSignOut}>Click here</Link> to end your
-                session and sign out of the dashboard.
+                <Link onClick={handleSignOut}>Click here</Link> to end your session and sign out of
+                the dashboard.
               </div>
             </div>
           </div>

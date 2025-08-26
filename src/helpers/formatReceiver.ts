@@ -1,4 +1,4 @@
-import { ApiReceiver, ReceiverDetails } from "types";
+import { ApiReceiver, ReceiverDetails } from "@/types";
 
 export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
   id: receiver.id,
@@ -33,5 +33,6 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
       verificationField: v.verification_field,
       value: v.hashed_value,
       confirmedAt: v.confirmed_at,
+      verificationChannel: v.verification_channel,
     })) || [],
 });

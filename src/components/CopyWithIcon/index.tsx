@@ -20,15 +20,11 @@ export const CopyWithIcon = ({
   } as React.CSSProperties;
 
   return (
-    <CopyText
-      textToCopy={textToCopy}
-      doneLabel={doneLabel}
-      tooltipPlacement="right"
-    >
+    <CopyText textToCopy={textToCopy} doneLabel={doneLabel} tooltipPlacement="right">
       <div className="CopyWithIcon">
         {children}
         <div className="CopyWithIcon__icon" style={customStyle}>
-          <Icon.ContentCopy />
+          <Icon.Copy01 />
         </div>
       </div>
     </CopyText>

@@ -3,30 +3,23 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Heading } from "@stellar/design-system";
 
-import { AppDispatch } from "store";
-import { getDisbursementsAction } from "store/ducks/disbursements";
-import { resetDisbursementDetailsAction } from "store/ducks/disbursementDetails";
-import { setDraftIdAction } from "store/ducks/disbursementDrafts";
-import { useRedux } from "hooks/useRedux";
-import { Routes } from "constants/settings";
+import { AppDispatch } from "@/store";
+import { getDisbursementsAction } from "@/store/ducks/disbursements";
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
+import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+import { useRedux } from "@/hooks/useRedux";
+import { Routes } from "@/constants/settings";
 
-import { SectionHeader } from "components/SectionHeader";
-import { ShowForRoles } from "components/ShowForRoles";
-import { DisbursementsTable } from "components/DisbursementsTable";
-import { DashboardAnalytics } from "components/DashboardAnalytics";
-import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
-import { NewDisbursementButton } from "components/NewDisbursementButton";
+import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "@/components/ShowForRoles";
+import { DisbursementsTable } from "@/components/DisbursementsTable";
+import { DashboardAnalytics } from "@/components/DashboardAnalytics";
+import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 
 export const Home = () => {
-  const { disbursements, userAccount } = useRedux(
-    "disbursements",
-    "userAccount",
-  );
-  const { isRoleAccepted } = useIsUserRoleAccepted([
-    "business",
-    "financial_controller",
-    "owner",
-  ]);
+  const { disbursements, userAccount } = useRedux("disbursements", "userAccount");
+  const { isRoleAccepted } = useIsUserRoleAccepted(["business", "financial_controller", "owner"]);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,16 +39,12 @@ export const Home = () => {
       ? disbursements.errorString
       : undefined;
 
-  const goToAnalytics = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const goToAnalytics = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     navigate(Routes.ANALYTICS);
   };
 
-  const goToDisbursements = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const goToDisbursements = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     navigate(Routes.DISBURSEMENTS);
   };
@@ -65,12 +54,12 @@ export const Home = () => {
       <SectionHeader>
         <SectionHeader.Row>
           <SectionHeader.Content>
-            <Heading as="h2" size="lg">
+            <Heading as="h2" size="sm">
               Dashboard
             </Heading>
           </SectionHeader.Content>
           <SectionHeader.Content align="right">
-            <Button size="xs" variant="secondary" onClick={goToAnalytics}>
+            <Button size="md" variant="tertiary" onClick={goToAnalytics}>
               View analytics
             </Button>
           </SectionHeader.Content>
@@ -81,22 +70,20 @@ export const Home = () => {
         <DashboardAnalytics />
       </div>
 
-      <ShowForRoles
-        acceptedRoles={["business", "financial_controller", "owner"]}
-      >
+      <ShowForRoles acceptedRoles={["business", "financial_controller", "owner"]}>
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
-              <Heading as="h2" size="sm">
+              <Heading as="h2" size="xs">
                 Recent disbursements
               </Heading>
             </SectionHeader.Content>
             <SectionHeader.Content align="right">
-              <Button size="xs" variant="secondary" onClick={goToDisbursements}>
+              <Button size="md" variant="tertiary" onClick={goToDisbursements}>
                 View all
               </Button>
               <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
-                <NewDisbursementButton size="xs" />
+                <NewDisbursementButton />
               </ShowForRoles>
             </SectionHeader.Content>
           </SectionHeader.Row>

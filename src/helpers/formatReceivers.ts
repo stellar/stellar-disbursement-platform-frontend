@@ -1,4 +1,4 @@
-import { ApiReceiver, Receiver } from "types";
+import { ApiReceiver, Receiver } from "@/types";
 
 export const formatReceivers = (receivers: ApiReceiver[]): Receiver[] => {
   return receivers.map((r) => ({

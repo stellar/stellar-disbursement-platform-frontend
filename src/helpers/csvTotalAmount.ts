@@ -25,9 +25,7 @@ export const csvTotalAmount = ({
         if (amountIndex === -1) return;
 
         const totalAmount = rows.reduce((accumulator, line) => {
-          return !line
-            ? accumulator
-            : accumulator.plus(BigNumber(line.split(",")[amountIndex]));
+          return !line ? accumulator : accumulator.plus(BigNumber(line.split(",")[amountIndex]));
         }, BigNumber(0));
 
         resolve(totalAmount);

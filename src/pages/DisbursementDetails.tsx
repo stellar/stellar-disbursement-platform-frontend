@@ -12,45 +12,42 @@ import {
 } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "store";
+import { AppDispatch } from "@/store";
 import {
   getDisbursementDetailsAction,
   getDisbursementReceiversAction,
   pauseOrStartDisbursementAction,
   setDisbursementDetailsAction,
-} from "store/ducks/disbursementDetails";
-import { useRedux } from "hooks/useRedux";
-import { useDownloadCsvFile } from "hooks/useDownloadCsvFile";
-import { STELLAR_EXPERT_URL } from "constants/envVariables";
-import { PAGE_LIMIT_OPTIONS, Routes } from "constants/settings";
+} from "@/store/ducks/disbursementDetails";
+import { useRedux } from "@/hooks/useRedux";
+import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
+import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
-import { CopyWithIcon } from "components/CopyWithIcon";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { AssetAmount } from "components/AssetAmount";
-import { Pagination } from "components/Pagination";
-import { Table } from "components/Table";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { PaymentStatus } from "components/PaymentStatus";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SectionHeader } from "@/components/SectionHeader";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { AssetAmount } from "@/components/AssetAmount";
+import { Pagination } from "@/components/Pagination";
+import { Table } from "@/components/Table";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { PaymentStatus } from "@/components/PaymentStatus";
 
-import { renderNumberOrDash } from "helpers/renderNumberOrDash";
-import { number } from "helpers/formatIntlNumber";
-import { formatRegistrationContactType } from "helpers/formatRegistrationContactType";
-import { saveFile } from "helpers/saveFile";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+import { number } from "@/helpers/formatIntlNumber";
+import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
+import { saveFile } from "@/helpers/saveFile";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
-} from "helpers/receiverContactInfo";
-import { VerificationFieldMap } from "types";
+} from "@/helpers/receiverContactInfo";
+import { VerificationFieldMap } from "@/types";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();
 
-  const { disbursements, disbursementDetails } = useRedux(
-    "disbursements",
-    "disbursementDetails",
-  );
+  const { disbursements, disbursementDetails } = useRedux("disbursements", "disbursementDetails");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
@@ -58,21 +55,16 @@ export const DisbursementDetails = () => {
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading: csvDownloadIsLoading, getFile } = useDownloadCsvFile(
-    (file: File) => {
-      saveFile({
-        file,
-        suggestedFileName: disbursementDetails.details.fileName || "",
-      });
-    },
-  );
+  const { isLoading: csvDownloadIsLoading, getFile } = useDownloadCsvFile((file: File) => {
+    saveFile({
+      file,
+      suggestedFileName: disbursementDetails.details.fileName || "",
+    });
+  });
 
-  const fetchedDisbursement = disbursements.items.find(
-    (p) => p.id === disbursementId,
-  );
+  const fetchedDisbursement = disbursements.items.find((p) => p.id === disbursementId);
 
-  const maxPages =
-    disbursementDetails.details.receivers?.pagination?.pages || 1;
+  const maxPages = disbursementDetails.details.receivers?.pagination?.pages || 1;
   const isPaused = disbursementDetails.details.status === "PAUSED";
 
   const saveDisbursementDetails = useCallback(() => {
@@ -95,12 +87,7 @@ export const DisbursementDetails = () => {
     } else if (disbursementId) {
       dispatch(getDisbursementDetailsAction(disbursementId));
     }
-  }, [
-    disbursementId,
-    dispatch,
-    fetchedDisbursement?.id,
-    saveDisbursementDetails,
-  ]);
+  }, [disbursementId, dispatch, fetchedDisbursement?.id, saveDisbursementDetails]);
 
   useEffect(() => {
     if (disbursementDetails.details.id) {
@@ -108,16 +95,12 @@ export const DisbursementDetails = () => {
     }
   }, [disbursementDetails.details.id, dispatch]);
 
-  const handleDownloadFile = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleDownloadFile = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     getFile();
   };
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const handlePageLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
 
     const pageLimit = Number(event.target.value);
@@ -141,16 +124,12 @@ export const DisbursementDetails = () => {
     navigate(`${Routes.RECEIVERS}/${receiverId}`);
   };
 
-  const showModal = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const showModal = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     setIsModalVisible(true);
   };
 
-  const hideModal = (
-    event?: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const hideModal = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event?.preventDefault();
     setIsModalVisible(false);
   };
@@ -170,13 +149,9 @@ export const DisbursementDetails = () => {
         <Card>
           <div className="StatCards__card StatCards__card--grid">
             <div className="StatCards__card__item">
-              <label className="StatCards__card__item__label">
-                No. of receivers
-              </label>
+              <label className="StatCards__card__item__label">No. of receivers</label>
               <div className="StatCards__card__item__value">
-                {renderNumberOrDash(
-                  disbursementDetails.details.stats?.paymentsTotalCount,
-                )}
+                {renderNumberOrDash(disbursementDetails.details.stats?.paymentsTotalCount)}
               </div>
             </div>
 
@@ -188,38 +163,25 @@ export const DisbursementDetails = () => {
             </div>
 
             <div className="StatCards__card__item StatCards__card__item--fullWidth">
-              <label className="StatCards__card__item__label">
-                Disbursement ID
-              </label>
+              <label className="StatCards__card__item__label">Disbursement ID</label>
               <div className="StatCards__card__item__value">
-                <CopyWithIcon
-                  textToCopy={disbursementDetails.details.id}
-                  iconSizeRem="0.875"
-                >
+                <CopyWithIcon textToCopy={disbursementDetails.details.id} iconSizeRem="0.875">
                   {disbursementDetails.details.id}
                 </CopyWithIcon>
               </div>
             </div>
 
             <div className="StatCards__card__item">
-              <label className="StatCards__card__item__label">
-                Registration Contact Type
-              </label>
+              <label className="StatCards__card__item__label">Registration Contact Type</label>
               <div className="StatCards__card__item__value">
-                {formatRegistrationContactType(
-                  disbursementDetails.details.registrationContactType,
-                )}
+                {formatRegistrationContactType(disbursementDetails.details.registrationContactType)}
               </div>
             </div>
             <div className="StatCards__card__item">
-              <label className="StatCards__card__item__label">
-                Verification Type
-              </label>
+              <label className="StatCards__card__item__label">Verification Type</label>
               <div className="StatCards__card__item__value">
                 {disbursementDetails.details.verificationField
-                  ? VerificationFieldMap[
-                      disbursementDetails.details.verificationField
-                    ]
+                  ? VerificationFieldMap[disbursementDetails.details.verificationField]
                   : "None"}
               </div>
             </div>
@@ -250,62 +212,42 @@ export const DisbursementDetails = () => {
                   Receivers invitation was sent to
                 </label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    disbursementDetails.details.stats?.paymentsTotalCount,
-                  )}
+                  {renderNumberOrDash(disbursementDetails.details.stats?.paymentsTotalCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Successful payments
-                </label>
+                <label className="StatCards__card__item__label">Successful payments</label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    disbursementDetails.details.stats?.paymentsSuccessfulCount,
-                  )}
+                  {renderNumberOrDash(disbursementDetails.details.stats?.paymentsSuccessfulCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Failed payments
-                </label>
+                <label className="StatCards__card__item__label">Failed payments</label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    disbursementDetails.details.stats?.paymentsFailedCount,
-                  )}
+                  {renderNumberOrDash(disbursementDetails.details.stats?.paymentsFailedCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Canceled payments
-                </label>
+                <label className="StatCards__card__item__label">Canceled payments</label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    disbursementDetails.details.stats?.paymentsCanceledCount,
-                  )}
+                  {renderNumberOrDash(disbursementDetails.details.stats?.paymentsCanceledCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Remaining payments
-                </label>
+                <label className="StatCards__card__item__label">Remaining payments</label>
                 <div className="StatCards__card__item__value">
-                  {renderNumberOrDash(
-                    disbursementDetails.details.stats?.paymentsRemainingCount,
-                  )}
+                  {renderNumberOrDash(disbursementDetails.details.stats?.paymentsRemainingCount)}
                 </div>
               </div>
             </div>
 
             <div className="StatCards__card__column">
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Total amount
-                </label>
+                <label className="StatCards__card__item__label">Total amount</label>
                 <div className="StatCards__card__item__value">
                   <AssetAmount
                     assetCode={disbursementDetails.details.asset.code}
@@ -316,9 +258,7 @@ export const DisbursementDetails = () => {
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Amount disbursed
-                </label>
+                <label className="StatCards__card__item__label">Amount disbursed</label>
                 <div className="StatCards__card__item__value">
                   <AssetAmount
                     assetCode={disbursementDetails.details.asset.code}
@@ -329,15 +269,11 @@ export const DisbursementDetails = () => {
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Average payment amount
-                </label>
+                <label className="StatCards__card__item__label">Average payment amount</label>
                 <div className="StatCards__card__item__value">
                   <AssetAmount
                     assetCode={disbursementDetails.details.asset.code}
-                    amount={
-                      disbursementDetails.details.stats?.averagePaymentAmount
-                    }
+                    amount={disbursementDetails.details.stats?.averagePaymentAmount}
                     fallback="-"
                   />
                 </div>
@@ -389,10 +325,7 @@ export const DisbursementDetails = () => {
                   <Checkbox id={`receiver-${r.id}`} fieldSize="xs" />
                 </Table.BodyCell> */}
                   <Table.BodyCell
-                    title={getReceiverContactInfoTitle(
-                      r?.phoneNumber,
-                      r?.email,
-                    )}
+                    title={getReceiverContactInfoTitle(r?.phoneNumber, r?.email)}
                     wrap={true}
                   >
                     <Link onClick={(event) => goToReceiver(event, r.id)}>
@@ -401,11 +334,7 @@ export const DisbursementDetails = () => {
                   </Table.BodyCell>
                   <Table.BodyCell>{r.provider}</Table.BodyCell>
                   <Table.BodyCell textAlign="right">
-                    <AssetAmount
-                      amount={r.amount}
-                      assetCode={r.assetCode}
-                      fallback="-"
-                    />
+                    <AssetAmount amount={r.amount} assetCode={r.assetCode} fallback="-" />
                   </Table.BodyCell>
                   <Table.BodyCell>
                     {r.completedAt ? (
@@ -437,7 +366,7 @@ export const DisbursementDetails = () => {
   const renderContent = () => {
     if (disbursementDetails.errorString) {
       return (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras
             appError={{
               message: disbursementDetails.errorString,
@@ -447,10 +376,7 @@ export const DisbursementDetails = () => {
       );
     }
 
-    if (
-      !disbursementDetails.details.id &&
-      disbursementDetails.status === "PENDING"
-    ) {
+    if (!disbursementDetails.details.id && disbursementDetails.status === "PENDING") {
       return <div className="Note">Loading…</div>;
     }
 
@@ -462,7 +388,7 @@ export const DisbursementDetails = () => {
       <>
         {isPaused ? (
           <div className="SectionBlock">
-            <Notification variant="error" title="Disbursement paused">
+            <Notification variant="error" title="Disbursement paused" isFilled={true}>
               Payments are on hold until the disbursement is started again.
             </Notification>
           </div>
@@ -472,10 +398,7 @@ export const DisbursementDetails = () => {
           <SectionHeader.Row>
             <SectionHeader.Content>
               <Heading as="h2" size="sm">
-                <CopyWithIcon
-                  textToCopy={disbursementDetails.details.name}
-                  iconSizeRem="1.5"
-                >
+                <CopyWithIcon textToCopy={disbursementDetails.details.name} iconSizeRem="1.5">
                   {disbursementDetails.details.name}
                 </CopyWithIcon>
               </Heading>
@@ -485,8 +408,8 @@ export const DisbursementDetails = () => {
               {isPaused ? (
                 <Button
                   variant="success"
-                  size="sm"
-                  icon={<Icon.ChevronDoubleRight />}
+                  size="md"
+                  icon={<Icon.PlayCircle />}
                   onClick={showModal}
                   isLoading={disbursementDetails.status === "PENDING"}
                 >
@@ -495,8 +418,8 @@ export const DisbursementDetails = () => {
               ) : (
                 <Button
                   variant="error"
-                  size="sm"
-                  icon={<Icon.Block />}
+                  size="md"
+                  icon={<Icon.PauseCircle />}
                   onClick={showModal}
                   isLoading={disbursementDetails.status === "PENDING"}
                   disabled={disbursementDetails.details.status !== "STARTED"}
@@ -506,9 +429,9 @@ export const DisbursementDetails = () => {
               )}
 
               <Button
-                variant="secondary"
-                size="sm"
-                icon={<Icon.Download />}
+                variant="tertiary"
+                size="md"
+                icon={<Icon.Download01 />}
                 onClick={handleDownloadFile}
                 isLoading={csvDownloadIsLoading}
                 disabled={!disbursementDetails.details.fileName}
@@ -524,12 +447,10 @@ export const DisbursementDetails = () => {
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
-              <Heading as="h3" size="sm">
+              <Heading as="h3" size="xs">
                 {disbursementDetails.details.receivers?.pagination?.total &&
                 disbursementDetails.details.receivers?.pagination.total > 0
-                  ? `${number.format(
-                      disbursementDetails.details.receivers.pagination.total,
-                    )} `
+                  ? `${number.format(disbursementDetails.details.receivers.pagination.total)} `
                   : ""}
                 Receivers
               </Heading>
@@ -554,9 +475,7 @@ export const DisbursementDetails = () => {
                 maxPages={Number(maxPages)}
                 onSetPage={(page) => {
                   setCurrentPage(page);
-                  dispatch(
-                    getDisbursementReceiversAction({ page: page.toString() }),
-                  );
+                  dispatch(getDisbursementReceiversAction({ page: page.toString() }));
                 }}
                 isLoading={disbursementDetails.status === "PENDING"}
               />
@@ -591,21 +510,21 @@ export const DisbursementDetails = () => {
             <Modal.Heading>Restart disbursement</Modal.Heading>
             <Modal.Body>
               <div>
-                Click Confirm to restart the disbursement. All remaining
-                payments will be made automatically to registered receivers.
+                Click Confirm to restart the disbursement. All remaining payments will be made
+                automatically to registered receivers.
               </div>
             </Modal.Body>
             <Modal.Footer>
               <Button
-                size="sm"
-                variant="secondary"
+                size="md"
+                variant="tertiary"
                 onClick={hideModal}
                 isLoading={disbursementDetails.status === "PENDING"}
               >
                 Cancel
               </Button>
               <Button
-                size="sm"
+                size="md"
                 variant="success"
                 onClick={(event) => handlePauseOrRestart(event, "STARTED")}
                 isLoading={disbursementDetails.status === "PENDING"}
@@ -619,21 +538,21 @@ export const DisbursementDetails = () => {
             <Modal.Heading>Pause disbursement</Modal.Heading>
             <Modal.Body>
               <div>
-                Click Confirm to pause all payments still remaining in this
-                disbursement. The disbursement can be restarted afterwards.
+                Click Confirm to pause all payments still remaining in this disbursement. The
+                disbursement can be restarted afterwards.
               </div>
             </Modal.Body>
             <Modal.Footer>
               <Button
-                size="sm"
-                variant="secondary"
+                size="md"
+                variant="tertiary"
                 onClick={hideModal}
                 isLoading={disbursementDetails.status === "PENDING"}
               >
                 Cancel
               </Button>
               <Button
-                size="sm"
+                size="md"
                 variant="error"
                 onClick={(event) => handlePauseOrRestart(event, "PAUSED")}
                 isLoading={disbursementDetails.status === "PENDING"}

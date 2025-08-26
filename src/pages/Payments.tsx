@@ -1,25 +1,30 @@
 import { useState } from "react";
-import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { AppDispatch } from "store";
-import { exportDataAction } from "store/ducks/dataExport";
+import { AppDispatch } from "@/store";
+import { exportDataAction } from "@/store/ducks/dataExport";
 
-import { FilterMenu } from "components/FilterMenu";
-import { Pagination } from "components/Pagination";
-import { PaymentsTable } from "components/PaymentsTable";
-import { SearchInput } from "components/SearchInput";
-import { SectionHeader } from "components/SectionHeader";
+import { FilterMenu } from "@/components/FilterMenu";
+import { Pagination } from "@/components/Pagination";
+import { PaymentsTable } from "@/components/PaymentsTable";
+import { SearchInput } from "@/components/SearchInput";
+import { SectionHeader } from "@/components/SectionHeader";
+import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { usePayments } from "apiQueries/usePayments";
-import { PAGE_LIMIT_OPTIONS } from "constants/settings";
-import { number } from "helpers/formatIntlNumber";
-import { CommonFilters } from "types";
+import { usePayments } from "@/apiQueries/usePayments";
+import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
+import { PAGE_LIMIT_OPTIONS } from "@/constants/settings";
+import { number } from "@/helpers/formatIntlNumber";
+import { CommonFilters, CreateDirectPaymentRequest } from "@/types";
 
 export const Payments = () => {
   const [isSearchInProgress] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
+  const [isDirectPaymentModalVisible, setIsDirectPaymentModalVisible] = useState(false);
 
   const initFilters: CommonFilters = {
     status: "",
@@ -28,10 +33,10 @@ export const Payments = () => {
   };
 
   const [filters, setFilters] = useState<CommonFilters>(initFilters);
-  // Using extra param to trigger API call when we want, not on every filter
-  // state change
   const [queryFilters, setQueryFilters] = useState<CommonFilters>({});
   const [searchQuery, setSearchQuery] = useState<{ q: string } | undefined>();
+
+  const queryClient = useQueryClient();
 
   const {
     data: payments,
@@ -45,8 +50,19 @@ export const Payments = () => {
     ...searchQuery,
   });
 
-  const isFiltersSelected =
-    Object.values(filters).filter((v) => Boolean(v)).length > 0;
+  const {
+    mutateAsync: createDirectPayment,
+    isPending: isCreatingPayment,
+    error: createPaymentError,
+    reset: resetCreatePaymentQuery,
+  } = useCreateDirectPayment({
+    onSuccess: () => {
+      setIsDirectPaymentModalVisible(false);
+      queryClient.invalidateQueries({ queryKey: ["payments"] });
+    },
+  });
+
+  const isFiltersSelected = Object.values(filters).filter((v) => Boolean(v)).length > 0;
 
   const maxPages = payments?.pagination?.pages || 1;
 
@@ -55,9 +71,7 @@ export const Payments = () => {
     setSearchQuery(searchText ? { q: searchText } : undefined);
   };
 
-  const handleFilterChange = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-  ) => {
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setFilters({
       ...filters,
       [event.target.id]: event.target.value,
@@ -77,9 +91,7 @@ export const Payments = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const handleExport = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleExport = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (isLoading || isFetching) {
       return;
@@ -93,12 +105,23 @@ export const Payments = () => {
     );
   };
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const handlePageLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
     setCurrentPage(1);
     setPageLimit(Number(event.target.value));
+  };
+
+  const handleCreateDirectPayment = () => {
+    setIsDirectPaymentModalVisible(true);
+  };
+
+  const handleCloseDirectPaymentModal = () => {
+    setIsDirectPaymentModalVisible(false);
+    resetCreatePaymentQuery();
+  };
+
+  const handleSubmitDirectPayment = async (paymentData: CreateDirectPaymentRequest) => {
+    await createDirectPayment(paymentData);
   };
 
   return (
@@ -112,6 +135,17 @@ export const Payments = () => {
                 : ""}
               Payments
             </Heading>
+          </SectionHeader.Content>
+
+          <SectionHeader.Content align="right">
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handleCreateDirectPayment}
+              disabled={isLoading || isFetching}
+            >
+              New Direct Payment
+            </Button>
           </SectionHeader.Content>
         </SectionHeader.Row>
 
@@ -177,9 +211,9 @@ export const Payments = () => {
             </FilterMenu>
 
             <Button
-              variant="secondary"
-              size="sm"
-              icon={<Icon.Download />}
+              variant="tertiary"
+              size="md"
+              icon={<Icon.Download01 />}
               onClick={handleExport}
               disabled={isLoading || isFetching}
             >
@@ -191,7 +225,7 @@ export const Payments = () => {
             <div className="FiltersWithSearch__pageLimit">
               <Select
                 id="payments-page-limit"
-                fieldSize="sm"
+                fieldSize="md"
                 value={pageLimit}
                 onChange={handlePageLimitChange}
               >
@@ -211,11 +245,30 @@ export const Payments = () => {
         </SectionHeader.Row>
       </SectionHeader>
 
+      {createPaymentError && (
+        <Notification variant="error" title="Error" isFilled={true}>
+          <ErrorWithExtras
+            appError={{
+              message: createPaymentError.message,
+            }}
+          />
+        </Notification>
+      )}
+
       <PaymentsTable
         paymentItems={payments?.data || []}
         apiError={error?.message}
         isFiltersSelected={isFiltersSelected}
         isLoading={isLoading || isFetching}
+      />
+
+      <DirectPaymentCreateModal
+        visible={isDirectPaymentModalVisible}
+        onClose={handleCloseDirectPaymentModal}
+        onSubmit={handleSubmitDirectPayment}
+        onResetQuery={resetCreatePaymentQuery}
+        isLoading={isCreatingPayment}
+        errorMessage={createPaymentError?.message}
       />
     </>
   );

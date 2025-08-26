@@ -1,0 +1,38 @@
+.ApiKeysTable {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__emptyState {
+    display: flex;
+    flex-direction: column;
+    padding: 48px 24px;
+    text-align: center;
+    gap: 8px;
+  }
+
+  &__actionItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__keyName {
+    font-weight: 500;
+  }
+}
+
+.StatusCell {
+  font-weight: 500;
+
+  &[data-status="active"] {
+    color: var(--sds-clr-green-11);
+  }
+
+  &[data-status="expired"] {
+    color: var(--sds-clr-red-11);
+  }
+}

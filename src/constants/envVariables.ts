@@ -7,7 +7,7 @@ export type OidcUsername = keyof Pick<
 
 declare global {
   // ATTENTION: when adding a new environment variable, make sure to add it to the `generateEnvConfig` method below and
-  // `new DefinePlugin({"process.env": ...})` in the webpack config ad well.
+  // ensure it’s surfaced via Vite (see vite.config.ts `define`) or use import.meta.env if you switch to that pattern.
   interface Window {
     _env_: {
       DISABLE_TENANT_PREFIL_FROM_DOMAIN: string;
@@ -44,25 +44,18 @@ const generateEnvConfig = async () => {
       process?.env?.REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN ||
       window._env_.DISABLE_TENANT_PREFIL_FROM_DOMAIN,
     STELLAR_EXPERT_URL:
-      process?.env?.REACT_APP_STELLAR_EXPERT_URL ||
-      window._env_.STELLAR_EXPERT_URL,
-    HORIZON_URL:
-      process?.env?.REACT_APP_HORIZON_URL || window._env_.HORIZON_URL,
+      process?.env?.REACT_APP_STELLAR_EXPERT_URL || window._env_.STELLAR_EXPERT_URL,
+    HORIZON_URL: process?.env?.REACT_APP_HORIZON_URL || window._env_.HORIZON_URL,
     RECAPTCHA_SITE_KEY:
-      process?.env?.REACT_APP_RECAPTCHA_SITE_KEY ||
-      window._env_.RECAPTCHA_SITE_KEY,
+      process?.env?.REACT_APP_RECAPTCHA_SITE_KEY || window._env_.RECAPTCHA_SITE_KEY,
     SINGLE_TENANT_MODE: Boolean(
-      process?.env?.REACT_APP_SINGLE_TENANT_MODE ||
-        window._env_.SINGLE_TENANT_MODE,
+      process?.env?.REACT_APP_SINGLE_TENANT_MODE || window._env_.SINGLE_TENANT_MODE,
     ),
     USE_SSO: Boolean(process?.env?.REACT_APP_USE_SSO || window?._env_?.USE_SSO),
-    OIDC_AUTHORITY:
-      process?.env?.REACT_APP_OIDC_AUTHORITY || window?._env_?.OIDC_AUTHORITY,
-    OIDC_CLIENT_ID:
-      process?.env?.REACT_APP_OIDC_CLIENT_ID || window?._env_?.OIDC_CLIENT_ID,
+    OIDC_AUTHORITY: process?.env?.REACT_APP_OIDC_AUTHORITY || window?._env_?.OIDC_AUTHORITY,
+    OIDC_CLIENT_ID: process?.env?.REACT_APP_OIDC_CLIENT_ID || window?._env_?.OIDC_CLIENT_ID,
     OIDC_REDIRECT_URI:
-      process?.env?.REACT_APP_OIDC_REDIRECT_URI ||
-      window?._env_?.OIDC_REDIRECT_URI,
+      process?.env?.REACT_APP_OIDC_REDIRECT_URI || window?._env_?.OIDC_REDIRECT_URI,
     OIDC_SCOPE: process?.env?.REACT_APP_OIDC_SCOPE || window?._env_?.OIDC_SCOPE,
     OIDC_USERNAME_MAPPING:
       ((process?.env?.REACT_APP_OIDC_USERNAME_MAPPING ||

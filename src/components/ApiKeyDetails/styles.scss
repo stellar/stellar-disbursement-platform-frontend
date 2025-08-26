@@ -1,0 +1,19 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.ApiKeyDetails {
+  &__status {
+    font-weight: var(--sds-fw-medium);
+
+    &--active {
+      color: var(--sds-clr-green-11);
+    }
+
+    &--expired {
+      color: var(--sds-clr-red-11);
+    }
+  }
+}
+.StatCards__card__item {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}

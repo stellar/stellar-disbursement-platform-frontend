@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { ApiWallet, AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { ApiWallet, AppError } from "@/types";
 
 type UseWalletsProps = {
   userManaged?: boolean;
+  supportedAssets?: string[];
 };
 
-export const useWallets = ({ userManaged }: UseWalletsProps) => {
+export const useWallets = ({ userManaged, supportedAssets }: UseWalletsProps) => {
   const query = useQuery<ApiWallet[], AppError>({
     queryKey: ["wallets"],
     queryFn: async () => {
@@ -15,6 +16,10 @@ export const useWallets = ({ userManaged }: UseWalletsProps) => {
 
       if (userManaged !== undefined) {
         url.searchParams.append("user_managed", userManaged.toString());
+      }
+
+      if (supportedAssets && supportedAssets.length > 0) {
+        url.searchParams.set("supported_assets", supportedAssets.join(","));
       }
 
       return await fetchApi(url.toString());

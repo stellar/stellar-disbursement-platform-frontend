@@ -102,6 +102,8 @@ export interface Store {
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
   userAccount: UserAccountInitialState;
+  apiKeys: ApiKeysInitialState;
+  apiKeyDetails: ApiKeyDetailsInitialState;
 }
 
 export type StoreKey = keyof Store;
@@ -174,11 +176,7 @@ export type JwtUser = {
   roles: UserRole[] | null;
 };
 
-export type UserRole =
-  | "owner"
-  | "financial_controller"
-  | "developer"
-  | "business";
+export type UserRole = "owner" | "financial_controller" | "developer" | "business";
 
 export type NewUser = {
   first_name: string;
@@ -199,12 +197,7 @@ export type DistributionAccountType =
 // =============================================================================
 // Disbursement
 // =============================================================================
-export type DisbursementStatusType =
-  | "DRAFT"
-  | "READY"
-  | "STARTED"
-  | "PAUSED"
-  | "COMPLETED";
+export type DisbursementStatusType = "DRAFT" | "READY" | "STARTED" | "PAUSED" | "COMPLETED";
 
 export type DisbursementVerificationField =
   | "DATE_OF_BIRTH"
@@ -212,10 +205,7 @@ export type DisbursementVerificationField =
   | "PIN"
   | "NATIONAL_ID_NUMBER";
 
-export const VerificationFieldMap: Record<
-  DisbursementVerificationField | string,
-  string
-> = {
+export const VerificationFieldMap: Record<DisbursementVerificationField | string, string> = {
   DATE_OF_BIRTH: "Date of Birth",
   YEAR_MONTH: "Date of Birth (Year & Month only)",
   PIN: "PIN",
@@ -266,9 +256,7 @@ export type Disbursement = {
   receiverRegistrationMessageTemplate: string;
 };
 
-export type DisbursementsSearchParams = CommonFilters &
-  SortParams &
-  PaginationParams;
+export type DisbursementsSearchParams = CommonFilters & SortParams & PaginationParams;
 
 export interface DisbursementDraftRejectMessage extends RejectMessage {
   newDraftId?: string;
@@ -355,9 +343,7 @@ export type PaymentDetails = {
 // =============================================================================
 export type ReceiverStatus = "DRAFT" | "READY" | "REGISTERED" | "FLAGGED";
 
-export type ReceiversSearchParams = CommonFilters &
-  SortParams &
-  PaginationParams;
+export type ReceiversSearchParams = CommonFilters & SortParams & PaginationParams;
 
 export type AmountReceived = {
   assetCode: string;
@@ -394,6 +380,7 @@ export type ReceiverVerification = {
   verificationField: string;
   value: string;
   confirmedAt?: string;
+  verificationChannel?: string | null;
 };
 
 export type ReceiverWalletBalance = {
@@ -500,10 +487,7 @@ export type RegistrationContactType =
   | "PHONE_NUMBER"
   | "PHONE_NUMBER_AND_WALLET_ADDRESS";
 
-export const RegistrationContactTypeMap: Record<
-  RegistrationContactType | string,
-  string
-> = {
+export const RegistrationContactTypeMap: Record<RegistrationContactType | string, string> = {
   EMAIL: "Email",
   EMAIL_AND_WALLET_ADDRESS: "Wallet Address and Email",
   PHONE_NUMBER: "Phone Number",
@@ -522,6 +506,11 @@ export type ApiAsset = {
   deleted_at?: string;
 };
 
+export type ApiAssetWithTrustline = ApiAsset & {
+  has_trustline: boolean;
+  balance: number;
+};
+
 export type ApiWallet = {
   id: string;
   name: string;
@@ -534,9 +523,7 @@ export type ApiWallet = {
   user_managed?: boolean;
 };
 
-export const isUserManagedWalletEnabled = (
-  wallets: ApiWallet[] | undefined,
-): boolean => {
+export const isUserManagedWalletEnabled = (wallets: ApiWallet[] | undefined): boolean => {
   if (!wallets) {
     return false;
   }
@@ -655,7 +642,8 @@ export type ApiPayment = {
   stellar_address?: string;
   status: PaymentStatus;
   status_history: ApiPaymentStatusHistory[];
-  disbursement: ApiPaymentDisbursement;
+  type: "DISBURSEMENT" | "DIRECT";
+  disbursement?: ApiPaymentDisbursement;
   asset: ApiPaymentAsset;
   receiver_wallet: ApiPaymentReceiverWallet;
   created_at: string;
@@ -772,6 +760,7 @@ export type ApiReceiverVerification = {
   verification_field: string;
   hashed_value: string;
   confirmed_at: string;
+  verification_channel?: string | null;
 };
 
 export type ApiReceiver = {
@@ -908,8 +897,7 @@ export interface ApiStellarOperationPathPaymentStrictReceive
   source_max: string;
 }
 
-export interface ApiStellarOperationPathPaymentStrictSend
-  extends ApiStellarOperationPathPayment {
+export interface ApiStellarOperationPathPaymentStrictSend extends ApiStellarOperationPathPayment {
   destination_min: string;
 }
 
@@ -935,3 +923,145 @@ export type ApiStellarTransaction = {
   valid_after: string;
   valid_before: string;
 };
+
+export type ApiKey = {
+  id: string;
+  name: string;
+  key?: string; // Only provided during creation
+  expiry_date: string | null;
+  permissions: string[];
+  created_at: string;
+  created_by: string;
+  updated_at: string;
+  updated_by: string;
+  last_used_at: string | null;
+  allowed_ips: string[];
+  enabled: boolean;
+};
+
+export type ApiKeysInitialState = {
+  items: ApiKey[];
+  status: ActionStatus | undefined;
+  errorString?: string;
+  errorExtras?: AnyObject;
+};
+
+export type ApiKeysResponse = {
+  data: ApiKey[];
+};
+
+export type CreateApiKeyRequest = {
+  name: string;
+  expiry_date?: string | null;
+  permissions: string[];
+  allowed_ips?: string[];
+};
+
+export type UpdateApiKeyRequest = {
+  name?: string;
+  expiry_date?: string | null;
+  permissions?: string[];
+  allowed_ips?: string[];
+  enabled?: boolean;
+};
+
+export type ApiKeyDetailsInitialState = {
+  details: ApiKey | null;
+  status: ActionStatus | undefined;
+  errorString?: string;
+  errorExtras?: AnyObject;
+};
+
+export type CreateDirectPaymentRequest = {
+  amount: string;
+  asset: DirectPaymentAsset;
+  receiver: DirectPaymentReceiver;
+  wallet?: DirectPaymentWallet;
+  external_payment_id?: string;
+};
+
+export type CreateReceiverRequest = {
+  email: string;
+  phone_number: string;
+  external_id: string;
+  verifications: {
+    type: string;
+    value: string;
+  }[];
+  wallets: {
+    address: string;
+    memo?: string;
+  }[];
+};
+
+export type DirectPaymentAsset = {
+  id?: string;
+  type?: "native" | "classic" | "contract" | "fiat";
+  code?: string;
+  issuer?: string;
+  contract_id?: string;
+};
+
+export type DirectPaymentReceiver = {
+  id?: string;
+  email?: string;
+  phone_number?: string;
+  wallet_address?: string;
+};
+
+export type DirectPaymentWallet = {
+  id?: string;
+  address?: string;
+};
+
+export interface BridgeIntegration {
+  status: BridgeIntegrationStatusType;
+  customer_id: string;
+  kyc_status: {
+    id: string;
+    type: "individual" | "business";
+    kyc_status: BridgeKYCStatusType;
+    tos_status: BridgeTOSStatusType;
+    kyc_link: string;
+    tos_link: string;
+  };
+  virtual_account?: {
+    id: string;
+    status: "activated" | "deactivated";
+    source_deposit_instructions: {
+      bank_beneficiary_name: string;
+      currency: string;
+      bank_name: string;
+      bank_address: string;
+      bank_account_number: string;
+      bank_routing_number: string;
+      payment_rails: string[];
+    };
+  };
+}
+
+export interface BridgeIntegrationUpdate {
+  status: "OPTED_IN" | "READY_FOR_DEPOSIT";
+  email?: string;
+  full_name?: string;
+  kyc_type?: "individual" | "business";
+}
+
+export type BridgeIntegrationStatusType =
+  | "NOT_ENABLED"
+  | "NOT_OPTED_IN"
+  | "OPTED_IN"
+  | "READY_FOR_DEPOSIT"
+  | "ERROR";
+
+export type BridgeKYCStatusType =
+  | "not_started"
+  | "incomplete"
+  | "awaiting_ubo"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "paused"
+  | "offboarded";
+
+export type BridgeTOSStatusType = "pending" | "approved";

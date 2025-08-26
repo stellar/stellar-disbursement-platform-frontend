@@ -1,21 +1,18 @@
 import { Card, Link, Profile, Notification } from "@stellar/design-system";
-import { STELLAR_EXPERT_URL } from "constants/envVariables";
-import { useStellarAccountPayments } from "apiQueries/useStellarAccountPayments";
-import { formatDateTime } from "helpers/formatIntlDateTime";
+import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
+import { useStellarAccountPayments } from "@/apiQueries/useStellarAccountPayments";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
 
-import { Table } from "components/Table";
-import { AssetAmount } from "components/AssetAmount";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { Table } from "@/components/Table";
+import { AssetAmount } from "@/components/AssetAmount";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 interface ReceiverWalletHistoryProps {
   stellarAddress: string | undefined;
 }
 
-export const ReceiverWalletHistory = ({
-  stellarAddress,
-}: ReceiverWalletHistoryProps) => {
-  const { isLoading, isFetching, data, error } =
-    useStellarAccountPayments(stellarAddress);
+export const ReceiverWalletHistory = ({ stellarAddress }: ReceiverWalletHistoryProps) => {
+  const { isLoading, isFetching, data, error } = useStellarAccountPayments(stellarAddress);
 
   if (stellarAddress && (isLoading || isFetching)) {
     return <div className="Note">Loading…</div>;
@@ -23,7 +20,7 @@ export const ReceiverWalletHistory = ({
 
   if (error) {
     return (
-      <Notification variant="error" title="Error">
+      <Notification variant="error" title="Error" isFilled={true}>
         <ErrorWithExtras appError={error} />
       </Notification>
     );
@@ -45,49 +42,30 @@ export const ReceiverWalletHistory = ({
             data.map((p) => (
               <Table.BodyRow key={p.id}>
                 <Table.BodyCell>
-                  <Link href={`${STELLAR_EXPERT_URL}/tx/${p.transactionHash}`}>
-                    {p.id}
-                  </Link>
+                  <Link href={`${STELLAR_EXPERT_URL}/tx/${p.transactionHash}`}>{p.id}</Link>
                 </Table.BodyCell>
                 <Table.BodyCell>
-                  <span className="Table-v2__cell--secondary">
-                    {formatDateTime(p.createdAt)}
-                  </span>
+                  <span className="Table-v2__cell--secondary">{formatDateTime(p.createdAt)}</span>
                 </Table.BodyCell>
                 <Table.BodyCell>
                   {p.paymentAddress ? (
-                    <Profile
-                      size="sm"
-                      publicAddress={p.paymentAddress}
-                      isCopy
-                      isShort
-                      hideAvatar
-                    />
+                    <Profile size="md" publicAddress={p.paymentAddress} isCopy isShort hideAvatar />
                   ) : (
                     "-"
                   )}
                 </Table.BodyCell>
                 <Table.BodyCell>
-                  {p.memo ? (
-                    <span className="Table-v2__cell--secondary">{p.memo}</span>
-                  ) : null}
+                  {p.memo ? <span className="Table-v2__cell--secondary">{p.memo}</span> : null}
                 </Table.BodyCell>
                 <Table.BodyCell textAlign="right">
                   {p.operationKind === "send" ? "-" : "+"}
-                  <AssetAmount
-                    amount={p.amount}
-                    assetCode={p.assetCode}
-                    fallback="-"
-                  />
+                  <AssetAmount amount={p.amount} assetCode={p.assetCode} fallback="-" />
                 </Table.BodyCell>
               </Table.BodyRow>
             ))
           ) : (
             <Table.BodyRow>
-              <td
-                colSpan={5}
-                className="ReceiverDetails__wallets__noRecentPayments"
-              >
+              <td colSpan={5} className="ReceiverDetails__wallets__noRecentPayments">
                 No recent payments
               </td>
             </Table.BodyRow>
