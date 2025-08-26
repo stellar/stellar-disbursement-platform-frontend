@@ -4,11 +4,48 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [UNRELEASED]
+## [4.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.7.0...4.0.0))
+
+> [!WARNING]
+> This version is only compatible with the [stellar/stellar-disbursement-platform-backend] version `4.0.0`.
 
 ### Added
 
+- API Keys management functionality with create, update, delete, and detailed view capabilities.
+  [#271](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/271),
+  [#272](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/272),
+  [#273](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/273),
+  [#274](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/274),
+  [#276](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/276),
+  [#303](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/303)
+- Direct payment functionality allowing one-off payments to receivers.
+  [#278](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/278),
+  [#270](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/270),
+  [#301](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/301),
+  [#307](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/307)
+- Bridge integration for liquidity sourcing with virtual account management. [#288](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/288)
+- Receiver creation modal for adding new receivers directly from the UI.
+  [#308](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/308),
+  [#317](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/317)
 - Ability to unregister a receiver wallet. [#266](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/266)
+
+### Changed
+
+- Migrated build system from Webpack to Vite for improved developer experience and faster builds. [#304](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/304)
+- Upgraded to Stellar Design System v3 for modern UI components and improved accessibility.
+  [#295](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/295),
+  [#318](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/318)
+- Updated to React v19 and Node.js v22 with other dependency upgrades.
+  [#309](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/309),
+  [#284](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/284)
+- Enhanced receiver search functionality to trigger with 3+ characters and improved UX. [#301](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/301)
+- Changed ESLint configuration to use local version instead of system version. [#321](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/321)
+- Updated Docker base image from nginx 1.27 to 1.29. [#279](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/279)
+
+### Fixed
+
+- Payment Details page sender data display to be conditional based on API availability. [#316](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/316)
+
 
 ## [3.7.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/3.7.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.6.0...3.7.0))
 
