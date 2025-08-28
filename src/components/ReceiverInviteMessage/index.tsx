@@ -117,11 +117,14 @@ export const ReceiverInviteMessage = () => {
               if (isError || isSuccess) {
                 reset();
               }
-
               setCustomMessageInput(event.target.value);
             }}
             disabled={isPending}
+            maxLength={255}
           ></Textarea>
+          <div className="ReceiverInviteMessage__form__charCount">
+            {customMessageInput.length}/255
+          </div>
           <div className="ReceiverInviteMessage__form__buttons">
             <Button variant="tertiary" size="md" type="reset" isLoading={isPending}>
               Cancel
