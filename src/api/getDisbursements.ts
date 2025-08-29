@@ -11,7 +11,9 @@ export const getDisbursements = async (
 ): Promise<ApiDisbursements> => {
   // ALL status is for UI only
   if (searchParams?.status === "ALL") {
-    delete searchParams.status;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { status, ...searchParamsWithoutStatus } = searchParams;
+    searchParams = searchParamsWithoutStatus;
   }
 
   const params = handleSearchParams({
