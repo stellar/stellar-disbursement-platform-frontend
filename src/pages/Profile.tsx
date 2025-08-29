@@ -393,8 +393,8 @@ export const Profile = () => {
               fieldSize="sm"
               value={organizationDetails.name}
               onChange={handleOrgDetailsChange}
+              maxLength={64}
             />
-
             <Input
               id="privacyPolicyLink"
               name="privacyPolicyLink"
