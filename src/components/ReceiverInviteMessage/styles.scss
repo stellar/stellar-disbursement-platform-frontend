@@ -16,6 +16,17 @@
     flex-direction: column;
     gap: pxToRem(16px);
 
+    &__charCount {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: pxToRem(8px);
+      font-size: pxToRem(10px);
+      color: var(--sds-clr-gray-09);
+      margin-top: pxToRem(-12px);  // Reduce top spacing
+      margin-bottom: pxToRem(-8px); // Reduce bottom spacing
+    }
+
     &__buttons {
       display: flex;
       align-items: center;

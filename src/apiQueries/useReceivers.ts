@@ -8,7 +8,9 @@ import { ApiReceivers, AppError, ReceiversSearchParams } from "@/types";
 export const useReceivers = (searchParams?: ReceiversSearchParams) => {
   // ALL status is for UI only
   if (searchParams?.status === "ALL") {
-    delete searchParams.status;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { status, ...searchParamsWithoutStatus } = searchParams;
+    searchParams = searchParamsWithoutStatus;
   }
 
   const params = handleSearchParams(searchParams);
