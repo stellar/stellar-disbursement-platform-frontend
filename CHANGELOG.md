@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.0...4.0.1))
+
+### Changed
+
+- Using immutable data handling in React Query. [#331](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/331)
+
+### Fixed
+
+- Validate length of message template and organization name. [#330](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/330)
+
 ## [4.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/3.7.0...4.0.0))
 
 > [!WARNING]
