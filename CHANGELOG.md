@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Using immutable data handling in React Query. [#331](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/331)
+- Re-Enabeled the retry invitation message button. [#339](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/339)
 
 ### Fixed
 
@@ -284,7 +285,7 @@ option to set different distribution account signers per tenant, as well as
 Circle support, so the tenant can choose to run their payments through the
 Circle API rather than directly on the Stellar network.
 
-> [!WARNING]  
+> [!WARNING]
 > This version is only compatible with the
 > [stellar/stellar-disbursement-platform-backend] version `2.1.0`.
 
@@ -326,7 +327,7 @@ platform simultaneously.
 
 Each organization has its own set of users, receivers, disbursements, etc.
 
-> [!WARNING]  
+> [!WARNING]
 > This version is only compatible with the
 > [stellar/stellar-disbursement-platform-backend] version 2.x.x. In order to
 > migrate from 1.x.x to 2.x.x, please consult the
