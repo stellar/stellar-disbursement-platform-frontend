@@ -7,6 +7,8 @@ import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLink
 import { SettingsEnablePaymentCancellation } from "@/components/SettingsEnablePaymentCancellation";
 import { SettingsEnableReceiverInvitationRetry } from "@/components/SettingsEnableReceiverInvitationRetry";
 import { SettingsEnableMemoTracking } from "@/components/SettingsEnableMemoTracking";
+import { SettingsEnableMFA } from "@/components/SettingsEnableMFA";
+import { SettingsEnableCAPTCHA } from "@/components/SettingsEnableCAPTCHA";
 
 export const Settings = () => {
   return (
@@ -22,6 +24,12 @@ export const Settings = () => {
       </SectionHeader>
 
       <div className="CardStack">
+        {/* Enable MFA */}
+        <SettingsEnableMFA />
+
+        {/* Enable CAPTCHA */}
+        <SettingsEnableCAPTCHA />
+
         {/* Enable short link */}
         <SettingsEnableShortLinking />
 

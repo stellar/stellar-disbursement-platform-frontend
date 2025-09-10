@@ -1,0 +1,71 @@
+import { useEffect } from "react";
+import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
+import { useDispatch } from "react-redux";
+
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
+import { useUpdateOrgCAPTCHAEnabled } from "@/apiQueries/useUpdateOrgCAPTCHAEnabled";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { getOrgInfoAction } from "@/store/ducks/organization";
+
+export const SettingsEnableCAPTCHA = () => {
+  const { organization } = useRedux("organization");
+
+  const dispatch: AppDispatch = useDispatch();
+
+  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgCAPTCHAEnabled();
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(getOrgInfoAction());
+    }
+  }, [dispatch, isSuccess]);
+
+  const handleToggleChange = () => {
+    mutateAsync(!organization.data.captcha_enabled);
+  };
+
+  const renderContent = () => {
+    return (
+      <div className="SdpSettings">
+        <div className="SdpSettings__row">
+          <div className="SdpSettings__item">
+            <label className="SdpSettings__label" htmlFor="captcha-enabled">
+              Enable reCAPTCHA
+            </label>
+            <div className="Toggle__wrapper">
+              {isPending ? <Loader size="1rem" /> : null}
+              <Toggle
+                id="captcha-enabled"
+                checked={Boolean(organization.data.captcha_enabled)}
+                onChange={handleToggleChange}
+                disabled={isPending}
+                fieldSize="sm"
+              />
+            </div>
+          </div>
+          <div className="Note">
+            Select this option to require reCAPTCHA verification on login and MFA pages. This helps
+            protect against automated attacks and bot traffic. If disabled, this organization will
+            use the platform default setting.
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      {error ? (
+        <Notification variant="error" title="Error" isFilled={true}>
+          <ErrorWithExtras appError={error} />
+        </Notification>
+      ) : null}
+
+      <Card>
+        <div className="CardStack__card">{renderContent()}</div>
+      </Card>
+    </>
+  );
+};
