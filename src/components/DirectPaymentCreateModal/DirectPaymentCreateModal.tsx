@@ -150,10 +150,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     }
   }, [visible, previousVisible]);
 
-  // Update selectedReceiver with full details including verifications when fetched
   useEffect(() => {
     if (receiverDetailsRaw && formData.selectedReceiver?.id === receiverDetailsRaw.id) {
-      // Update the selectedReceiver with the full details including verifications
       setFormData((prev) => ({
         ...prev,
         selectedReceiver: {
@@ -212,7 +210,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
         walletId: "",
       }));
 
-      // Clear selected receiver ID if receiver is being cleared
       if (shouldClearReceiver) {
         setSelectedReceiverId(undefined);
       }
@@ -229,7 +226,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   };
 
   const handleReceiverSelect = (receiver: ApiReceiver) => {
-    // Set the receiver ID to trigger fetching full details
     setSelectedReceiverId(receiver.id);
 
     setFormData((prev) => ({
