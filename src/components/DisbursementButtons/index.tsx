@@ -1,6 +1,7 @@
 import { Button, Icon } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 import { Routes } from "@/constants/settings";
+import { ShowForRoles } from "@/components/ShowForRoles";
 import { DisbursementDraftAction, DisbursementStep } from "@/types";
 import "./styles.scss";
 
@@ -18,6 +19,7 @@ interface DisbursementButtonsPros {
   isDraftPending?: boolean;
   actionType?: DisbursementDraftAction;
   tooltip?: string;
+  isCsvFileUpdated?: boolean;
 }
 
 export const DisbursementButtons = ({
@@ -34,6 +36,7 @@ export const DisbursementButtons = ({
   isDraftPending,
   actionType,
   tooltip,
+  isCsvFileUpdated,
 }: DisbursementButtonsPros) => {
   const navigate = useNavigate();
 
@@ -155,27 +158,31 @@ export const DisbursementButtons = ({
           </Button>
 
           <div className="DisbursementButtons--continue">
-            <Button
-              variant="tertiary"
-              size="md"
-              onClick={handleSaveDraft}
-              isLoading={isSavePending}
-              disabled={isDraftDisabled || isSubmitPending}
-            >
-              Save as a draft
-            </Button>
-            <Button
-              variant="primary"
-              size="md"
-              icon={<Icon.CheckCircle />}
-              iconPosition="right"
-              type="submit"
-              disabled={isSubmitDisabled || isSavePending}
-              isLoading={isSubmitPending}
-              {...(tooltip ? { title: tooltip } : {})}
-            >
-              Confirm disbursement
-            </Button>
+            <ShowForRoles acceptedRoles={["owner", "financial_controller", "initiator"]}>
+              <Button
+                variant="tertiary"
+                size="md"
+                onClick={handleSaveDraft}
+                isLoading={isSavePending}
+                disabled={isDraftDisabled || isSubmitPending}
+              >
+                Save as a draft
+              </Button>
+            </ShowForRoles>
+            <ShowForRoles acceptedRoles={["owner", "financial_controller", "approver"]}>
+              <Button
+                variant="primary"
+                size="md"
+                icon={<Icon.CheckCircle />}
+                iconPosition="right"
+                type="submit"
+                disabled={isSubmitDisabled || isSavePending || isCsvFileUpdated}
+                isLoading={isSubmitPending}
+                {...(tooltip ? { title: tooltip } : {})}
+              >
+                Confirm disbursement
+              </Button>
+            </ShowForRoles>
           </div>
         </>
       );

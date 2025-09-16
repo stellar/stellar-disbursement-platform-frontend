@@ -45,6 +45,8 @@ export const USER_ROLES_ARRAY: UserRole[] = [
   "financial_controller",
   "developer",
   "business",
+  "initiator",
+  "approver",
 ];
 
 export const TIME_ZONES = [

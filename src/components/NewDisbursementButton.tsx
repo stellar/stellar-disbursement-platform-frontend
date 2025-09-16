@@ -16,7 +16,7 @@ export const NewDisbursementButton = () => {
   const disableMessage = inactiveCircleAccount ? "Circle Account is not active" : "";
 
   return (
-    <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+    <ShowForRoles acceptedRoles={["owner", "financial_controller", "initiator"]}>
       <Button
         variant="primary"
         size="md"

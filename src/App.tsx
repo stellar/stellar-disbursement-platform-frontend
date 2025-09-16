@@ -127,7 +127,15 @@ export const App = () => {
             <Route
               path={Routes.DISBURSEMENTS}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "business",
+                    "initiator",
+                    "approver",
+                  ]}
+                >
                   <InnerPage>
                     <Disbursements />
                   </InnerPage>
@@ -137,7 +145,15 @@ export const App = () => {
             <Route
               path={`${Routes.DISBURSEMENTS}/:id`}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "business",
+                    "initiator",
+                    "approver",
+                  ]}
+                >
                   <InnerPage>
                     <DisbursementDetails />
                   </InnerPage>
@@ -147,7 +163,7 @@ export const App = () => {
             <Route
               path={Routes.DISBURSEMENT_NEW}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
+                <PrivateRoute acceptedRoles={["owner", "financial_controller", "initiator"]}>
                   <InnerPage isNarrow>
                     <DisbursementsNew />
                   </InnerPage>
@@ -157,7 +173,9 @@ export const App = () => {
             <Route
               path={Routes.DISBURSEMENT_DRAFTS}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
+                <PrivateRoute
+                  acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
+                >
                   <InnerPage isNarrow>
                     <DisbursementsDrafts />
                   </InnerPage>
@@ -167,7 +185,9 @@ export const App = () => {
             <Route
               path={`${Routes.DISBURSEMENT_DRAFTS}/:id`}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
+                <PrivateRoute
+                  acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
+                >
                   <InnerPage isNarrow>
                     <DisbursementDraftDetails />
                   </InnerPage>
@@ -178,7 +198,15 @@ export const App = () => {
             <Route
               path={Routes.RECEIVERS}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "business",
+                    "initiator",
+                    "approver",
+                  ]}
+                >
                   <InnerPage>
                     <Receivers />
                   </InnerPage>
@@ -188,7 +216,15 @@ export const App = () => {
             <Route
               path={`${Routes.RECEIVERS}/:id`}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "business",
+                    "initiator",
+                    "approver",
+                  ]}
+                >
                   <InnerPage>
                     <ReceiverDetails />
                   </InnerPage>
@@ -209,7 +245,15 @@ export const App = () => {
             <Route
               path={`${Routes.PAYMENTS}/:id`}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "business",
+                    "initiator",
+                    "approver",
+                  ]}
+                >
                   <InnerPage>
                     <PaymentDetails />
                   </InnerPage>
@@ -219,7 +263,15 @@ export const App = () => {
             <Route
               path={Routes.PAYMENTS}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "business"]}>
+                <PrivateRoute
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "business",
+                    "initiator",
+                    "approver",
+                  ]}
+                >
                   <InnerPage>
                     <Payments />
                   </InnerPage>
