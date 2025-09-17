@@ -15,6 +15,7 @@ import {
 import {
   clearCsvUpdatedAction,
   clearDisbursementDraftsErrorAction,
+  confirmDisbursementAction,
   deleteDisbursementDraftAction,
   resetDisbursementDraftsAction,
   saveNewCsvFileAction,
@@ -212,13 +213,23 @@ export const DisbursementDraftDetails = () => {
   const handleSubmitDisbursement = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (draftDetails && csvFile) {
-      dispatch(
-        submitDisbursementSavedDraftAction({
-          savedDraftId: draftId,
-          details: draftDetails.details,
-          file: csvFile,
-        }),
-      );
+      if (isCsvFileUpdated) {
+        // If form is dirty, save + submit (legacy behavior for backward compatibility)
+        dispatch(
+          submitDisbursementSavedDraftAction({
+            savedDraftId: draftId,
+            details: draftDetails.details,
+            file: csvFile,
+          }),
+        );
+      } else {
+        // If form is clean, only confirm the status (new separated behavior)
+        dispatch(
+          confirmDisbursementAction({
+            savedDraftId: draftId,
+          }),
+        );
+      }
     }
   };
 
@@ -261,7 +272,9 @@ export const DisbursementDraftDetails = () => {
 
     let tooltip;
 
-    if (!canUserSubmit) {
+    if (isCsvFileUpdated) {
+      tooltip = "Please save your changes as a draft before confirming the disbursement";
+    } else if (!canUserSubmit) {
       tooltip =
         "Your organization requires disbursements to be approved by another user. Save as a draft and make sure another user reviews and submits.";
     }
@@ -282,6 +295,7 @@ export const DisbursementDraftDetails = () => {
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
         tooltip={tooltip}
+        isCsvFileUpdated={isCsvFileUpdated}
       />
     );
   };

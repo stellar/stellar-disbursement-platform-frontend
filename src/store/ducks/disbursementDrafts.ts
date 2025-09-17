@@ -214,6 +214,43 @@ export const submitDisbursementSavedDraftAction = createAsyncThunk<
   },
 );
 
+export const confirmDisbursementAction = createAsyncThunk<
+  string,
+  {
+    savedDraftId?: string;
+  },
+  { rejectValue: DisbursementDraftRejectMessage; state: RootState }
+>(
+  "disbursementDrafts/confirmDisbursementAction",
+  async ({ savedDraftId }, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+    const { id } = getState().disbursementDetails.details;
+    const { newDraftId } = getState().disbursementDrafts;
+
+    try {
+      const draftId = savedDraftId ?? id ?? newDraftId;
+
+      if (!draftId) {
+        throw new Error("No draft ID available for confirmation");
+      }
+
+      await patchDisbursementStatus(token, draftId, "STARTED");
+      refreshSessionToken(dispatch);
+
+      return draftId;
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error confirming disbursement: ${errorString}`,
+        errorExtras: apiError?.extras,
+      });
+    }
+  },
+);
+
 export const deleteDisbursementDraftAction = createAsyncThunk<
   void,
   string,
@@ -348,6 +385,21 @@ const disbursementDraftsSlice = createSlice({
       state.errorString = action.payload?.errorString;
       state.errorExtras = action.payload?.errorExtras;
       state.newDraftId = action.payload?.newDraftId;
+    });
+    // Confirm disbursement (status-only)
+    builder.addCase(confirmDisbursementAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+      state.actionType = "submit";
+    });
+    builder.addCase(confirmDisbursementAction.fulfilled, (state, action) => {
+      state.newDraftId = action.payload;
+      state.status = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(confirmDisbursementAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+      state.errorExtras = action.payload?.errorExtras;
     });
     // Delete disbursement draft
     builder.addCase(deleteDisbursementDraftAction.pending, (state) => {

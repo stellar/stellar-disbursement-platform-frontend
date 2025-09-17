@@ -177,7 +177,9 @@ export const Disbursements = () => {
             </Heading>
           </SectionHeader.Content>
           <SectionHeader.Content align="right">
-            <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+            <ShowForRoles
+              acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
+            >
               <Button
                 variant="tertiary"
                 size="md"
