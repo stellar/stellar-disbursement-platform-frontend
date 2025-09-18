@@ -178,7 +178,13 @@ export type JwtUser = {
   roles: UserRole[] | null;
 };
 
-export type UserRole = "owner" | "financial_controller" | "developer" | "business";
+export type UserRole =
+  | "owner"
+  | "financial_controller"
+  | "developer"
+  | "business"
+  | "initiator"
+  | "approver";
 
 export type NewUser = {
   first_name: string;

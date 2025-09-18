@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-### Unreleased
+## Unreleased
 
+### Added
+- Add initiator and approver roles with separated disbursement operations to enforce role-based workflow controls.
+  [#346](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/346)
+
+### Changed
 - Improve CSV parsing robustness in `csvTotalAmount` helper by using PapaParse library to handle edge cases.  [#344](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/344)
 
 ## [4.0.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.0...4.0.1))
