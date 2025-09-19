@@ -11,6 +11,7 @@ import { Pagination } from "@/components/Pagination";
 import { PaymentsTable } from "@/components/PaymentsTable";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "@/components/ShowForRoles";
 import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
@@ -138,14 +139,16 @@ export const Payments = () => {
           </SectionHeader.Content>
 
           <SectionHeader.Content align="right">
-            <Button
-              variant="primary"
-              size="md"
-              onClick={handleCreateDirectPayment}
-              disabled={isLoading || isFetching}
-            >
-              New Direct Payment
-            </Button>
+            <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleCreateDirectPayment}
+                disabled={isLoading || isFetching}
+              >
+                New Direct Payment
+              </Button>
+            </ShowForRoles>
           </SectionHeader.Content>
         </SectionHeader.Row>
 
