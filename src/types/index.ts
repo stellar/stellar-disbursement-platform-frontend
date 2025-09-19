@@ -77,6 +77,8 @@ export type OrganizationInitialState = {
     paymentCancellationPeriodDays: number;
     mfa_enabled?: boolean;
     captcha_enabled?: boolean;
+    mfa_disabled?: boolean;
+    captcha_disabled?: boolean;
     distributionAccount?: {
       circleWalletId?: string;
       status: string;

@@ -1,20 +1,20 @@
+import { Card, Loader, Notification, Toggle } from "@stellar/design-system";
 import { useEffect } from "react";
-import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useUpdateOrgMFAEnabled } from "@/apiQueries/useUpdateOrgMFAEnabled";
+import { useUpdateOrgMfaEnabled } from "@/apiQueries/useUpdateOrgMFAEnabled";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { getOrgInfoAction } from "@/store/ducks/organization";
 
-export const SettingsEnableMFA = () => {
+export const SettingsEnableMfa = () => {
   const { organization } = useRedux("organization");
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgMFAEnabled();
+  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgMfaEnabled();
 
   useEffect(() => {
     if (isSuccess) {
@@ -23,7 +23,7 @@ export const SettingsEnableMFA = () => {
   }, [dispatch, isSuccess]);
 
   const handleToggleChange = () => {
-    mutateAsync(!organization.data.mfa_enabled);
+    mutateAsync(!organization.data.mfa_disabled);
   };
 
   const renderContent = () => {
@@ -31,14 +31,14 @@ export const SettingsEnableMFA = () => {
       <div className="SdpSettings">
         <div className="SdpSettings__row">
           <div className="SdpSettings__item">
-            <label className="SdpSettings__label" htmlFor="mfa-enabled">
-              Enable Multi-Factor Authentication (MFA)
+            <label className="SdpSettings__label" htmlFor="mfa-disabled">
+              Disable Multi-Factor Authentication (MFA)
             </label>
             <div className="Toggle__wrapper">
               {isPending ? <Loader size="1rem" /> : null}
               <Toggle
-                id="mfa-enabled"
-                checked={Boolean(organization.data.mfa_enabled)}
+                id="mfa-disabled"
+                checked={Boolean(organization.data.mfa_disabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
                 fieldSize="sm"
@@ -46,9 +46,9 @@ export const SettingsEnableMFA = () => {
             </div>
           </div>
           <div className="Note">
-            Select this option to require Multi-Factor Authentication for user logins. When enabled,
-            users will need to enter a verification code sent to their email in addition to their
-            password. If disabled, this organization will use the platform default setting.
+            Toggle this option to disable Multi-Factor Authentication for user logins. When
+            disabled, users will not need to enter a verification code and this organization will
+            use the platform default setting.
           </div>
         </div>
       </div>

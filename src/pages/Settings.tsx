@@ -1,14 +1,14 @@
 import { Heading } from "@stellar/design-system";
 
-import { SectionHeader } from "@/components/SectionHeader";
-import { SettingsTeamMembers } from "@/components/SettingsTeamMembers";
 import { ReceiverInviteMessage } from "@/components/ReceiverInviteMessage";
-import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLinking";
+import { SectionHeader } from "@/components/SectionHeader";
+import { SettingsEnableCaptcha } from "@/components/SettingsEnableCAPTCHA";
+import { SettingsEnableMemoTracking } from "@/components/SettingsEnableMemoTracking";
+import { SettingsEnableMfa } from "@/components/SettingsEnableMFA";
 import { SettingsEnablePaymentCancellation } from "@/components/SettingsEnablePaymentCancellation";
 import { SettingsEnableReceiverInvitationRetry } from "@/components/SettingsEnableReceiverInvitationRetry";
-import { SettingsEnableMemoTracking } from "@/components/SettingsEnableMemoTracking";
-import { SettingsEnableMFA } from "@/components/SettingsEnableMFA";
-import { SettingsEnableCAPTCHA } from "@/components/SettingsEnableCAPTCHA";
+import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLinking";
+import { SettingsTeamMembers } from "@/components/SettingsTeamMembers";
 
 export const Settings = () => {
   return (
@@ -24,11 +24,11 @@ export const Settings = () => {
       </SectionHeader>
 
       <div className="CardStack">
-        {/* Enable MFA */}
-        <SettingsEnableMFA />
+        {/* Disable MFA */}
+        <SettingsEnableMfa />
 
-        {/* Enable CAPTCHA */}
-        <SettingsEnableCAPTCHA />
+        {/* Disable CAPTCHA */}
+        <SettingsEnableCaptcha />
 
         {/* Enable short link */}
         <SettingsEnableShortLinking />

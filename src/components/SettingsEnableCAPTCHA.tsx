@@ -1,20 +1,20 @@
+import { Card, Loader, Notification, Toggle } from "@stellar/design-system";
 import { useEffect } from "react";
-import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useUpdateOrgCAPTCHAEnabled } from "@/apiQueries/useUpdateOrgCAPTCHAEnabled";
+import { useUpdateOrgCaptchaEnabled } from "@/apiQueries/useUpdateOrgCAPTCHAEnabled";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { getOrgInfoAction } from "@/store/ducks/organization";
 
-export const SettingsEnableCAPTCHA = () => {
+export const SettingsEnableCaptcha = () => {
   const { organization } = useRedux("organization");
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgCAPTCHAEnabled();
+  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgCaptchaEnabled();
 
   useEffect(() => {
     if (isSuccess) {
@@ -23,7 +23,7 @@ export const SettingsEnableCAPTCHA = () => {
   }, [dispatch, isSuccess]);
 
   const handleToggleChange = () => {
-    mutateAsync(!organization.data.captcha_enabled);
+    mutateAsync(!organization.data.captcha_disabled);
   };
 
   const renderContent = () => {
@@ -31,14 +31,14 @@ export const SettingsEnableCAPTCHA = () => {
       <div className="SdpSettings">
         <div className="SdpSettings__row">
           <div className="SdpSettings__item">
-            <label className="SdpSettings__label" htmlFor="captcha-enabled">
-              Enable reCAPTCHA
+            <label className="SdpSettings__label" htmlFor="captcha-disabled">
+              Disable reCAPTCHA
             </label>
             <div className="Toggle__wrapper">
               {isPending ? <Loader size="1rem" /> : null}
               <Toggle
-                id="captcha-enabled"
-                checked={Boolean(organization.data.captcha_enabled)}
+                id="captcha-disabled"
+                checked={Boolean(organization.data.captcha_disabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
                 fieldSize="sm"
@@ -46,9 +46,9 @@ export const SettingsEnableCAPTCHA = () => {
             </div>
           </div>
           <div className="Note">
-            Select this option to require reCAPTCHA verification on login and MFA pages. This helps
-            protect against automated attacks and bot traffic. If disabled, this organization will
-            use the platform default setting.
+            Toggle this option to disable reCAPTCHA verification on login and MFA pages. When
+            disabled, this organization will not require reCAPTCHA verification and will use the
+            platform default setting.
           </div>
         </div>
       </div>
