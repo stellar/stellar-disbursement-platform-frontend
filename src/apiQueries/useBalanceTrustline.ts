@@ -3,7 +3,7 @@ import { API_URL } from "@/constants/envVariables";
 import { fetchApi } from "@/helpers/fetchApi";
 import { ApiAsset, AppError, AccountBalanceItem } from "@/types";
 
-type Trustline = {
+export type Trustline = {
   id: string | null;
   code: string;
   issuer: string;

@@ -6,6 +6,7 @@ import { DropdownMenu } from "@/components/DropdownMenu";
 import { MoreMenuButton } from "@/components/MoreMenuButton";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { AddPresetAssetModal } from "@/components/AddPresetAssetModal";
 
 import { useBalanceTrustline } from "@/apiQueries/useBalanceTrustline";
 import { useAssetsAdd } from "@/apiQueries/useAssetsAdd";
@@ -34,6 +35,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
 
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
+  const [isAddPresetAssetModalVisible, setIsAddPresetAssetModalVisible] = useState(false);
   const [formItems, setFormItems] = useState<FormItems>(initForm);
   const [formError, setFormError] = useState<string[]>([]);
   const [removeAssetId, setRemoveAssetId] = useState<string>();
@@ -93,6 +95,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
   const handleCloseModal = () => {
     setIsAddModalVisible(false);
     setIsRemoveModalVisible(false);
+    setIsAddPresetAssetModalVisible(false);
     setFormItems(initForm);
     setFormError([]);
     setRemoveAssetId(undefined);
@@ -201,6 +204,15 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
             }}
           >
             Add trustline
+          </Button>
+          <Button
+            size="md"
+            variant="tertiary"
+            onClick={() => {
+              setIsAddPresetAssetModalVisible(true);
+            }}
+          >
+            Add from preset assets
           </Button>
         </div>
       </>
@@ -364,6 +376,16 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
           </Modal.Footer>
         </form>
       </Modal>
+
+      {/* Add preset asset modal */}
+      <AddPresetAssetModal
+        isVisible={isAddPresetAssetModalVisible}
+        onClose={handleCloseModal}
+        onSubmit={trustlineAdd}
+        trustlines={trustlines}
+        isLoading={isTrustlineAddPending}
+      />
     </>
   );
 };
+// Force rebuild
