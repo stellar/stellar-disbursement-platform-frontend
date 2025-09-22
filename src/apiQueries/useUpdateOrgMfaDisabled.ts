@@ -3,7 +3,7 @@ import { fetchApi } from "@/helpers/fetchApi";
 import { AppError } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 
-export const useUpdateOrgMfaEnabled = () => {
+export const useUpdateOrgMfaDisabled = () => {
   const mutation = useMutation({
     mutationFn: (isEnabled: boolean) => {
       const formData = new FormData();

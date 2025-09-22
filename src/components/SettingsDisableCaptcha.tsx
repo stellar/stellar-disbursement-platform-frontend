@@ -4,17 +4,17 @@ import { useDispatch } from "react-redux";
 
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useUpdateOrgMfaEnabled } from "@/apiQueries/useUpdateOrgMFAEnabled";
+import { useUpdateOrgCaptchaDisabled } from "@/apiQueries/useUpdateOrgCaptchaDisabled";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { getOrgInfoAction } from "@/store/ducks/organization";
 
-export const SettingsEnableMfa = () => {
+export const SettingsDisableCaptcha = () => {
   const { organization } = useRedux("organization");
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgMfaEnabled();
+  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgCaptchaDisabled();
 
   useEffect(() => {
     if (isSuccess) {
@@ -23,7 +23,7 @@ export const SettingsEnableMfa = () => {
   }, [dispatch, isSuccess]);
 
   const handleToggleChange = () => {
-    mutateAsync(!organization.data.mfa_disabled);
+    mutateAsync(!organization.data.captcha_disabled);
   };
 
   const renderContent = () => {
@@ -31,14 +31,14 @@ export const SettingsEnableMfa = () => {
       <div className="SdpSettings">
         <div className="SdpSettings__row">
           <div className="SdpSettings__item">
-            <label className="SdpSettings__label" htmlFor="mfa-disabled">
-              Disable Multi-Factor Authentication (MFA)
+            <label className="SdpSettings__label" htmlFor="captcha-disabled">
+              Disable reCAPTCHA
             </label>
             <div className="Toggle__wrapper">
               {isPending ? <Loader size="1rem" /> : null}
               <Toggle
-                id="mfa-disabled"
-                checked={Boolean(organization.data.mfa_disabled)}
+                id="captcha-disabled"
+                checked={Boolean(organization.data.captcha_disabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
                 fieldSize="sm"
@@ -46,9 +46,9 @@ export const SettingsEnableMfa = () => {
             </div>
           </div>
           <div className="Note">
-            Toggle this option to disable Multi-Factor Authentication for user logins. When
-            disabled, users will not need to enter a verification code and this organization will
-            use the platform default setting.
+            Toggle this option to disable reCAPTCHA verification on login and MFA pages. When
+            disabled, this organization will not require reCAPTCHA verification and will use the
+            platform default setting.
           </div>
         </div>
       </div>
