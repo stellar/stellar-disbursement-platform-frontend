@@ -54,21 +54,21 @@ export const DirectPaymentConfirmation: React.FC<DirectPaymentConfirmationProps>
   const walletMemo = selectedWallet?.stellar_memo;
 
   // Check if wallet will be auto-registered
-  const isReceiverVerified = (selectedReceiver?.verifications?.length ?? 0) > 0;
+  const isReceiverVerified = Boolean(selectedReceiver?.verifications?.length);
   const isWalletRegistered = Boolean(selectedWallet);
   const willAutoRegister = isReceiverVerified && !isWalletRegistered && paymentData.wallet?.id;
 
   return (
     <div className="DirectPaymentConfirmation">
       <div className="DirectPaymentConfirmation__content">
-        <Notification variant="warning" title="Warning" isFilled={true}>
-          <p>Please review the payment details below. This action cannot be undone.</p>
-          {willAutoRegister && (
-            <p style={{ marginTop: "8px" }}>
-              ⚡ The selected wallet will be automatically registered for this receiver.
-            </p>
-          )}
-        </Notification>
+        <div className="DirectPaymentConfirmation__notification">
+          <Notification variant="warning" title="Warning" isFilled={true}>
+            <p>Please review the payment details below. This action cannot be undone.</p>
+            {willAutoRegister && (
+              <p>The selected wallet will be automatically registered for this receiver.</p>
+            )}
+          </Notification>
+        </div>
 
         <div className="DirectPaymentConfirmation__details">
           <ConfirmationRow label="Amount:">
@@ -77,6 +77,16 @@ export const DirectPaymentConfirmation: React.FC<DirectPaymentConfirmationProps>
 
           <ConfirmationRow label="Receiver:">{receiverInfo}</ConfirmationRow>
 
+          {/*
+            Display wallet row when either:
+            1. walletAddress exists (wallet is already registered)
+            2. paymentData.wallet?.id exists (wallet selected for payment, may trigger auto-registration)
+            
+            We check wallet.id even without using it directly because:
+            - For auto-registration cases, the wallet won't have an address yet
+            - We still want to show the wallet name and auto-registration notice
+            - The wallet.id confirms a wallet was selected in the payment flow
+          */}
           {(walletAddress || paymentData.wallet?.id) && (
             <ConfirmationRow label="Wallet:">
               {(selectedWallet?.wallet?.name || selectedWalletInfo?.name) && (
