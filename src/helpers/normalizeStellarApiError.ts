@@ -1,5 +1,5 @@
-import { GENERIC_ERROR_MESSAGE } from "constants/settings";
-import { AnyObject, AppError } from "types";
+import { GENERIC_ERROR_MESSAGE } from "@/constants/settings";
+import { AnyObject, AppError } from "@/types";
 
 export const normalizeStellarApiError = (
   error: Error,
@@ -34,8 +34,7 @@ const TX_ERROR_TEXT: AnyObject = {
     "We couldn’t complete your transaction at this time because the exchange rate offered is no longer available. Please try again.",
   op_over_source_max:
     "We couldn’t complete your transaction at this time because the exchange rate offered is no longer available. Please try again.",
-  op_cross_self:
-    "You already have an offer out that would immediately cross this one.",
+  op_cross_self: "You already have an offer out that would immediately cross this one.",
   op_sell_no_issuer: "The issuer of that token doesn’t exist.",
   buy_no_issuer: "The issuer of that token doesn’t exist.",
   op_offer_not_found: "We couldn’t find that offer.",
@@ -43,8 +42,7 @@ const TX_ERROR_TEXT: AnyObject = {
   op_not_authorized:
     "This operation was not authorized, please make sure the asset you used complies with the Regulated Assets protocol (SEP-8).",
   tx_bad_auth: "Something went wrong while signing a transaction.",
-  tx_bad_seq:
-    "The app has gotten out of sync with the network. Please try again later.",
+  tx_bad_seq: "The app has gotten out of sync with the network. Please try again later.",
   tx_too_late: "This transaction has expired.",
 };
 
@@ -78,10 +76,7 @@ export function getErrorString(err: any): string {
     }
 
     if (resultCodes.transaction) {
-      return (
-        TX_ERROR_TEXT[resultCodes.transaction] ||
-        `Error code '${resultCodes.transaction}'`
-      );
+      return TX_ERROR_TEXT[resultCodes.transaction] || `Error code '${resultCodes.transaction}'`;
     }
   }
 

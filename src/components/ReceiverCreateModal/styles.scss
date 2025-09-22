@@ -1,0 +1,183 @@
+@use "../../styles/styles-utils.scss" as *;
+
+:root {
+  --sdp-receiver-modal-spacing-xs: #{pxToRem(4px)};
+  --sdp-receiver-modal-spacing-sm: #{pxToRem(8px)};
+  --sdp-receiver-modal-spacing-md: #{pxToRem(12px)};
+  --sdp-receiver-modal-spacing-lg: #{pxToRem(16px)};
+  --sdp-receiver-modal-spacing-xl: #{pxToRem(24px)};
+}
+
+// Layout constants
+$modal-max-height: 70vh;
+$input-min-width-small: pxToRem(120px);
+$input-min-width-medium: pxToRem(150px);
+$input-min-width-large: pxToRem(200px);
+
+.ReceiverCreateModal {
+  // LAYOUT & STRUCTURE
+  &__content {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: $modal-max-height;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__section {
+    margin-bottom: var(--sdp-receiver-modal-spacing-sm);
+  }
+
+  &__section-description {
+    margin-bottom: var(--sdp-receiver-modal-spacing-md);
+  }
+
+  // FORM INPUTS & CONTROLS
+  &__contact-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sdp-receiver-modal-spacing-lg);
+  }
+
+  &__input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sdp-receiver-modal-spacing-md);
+    align-items: flex-end;
+    padding-top: pxToRem(5px);
+    padding-bottom: pxToRem(5px);
+
+    .Button {
+      flex-shrink: 0;
+      min-width: fit-content;
+      white-space: nowrap;
+    }
+
+    &--verification-type {
+      .Select {
+        flex: 1;
+        max-width: 100%;
+      }
+    }
+
+    &--verification-value {
+      .Input,
+      .CustomDateInput,
+      .CustomYearMonthInput {
+        flex: 1;
+        max-width: 100%;
+      }
+
+      .Button {
+        align-self: baseline;
+      }
+    }
+
+    &--wallet-address {
+      .Input {
+        flex: 1;
+        max-width: 100%;
+      }
+    }
+
+    &--wallet-memo {
+      .Input {
+        flex: 1;
+        max-width: 100%;
+      }
+    }
+  }
+
+  &__wallet-memo-field {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  // VERIFICATION & BADGES
+
+  &__verification-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sdp-receiver-modal-spacing-sm);
+    margin-top: var(--sdp-receiver-modal-spacing-sm);
+  }
+
+  &__verification-badge {
+    flex-shrink: 0;
+  }
+
+  &__verification-label {
+    font-weight: var(--sds-fw-medium);
+    margin-right: var(--sdp-receiver-modal-spacing-xs);
+  }
+
+  &__verification-value {
+    font-weight: var(--sds-fw-regular);
+  }
+
+  &__provided {
+    margin-top: var(--sdp-receiver-modal-spacing-lg);
+    margin-bottom: var(--sdp-receiver-modal-spacing-sm);
+  }
+
+  // ERROR STATES
+
+  &__error-row {
+    margin-top: var(--sdp-receiver-modal-spacing-sm);
+    margin-bottom: var(--sdp-receiver-modal-spacing-lg);
+    color: var(--sds-clr-red-09);
+  }
+
+  // CONFIRMATION SECTION
+
+  &__confirmation {
+    contain: layout style;
+  }
+
+  &__confirmation__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sdp-receiver-modal-spacing-md);
+    margin-bottom: var(--sdp-receiver-modal-spacing-lg);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__confirmation__label {
+    margin-bottom: var(--sdp-receiver-modal-spacing-xs);
+    border-bottom: 1px solid var(--sds-clr-gray-05);
+    padding-bottom: var(--sdp-receiver-modal-spacing-xs);
+  }
+
+  &__confirmation__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sdp-receiver-modal-spacing-sm);
+    padding-left: var(--sdp-receiver-modal-spacing-lg);
+  }
+
+  &__confirmation__item {
+    display: flex;
+    gap: var(--sdp-receiver-modal-spacing-sm);
+    align-items: baseline;
+    min-height: pxToRem(20px);
+  }
+
+  &__confirmation__field {
+    min-width: fit-content;
+  }
+
+  &__confirmation__value {
+    line-height: pxToRem(20px);
+  }
+
+  &__confirmation__empty {
+    font-style: italic;
+    color: var(--sds-clr-gray-08);
+  }
+}

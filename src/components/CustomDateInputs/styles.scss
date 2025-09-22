@@ -1,0 +1,34 @@
+@use "../../styles/styles-utils.scss" as *;
+
+:root {
+  --sdp-custom-input-spacing-xs: #{pxToRem(4px)};
+  --sdp-custom-input-spacing-sm: #{pxToRem(8px)};
+}
+
+.CustomDateInput {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sdp-custom-input-spacing-xs);
+  width: 100%;
+
+  &__formatted {
+    color: var(--sds-clr-gray-07);
+    font-style: italic;
+    margin: 0;
+    padding-left: var(--sdp-custom-input-spacing-sm);
+  }
+}
+
+.CustomYearMonthInput {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sdp-custom-input-spacing-xs);
+  width: 100%;
+
+  &__formatted {
+    color: var(--sds-clr-gray-07);
+    font-style: italic;
+    margin: 0;
+    padding-left: var(--sdp-custom-input-spacing-sm);
+  }
+}

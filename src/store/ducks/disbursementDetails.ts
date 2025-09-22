@@ -1,12 +1,12 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "store";
-import { getDisbursementDetails } from "api/getDisbursementDetails";
-import { getDisbursementReceivers } from "api/getDisbursementReceivers";
-import { patchDisbursementStatus } from "api/patchDisbursementStatus";
-import { endSessionIfTokenInvalid } from "helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "helpers/refreshSessionToken";
-import { formatDisbursement } from "helpers/formatDisbursements";
-import { normalizeApiError } from "helpers/normalizeApiError";
+import { RootState } from "@/store";
+import { getDisbursementDetails } from "@/api/getDisbursementDetails";
+import { getDisbursementReceivers } from "@/api/getDisbursementReceivers";
+import { patchDisbursementStatus } from "@/api/patchDisbursementStatus";
+import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+import { formatDisbursement } from "@/helpers/formatDisbursements";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
 import {
   ApiDisbursementReceiver,
   ApiDisbursementReceivers,
@@ -18,7 +18,7 @@ import {
   DisbursementStatusType,
   PaginationParams,
   RejectMessage,
-} from "types";
+} from "@/types";
 
 export const getDisbursementDetailsAction = createAsyncThunk<
   Disbursement,
@@ -30,10 +30,7 @@ export const getDisbursementDetailsAction = createAsyncThunk<
     const { token } = getState().userAccount;
 
     try {
-      const disbursementDetails = await getDisbursementDetails(
-        token,
-        disbursementId,
-      );
+      const disbursementDetails = await getDisbursementDetails(token, disbursementId);
       refreshSessionToken(dispatch);
 
       return formatDisbursement(disbursementDetails);
@@ -161,10 +158,7 @@ const disbursementDetailsSlice = createSlice({
   name: "disbursementDetails",
   initialState,
   reducers: {
-    setDisbursementDetailsAction: (
-      state,
-      action: PayloadAction<DisbursementDraft>,
-    ) => {
+    setDisbursementDetailsAction: (state, action: PayloadAction<DisbursementDraft>) => {
       state.details = action.payload.details;
       state.instructions = action.payload.instructions;
       state.status = "SUCCESS";
@@ -174,12 +168,9 @@ const disbursementDetailsSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Get disbursement details
-    builder.addCase(
-      getDisbursementDetailsAction.pending,
-      (state = initialState) => {
-        state.status = "PENDING";
-      },
-    );
+    builder.addCase(getDisbursementDetailsAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+    });
     builder.addCase(getDisbursementDetailsAction.fulfilled, (state, action) => {
       state.details = action.payload;
       state.status = "SUCCESS";
@@ -190,68 +181,47 @@ const disbursementDetailsSlice = createSlice({
       state.errorString = action.payload?.errorString;
     });
     // Get disbursement receivers
-    builder.addCase(
-      getDisbursementReceiversAction.pending,
-      (state = initialState) => {
-        state.status = "PENDING";
-      },
-    );
-    builder.addCase(
-      getDisbursementReceiversAction.fulfilled,
-      (state, action) => {
-        state.details.receivers = {
-          items: formatDisbursementReceivers(action.payload.receivers.data),
-          pagination: action.payload.receivers.pagination,
-          searchParams: action.payload.searchParams,
-        };
-        state.status = "SUCCESS";
-        state.errorString = undefined;
-      },
-    );
-    builder.addCase(
-      getDisbursementReceiversAction.rejected,
-      (state, action) => {
-        state.status = "ERROR";
-        state.errorString = action.payload?.errorString;
-      },
-    );
+    builder.addCase(getDisbursementReceiversAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+    });
+    builder.addCase(getDisbursementReceiversAction.fulfilled, (state, action) => {
+      state.details.receivers = {
+        items: formatDisbursementReceivers(action.payload.receivers.data),
+        pagination: action.payload.receivers.pagination,
+        searchParams: action.payload.searchParams,
+      };
+      state.status = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(getDisbursementReceiversAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+    });
     // Pause or start disbursement
-    builder.addCase(
-      pauseOrStartDisbursementAction.pending,
-      (state = initialState) => {
-        state.status = "PENDING";
-      },
-    );
-    builder.addCase(
-      pauseOrStartDisbursementAction.fulfilled,
-      (state, action) => {
-        state.details = {
-          ...state.details,
-          status: action.payload.status,
-        };
-        state.status = "SUCCESS";
-        state.errorString = undefined;
-      },
-    );
-    builder.addCase(
-      pauseOrStartDisbursementAction.rejected,
-      (state, action) => {
-        state.status = "ERROR";
-        state.errorString = action.payload?.errorString;
-      },
-    );
+    builder.addCase(pauseOrStartDisbursementAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+    });
+    builder.addCase(pauseOrStartDisbursementAction.fulfilled, (state, action) => {
+      state.details = {
+        ...state.details,
+        status: action.payload.status,
+      };
+      state.status = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(pauseOrStartDisbursementAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+    });
   },
 });
 
-export const disbursementDetailsSelector = (state: RootState) =>
-  state.disbursementDetails;
+export const disbursementDetailsSelector = (state: RootState) => state.disbursementDetails;
 export const { reducer } = disbursementDetailsSlice;
 export const { setDisbursementDetailsAction, resetDisbursementDetailsAction } =
   disbursementDetailsSlice.actions;
 
-const formatDisbursementReceivers = (
-  items: ApiDisbursementReceiver[],
-): DisbursementReceiver[] =>
+const formatDisbursementReceivers = (items: ApiDisbursementReceiver[]): DisbursementReceiver[] =>
   items.map((r) => ({
     id: r.id,
     phoneNumber: r.phone_number,
@@ -259,8 +229,7 @@ const formatDisbursementReceivers = (
     provider: r.receiver_wallet.wallet.name,
     amount: r.payment.amount,
     assetCode: r.payment.asset.code,
-    completedAt:
-      r.payment.status === "SUCCESS" ? r.payment.updated_at : undefined,
+    completedAt: r.payment.status === "SUCCESS" ? r.payment.updated_at : undefined,
     blockchainId: r.payment.stellar_transaction_id,
     orgId: r.external_id,
     paymentStatus: r.payment.status,

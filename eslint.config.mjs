@@ -1,6 +1,6 @@
 import js from "@eslint/js";
-import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
+import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -17,10 +17,7 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      "@typescript-eslint/ban-ts-comment": [
-        "error",
-        { "ts-ignore": "allow-with-description" },
-      ],
+      "@typescript-eslint/ban-ts-comment": ["error", { "ts-ignore": "allow-with-description" }],
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "jsx-a11y/click-events-have-key-events": "off",

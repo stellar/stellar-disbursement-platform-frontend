@@ -1,34 +1,20 @@
 import { useEffect, useState, useRef } from "react";
 import Recaptcha from "react-google-recaptcha";
-import {
-  Heading,
-  Input,
-  Button,
-  Notification,
-  Link,
-} from "@stellar/design-system";
+import { Heading, Input, Button, Notification, Link } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-import { AppDispatch, resetStoreAction } from "store";
-import { signInAction } from "store/ducks/userAccount";
-import {
-  USE_SSO,
-  RECAPTCHA_SITE_KEY,
-  SINGLE_TENANT_MODE,
-} from "constants/envVariables";
-import {
-  Routes,
-  LOCAL_STORAGE_DEVICE_ID,
-  ORG_NAME_INFO_TEXT,
-} from "constants/settings";
-import { useRedux } from "hooks/useRedux";
-import { signInRedirect } from "helpers/singleSingOn";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { localStorageTenantName } from "helpers/localStorageTenantName";
-import { InfoTooltip } from "components/InfoTooltip";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { AppDispatch, resetStoreAction } from "@/store";
+import { signInAction } from "@/store/ducks/userAccount";
+import { USE_SSO, RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "@/constants/envVariables";
+import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "@/constants/settings";
+import { useRedux } from "@/hooks/useRedux";
+import { signInRedirect } from "@/helpers/singleSingOn";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { localStorageTenantName } from "@/helpers/localStorageTenantName";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 export const SignIn = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -122,9 +108,7 @@ export const SignIn = () => {
     }
   };
 
-  const goToForgotPassword = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-  ) => {
+  const goToForgotPassword = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
     navigate(Routes.FORGOT_PASSWORD);
   };
@@ -133,19 +117,19 @@ export const SignIn = () => {
     <>
       <div className="CardLayout">
         {showPasswordResetSuccess && (
-          <Notification variant="success" title="Password Reset Successful">
-            Your password has been reset successfully. Please log in with your
-            new password.
+          <Notification variant="success" title="Password Reset Successful" isFilled={true}>
+            Your password has been reset successfully. Please log in with your new password.
           </Notification>
         )}
         {isSessionExpired && (
           <Notification
             variant="primary"
             title="Session expired, please sign in again"
+            isFilled={true}
           />
         )}
         {!isSessionExpired && userAccount.errorString && (
-          <Notification variant="error" title="Sign in error">
+          <Notification variant="error" title="Sign in error" isFilled={true}>
             <ErrorWithExtras
               appError={{
                 message: userAccount.errorString,
@@ -165,11 +149,7 @@ export const SignIn = () => {
                   fieldSize="sm"
                   id="si-organization-name"
                   name="si-organization-name"
-                  label={
-                    <InfoTooltip infoText={ORG_NAME_INFO_TEXT}>
-                      Organization name
-                    </InfoTooltip>
-                  }
+                  label={<InfoTooltip infoText={ORG_NAME_INFO_TEXT}>Organization name</InfoTooltip>}
                   onChange={(e) => setOrganizationName(e.target.value)}
                   value={organizationName}
                   type="text"
@@ -200,22 +180,15 @@ export const SignIn = () => {
             </>
           )}
           {USE_SSO ? (
-            <Button
-              variant="secondary"
-              size="sm"
-              type="button"
-              onClick={signInRedirect}
-            >
+            <Button variant="tertiary" size="md" type="button" onClick={signInRedirect}>
               Single Sign On
             </Button>
           ) : (
             <Button
               variant="primary"
-              size="sm"
+              size="md"
               type="submit"
-              disabled={
-                !organizationName || !email || !password || !recaptchaToken
-              }
+              disabled={!organizationName || !email || !password || !recaptchaToken}
               isLoading={userAccount.status === "PENDING"}
               data-callback="onRecaptchaSubmit"
             >
@@ -223,12 +196,7 @@ export const SignIn = () => {
             </Button>
           )}
 
-          <Link
-            role="button"
-            size="sm"
-            variant="primary"
-            onClick={goToForgotPassword}
-          >
+          <Link role="button" size="sm" variant="primary" onClick={goToForgotPassword}>
             Forgot Password?
           </Link>
         </form>

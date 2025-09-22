@@ -1,4 +1,4 @@
-@use "../../styles-utils.scss" as *;
+@use "../../styles/styles-utils.scss" as *;
 
 .ExpandContent {
   &__heading {
@@ -19,7 +19,7 @@
       display: block;
       width: 100%;
       height: 100%;
-      fill: currentColor;
+      stroke: currentColor;
     }
   }
 
@@ -29,7 +29,7 @@
     transition: grid-template-rows ease-in-out 400ms;
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
-    color: var(--color-gray-70);
+    color: var(--sds-clr-gray-10);
 
     &--open {
       grid-template-rows: 1fr;

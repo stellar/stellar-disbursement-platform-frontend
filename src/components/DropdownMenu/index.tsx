@@ -11,22 +11,18 @@ interface DropdownMenuComponent {
   Item: React.FC<DropdownMenuItemProps>;
 }
 
-export const DropdownMenu: React.FC<DropdownMenuProps> &
-  DropdownMenuComponent = ({ triggerEl, children }: DropdownMenuProps) => {
+export const DropdownMenu: React.FC<DropdownMenuProps> & DropdownMenuComponent = ({
+  triggerEl,
+  children,
+}: DropdownMenuProps) => {
   return (
-    <Floater
-      triggerEl={triggerEl}
-      placement="bottom"
-      hasActiveInsideClick
-      isContrast={false}
-    >
+    <Floater triggerEl={triggerEl} placement="bottom" hasActiveInsideClick isContrast={false}>
       <div className="DropdownMenu">{children}</div>
     </Floater>
   );
 };
 
-interface DropdownMenuItemProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface DropdownMenuItemProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   children: React.ReactNode;
   to?: string;
   isHighlight?: boolean;
@@ -39,10 +35,7 @@ const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
   ...props
 }: DropdownMenuItemProps) => {
   const handleNavLinkStyle = ({ isActive }: { isActive: boolean }) => {
-    return [
-      "DropdownMenu__item",
-      isActive ? "DropdownMenu__item--current" : null,
-    ]
+    return ["DropdownMenu__item", isActive ? "DropdownMenu__item--current" : null]
       .filter(Boolean)
       .join(" ");
   };

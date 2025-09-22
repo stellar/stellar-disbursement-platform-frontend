@@ -1,6 +1,6 @@
-import { API_URL } from "constants/envVariables";
-import { SESSION_EXPIRED } from "constants/settings";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
+import { API_URL } from "@/constants/envVariables";
+import { SESSION_EXPIRED } from "@/constants/settings";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 
 export const deleteApiKey = async (
   token: string,

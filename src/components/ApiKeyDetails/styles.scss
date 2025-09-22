@@ -1,15 +1,15 @@
-@use "./styles-utils.scss" as *;
+@use "../../styles/styles-utils.scss" as *;
 
 .ApiKeyDetails {
   &__status {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--sds-fw-medium);
 
     &--active {
-      color: var(--color-green-60);
+      color: var(--sds-clr-green-11);
     }
 
     &--expired {
-      color: var(--color-red-60);
+      color: var(--sds-clr-red-11);
     }
   }
 }

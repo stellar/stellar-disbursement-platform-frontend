@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { Card, Icon, Heading, Button, Link } from "@stellar/design-system";
 
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { Table } from "components/Table";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { DropdownMenu } from "components/DropdownMenu";
-import { EmptyStateMessage } from "components/EmptyStateMessage/EmptyStateMessage";
-import { Routes } from "constants/settings";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { Table } from "@/components/Table";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
+import { Routes } from "@/constants/settings";
 
-import { ApiKey } from "types";
+import { ApiKey } from "@/types";
 
 import "./styles.scss";
 
@@ -35,7 +35,7 @@ const EmptyState = () => (
   <Card variant="secondary">
     <div className="ApiKeysTable__emptyState">
       <EmptyStateMessage
-        icon={<Icon.Key />}
+        icon={<Icon.Key01 />}
         message="You have no keys. Create one to get started."
       />
     </div>
@@ -72,7 +72,7 @@ const ActionsCell = ({ apiKey, onEditKey, onDeleteKey }: ActionsCellProps) => {
       <DropdownMenu.Item onClick={handleEdit}>
         <div className="ApiKeysTable__actionItem">
           Edit key
-          <Icon.Edit />
+          <Icon.Edit01 />
         </div>
       </DropdownMenu.Item>
       <DropdownMenu.Item isHighlight={true} onClick={handleDelete}>
@@ -109,9 +109,9 @@ export const ApiKeysTable = ({
           API Keys
         </Heading>
         <Button
-          variant="tertiary"
-          size="sm"
-          icon={<Icon.Add />}
+          variant="secondary"
+          size="md"
+          icon={<Icon.Plus />}
           iconPosition="right"
           onClick={onCreateKey}
         >

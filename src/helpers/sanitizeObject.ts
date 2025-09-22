@@ -1,4 +1,4 @@
-import { AnyObject } from "types";
+import { AnyObject } from "@/types";
 
 export const sanitizeObject = (object: AnyObject) =>
   Object.entries(object)

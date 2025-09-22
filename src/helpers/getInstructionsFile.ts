@@ -1,4 +1,4 @@
-import { getDisbursementInstructions } from "api/getDisbursementInstructions";
+import { getDisbursementInstructions } from "@/api/getDisbursementInstructions";
 
 export const getInstructionsFile = async ({
   token,

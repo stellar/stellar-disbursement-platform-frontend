@@ -1,7 +1,7 @@
 import { Button, Icon, ThemeSwitch } from "@stellar/design-system";
-import { PROJECT_NAME, Routes } from "constants/settings";
-import { DropdownMenu } from "components/DropdownMenu";
-import { formatDateTimeWithGmt } from "helpers/formatIntlDateTime";
+import { PROJECT_NAME, Routes } from "@/constants/settings";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { formatDateTimeWithGmt } from "@/helpers/formatIntlDateTime";
 import "./styles.scss";
 
 type PageHeaderProps = {
@@ -11,12 +11,7 @@ type PageHeaderProps = {
   companyName?: string;
 };
 
-export const PageHeader = ({
-  username,
-  onSignOut,
-  logoImage,
-  companyName,
-}: PageHeaderProps) => {
+export const PageHeader = ({ username, onSignOut, logoImage, companyName }: PageHeaderProps) => {
   return (
     <div className={`PageHeader ${username ? "PageHeader--internal" : ""}`}>
       <div className="PageHeader__inset">
@@ -27,9 +22,7 @@ export const PageHeader = ({
                 className="CompanyBrand__logo"
                 style={{ backgroundImage: `url(${logoImage})` }}
               ></div>
-              <div className="CompanyBrand__name">
-                {companyName || "Company Name"}
-              </div>
+              <div className="CompanyBrand__name">{companyName || "Company Name"}</div>
             </div>
           )}
         </div>
@@ -48,25 +41,23 @@ export const PageHeader = ({
             </div>
           ) : null}
           <div className="PageHeader--right">
+            <ThemeSwitch storageKeyId={`stellarTheme:${PROJECT_NAME}`} />
+
             {username ? (
               <DropdownMenu
                 triggerEl={
-                  <Button variant="secondary" size="xs">
+                  <Button variant="tertiary" size="md">
                     {username}
                   </Button>
                 }
               >
-                <DropdownMenu.Item to={Routes.PROFILE}>
-                  Profile
-                </DropdownMenu.Item>
+                <DropdownMenu.Item to={Routes.PROFILE}>Profile</DropdownMenu.Item>
                 <DropdownMenu.Item to={Routes.HELP}>Help</DropdownMenu.Item>
                 <DropdownMenu.Item onClick={onSignOut} isHighlight>
                   Sign out
                 </DropdownMenu.Item>
               </DropdownMenu>
             ) : null}
-
-            <ThemeSwitch storageKeyId={`stellarTheme:${PROJECT_NAME}`} />
           </div>
         </div>
       </div>

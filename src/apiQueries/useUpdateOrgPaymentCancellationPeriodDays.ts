@@ -1,17 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { AppError } from "@/types";
 
 export const useUpdateOrgPaymentCancellationPeriodDays = () => {
   const mutation = useMutation({
     mutationFn: (cancellationPeriod: number) => {
       const formData = new FormData();
 
-      formData.append(
-        "data",
-        `{"payment_cancellation_period_days": ${cancellationPeriod}}`,
-      );
+      formData.append("data", `{"payment_cancellation_period_days": ${cancellationPeriod}}`);
 
       return fetchApi(
         `${API_URL}/organization`,

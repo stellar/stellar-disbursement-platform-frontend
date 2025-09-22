@@ -2,8 +2,8 @@ import { useEffect, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Notification } from "@stellar/design-system";
 
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
 
 import {
   getApiKeysAction,
@@ -11,19 +11,19 @@ import {
   deleteApiKeyAction,
   updateApiKeyAction,
   clearApiKeysErrorAction,
-} from "store/ducks/apiKeys";
+} from "@/store/ducks/apiKeys";
 
-import { ApiKeysTable } from "components/ApiKeysTable/ApiKeysTable";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { ShowForRoles } from "components/ShowForRoles";
-import { ApiKeysDescription } from "components/ApiKeysDescription/ApiKeysDescription";
-import { ApiKeySuccessModal } from "components/ApiKeySuccessModal/ApiKeySuccessModal";
-import { CreateApiKeyModal } from "components/ApiKeyCreateModal/ApiKeyCreateModal";
-import { DeleteApiKeyModal } from "components/ApiKeyDeleteModal/DeleteApiKeyModal";
-import { EditApiKeyModal } from "components/ApiKeyUpdateModal/EditApiKeyModal";
+import { ApiKeysTable } from "@/components/ApiKeysTable/ApiKeysTable";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { ShowForRoles } from "@/components/ShowForRoles";
+import { ApiKeysDescription } from "@/components/ApiKeysDescription/ApiKeysDescription";
+import { ApiKeySuccessModal } from "@/components/ApiKeySuccessModal/ApiKeySuccessModal";
+import { CreateApiKeyModal } from "@/components/ApiKeyCreateModal/ApiKeyCreateModal";
+import { DeleteApiKeyModal } from "@/components/ApiKeyDeleteModal/DeleteApiKeyModal";
+import { EditApiKeyModal } from "@/components/ApiKeyUpdateModal/EditApiKeyModal";
 
-import { UserRole, CreateApiKeyRequest, ApiKey } from "types";
-import { UpdateApiKeyRequest } from "api/updateApiKey";
+import { UserRole, CreateApiKeyRequest, ApiKey } from "@/types";
+import { UpdateApiKeyRequest } from "@/api/updateApiKey";
 
 const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 
@@ -48,7 +48,8 @@ export const ApiKeys = () => {
 
   const handleCloseCreateModal = useCallback(() => {
     setIsCreateModalVisible(false);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleCloseSuccessModal = useCallback(() => {
     setIsSuccessModalVisible(false);
@@ -58,12 +59,14 @@ export const ApiKeys = () => {
   const handleCloseDeleteModal = useCallback(() => {
     setIsDeleteModalVisible(false);
     setSelectedApiKey(undefined);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleCloseEditModal = useCallback(() => {
     setIsEditModalVisible(false);
     setEditingApiKey(undefined);
-  }, []);
+    dispatch(clearApiKeysErrorAction());
+  }, [dispatch]);
 
   const handleSubmitCreateApiKey = useCallback(
     async (apiKeyData: CreateApiKeyRequest) => {
@@ -130,24 +133,23 @@ export const ApiKeys = () => {
   );
 
   const renderPageContent = () => {
-    if (apiKeys.errorString) {
-      return (
-        <Notification variant="error" title="Error">
-          <ErrorWithExtras
-            appError={{
-              message: apiKeys.errorString,
-            }}
-          />
-        </Notification>
-      );
-    }
-
     if (apiKeys.status === "PENDING" && apiKeys.items.length === 0) {
       return <div className="Note">Loading…</div>;
     }
 
     return (
       <div className="CardStack">
+        {apiKeys.errorString ? (
+          <Notification variant="error" title="Error" isFilled={true}>
+            <ErrorWithExtras
+              appError={{
+                message: apiKeys.errorString,
+                extras: apiKeys.errorExtras,
+              }}
+            />
+          </Notification>
+        ) : null}
+
         <div className="CardStack__card">
           <ApiKeysTable
             apiKeys={apiKeys.items}
@@ -176,7 +178,11 @@ export const ApiKeys = () => {
         onSubmit={handleSubmitCreateApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
       />
 
       <ApiKeySuccessModal
@@ -191,7 +197,11 @@ export const ApiKeys = () => {
         onSubmit={deleteApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={selectedApiKey}
       />
 
@@ -201,7 +211,11 @@ export const ApiKeys = () => {
         onSubmit={handleSubmitEditApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={editingApiKey}
       />
     </>

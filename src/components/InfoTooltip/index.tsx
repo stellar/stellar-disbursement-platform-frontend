@@ -2,7 +2,7 @@ import { FloaterPlacement, Icon, Tooltip } from "@stellar/design-system";
 import "./styles.scss";
 
 const ICONS = {
-  info: <Icon.Info />,
+  info: <Icon.InfoCircle />,
   check: <Icon.CheckCircle color="green" />,
 };
 

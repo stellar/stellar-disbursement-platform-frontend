@@ -1,36 +1,29 @@
 import { useEffect, useState } from "react";
-import {
-  Card,
-  Heading,
-  Input,
-  Button,
-  Notification,
-} from "@stellar/design-system";
+import { Card, Heading, Input, Button, Notification } from "@stellar/design-system";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 
-import { SectionHeader } from "components/SectionHeader";
-import { InfoTooltip } from "components/InfoTooltip";
-import { Box } from "components/Box";
-import { LoadingContent } from "components/LoadingContent";
-import { AssetAmount } from "components/AssetAmount";
-import { DropdownMenu } from "components/DropdownMenu";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { Box } from "@/components/Box";
+import { LoadingContent } from "@/components/LoadingContent";
+import { AssetAmount } from "@/components/AssetAmount";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 
-import { AppDispatch } from "store";
-import { getOrgCircleInfoAction } from "store/ducks/organization";
-import { useRedux } from "hooks/useRedux";
-import { useCircleBalances } from "apiQueries/useCircleBalances";
-import { useUpdateCircleConfig } from "apiQueries/useUpdateCircleConfig";
+import { AppDispatch } from "@/store";
+import { getOrgCircleInfoAction } from "@/store/ducks/organization";
+import { useRedux } from "@/hooks/useRedux";
+import { useCircleBalances } from "@/apiQueries/useCircleBalances";
+import { useUpdateCircleConfig } from "@/apiQueries/useUpdateCircleConfig";
 
 export const DistributionAccountCircle = () => {
   const CIRCLE_API_MASKED_VALUE = "**************";
 
   const { organization } = useRedux("organization");
   const { distributionAccount } = organization.data;
-  const isPendingAccount =
-    distributionAccount?.status === "PENDING_USER_ACTIVATION";
+  const isPendingAccount = distributionAccount?.status === "PENDING_USER_ACTIVATION";
 
   const [isEditMode, setIsEditMode] = useState(isPendingAccount);
   const [circleApiKey, setCircleApiKey] = useState("");
@@ -62,9 +55,7 @@ export const DistributionAccountCircle = () => {
   useEffect(() => {
     if (isEditMode && (isCircleConfigSuccess || isCircleConfigError)) {
       setConfigResponse({
-        message: isCircleConfigSuccess
-          ? circleConfig.message
-          : circleConfigError.message,
+        message: isCircleConfigSuccess ? circleConfig.message : circleConfigError.message,
         type: isCircleConfigSuccess ? "success" : "error",
       });
 
@@ -125,8 +116,8 @@ export const DistributionAccountCircle = () => {
             <Box gap="md" direction="row" justify="end">
               <>
                 <Button
-                  variant="secondary"
-                  size="sm"
+                  variant="tertiary"
+                  size="md"
                   type="button"
                   onClick={() => {
                     setIsEditMode(false);
@@ -140,7 +131,7 @@ export const DistributionAccountCircle = () => {
                 </Button>
                 <Button
                   variant="primary"
-                  size="sm"
+                  size="md"
                   type="submit"
                   disabled={!isSaveEnabled}
                   isLoading={isCircleConfigFetching}
@@ -158,16 +149,12 @@ export const DistributionAccountCircle = () => {
       <Box gap="md">
         <div className="CardStack__infoItem">
           <label className="Label Label--sm">Circle API Key</label>
-          <div className="CardStack__infoItem__value">
-            {CIRCLE_API_MASKED_VALUE}
-          </div>
+          <div className="CardStack__infoItem__value">{CIRCLE_API_MASKED_VALUE}</div>
         </div>
 
         <div className="CardStack__infoItem">
           <label className="Label Label--sm">Wallet ID</label>
-          <div className="CardStack__infoItem__value">
-            {distributionAccount?.circleWalletId}
-          </div>
+          <div className="CardStack__infoItem__value">{distributionAccount?.circleWalletId}</div>
         </div>
       </Box>
     );
@@ -179,17 +166,11 @@ export const DistributionAccountCircle = () => {
     }
 
     if (balanceError) {
-      return (
-        <div className="Note Note--noMargin Note--error">
-          {balanceError.message}
-        </div>
-      );
+      return <div className="Note Note--noMargin Note--error">{balanceError.message}</div>;
     }
 
     if (balances?.balances.length === 0) {
-      return (
-        <div className="Note Note--noMargin">There are no balances to show</div>
-      );
+      return <div className="Note Note--noMargin">There are no balances to show</div>;
     }
 
     return balances?.balances.map((b) => (
@@ -215,7 +196,7 @@ export const DistributionAccountCircle = () => {
 
       <div className="CardStack">
         {configResponse?.message && configResponse?.type === "error" ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             {configResponse.message}
           </Notification>
         ) : null}
@@ -239,9 +220,7 @@ export const DistributionAccountCircle = () => {
         <Card>
           <Box gap="sm">
             <div className="CardStack__title">
-              <InfoTooltip infoText="TODO: info text">
-                Circle Account Configuration
-              </InfoTooltip>
+              <InfoTooltip infoText="TODO: info text">Circle Account Configuration</InfoTooltip>
 
               {!isEditMode ? (
                 <DropdownMenu triggerEl={<MoreMenuButton />}>
@@ -260,14 +239,13 @@ export const DistributionAccountCircle = () => {
 
             <Box gap="lg">
               <div className="Note Note--noMargin">
-                Add funds to your distribution account by sending Stellar-based
-                digital assets to the public key above.
+                Add funds to your distribution account by sending Stellar-based digital assets to
+                the public key above.
               </div>
               <div className="Note Note--noMargin">
-                It is strongly recommended that you only fund the distribution
-                account when you are ready to send disbursements. It is not
-                meant to be a long-term store of value, as any SDP user with
-                permission to send disbursements can trigger payments from this
+                It is strongly recommended that you only fund the distribution account when you are
+                ready to send disbursements. It is not meant to be a long-term store of value, as
+                any SDP user with permission to send disbursements can trigger payments from this
                 account.
               </div>
 
@@ -277,9 +255,7 @@ export const DistributionAccountCircle = () => {
                 {isPendingAccount ? null : (
                   <Card noPadding>
                     <Box gap="sm" addlClassName="CircleBalances">
-                      <div className="CircleBalances__title">
-                        Current Balances
-                      </div>
+                      <div className="CircleBalances__title">Current Balances</div>
                       <>{renderBalances()}</>
                     </Box>
                   </Card>

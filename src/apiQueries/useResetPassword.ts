@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { normalizeApiError } from "helpers/normalizeApiError";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { AppError } from "@/types";
 
 type ResetPasswordProps = {
   organizationName: string;
@@ -13,11 +13,7 @@ type ResetPasswordProps = {
 
 export const useResetPassword = () => {
   const mutation = useMutation({
-    mutationFn: ({
-      organizationName,
-      password,
-      resetToken,
-    }: ResetPasswordProps) => {
+    mutationFn: ({ organizationName, password, resetToken }: ResetPasswordProps) => {
       return fetchApi(
         `${API_URL}/reset-password`,
         {
@@ -54,11 +50,7 @@ export const useResetPassword = () => {
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as boolean,
-    mutateAsync: async ({
-      organizationName,
-      password,
-      resetToken,
-    }: ResetPasswordProps) => {
+    mutateAsync: async ({ organizationName, password, resetToken }: ResetPasswordProps) => {
       try {
         await mutation.mutateAsync({ organizationName, password, resetToken });
       } catch {

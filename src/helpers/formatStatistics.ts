@@ -1,4 +1,4 @@
-import { ApiStatistics, HomeStatistics } from "types";
+import { ApiStatistics, HomeStatistics } from "@/types";
 
 export const formatStatistics = (statistics: ApiStatistics): HomeStatistics => {
   return {

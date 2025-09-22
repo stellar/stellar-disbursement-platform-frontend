@@ -1,5 +1,5 @@
-import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
-import { UserRole } from "types";
+import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+import { UserRole } from "@/types";
 
 interface ShowForRolesProps {
   acceptedRoles: UserRole[];

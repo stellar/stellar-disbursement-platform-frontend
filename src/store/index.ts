@@ -2,16 +2,16 @@ import { configureStore, isPlain, createAction } from "@reduxjs/toolkit";
 import { combineReducers, Action, Reducer } from "redux";
 import { BigNumber } from "bignumber.js";
 
-import { RESET_STORE_ACTION_TYPE } from "constants/settings";
+import { RESET_STORE_ACTION_TYPE } from "@/constants/settings";
 
-import { reducer as disbursementDetails } from "store/ducks/disbursementDetails";
-import { reducer as disbursementDrafts } from "store/ducks/disbursementDrafts";
-import { reducer as disbursements } from "store/ducks/disbursements";
-import { reducer as organization } from "store/ducks/organization";
-import { reducer as profile } from "store/ducks/profile";
-import { reducer as userAccount } from "store/ducks/userAccount";
-import { reducer as apiKeys } from "store/ducks/apiKeys";
-import { reducer as apiKeyDetails } from "store/ducks/apiKeyDetails";
+import { reducer as disbursementDetails } from "@/store/ducks/disbursementDetails";
+import { reducer as disbursementDrafts } from "@/store/ducks/disbursementDrafts";
+import { reducer as disbursements } from "@/store/ducks/disbursements";
+import { reducer as organization } from "@/store/ducks/organization";
+import { reducer as profile } from "@/store/ducks/profile";
+import { reducer as userAccount } from "@/store/ducks/userAccount";
+import { reducer as apiKeys } from "@/store/ducks/apiKeys";
+import { reducer as apiKeyDetails } from "@/store/ducks/apiKeyDetails";
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

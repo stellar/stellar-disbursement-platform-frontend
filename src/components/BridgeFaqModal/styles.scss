@@ -1,0 +1,67 @@
+.BridgeFaqModal {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__intro {
+    p {
+      margin: 0;
+      color: var(--sds-clr-gray-11);
+      line-height: 1.5;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+
+  &__item {
+    padding: 1rem;
+    border: 1px solid var(--sds-clr-gray-03);
+    border-radius: 4px;
+    background: var(--sds-clr-gray-08);
+  }
+
+  &__question {
+    margin: 0 0 0.75rem 0;
+    color: var(--sds-clr-gray-12);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  &__answer {
+    margin: 0;
+    color: var(--sds-clr-gray-11);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  &__footer {
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--sds-clr-gray-02);
+
+    p {
+      margin: 0;
+      color: var(--sds-clr-gray-10);
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+  }
+
+  &__link {
+    color: var(--sds-clr-lilac-11);
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      color: var(--sds-clr-lilac-12);
+      text-decoration: underline;
+    }
+  }
+}

@@ -1,7 +1,7 @@
-import { API_URL } from "constants/envVariables";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { handleSearchParams } from "api/handleSearchParams";
-import { Export } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { handleSearchParams } from "@/api/handleSearchParams";
+import { Export } from "@/types";
 
 export const getExport = async <T>(
   token: string,

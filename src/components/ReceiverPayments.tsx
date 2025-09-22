@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Heading, Select } from "@stellar/design-system";
 
-import { PAGE_LIMIT_OPTIONS } from "constants/settings";
+import { PAGE_LIMIT_OPTIONS } from "@/constants/settings";
 
-import { SectionHeader } from "components/SectionHeader";
-import { PaymentsTable } from "components/PaymentsTable";
-import { Pagination } from "components/Pagination";
+import { SectionHeader } from "@/components/SectionHeader";
+import { PaymentsTable } from "@/components/PaymentsTable";
+import { Pagination } from "@/components/Pagination";
 
-import { usePayments } from "apiQueries/usePayments";
-import { renderTextWithCount } from "helpers/renderTextWithCount";
+import { usePayments } from "@/apiQueries/usePayments";
+import { renderTextWithCount } from "@/helpers/renderTextWithCount";
 
 export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,9 +27,7 @@ export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {
 
   const maxPages = receiverPayments?.pagination?.pages || 1;
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const handlePageLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
     setCurrentPage(1);
     setPageLimit(Number(event.target.value));
@@ -40,12 +38,8 @@ export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {
       <SectionHeader>
         <SectionHeader.Row>
           <SectionHeader.Content>
-            <Heading as="h3" size="sm">
-              {renderTextWithCount(
-                receiverPayments?.pagination?.total || 0,
-                "Payment",
-                "Payments",
-              )}
+            <Heading as="h3" size="xs">
+              {renderTextWithCount(receiverPayments?.pagination?.total || 0, "Payment", "Payments")}
             </Heading>
           </SectionHeader.Content>
 
@@ -53,7 +47,7 @@ export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {
             <div className="FiltersWithSearch__pageLimit">
               <Select
                 id="receiver-payments-page-limit"
-                fieldSize="sm"
+                fieldSize="md"
                 value={pageLimit}
                 onChange={handlePageLimitChange}
               >

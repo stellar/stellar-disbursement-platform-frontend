@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import Papa from "papaparse";
 
 type CSVTotalAmountProps = {
   csvFile?: File;
@@ -12,32 +13,53 @@ export const csvTotalAmount = ({
   if (!csvFile) return Promise.resolve(null);
 
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsText(csvFile);
+    Papa.parse(csvFile, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (result) => {
+        try {
+          if (result.errors.length > 0) {
+            reject(new Error(`CSV parsing error: ${result.errors[0].message}`));
+            return;
+          }
 
-    reader.onload = () => {
-      try {
-        const csvRows = reader.result?.toString();
-        if (!csvRows) return;
+          const data = result.data as Record<string, string>[];
+          if (data.length === 0) {
+            resolve(new BigNumber(0));
+            return;
+          }
 
-        const [header, ...rows] = csvRows.split("\n");
-        const amountIndex = header.split(",").indexOf(columnName);
-        if (amountIndex === -1) return;
+          // Check if the column exists
+          const headerRow = data[0];
+          if (!(columnName in headerRow)) {
+            reject(new Error(`Column "${columnName}" not found in CSV`));
+            return;
+          }
 
-        const totalAmount = rows.reduce((accumulator, line) => {
-          return !line
-            ? accumulator
-            : accumulator.plus(BigNumber(line.split(",")[amountIndex]));
-        }, BigNumber(0));
+          let totalAmount = new BigNumber(0);
 
-        resolve(totalAmount);
-      } catch (error) {
-        reject(error);
-      }
-    };
+          for (const row of data) {
+            const amountValue = row[columnName];
+            if (!amountValue || amountValue.trim() === "") continue;
 
-    reader.onerror = (error) => {
-      reject(error);
-    };
+            try {
+              const amount = new BigNumber(amountValue.trim());
+              if (!amount.isNaN() && amount.isFinite()) {
+                totalAmount = totalAmount.plus(amount);
+              }
+            } catch {
+              // Skipping invalid amount.
+            }
+          }
+
+          resolve(totalAmount);
+        } catch (error) {
+          reject(error);
+        }
+      },
+      error: (error) => {
+        reject(new Error(`Failed to parse CSV: ${error.message}`));
+      },
+    });
   });
 };

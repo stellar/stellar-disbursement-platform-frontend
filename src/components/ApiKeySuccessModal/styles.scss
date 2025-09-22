@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "../../styles/styles-utils.scss" as *;
 
 .ApiKeySuccessModal {
   &__header {
@@ -8,7 +8,7 @@
   }
 
   &__successIcon {
-    color: var(--color-green-60);
+    color: var(--sds-clr-green-11);
   }
 
   &__keyContainer {
@@ -26,7 +26,7 @@
 
   &__keyInput {
     height: 44px;
-    font-family: var(--font-family-monospace);
+    font-family: var(--sds-ff-monospace);
     outline: none;
   }
 }

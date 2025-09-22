@@ -19,7 +19,7 @@ export const NotificationWithButtons = React.forwardRef<
 >(({ variant, title, icon, buttons, children }, ref) => {
   return (
     <div ref={ref} className="NotificationWithButtons__wrapper">
-      <Notification variant={variant} title={title} icon={icon}>
+      <Notification variant={variant} title={title} icon={icon} isFilled={true}>
         <div>{children}</div>
 
         {buttons && (

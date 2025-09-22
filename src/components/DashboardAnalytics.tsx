@@ -1,22 +1,17 @@
 import { Card, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "components/InfoTooltip";
-import { AssetAmount } from "components/AssetAmount";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { AssetAmount } from "@/components/AssetAmount";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useStatistics } from "apiQueries/useStatistics";
-import { percent } from "helpers/formatIntlNumber";
-import { renderNumberOrDash } from "helpers/renderNumberOrDash";
-import { useRedux } from "hooks/useRedux";
+import { useStatistics } from "@/apiQueries/useStatistics";
+import { percent } from "@/helpers/formatIntlNumber";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+import { useRedux } from "@/hooks/useRedux";
 
 export const DashboardAnalytics = () => {
   const { userAccount } = useRedux("userAccount");
 
-  const {
-    data: stats,
-    error,
-    isLoading,
-    isFetching,
-  } = useStatistics(userAccount.isAuthenticated);
+  const { data: stats, error, isLoading, isFetching } = useStatistics(userAccount.isAuthenticated);
 
   const calculateRate = () => {
     if (!stats) return 0;
@@ -29,7 +24,7 @@ export const DashboardAnalytics = () => {
 
   if (error) {
     return (
-      <Notification variant="error" title="Error">
+      <Notification variant="error" title="Error" isFilled={true}>
         <ErrorWithExtras appError={error} />
       </Notification>
     );
@@ -56,44 +51,34 @@ export const DashboardAnalytics = () => {
               </InfoTooltip>
             </div>
             {/* TODO: add chart */}
-            <div className="StatCards__card__unit">{`${percent.format(
-              calculateRate(),
-            )}`}</div>
+            <div className="StatCards__card__unit">{`${percent.format(calculateRate())}`}</div>
           </div>
 
           <div>
             <div className="StatCards__card__column">
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Successful payments
-                </label>
+                <label className="StatCards__card__item__label">Successful payments</label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(stats?.paymentsSuccessfulCounts)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Failed payments
-                </label>
+                <label className="StatCards__card__item__label">Failed payments</label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(stats?.paymentsFailedCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Canceled payments
-                </label>
+                <label className="StatCards__card__item__label">Canceled payments</label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(stats?.paymentsCanceledCount)}
                 </div>
               </div>
 
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Remaining payments
-                </label>
+                <label className="StatCards__card__item__label">Remaining payments</label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(stats?.paymentsRemainingCount)}
                 </div>
@@ -128,10 +113,7 @@ export const DashboardAnalytics = () => {
               {stats?.assets.map((a) => (
                 <div className="StatCards__card--flexCols" key={a.assetCode}>
                   <div>
-                    <AssetAmount
-                      amount={a.success || "0"}
-                      assetCode={a.assetCode}
-                    />
+                    <AssetAmount amount={a.success || "0"} assetCode={a.assetCode} />
                   </div>
                   <div>
                     <AssetAmount amount={a.average} assetCode={a.assetCode} />
@@ -143,9 +125,7 @@ export const DashboardAnalytics = () => {
 
           <div className="StatCards__card__column">
             <div className="StatCards__card__item StatCards__card__item--inline">
-              <label className="StatCards__card__item__label">
-                Individuals
-              </label>
+              <label className="StatCards__card__item__label">Individuals</label>
               <div className="StatCards__card__item__value">
                 {renderNumberOrDash(stats?.individualsTotalCount)}
               </div>

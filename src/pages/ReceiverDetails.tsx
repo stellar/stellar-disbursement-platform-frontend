@@ -11,31 +11,31 @@ import {
   Modal,
 } from "@stellar/design-system";
 
-import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
+import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
-import { CopyWithIcon } from "components/CopyWithIcon";
-import { AssetAmount } from "components/AssetAmount";
-import { InfoTooltip } from "components/InfoTooltip";
-import { ReceiverWalletBalance } from "components/ReceiverWalletBalance";
-import { ReceiverWalletHistory } from "components/ReceiverWalletHistory";
-import { LoadingContent } from "components/LoadingContent";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { ReceiverPayments } from "components/ReceiverPayments";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { AssetAmount } from "@/components/AssetAmount";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { ReceiverPayments } from "@/components/ReceiverPayments";
+import { ReceiverWalletBalance } from "@/components/ReceiverWalletBalance";
+import { ReceiverWalletHistory } from "@/components/ReceiverWalletHistory";
+import { SectionHeader } from "@/components/SectionHeader";
 
-import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
-import { useReceiverWalletInviteSmsRetry } from "apiQueries/useReceiverWalletInviteSmsRetry";
-import { useUpdateReceiverWalletStatus } from "apiQueries/useUpdateReceiverWalletStatus";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { useReceiverWalletInviteSmsRetry } from "@/apiQueries/useReceiverWalletInviteSmsRetry";
+import { useUpdateReceiverWalletStatus } from "@/apiQueries/useUpdateReceiverWalletStatus";
 
-import { percent } from "helpers/formatIntlNumber";
-import { renderNumberOrDash } from "helpers/renderNumberOrDash";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { shortenAccountKey } from "helpers/shortenAccountKey";
-import { renderTextWithCount } from "helpers/renderTextWithCount";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { percent } from "@/helpers/formatIntlNumber";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+import { renderTextWithCount } from "@/helpers/renderTextWithCount";
+import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 
-import { ReceiverDetails as ReceiverDetailsType, ReceiverWallet } from "types";
+import { ReceiverDetails as ReceiverDetailsType, ReceiverWallet } from "@/types";
 
 export const ReceiverDetails = () => {
   const { id: receiverId } = useParams();
@@ -157,8 +157,8 @@ export const ReceiverDetails = () => {
   const renderRetryInvitationButton = () => {
     return (
       <Button
-        variant="secondary"
-        size="xs"
+        variant="tertiary"
+        size="md"
         onClick={(e) => {
           e.preventDefault();
           retryReceiverInvitation();
@@ -177,8 +177,8 @@ export const ReceiverDetails = () => {
   const renderUnregisterWalletButton = () => {
     return (
       <Button
-        variant="secondary"
-        size="xs"
+        variant="tertiary"
+        size="md"
         onClick={showUnregisterModal}
         isLoading={isUnregisterWalletPending}
         title="Unregister this wallet"
@@ -408,7 +408,7 @@ export const ReceiverDetails = () => {
                     <div className="StatCards__card__item__value">
                       {selectedWallet.stellarAddress ? (
                         <Profile
-                          size="sm"
+                          size="md"
                           publicAddress={selectedWallet.stellarAddress}
                           isCopy
                           isShort
@@ -509,7 +509,7 @@ export const ReceiverDetails = () => {
 
     if (receiverDetailsError || !receiverDetails) {
       return (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras appError={receiverDetailsError || { message: GENERIC_ERROR_MESSAGE }} />
         </Notification>
       );
@@ -540,8 +540,8 @@ export const ReceiverDetails = () => {
                 </Heading>
               </SectionHeader.Content>
               <Button
-                variant="secondary"
-                size="xs"
+                variant="tertiary"
+                size="md"
                 type="reset"
                 onClick={(e) => {
                   e.preventDefault();
@@ -560,7 +560,7 @@ export const ReceiverDetails = () => {
           <SectionHeader>
             <SectionHeader.Row>
               <SectionHeader.Content>
-                <Heading as="h3" size="sm">
+                <Heading as="h3" size="xs">
                   Wallets
                 </Heading>
               </SectionHeader.Content>
@@ -603,8 +603,8 @@ export const ReceiverDetails = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            variant="secondary"
-            size="sm"
+            variant="tertiary"
+            size="md"
             onClick={hideUnregisterModal}
             isLoading={isUnregisterWalletPending}
           >
@@ -612,7 +612,7 @@ export const ReceiverDetails = () => {
           </Button>
           <Button
             variant="destructive"
-            size="sm"
+            size="md"
             onClick={(event) => {
               event.preventDefault();
 

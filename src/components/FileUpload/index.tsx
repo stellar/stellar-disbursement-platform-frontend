@@ -74,9 +74,7 @@ export const FileUpload = ({
             })
             .join(" or ");
 
-          setErrorMessage(
-            `Wrong format. Please upload a ${acceptedTypeString} file.`,
-          );
+          setErrorMessage(`Wrong format. Please upload a ${acceptedTypeString} file.`);
           return;
         }
 
@@ -131,7 +129,7 @@ export const FileUpload = ({
     <div ref={dropareaElRef} className={containerClasses}>
       {uploadButton ? (
         <div className="FileUpload__button">
-          {cloneElement(uploadButton, {
+          {cloneElement(uploadButton as React.ReactElement<any>, {
             onChange: handleChange,
             disabled: Boolean(disabled),
           })}
@@ -141,9 +139,7 @@ export const FileUpload = ({
       <div className="FileUpload__info">
         {extraInfo ? extraInfo : null}
         {errorMessage ? (
-          <div className="FileUpload__message FileUpload__message--error">
-            {errorMessage}
-          </div>
+          <div className="FileUpload__message FileUpload__message--error">{errorMessage}</div>
         ) : (
           <div className="FileUpload__message">{infoMessage}</div>
         )}

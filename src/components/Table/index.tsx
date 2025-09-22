@@ -1,5 +1,5 @@
 import { Icon, Loader } from "@stellar/design-system";
-import { SortDirection } from "types";
+import { SortDirection } from "@/types";
 import "./styles.scss";
 
 interface HeaderProps {
@@ -84,14 +84,9 @@ interface BodyRowProps {
   isHighlighted?: boolean;
 }
 
-const BodyRow: React.FC<BodyRowProps> = ({
-  children,
-  isHighlighted,
-}: BodyRowProps) => {
+const BodyRow: React.FC<BodyRowProps> = ({ children, isHighlighted }: BodyRowProps) => {
   return (
-    <tr {...(isHighlighted ? { className: "Table-v2__row--highlighted" } : {})}>
-      {children}
-    </tr>
+    <tr {...(isHighlighted ? { className: "Table-v2__row--highlighted" } : {})}>{children}</tr>
   );
 };
 
@@ -154,10 +149,7 @@ export const Table: React.FC<TableProps> & TableComponent = ({
 }: TableProps) => {
   return (
     <div
-      className={[
-        "Table-v2__container",
-        isLoading ? "Table-v2__container--loading" : "",
-      ].join(" ")}
+      className={["Table-v2__container", isLoading ? "Table-v2__container--loading" : ""].join(" ")}
     >
       <div className="Table-v2__wrapper" data-scrollable={isScrollable}>
         <table className="Table-v2">{children}</table>

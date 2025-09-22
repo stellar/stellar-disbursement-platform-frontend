@@ -1,8 +1,8 @@
 import { Card, Heading } from "@stellar/design-system";
 
-import { Table } from "components/Table";
+import { Table } from "@/components/Table";
 
-import { API_KEY_FIELD_DESCRIPTIONS } from "constants/apiKeyDescriptionFields";
+import { API_KEY_FIELD_DESCRIPTIONS } from "@/constants/apiKeyDescriptionFields";
 
 import "./styles.scss";
 
@@ -10,7 +10,7 @@ export const ApiKeysDescription = () => {
   return (
     <Card>
       <div className="ApiKeysDescription__header">
-        <Heading as="h3" size="sm">
+        <Heading as="h3" size="xs">
           Available API Fields
         </Heading>
       </div>

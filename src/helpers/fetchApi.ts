@@ -1,10 +1,10 @@
 import { differenceInMinutes, fromUnixTime } from "date-fns";
-import { refreshToken } from "api/refreshToken";
-import { SESSION_EXPIRED_EVENT } from "constants/settings";
-import { localStorageSessionToken } from "helpers/localStorageSessionToken";
-import { parseJwt } from "helpers/parseJwt";
-import { normalizeApiError } from "helpers/normalizeApiError";
-import { AnyObject } from "types";
+import { refreshToken } from "@/api/refreshToken";
+import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { parseJwt } from "@/helpers/parseJwt";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { AnyObject } from "@/types";
 import { getSdpTenantName } from "./getSdpTenantName";
 
 type FetchApiOptions = {
@@ -47,9 +47,7 @@ export const fetchApi = async (
       "SDP-Tenant-Name": getSdpTenantName(options?.organizationName),
       ...(!options?.omitContentType
         ? {
-            "Content-Type":
-              (config?.headers as AnyObject)?.["Content-Type"] ??
-              "application/json",
+            "Content-Type": (config?.headers as AnyObject)?.["Content-Type"] ?? "application/json",
           }
         : {}),
     };

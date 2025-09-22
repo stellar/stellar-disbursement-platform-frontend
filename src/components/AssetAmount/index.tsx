@@ -1,7 +1,7 @@
-import { decimal } from "helpers/formatIntlNumber";
-import UsdcLogoSrc from "assets/logo-usdc.png";
-import EurocLogoSrc from "assets/logo-euroc.png";
-import XlmLogoSrc from "assets/logo-xlm.png";
+import { decimal } from "@/helpers/formatIntlNumber";
+import UsdcLogoSrc from "@/assets/logo-usdc.png";
+import EurocLogoSrc from "@/assets/logo-euroc.png";
+import XlmLogoSrc from "@/assets/logo-xlm.png";
 import "./styles.scss";
 
 interface AssetAmountProps {
@@ -41,14 +41,10 @@ export const AssetAmount: React.FC<AssetAmountProps> = ({
   return (
     <span className="AssetAmount">
       {decimal.format(Number(amount))}
-      {assetCode ? (
-        <span className="AssetAmount__code">{assetCode}</span>
-      ) : null}
+      {assetCode ? <span className="AssetAmount__code">{assetCode}</span> : null}
       {showIcon ? (
         <span className="AssetAmount__icon">
-          {foundAsset ? (
-            <img src={foundAsset.image} alt={`${foundAsset.code} icon`} />
-          ) : null}
+          {foundAsset ? <img src={foundAsset.image} alt={`${foundAsset.code} icon`} /> : null}
         </span>
       ) : null}
     </span>

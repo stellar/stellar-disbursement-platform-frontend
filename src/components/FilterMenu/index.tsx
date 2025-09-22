@@ -24,10 +24,7 @@ export const FilterMenu: React.FC<FilterMenuProps> = ({
   const handleClickOutside = useCallback((event: MouseEvent) => {
     const target = event.target as Node;
 
-    if (
-      contentRef?.current?.contains(target) ||
-      buttonRef?.current?.contains(target)
-    ) {
+    if (contentRef?.current?.contains(target) || buttonRef?.current?.contains(target)) {
       return;
     }
 
@@ -46,9 +43,7 @@ export const FilterMenu: React.FC<FilterMenuProps> = ({
     };
   }, [isOpen, handleClickOutside]);
 
-  const toggleOpen = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const toggleOpen = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     setIsOpen(!isOpen);
   };
@@ -69,12 +64,7 @@ export const FilterMenu: React.FC<FilterMenuProps> = ({
     <Floater
       triggerEl={
         <div ref={buttonRef}>
-          <Button
-            variant="secondary"
-            size="sm"
-            icon={<Icon.Filter />}
-            onClick={toggleOpen}
-          >
+          <Button variant="tertiary" size="md" icon={<Icon.FilterLines />} onClick={toggleOpen}>
             Filter
           </Button>
         </div>
@@ -83,29 +73,14 @@ export const FilterMenu: React.FC<FilterMenuProps> = ({
       isVisible={isOpen}
       isContrast={false}
     >
-      <form
-        ref={contentRef}
-        className="FilterMenu"
-        onSubmit={handleSubmit}
-        onReset={handleReset}
-      >
+      <form ref={contentRef} className="FilterMenu" onSubmit={handleSubmit} onReset={handleReset}>
         <div className="FilterMenu__inputs">{children}</div>
 
         <div className="FilterMenu__buttons">
-          <Button
-            size="sm"
-            variant="secondary"
-            type="reset"
-            disabled={isResetDisabled}
-          >
+          <Button size="md" variant="tertiary" type="reset" disabled={isResetDisabled}>
             Reset
           </Button>
-          <Button
-            size="sm"
-            variant="primary"
-            type="submit"
-            disabled={isSubmitDisabled}
-          >
+          <Button size="md" variant="primary" type="submit" disabled={isSubmitDisabled}>
             Apply
           </Button>
         </div>

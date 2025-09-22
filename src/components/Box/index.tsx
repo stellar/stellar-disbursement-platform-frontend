@@ -17,14 +17,7 @@ export const Box = ({
   children: React.ReactElement | React.ReactElement[] | null;
   addlClassName?: string;
   direction?: "column" | "row" | "column-reverse" | "row-reverse";
-  justify?:
-    | "center"
-    | "space-between"
-    | "space-around"
-    | "end"
-    | "left"
-    | "right"
-    | "baseline";
+  justify?: "center" | "space-between" | "space-around" | "end" | "left" | "right" | "baseline";
   align?: "center" | "end" | "start" | "baseline" | "stretch";
 }) => {
   const customStyle = {

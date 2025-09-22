@@ -2,20 +2,19 @@ import { useEffect } from "react";
 import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useUpdateOrgMemoTrackingEnabled } from "apiQueries/useUpdateOrgMemoTrackingEnabled";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
-import { getOrgInfoAction } from "store/ducks/organization";
+import { useUpdateOrgMemoTrackingEnabled } from "@/apiQueries/useUpdateOrgMemoTrackingEnabled";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { getOrgInfoAction } from "@/store/ducks/organization";
 
 export const SettingsEnableMemoTracking = () => {
   const { organization } = useRedux("organization");
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isPending, error, isSuccess } =
-    useUpdateOrgMemoTrackingEnabled();
+  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgMemoTrackingEnabled();
 
   useEffect(() => {
     if (isSuccess) {
@@ -42,14 +41,14 @@ export const SettingsEnableMemoTracking = () => {
                 checked={Boolean(organization.data.isMemoTracingEnabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
+                fieldSize="sm"
               />
             </div>
           </div>
           <div className="Note">
-            When enabled, payments will include an organization-specific memo if
-            the receiver's wallet doesn't have an associated memo. This memo is
-            derived from your server URL and will update if the URL changes
-            (e.g. <code>sdp-100680ad546c</code>).
+            When enabled, payments will include an organization-specific memo if the receiver's
+            wallet doesn't have an associated memo. This memo is derived from your server URL and
+            will update if the URL changes (e.g. <code>sdp-100680ad546c</code>).
           </div>
         </div>
       </div>
@@ -59,7 +58,7 @@ export const SettingsEnableMemoTracking = () => {
   return (
     <>
       {error ? (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras appError={error} />
         </Notification>
       ) : null}

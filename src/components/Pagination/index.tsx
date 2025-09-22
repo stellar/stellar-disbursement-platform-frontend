@@ -9,12 +9,7 @@ interface PaginationProps {
   isLoading: boolean;
 }
 
-export const Pagination = ({
-  currentPage,
-  maxPages,
-  onSetPage,
-  isLoading,
-}: PaginationProps) => {
+export const Pagination = ({ currentPage, maxPages, onSetPage, isLoading }: PaginationProps) => {
   const [page, setPage] = useState<number | undefined>();
   const isError = (page || 0) > maxPages;
 
@@ -24,9 +19,7 @@ export const Pagination = ({
   };
 
   const handleBlur = (
-    event:
-      | React.FormEvent<HTMLFormElement>
-      | React.FocusEvent<HTMLInputElement>,
+    event: React.FormEvent<HTMLFormElement> | React.FocusEvent<HTMLInputElement>,
   ) => {
     event.preventDefault();
 
@@ -62,15 +55,15 @@ export const Pagination = ({
       <span>of {maxPages}</span>
       <div className="Pagination-v2__buttons">
         <Button
-          size="sm"
-          variant="secondary"
+          size="md"
+          variant="tertiary"
           icon={<Icon.ChevronLeft />}
           onClick={(event) => handlePageChange(event, "prev")}
           disabled={isError || isLoading || currentPage === 1}
         />
         <Button
-          size="sm"
-          variant="secondary"
+          size="md"
+          variant="tertiary"
           icon={<Icon.ChevronRight />}
           onClick={(event) => handlePageChange(event, "next")}
           disabled={isError || isLoading || currentPage === maxPages}

@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Icon,
-  Input,
-  Modal,
-  Select,
-  Notification,
-} from "@stellar/design-system";
-import { InfoTooltip } from "components/InfoTooltip";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { USER_ROLES_ARRAY } from "constants/settings";
-import { userRoleText } from "helpers/userRoleText";
-import { usePrevious } from "hooks/usePrevious";
-import { NewUser, UserRole } from "types";
+import { Button, Icon, Input, Modal, Select, Notification } from "@stellar/design-system";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { USER_ROLES_ARRAY } from "@/constants/settings";
+import { userRoleText } from "@/helpers/userRoleText";
+import { usePrevious } from "@/hooks/usePrevious";
+import { NewUser, UserRole } from "@/types";
 
 interface NewUserModalProps {
   visible: boolean;
@@ -71,9 +64,7 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
   };
 
   const handleChange = (
-    event:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>,
+    event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     if (errorMessage) {
       onResetQuery();
@@ -86,9 +77,7 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
   };
 
   const handleValidate = (
-    event:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>,
+    event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>,
   ) => {
     if (!event.target.value) {
       if (!formError.includes(event.target.value)) {
@@ -132,14 +121,7 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
           event.preventDefault();
 
           // Checking all fields manually to make TS happy in onSubmit method
-          if (
-            !(
-              formItems.fname &&
-              formItems.lname &&
-              formItems.email &&
-              formItems.role
-            )
-          ) {
+          if (!(formItems.fname && formItems.lname && formItems.email && formItems.role)) {
             return;
           }
 
@@ -154,7 +136,7 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
       >
         <Modal.Body>
           {errorMessage ? (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras
                 appError={{
                   message: errorMessage,
@@ -215,22 +197,17 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
               ))}
             </Select>
             <div className="RoleDescription">
-              <Icon.Key />
+              <Icon.Key01 />
               <span>{roleDescription(formItems.role)}</span>
             </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            size="sm"
-            variant="secondary"
-            type="reset"
-            isLoading={isLoading}
-          >
+          <Button size="md" variant="tertiary" type="reset" isLoading={isLoading}>
             Cancel
           </Button>
           <Button
-            size="sm"
+            size="md"
             variant="primary"
             type="submit"
             disabled={!canSubmit}

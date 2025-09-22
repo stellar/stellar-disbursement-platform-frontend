@@ -1,5 +1,5 @@
-import { SESSION_EXPIRED } from "constants/settings";
-import { ApiError } from "types";
+import { SESSION_EXPIRED } from "@/constants/settings";
+import { ApiError } from "@/types";
 
 export const handleApiResponse = async (response: Response) => {
   if (response.status === 401) {

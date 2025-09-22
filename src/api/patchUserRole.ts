@@ -1,7 +1,7 @@
-import { handleApiResponse } from "api/handleApiResponse";
-import { API_URL } from "constants/envVariables";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { UserRole } from "types";
+import { handleApiResponse } from "@/api/handleApiResponse";
+import { API_URL } from "@/constants/envVariables";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { UserRole } from "@/types";
 
 export const patchUserRole = async (
   token: string,

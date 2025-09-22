@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { getStellarTransaction } from "api/getStellarTransaction";
-import { HORIZON_URL } from "constants/envVariables";
-import { fetchStellarApi } from "helpers/fetchStellarApi";
-import { shortenAccountKey } from "helpers/shortenAccountKey";
+import { getStellarTransaction } from "@/api/getStellarTransaction";
+import { HORIZON_URL } from "@/constants/envVariables";
+import { fetchStellarApi } from "@/helpers/fetchStellarApi";
+import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import {
   ApiStellarOperationRecord,
   ApiStellarPaymentType,
   AppError,
   ReceiverWalletPayment,
-} from "types";
+} from "@/types";
 
 const ACCEPTED_TYPE: ApiStellarPaymentType[] = [
   "payment",
@@ -16,9 +16,7 @@ const ACCEPTED_TYPE: ApiStellarPaymentType[] = [
   "path_payment_strict_receive",
 ];
 
-export const useStellarAccountPayments = (
-  stellarAddress: string | undefined,
-) => {
+export const useStellarAccountPayments = (stellarAddress: string | undefined) => {
   const query = useQuery<ReceiverWalletPayment[], AppError>({
     queryKey: ["stellar", "accounts", "payments", stellarAddress],
     queryFn: async () => {
@@ -31,9 +29,7 @@ export const useStellarAccountPayments = (
         `${HORIZON_URL}/accounts/${stellarAddress}/operations?limit=20&order=desc`,
         undefined,
         {
-          notFoundMessage: `${shortenAccountKey(
-            stellarAddress,
-          )} address was not found.`,
+          notFoundMessage: `${shortenAccountKey(stellarAddress)} address was not found.`,
         },
       );
 

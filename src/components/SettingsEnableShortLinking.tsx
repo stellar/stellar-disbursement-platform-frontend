@@ -2,20 +2,19 @@ import { useEffect } from "react";
 import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useUpdateOrgShortLinkEnabled } from "apiQueries/useUpdateOrgShortLinkEnabled";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
-import { getOrgInfoAction } from "store/ducks/organization";
+import { useUpdateOrgShortLinkEnabled } from "@/apiQueries/useUpdateOrgShortLinkEnabled";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { getOrgInfoAction } from "@/store/ducks/organization";
 
 export const SettingsEnableShortLinking = () => {
   const { organization } = useRedux("organization");
 
   const dispatch: AppDispatch = useDispatch();
 
-  const { mutateAsync, isPending, error, isSuccess } =
-    useUpdateOrgShortLinkEnabled();
+  const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgShortLinkEnabled();
 
   useEffect(() => {
     if (isSuccess) {
@@ -42,13 +41,13 @@ export const SettingsEnableShortLinking = () => {
                 checked={Boolean(organization.data.isLinkShortenerEnabled)}
                 onChange={handleToggleChange}
                 disabled={isPending}
+                fieldSize="sm"
               />
             </div>
           </div>
           <div className="Note">
-            Select this option to use shorter links when inviting receivers. The
-            short link format will look like{" "}
-            <code>{organization.data.baseUrl}/r/abcd1234</code>.
+            Select this option to use shorter links when inviting receivers. The short link format
+            will look like <code>{organization.data.baseUrl}/r/abcd1234</code>.
           </div>
         </div>
       </div>
@@ -58,7 +57,7 @@ export const SettingsEnableShortLinking = () => {
   return (
     <>
       {error ? (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras appError={error} />
         </Notification>
       ) : null}

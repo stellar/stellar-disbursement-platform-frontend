@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE_SESSION_TOKEN } from "constants/settings";
+import { LOCAL_STORAGE_SESSION_TOKEN } from "@/constants/settings";
 
 export const localStorageSessionToken = {
   get: () => {

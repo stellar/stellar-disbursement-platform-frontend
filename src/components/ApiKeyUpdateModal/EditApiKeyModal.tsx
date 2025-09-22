@@ -1,21 +1,21 @@
 import { useEffect } from "react";
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
-import { ErrorWithExtras } from "components/ErrorWithExtras";
 import {
   ApiKeyFormFields,
   convertToApiPermissions,
   parseExistingPermissions,
-} from "components/ApiKeyFormFields/ApiKeyFormFields";
+} from "@/components/ApiKeyFormFields/ApiKeyFormFields";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useApiKeyForm } from "hooks/useApiKeyForm";
-import { usePrevious } from "hooks/usePrevious";
+import { useApiKeyForm } from "@/hooks/useApiKeyForm";
+import { usePrevious } from "@/hooks/usePrevious";
 
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { parseAllowedIPs } from "helpers/parseIPs";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { parseAllowedIPs } from "@/helpers/parseIPs";
 
-import { UpdateApiKeyRequest } from "api/updateApiKey";
-import { ApiKey } from "types";
+import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+import { ApiKey, AppError } from "@/types";
 
 import "./styles.scss";
 
@@ -25,7 +25,7 @@ interface EditApiKeyModalProps {
   onSubmit: (apiKeyId: string, updateData: UpdateApiKeyRequest) => void;
   onResetQuery: () => void;
   isLoading: boolean;
-  errorMessage?: string;
+  appError?: AppError;
   apiKey?: ApiKey;
 }
 
@@ -35,7 +35,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
   onSubmit,
   onResetQuery,
   isLoading,
-  errorMessage,
+  appError,
   apiKey,
 }) => {
   const {
@@ -49,7 +49,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
     isFormValid,
     resetForm,
     setForm,
-  } = useApiKeyForm({ onResetQuery, errorMessage });
+  } = useApiKeyForm({ onResetQuery, appError });
 
   const previousVisible = usePrevious(visible);
 
@@ -106,61 +106,59 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
     <Modal visible={visible} onClose={handleClose}>
       <Modal.Heading>Edit API Key</Modal.Heading>
       <form onSubmit={handleSubmit} onReset={handleClose}>
-        <Modal.Body>
-          <div className="EditApiKeyModal__description">
-            Update the permissions and IP restrictions for this API key.
-          </div>
-          {errorMessage && (
-            <Notification variant="error" title="Error">
-              <ErrorWithExtras
-                appError={{
-                  message: errorMessage,
-                }}
+        <div className="EditApiKeyModal__content">
+          <Modal.Body>
+            <div className="EditApiKeyModal__description">
+              Update the permissions and IP restrictions for this API key.
+            </div>
+            {appError && (
+              <Notification variant="error" title="Error" isFilled={true}>
+                <ErrorWithExtras appError={appError} />
+              </Notification>
+            )}
+
+            <div className="EditApiKeyModal__form">
+              <Input
+                fieldSize="sm"
+                id="name"
+                name="name"
+                type="text"
+                label="Key name"
+                value={apiKey.name}
+                disabled
+                note="Key name cannot be changed"
               />
-            </Notification>
-          )}
 
-          <div className="EditApiKeyModal__form">
-            <Input
-              fieldSize="sm"
-              id="name"
-              name="name"
-              type="text"
-              label="Key name"
-              value={apiKey.name}
-              disabled
-              note="Key name cannot be changed"
-            />
+              <Input
+                fieldSize="sm"
+                id="expiryDate"
+                name="expiryDate"
+                type="text"
+                label="Expiration date"
+                value={apiKey.expiry_date ? formatDateTime(apiKey.expiry_date) : "No expiration"}
+                disabled
+                note="Expiration date cannot be changed"
+              />
 
-            <Input
-              fieldSize="sm"
-              id="expiryDate"
-              name="expiryDate"
-              type="text"
-              label="Expiration date"
-              value={apiKey.expiry_date ? formatDateTime(apiKey.expiry_date) : "No expiration"}
-              disabled
-              note="Expiration date cannot be changed"
-            />
-
-            <ApiKeyFormFields
-              allowedIPs={formData.allowedIPs}
-              permissions={formData.permissions}
-              onAllowedIPsChange={handleAllowedIPsChange}
-              onAllowedIPsBlur={handleAllowedIPsBlur}
-              onPermissionChange={handlePermissionChange}
-              allowedIPsError={getAllowedIPsError()}
-              permissionsError={getPermissionsError()}
-            />
-          </div>
-        </Modal.Body>
+              <ApiKeyFormFields
+                allowedIPs={formData.allowedIPs}
+                permissions={formData.permissions}
+                onAllowedIPsChange={handleAllowedIPsChange}
+                onAllowedIPsBlur={handleAllowedIPsBlur}
+                onPermissionChange={handlePermissionChange}
+                allowedIPsError={getAllowedIPsError()}
+                permissionsError={getPermissionsError()}
+              />
+            </div>
+          </Modal.Body>
+        </div>
         <Modal.Footer>
-          <Button size="sm" variant="secondary" type="reset" disabled={isLoading}>
+          <Button size="md" variant="tertiary" type="reset" disabled={isLoading}>
             Cancel
           </Button>
           <Button
-            size="sm"
-            variant="tertiary"
+            size="md"
+            variant="primary"
             type="submit"
             disabled={!canSubmit}
             isLoading={isLoading}

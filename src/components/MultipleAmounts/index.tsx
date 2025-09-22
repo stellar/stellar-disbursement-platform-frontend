@@ -1,24 +1,15 @@
-import { AssetAmount } from "components/AssetAmount";
-import { DropdownMenu } from "components/DropdownMenu";
-import { AmountReceived } from "types";
+import { AssetAmount } from "@/components/AssetAmount";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { AmountReceived } from "@/types";
 import "./styles.scss";
 
-export const MultipleAmounts = ({
-  amounts,
-}: {
-  amounts?: AmountReceived[];
-}) => {
+export const MultipleAmounts = ({ amounts }: { amounts?: AmountReceived[] }) => {
   if (!amounts || amounts.length === 0) {
     return <>{"-"}</>;
   }
 
   if (amounts.length === 1) {
-    return (
-      <AssetAmount
-        amount={amounts[0].amount}
-        assetCode={amounts[0].assetCode}
-      />
-    );
+    return <AssetAmount amount={amounts[0].amount} assetCode={amounts[0].assetCode} />;
   }
 
   const firstItem = amounts[0];
@@ -27,9 +18,7 @@ export const MultipleAmounts = ({
   return (
     <div className="MultipleAmounts">
       <DropdownMenu
-        triggerEl={
-          <div className="MultipleAmounts__count">+{remainingItems.length}</div>
-        }
+        triggerEl={<div className="MultipleAmounts__count">+{remainingItems.length}</div>}
       >
         <div className="MultipleAmounts__container">
           {remainingItems.map((i) => (

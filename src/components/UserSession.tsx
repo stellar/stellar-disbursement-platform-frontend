@@ -1,24 +1,20 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { SESSION_EXPIRED_EVENT } from "constants/settings";
-import { AppDispatch, resetStoreAction } from "store";
+import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
+import { AppDispatch, resetStoreAction } from "@/store";
 import {
   setUserInfoAction,
   restoreUserSession,
   sessionExpiredAction,
-} from "store/ducks/userAccount";
-import { parseJwt } from "helpers/parseJwt";
-import { localStorageSessionToken } from "helpers/localStorageSessionToken";
-import { useRedux } from "hooks/useRedux";
-import { getProfileInfoAction } from "store/ducks/profile";
-import { getOrgInfoAction, getOrgLogoAction } from "store/ducks/organization";
+} from "@/store/ducks/userAccount";
+import { parseJwt } from "@/helpers/parseJwt";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { useRedux } from "@/hooks/useRedux";
+import { getProfileInfoAction } from "@/store/ducks/profile";
+import { getOrgInfoAction, getOrgLogoAction } from "@/store/ducks/organization";
 
 export const UserSession = () => {
-  const { userAccount, profile, organization } = useRedux(
-    "userAccount",
-    "profile",
-    "organization",
-  );
+  const { userAccount, profile, organization } = useRedux("userAccount", "profile", "organization");
   const dispatch: AppDispatch = useDispatch();
 
   const isSessionExpired = userAccount.isSessionExpired;

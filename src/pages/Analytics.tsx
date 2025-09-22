@@ -1,6 +1,6 @@
 import { Heading } from "@stellar/design-system";
-import { DashboardAnalytics } from "components/DashboardAnalytics";
-import { SectionHeader } from "components/SectionHeader";
+import { DashboardAnalytics } from "@/components/DashboardAnalytics";
+import { SectionHeader } from "@/components/SectionHeader";
 
 export const Analytics = () => {
   return (

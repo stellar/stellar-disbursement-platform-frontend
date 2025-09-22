@@ -1,4 +1,4 @@
-import { number } from "helpers/formatIntlNumber";
+import { number } from "@/helpers/formatIntlNumber";
 
 export const renderTextWithCount = (
   itemCount: number,

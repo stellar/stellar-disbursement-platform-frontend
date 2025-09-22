@@ -1,5 +1,5 @@
 import { Heading, Select, Textarea } from "@stellar/design-system";
-import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
+import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
 
 import "./styles.scss";
 
@@ -172,7 +172,6 @@ export const parseExistingPermissions = (permissions: string[]): PermissionState
     return state;
   } else if (hasReadAll) {
     state.all = "read";
-    return state;
   }
 
   const resourceMap: Record<string, keyof PermissionState> = {

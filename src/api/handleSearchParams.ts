@@ -1,5 +1,5 @@
-import { createUrlSearchParamsString } from "helpers/createUrlSearchParamsString";
-import { sanitizeObject } from "helpers/sanitizeObject";
+import { createUrlSearchParamsString } from "@/helpers/createUrlSearchParamsString";
+import { sanitizeObject } from "@/helpers/sanitizeObject";
 
 export const handleSearchParams = <T>(searchParams: T) => {
   let params = "";

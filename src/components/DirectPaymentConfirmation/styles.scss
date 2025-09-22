@@ -1,0 +1,47 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.DirectPaymentConfirmation {
+  padding: pxToRem(20px) 0;
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(12px);
+    padding: pxToRem(16px);
+    border-radius: pxToRem(6px);
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: pxToRem(8px) 0;
+    border-bottom: 1px solid var(--sds-clr-gray-04);
+  }
+
+  &__label {
+    font-weight: var(--sds-fw-medium);
+    font-size: var(--sds-fs-secondary);
+  }
+
+  &__value {
+    font-weight: var(--sds-fw-semi-bold);
+    font-size: var(--sds-fs-secondary);
+    text-align: right;
+    word-break: break-all;
+  }
+
+  &__valueProvider {
+    display: block;
+    font-weight: var(--sds-fw-medium);
+    font-size: var(--sds-fs-secondary);
+    margin-bottom: pxToRem(2px);
+  }
+
+  &__valueMemo {
+    display: block;
+    font-weight: var(--sds-fw-medium);
+    font-size: var(--sds-fs-secondary);
+    margin-top: pxToRem(2px);
+  }
+}

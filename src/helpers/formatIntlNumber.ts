@@ -1,4 +1,4 @@
-import { LOCALE } from "constants/settings";
+import { LOCALE } from "@/constants/settings";
 
 export const currency = new Intl.NumberFormat(LOCALE, {
   style: "currency",

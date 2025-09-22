@@ -1,4 +1,4 @@
-import { normalizeStellarApiError } from "helpers/normalizeStellarApiError";
+import { normalizeStellarApiError } from "@/helpers/normalizeStellarApiError";
 
 type FetchStellarApiOptions = {
   notFoundMessage?: string;

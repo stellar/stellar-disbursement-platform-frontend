@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { Link, Profile, Notification, Card } from "@stellar/design-system";
-import { Routes } from "constants/settings";
+import { Routes } from "@/constants/settings";
 
-import { AssetAmount } from "components/AssetAmount";
-import { PaymentStatus } from "components/PaymentStatus";
-import { Table } from "components/Table";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { ApiPayment } from "types";
+import { AssetAmount } from "@/components/AssetAmount";
+import { PaymentStatus } from "@/components/PaymentStatus";
+import { Table } from "@/components/Table";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { ApiPayment } from "@/types";
 
 interface PaymentsTableProps {
   paymentItems: ApiPayment[];
@@ -42,7 +42,7 @@ export const PaymentsTable = ({
 
   if (apiError) {
     return (
-      <Notification variant="error" title="Error">
+      <Notification variant="error" title="Error" isFilled={true}>
         <ErrorWithExtras
           appError={{
             message: apiError,
@@ -107,7 +107,7 @@ export const PaymentsTable = ({
                   {p.receiver_wallet?.stellar_address ? (
                     <Profile
                       publicAddress={p.receiver_wallet?.stellar_address}
-                      size="sm"
+                      size="md"
                       isCopy
                       isShort
                       hideAvatar

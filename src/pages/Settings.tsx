@@ -1,12 +1,12 @@
 import { Heading } from "@stellar/design-system";
 
-import { SectionHeader } from "components/SectionHeader";
-import { SettingsTeamMembers } from "components/SettingsTeamMembers";
-import { ReceiverInviteMessage } from "components/ReceiverInviteMessage";
-import { SettingsEnableShortLinking } from "components/SettingsEnableShortLinking";
-import { SettingsEnablePaymentCancellation } from "components/SettingsEnablePaymentCancellation";
-import { SettingsEnableReceiverInvitationRetry } from "components/SettingsEnableReceiverInvitationRetry";
-import { SettingsEnableMemoTracking } from "components/SettingsEnableMemoTracking";
+import { SectionHeader } from "@/components/SectionHeader";
+import { SettingsTeamMembers } from "@/components/SettingsTeamMembers";
+import { ReceiverInviteMessage } from "@/components/ReceiverInviteMessage";
+import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLinking";
+import { SettingsEnablePaymentCancellation } from "@/components/SettingsEnablePaymentCancellation";
+import { SettingsEnableReceiverInvitationRetry } from "@/components/SettingsEnableReceiverInvitationRetry";
+import { SettingsEnableMemoTracking } from "@/components/SettingsEnableMemoTracking";
 
 export const Settings = () => {
   return (

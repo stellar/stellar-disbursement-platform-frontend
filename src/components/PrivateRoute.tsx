@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useRedux } from "hooks/useRedux";
-import { UserRole } from "types";
+import { useRedux } from "@/hooks/useRedux";
+import { UserRole } from "@/types";
 
 export const PrivateRoute = ({
   children,
@@ -13,8 +13,7 @@ export const PrivateRoute = ({
   const location = useLocation();
 
   const isRoleRestricted = acceptedRoles && acceptedRoles?.length > 0;
-  const isRoleAllowed =
-    userAccount.role && acceptedRoles?.includes(userAccount.role as UserRole);
+  const isRoleAllowed = userAccount.role && acceptedRoles?.includes(userAccount.role as UserRole);
 
   const renderContent = () => {
     if (!isRoleRestricted || isRoleAllowed) {
