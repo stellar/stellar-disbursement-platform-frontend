@@ -2,9 +2,8 @@ import { Card, Loader, Notification, Toggle } from "@stellar/design-system";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-
 import { useUpdateOrgMfaDisabled } from "@/apiQueries/useUpdateOrgMfaDisabled";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { getOrgInfoAction } from "@/store/ducks/organization";
