@@ -409,7 +409,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             fieldSize="sm"
             value={formData.currentVerification.type}
             onChange={(e) => handleVerificationTypeChange(e.target.value)}
-            infoText="Supported verifications: PIN: 4-8 digits only, National ID Number: <50 characters, Date of Birth: YYYY-MM-DD or YYYY MM DD, Year-Month: YYYY-MM or YYYY MM"
+            infoText="Supported verifications: PIN: 4-8 alphanumeric only, National ID Number: <50 characters, Date of Birth: YYYY-MM-DD or YYYY MM DD, Year-Month: YYYY-MM or YYYY MM"
           >
             <option value="">Select type</option>
             {getAvailableVerificationTypes().map((type) => (
