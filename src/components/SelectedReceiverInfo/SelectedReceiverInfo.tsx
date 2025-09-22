@@ -1,4 +1,4 @@
-import { ApiReceiver } from "types";
+import { ApiReceiver } from "@/types";
 
 interface SelectedReceiverInfoProps {
   receiver: ApiReceiver;
@@ -23,7 +23,7 @@ export const SelectedReceiverInfo: React.FC<SelectedReceiverInfoProps> = ({ rece
       )}
       <div className="DirectPaymentCreateModal__selectedReceiver__item">
         <span className="DirectPaymentCreateModal__selectedReceiver__label">ID:</span>
-        <span>{receiver.id}</span>
+        <span>{receiver.external_id}</span>
       </div>
       {!hasContactInfo && (
         <div className="DirectPaymentCreateModal__selectedReceiver__item">

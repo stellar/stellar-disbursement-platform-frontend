@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { CsvUploadButton } from "components/CsvUploadButton";
-import { FileUpload } from "components/FileUpload";
+import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
+import { CsvUploadButton } from "@/components/CsvUploadButton";
+import { FileUpload } from "@/components/FileUpload";
 import "./styles.scss";
 
 interface CsvUploadProps {
@@ -10,11 +10,7 @@ interface CsvUploadProps {
   initFile?: File;
 }
 
-export const CsvUpload = ({
-  onChange,
-  initFile,
-  isDisabled,
-}: CsvUploadProps) => {
+export const CsvUpload = ({ onChange, initFile, isDisabled }: CsvUploadProps) => {
   const [file, setFile] = useState<File | undefined>(initFile);
 
   const handleChange = (inputFile?: File) => {
@@ -27,17 +23,10 @@ export const CsvUpload = ({
       <FileUpload
         onChange={handleChange}
         acceptedType={["text/csv"]}
-        infoMessage={
-          file ? formatUploadedFileDisplayName(file) : "or drop your file here"
-        }
+        infoMessage={file ? formatUploadedFileDisplayName(file) : "or drop your file here"}
         disabled={isDisabled}
         uploadButton={
-          <CsvUploadButton
-            size="xs"
-            variant="secondary"
-            isDisabled={Boolean(isDisabled)}
-            showIcon
-          />
+          <CsvUploadButton size="sm" variant="tertiary" isDisabled={Boolean(isDisabled)} showIcon />
         }
       />
     </div>

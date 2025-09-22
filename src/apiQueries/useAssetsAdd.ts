@@ -1,18 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { ApiAsset, AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { ApiAsset, AppError } from "@/types";
 
 type Asset = {
   assetCode: string;
   assetIssuer: string;
 };
 
-export const useAssetsAdd = ({
-  onSuccess,
-}: {
-  onSuccess: (addedAsset: ApiAsset) => void;
-}) => {
+export const useAssetsAdd = ({ onSuccess }: { onSuccess: (addedAsset: ApiAsset) => void }) => {
   const mutation = useMutation({
     mutationFn: ({ assetCode, assetIssuer }: Asset) => {
       return fetchApi(`${API_URL}/assets`, {

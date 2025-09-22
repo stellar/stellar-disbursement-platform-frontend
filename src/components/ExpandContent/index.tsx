@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Card, Icon, Title } from "@stellar/design-system";
+import { Card, Icon } from "@stellar/design-system";
+import { Title } from "@/components/Title";
 import "./styles.scss";
 
 interface ExpandContentProps {
@@ -25,15 +26,9 @@ export const ExpandContent: React.FC<ExpandContentProps> = ({
           }}
         >
           <Title size="md">{title}</Title>
-          <div className="ExpandContent__icon">
-            {isOpen ? <Icon.Remove /> : <Icon.Add />}
-          </div>
+          <div className="ExpandContent__icon">{isOpen ? <Icon.Minus /> : <Icon.Plus />}</div>
         </div>
-        <div
-          className={`ExpandContent__content ${
-            isOpen ? "ExpandContent__content--open" : ""
-          }`}
-        >
+        <div className={`ExpandContent__content ${isOpen ? "ExpandContent__content--open" : ""}`}>
           {/* Extra div is needed to handle the top padding */}
           <div>
             <div>{children}</div>

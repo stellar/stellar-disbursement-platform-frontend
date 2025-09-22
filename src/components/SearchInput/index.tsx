@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { Icon, Input, Loader } from "@stellar/design-system";
+import { FloaterPlacement, Icon, Input, Loader } from "@stellar/design-system";
 import "./styles.scss";
 
 interface SearchInputProps {
@@ -9,6 +9,8 @@ interface SearchInputProps {
   onClear: () => void;
   isLoading: boolean;
   disabled?: boolean;
+  infoText?: string;
+  tooltipPlacement?: FloaterPlacement;
 }
 
 export const SearchInput = ({
@@ -18,6 +20,8 @@ export const SearchInput = ({
   onClear,
   isLoading,
   disabled,
+  infoText,
+  tooltipPlacement,
 }: SearchInputProps) => {
   const [searchText, setSearchText] = useState("");
 
@@ -40,21 +44,19 @@ export const SearchInput = ({
   return (
     <form className="SearchInput" onSubmit={handleSubmit}>
       <Input
-        fieldSize="sm"
+        fieldSize="md"
         id={id}
         placeholder={placeholder}
         onChange={handleChange}
         value={searchText}
         type="search"
         disabled={Boolean(disabled)}
+        infoText={infoText}
+        tooltipPlacement={tooltipPlacement}
       />
 
-      <button
-        className="SearchInput__button"
-        disabled={isLoading || !searchText}
-        type="submit"
-      >
-        {isLoading ? <Loader /> : <Icon.Search />}
+      <button className="SearchInput__button" disabled={isLoading || !searchText} type="submit">
+        {isLoading ? <Loader /> : <Icon.SearchSm />}
       </button>
     </form>
   );

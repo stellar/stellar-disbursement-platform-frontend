@@ -3,22 +3,23 @@ import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/des
 import { useDispatch } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { AppDispatch } from "store";
-import { exportDataAction } from "store/ducks/dataExport";
+import { AppDispatch } from "@/store";
+import { exportDataAction } from "@/store/ducks/dataExport";
 
-import { FilterMenu } from "components/FilterMenu";
-import { Pagination } from "components/Pagination";
-import { PaymentsTable } from "components/PaymentsTable";
-import { SearchInput } from "components/SearchInput";
-import { SectionHeader } from "components/SectionHeader";
-import { DirectPaymentCreateModal } from "components/DirectPaymentCreateModal/DirectPaymentCreateModal";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { FilterMenu } from "@/components/FilterMenu";
+import { Pagination } from "@/components/Pagination";
+import { PaymentsTable } from "@/components/PaymentsTable";
+import { SearchInput } from "@/components/SearchInput";
+import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "@/components/ShowForRoles";
+import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { usePayments } from "apiQueries/usePayments";
-import { useCreateDirectPayment } from "apiQueries/useCreateDirectPayment";
-import { PAGE_LIMIT_OPTIONS } from "constants/settings";
-import { number } from "helpers/formatIntlNumber";
-import { CommonFilters, CreateDirectPaymentRequest } from "types";
+import { usePayments } from "@/apiQueries/usePayments";
+import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
+import { PAGE_LIMIT_OPTIONS } from "@/constants/settings";
+import { number } from "@/helpers/formatIntlNumber";
+import { CommonFilters, CreateDirectPaymentRequest } from "@/types";
 
 export const Payments = () => {
   const [isSearchInProgress] = useState(false);
@@ -138,14 +139,16 @@ export const Payments = () => {
           </SectionHeader.Content>
 
           <SectionHeader.Content align="right">
-            <Button
-              variant="tertiary"
-              size="sm"
-              onClick={handleCreateDirectPayment}
-              disabled={isLoading || isFetching}
-            >
-              Create Direct Payment
-            </Button>
+            <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleCreateDirectPayment}
+                disabled={isLoading || isFetching}
+              >
+                New Direct Payment
+              </Button>
+            </ShowForRoles>
           </SectionHeader.Content>
         </SectionHeader.Row>
 
@@ -211,9 +214,9 @@ export const Payments = () => {
             </FilterMenu>
 
             <Button
-              variant="secondary"
-              size="sm"
-              icon={<Icon.Download />}
+              variant="tertiary"
+              size="md"
+              icon={<Icon.Download01 />}
               onClick={handleExport}
               disabled={isLoading || isFetching}
             >
@@ -225,7 +228,7 @@ export const Payments = () => {
             <div className="FiltersWithSearch__pageLimit">
               <Select
                 id="payments-page-limit"
-                fieldSize="sm"
+                fieldSize="md"
                 value={pageLimit}
                 onChange={handlePageLimitChange}
               >
@@ -246,7 +249,7 @@ export const Payments = () => {
       </SectionHeader>
 
       {createPaymentError && (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras
             appError={{
               message: createPaymentError.message,

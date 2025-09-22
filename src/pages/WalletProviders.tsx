@@ -1,31 +1,22 @@
 import { useEffect, useState } from "react";
-import {
-  Card,
-  Heading,
-  Notification,
-  Modal,
-  Button,
-  Loader,
-} from "@stellar/design-system";
+import { Card, Heading, Notification, Modal, Button, Loader } from "@stellar/design-system";
 
-import { InfoTooltip } from "components/InfoTooltip";
-import { SectionHeader } from "components/SectionHeader";
-import { LoadingContent } from "components/LoadingContent";
-import { WalletCard } from "components/WalletCard";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { SectionHeader } from "@/components/SectionHeader";
+import { LoadingContent } from "@/components/LoadingContent";
+import { WalletCard } from "@/components/WalletCard";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useWallets } from "apiQueries/useWallets";
-import { useUpdateWallet } from "apiQueries/useUpdateWallet";
-import { useIsUserRoleAccepted } from "hooks/useIsUserRoleAccepted";
-import { ApiWallet } from "types";
+import { useWallets } from "@/apiQueries/useWallets";
+import { useUpdateWallet } from "@/apiQueries/useUpdateWallet";
+import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+import { ApiWallet } from "@/types";
 
 export const WalletProviders = () => {
   const [selectedWallet, setSelectedWallet] = useState<
     { id: string; enabled: boolean } | undefined
   >();
-  const { isRoleAccepted: canEditWalletProviders } = useIsUserRoleAccepted([
-    "owner",
-  ]);
+  const { isRoleAccepted: canEditWalletProviders } = useIsUserRoleAccepted(["owner"]);
 
   const {
     data: wallets,
@@ -113,7 +104,7 @@ export const WalletProviders = () => {
 
       <div className="CardStack">
         {walletsError || walletUpdateError ? (
-          <Notification variant="error" title="Error">
+          <Notification variant="error" title="Error" isFilled={true}>
             <ErrorWithExtras appError={walletsError || walletUpdateError} />
           </Notification>
         ) : null}
@@ -141,9 +132,8 @@ export const WalletProviders = () => {
                 </div>
                 {avalaibleWallets?.length ? (
                   <div className="Note">
-                    Make sure you agree with the wallet provider before adding
-                    them. They will also need to enable your organization before
-                    payments will succeed.
+                    Make sure you agree with the wallet provider before adding them. They will also
+                    need to enable your organization before payments will succeed.
                   </div>
                 ) : null}
 
@@ -157,8 +147,7 @@ export const WalletProviders = () => {
       {/* Enable/Disable wallet modal */}
       <Modal visible={Boolean(selectedWallet)} onClose={handleCloseModal}>
         <Modal.Heading>
-          Confirm turning {selectedWallet?.enabled ? "off" : "on"} wallet
-          provider
+          Confirm turning {selectedWallet?.enabled ? "off" : "on"} wallet provider
         </Modal.Heading>
         <form
           onSubmit={(event) => {
@@ -178,31 +167,28 @@ export const WalletProviders = () => {
               <Notification
                 variant="warning"
                 title="This will disable all new disbursements to this provider"
+                isFilled={true}
               ></Notification>
             </Modal.Body>
           ) : (
             <Modal.Body>
               <div className="Note">
-                Make sure the wallet provider knows you have added them as they
-                will have to add you in order for this to work.
+                Make sure the wallet provider knows you have added them as they will have to add you
+                in order for this to work.
               </div>
               <Notification
                 variant="warning"
                 title="This will allow ANY disbursement to this provider"
+                isFilled={true}
               ></Notification>
             </Modal.Body>
           )}
           <Modal.Footer>
-            <Button
-              size="sm"
-              variant="secondary"
-              type="reset"
-              isLoading={isWalletUpdatePending}
-            >
+            <Button size="md" variant="tertiary" type="reset" isLoading={isWalletUpdatePending}>
               Cancel
             </Button>
             <Button
-              size="sm"
+              size="md"
               variant={selectedWallet?.enabled ? "destructive" : "primary"}
               type="submit"
               isLoading={isWalletUpdatePending}

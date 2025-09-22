@@ -4,12 +4,13 @@ import {
   PermissionLevel,
   PermissionState,
   hasAnyPermissions,
-} from "components/ApiKeyFormFields/ApiKeyFormFields";
-import { validateAllowedIPs } from "helpers/validateIPs";
+} from "@/components/ApiKeyFormFields/ApiKeyFormFields";
+import { validateAllowedIPs } from "@/helpers/validateIPs";
+import { AppError } from "@/types";
 
 interface UseApiKeyFormProps {
   onResetQuery: () => void;
-  errorMessage?: string;
+  appError?: AppError;
 }
 
 export interface ApiKeyFormState {
@@ -17,7 +18,7 @@ export interface ApiKeyFormState {
   permissions: PermissionState;
 }
 
-export const useApiKeyForm = ({ onResetQuery, errorMessage }: UseApiKeyFormProps) => {
+export const useApiKeyForm = ({ onResetQuery, appError }: UseApiKeyFormProps) => {
   const [formData, setFormData] = useState<ApiKeyFormState>({
     allowedIPs: "",
     permissions: { ...INITIAL_PERMISSIONS },
@@ -30,7 +31,7 @@ export const useApiKeyForm = ({ onResetQuery, errorMessage }: UseApiKeyFormProps
 
   const handleAllowedIPsChange = useCallback(
     (value: string) => {
-      if (errorMessage) {
+      if (appError) {
         onResetQuery();
       }
       removeItemFromErrors("allowedIPs");
@@ -42,12 +43,12 @@ export const useApiKeyForm = ({ onResetQuery, errorMessage }: UseApiKeyFormProps
         allowedIPs: value,
       }));
     },
-    [errorMessage, onResetQuery, removeItemFromErrors],
+    [appError, onResetQuery, removeItemFromErrors],
   );
 
   const handlePermissionChange = useCallback(
     (resource: keyof PermissionState, level: PermissionLevel) => {
-      if (errorMessage) {
+      if (appError) {
         onResetQuery();
       }
       removeItemFromErrors("permissions");
@@ -73,7 +74,7 @@ export const useApiKeyForm = ({ onResetQuery, errorMessage }: UseApiKeyFormProps
         };
       });
     },
-    [errorMessage, onResetQuery, removeItemFromErrors],
+    [appError, onResetQuery, removeItemFromErrors],
   );
 
   const handleAllowedIPsBlur = useCallback(() => {

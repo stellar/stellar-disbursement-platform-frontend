@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import {
   ApiKeyFormFields,
   convertToApiPermissions,
-} from "components/ApiKeyFormFields/ApiKeyFormFields";
+} from "@/components/ApiKeyFormFields/ApiKeyFormFields";
 
-import { useApiKeyForm } from "hooks/useApiKeyForm";
-import { usePrevious } from "hooks/usePrevious";
+import { useApiKeyForm } from "@/hooks/useApiKeyForm";
+import { usePrevious } from "@/hooks/usePrevious";
 
-import { parseAllowedIPs } from "helpers/parseIPs";
+import { parseAllowedIPs } from "@/helpers/parseIPs";
 
-import { CreateApiKeyRequest } from "types";
+import { AppError, CreateApiKeyRequest } from "@/types";
 
 import "./styles.scss";
 
@@ -22,7 +22,7 @@ interface CreateApiKeyModalProps {
   onSubmit: (apiKeyData: CreateApiKeyRequest) => void;
   onResetQuery: () => void;
   isLoading: boolean;
-  errorMessage?: string;
+  appError?: AppError;
 }
 
 export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
@@ -31,7 +31,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
   onSubmit,
   onResetQuery,
   isLoading,
-  errorMessage,
+  appError,
 }) => {
   const [name, setName] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
@@ -47,7 +47,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
     getPermissionsError,
     isFormValid,
     resetForm,
-  } = useApiKeyForm({ onResetQuery, errorMessage });
+  } = useApiKeyForm({ onResetQuery, appError });
 
   const previousVisible = usePrevious(visible);
 
@@ -65,7 +65,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (errorMessage) {
+    if (appError) {
       onResetQuery();
     }
 
@@ -113,19 +113,15 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
   return (
     <Modal visible={visible} onClose={handleClose}>
       <Modal.Heading>Create new key</Modal.Heading>
-      <form onSubmit={handleSubmit} onReset={handleClose}>
+      <form onSubmit={handleSubmit} onReset={handleClose} className="CreateApiKeyModal__form">
         <Modal.Body>
           <div className="CreateApiKeyModal__description">
             Generate an API key for authenticating with our API.
           </div>
           <div className="CreateApiKeyModal__permissionsDivider" />
-          {errorMessage && (
-            <Notification variant="error" title="Error">
-              <ErrorWithExtras
-                appError={{
-                  message: errorMessage,
-                }}
-              />
+          {appError && (
+            <Notification variant="error" title="Error" isFilled={true}>
+              <ErrorWithExtras appError={appError} />
             </Notification>
           )}
 
@@ -167,12 +163,12 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button size="sm" variant="secondary" type="reset" disabled={isLoading}>
+          <Button size="md" variant="tertiary" type="reset" disabled={isLoading}>
             Cancel
           </Button>
           <Button
-            size="sm"
-            variant="tertiary"
+            size="md"
+            variant="primary"
             type="submit"
             disabled={!canSubmit}
             isLoading={isLoading}

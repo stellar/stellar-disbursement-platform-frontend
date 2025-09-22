@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { PartialSingleError, SingleSignOnError } from "types";
-import { signInRedirectCallback } from "helpers/singleSingOn";
-import { RootState } from "store";
-import { OIDC_USERNAME_MAPPING } from "constants/envVariables";
+import { PartialSingleError, SingleSignOnError } from "@/types";
+import { signInRedirectCallback } from "@/helpers/singleSingOn";
+import { RootState } from "@/store";
+import { OIDC_USERNAME_MAPPING } from "@/constants/envVariables";
 
 // TODO: need to confirm that this still works
 export const singleSignOnAction = createAsyncThunk<

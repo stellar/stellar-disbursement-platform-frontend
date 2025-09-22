@@ -1,7 +1,7 @@
-import { handleApiResponse } from "api/handleApiResponse";
-import { API_URL } from "constants/envVariables";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { sanitizeObject } from "helpers/sanitizeObject";
+import { handleApiResponse } from "@/api/handleApiResponse";
+import { API_URL } from "@/constants/envVariables";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { sanitizeObject } from "@/helpers/sanitizeObject";
 
 export const patchProfileInfo = async (
   token: string,

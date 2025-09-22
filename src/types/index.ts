@@ -176,7 +176,13 @@ export type JwtUser = {
   roles: UserRole[] | null;
 };
 
-export type UserRole = "owner" | "financial_controller" | "developer" | "business";
+export type UserRole =
+  | "owner"
+  | "financial_controller"
+  | "developer"
+  | "business"
+  | "initiator"
+  | "approver";
 
 export type NewUser = {
   first_name: string;
@@ -380,6 +386,7 @@ export type ReceiverVerification = {
   verificationField: string;
   value: string;
   confirmedAt?: string;
+  verificationChannel?: string | null;
 };
 
 export type ReceiverWalletBalance = {
@@ -503,6 +510,11 @@ export type ApiAsset = {
   created_at: string;
   updated_at: string;
   deleted_at?: string;
+};
+
+export type ApiAssetWithTrustline = ApiAsset & {
+  has_trustline: boolean;
+  balance: number;
 };
 
 export type ApiWallet = {
@@ -754,6 +766,7 @@ export type ApiReceiverVerification = {
   verification_field: string;
   hashed_value: string;
   confirmed_at: string;
+  verification_channel?: string | null;
 };
 
 export type ApiReceiver = {
@@ -936,6 +949,7 @@ export type ApiKeysInitialState = {
   items: ApiKey[];
   status: ActionStatus | undefined;
   errorString?: string;
+  errorExtras?: AnyObject;
 };
 
 export type ApiKeysResponse = {
@@ -961,6 +975,7 @@ export type ApiKeyDetailsInitialState = {
   details: ApiKey | null;
   status: ActionStatus | undefined;
   errorString?: string;
+  errorExtras?: AnyObject;
 };
 
 export type CreateDirectPaymentRequest = {
@@ -969,6 +984,20 @@ export type CreateDirectPaymentRequest = {
   receiver: DirectPaymentReceiver;
   wallet?: DirectPaymentWallet;
   external_payment_id?: string;
+};
+
+export type CreateReceiverRequest = {
+  email: string;
+  phone_number: string;
+  external_id: string;
+  verifications: {
+    type: string;
+    value: string;
+  }[];
+  wallets: {
+    address: string;
+    memo?: string;
+  }[];
 };
 
 export type DirectPaymentAsset = {
@@ -990,3 +1019,55 @@ export type DirectPaymentWallet = {
   id?: string;
   address?: string;
 };
+
+export interface BridgeIntegration {
+  status: BridgeIntegrationStatusType;
+  customer_id: string;
+  kyc_status: {
+    id: string;
+    type: "individual" | "business";
+    kyc_status: BridgeKYCStatusType;
+    tos_status: BridgeTOSStatusType;
+    kyc_link: string;
+    tos_link: string;
+  };
+  virtual_account?: {
+    id: string;
+    status: "activated" | "deactivated";
+    source_deposit_instructions: {
+      bank_beneficiary_name: string;
+      currency: string;
+      bank_name: string;
+      bank_address: string;
+      bank_account_number: string;
+      bank_routing_number: string;
+      payment_rails: string[];
+    };
+  };
+}
+
+export interface BridgeIntegrationUpdate {
+  status: "OPTED_IN" | "READY_FOR_DEPOSIT";
+  email?: string;
+  full_name?: string;
+  kyc_type?: "individual" | "business";
+}
+
+export type BridgeIntegrationStatusType =
+  | "NOT_ENABLED"
+  | "NOT_OPTED_IN"
+  | "OPTED_IN"
+  | "READY_FOR_DEPOSIT"
+  | "ERROR";
+
+export type BridgeKYCStatusType =
+  | "not_started"
+  | "incomplete"
+  | "awaiting_ubo"
+  | "under_review"
+  | "approved"
+  | "rejected"
+  | "paused"
+  | "offboarded";
+
+export type BridgeTOSStatusType = "pending" | "approved";

@@ -5,10 +5,14 @@
     "target": "es2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noEmit": true,
     "jsx": "react-jsx",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["vite/client", "vite-plugin-svgr/client"],
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "vite.config.ts"]
 }

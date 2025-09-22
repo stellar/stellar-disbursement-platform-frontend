@@ -1,11 +1,16 @@
-import { Button, Card, Title } from "@stellar/design-system";
-import { formatUploadedFileDisplayName } from "helpers/formatUploadedFileDisplayName";
-import { saveFile } from "helpers/saveFile";
-import { CsvUpload } from "components/CsvUpload";
-import { CsvUploadButton } from "components/CsvUploadButton";
-import { CsvPreview } from "components/CsvPreview";
-import { InfoTooltip } from "components/InfoTooltip";
-import { RegistrationContactType } from "types";
+import { Button, Card } from "@stellar/design-system";
+
+import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
+import { saveFile } from "@/helpers/saveFile";
+
+import { CsvUpload } from "@/components/CsvUpload";
+import { CsvUploadButton } from "@/components/CsvUploadButton";
+import { CsvPreview } from "@/components/CsvPreview";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { Title } from "@/components/Title";
+
+import { RegistrationContactType } from "@/types";
+
 import "./styles.scss";
 
 interface DisbursementInstructionsProps {
@@ -17,9 +22,7 @@ interface DisbursementInstructionsProps {
   verificationField: string | undefined;
 }
 
-export const DisbursementInstructions: React.FC<
-  DisbursementInstructionsProps
-> = ({
+export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> = ({
   variant,
   csvFile,
   onChange,
@@ -31,9 +34,7 @@ export const DisbursementInstructions: React.FC<
     switch (registrationContactType) {
       case "EMAIL":
       case "PHONE_NUMBER":
-        return verificationField
-          ? `${registrationContactType}_${verificationField}`
-          : "";
+        return verificationField ? `${registrationContactType}_${verificationField}` : "";
       case "EMAIL_AND_WALLET_ADDRESS":
       case "PHONE_NUMBER_AND_WALLET_ADDRESS":
         return `${registrationContactType}`;
@@ -44,9 +45,7 @@ export const DisbursementInstructions: React.FC<
 
   const csvTemplateName = getCsvTemplateName();
 
-  const handleDownloadTemplate = async (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleDownloadTemplate = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     saveFile({
       fileUrl: csvTemplateName
@@ -63,15 +62,10 @@ export const DisbursementInstructions: React.FC<
       return (
         <>
           <div className="Note">
-            Please complete all fields above before uploading a disbursement
-            file
+            Please complete all fields above before uploading a disbursement file
           </div>
 
-          <CsvUpload
-            initFile={csvFile}
-            onChange={onChange}
-            isDisabled={isDisabled}
-          />
+          <CsvUpload initFile={csvFile} onChange={onChange} isDisabled={isDisabled} />
         </>
       );
     }
@@ -115,8 +109,8 @@ export const DisbursementInstructions: React.FC<
 
         <div className="DisbursementInstructions__buttons">
           <Button
-            size="xs"
-            variant="secondary"
+            size="sm"
+            variant="tertiary"
             onClick={handleDownloadTemplate}
             disabled={!csvTemplateName}
             title={getButtonTitleText()}
@@ -126,8 +120,8 @@ export const DisbursementInstructions: React.FC<
 
           {variant === "preview" ? (
             <CsvUploadButton
-              size="xs"
-              variant="secondary"
+              size="sm"
+              variant="tertiary"
               onChange={(file) => onChange(file)}
               label={csvFile ? "Reupload CSV" : "Upload CSV"}
               isStandalone={true}

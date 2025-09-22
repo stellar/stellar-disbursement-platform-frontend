@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { AppError } from "types";
+import { API_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { AppError } from "@/types";
 
 export const useUpdateOrgMemoTrackingEnabled = () => {
   const mutation = useMutation({
