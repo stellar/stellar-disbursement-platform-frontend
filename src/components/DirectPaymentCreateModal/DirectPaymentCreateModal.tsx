@@ -12,9 +12,9 @@ import { useWallets } from "@/apiQueries/useWallets";
 import { DirectPaymentConfirmation } from "@/components/DirectPaymentConfirmation/DirectPaymentConfirmation";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { SelectedReceiverInfo } from "@/components/SelectedReceiverInfo/SelectedReceiverInfo";
-import { getEnhancedWalletErrorMessage } from "@/helpers/walletErrorMessages";
 
 import { directPayment } from "@/constants/directPayment";
+import { getEnhancedWalletErrorMessage } from "@/helpers/walletErrorMessages";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
 
 import { ApiAssetWithTrustline, ApiReceiver, CreateDirectPaymentRequest } from "@/types";
