@@ -14,6 +14,8 @@ import { useAssetsDelete } from "@/apiQueries/useAssetsDelete";
 import { parseApiError } from "@/helpers/parseApiError";
 
 import { ApiError, AccountBalanceItem } from "@/types";
+import { getNetworkTypeFromPassphrase } from "@/constants/network";
+import { useHorizonNetworkInfo } from "@/apiQueries/useHorizonNetworkInfo";
 
 import "./styles.scss";
 
@@ -57,6 +59,11 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
     data: trustlines,
     error: trustlinesError,
   } = useBalanceTrustline(balances);
+
+  const { data: networkInfo } = useHorizonNetworkInfo();
+  const networkType = networkInfo?.network_passphrase
+    ? getNetworkTypeFromPassphrase(networkInfo.network_passphrase)
+    : null;
 
   const {
     isPending: isTrustlineAddPending,
@@ -383,9 +390,9 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
         onClose={handleCloseModal}
         onSubmit={trustlineAdd}
         trustlines={trustlines}
+        networkType={networkType}
         isLoading={isTrustlineAddPending}
       />
     </>
   );
 };
-// Force rebuild

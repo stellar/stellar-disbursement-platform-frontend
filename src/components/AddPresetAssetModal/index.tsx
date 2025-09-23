@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Button, Checkbox, Modal } from "@stellar/design-system";
+import { Button, RadioButton, Modal } from "@stellar/design-system";
 
-import { Trustline } from "@/apiQueries/useBalanceTrustline";
-import { getNetworkType } from "@/constants/envVariables";
+import { Box } from "@/components/Box";
+import { Trustline } from "@/types";
+import { NetworkType } from "@/constants/network";
 
 import "./styles.scss";
 
@@ -17,6 +18,7 @@ interface AddPresetAssetModalProps {
   onClose: () => void;
   onSubmit: (asset: { assetCode: string; assetIssuer: string }) => Promise<void>;
   trustlines?: Trustline[];
+  networkType?: NetworkType | null;
   isLoading?: boolean;
 }
 
@@ -29,7 +31,7 @@ const PRESET_ASSETS: PresetAsset[] = [
   },
   {
     id: "EURC:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
-    name: "Euro Coin",
+    name: "EURC",
     network: "testnet",
   },
   // Mainnet
@@ -40,7 +42,7 @@ const PRESET_ASSETS: PresetAsset[] = [
   },
   {
     id: "EURC:GDHU6WRG4IEQXM5NZ4BMPKOXHW76MZM4Y2IEMFDVXBSDP6SJY4ITNPP2",
-    name: "Euro Coin",
+    name: "EURC",
     network: "mainnet",
   },
 ];
@@ -50,12 +52,14 @@ export const AddPresetAssetModal = ({
   onClose,
   onSubmit,
   trustlines,
+  networkType,
   isLoading = false,
 }: AddPresetAssetModalProps) => {
-  const [checkedAssets, setCheckedAssets] = useState<{ [key: string]: boolean }>({});
+  const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
 
-  const currentNetwork = getNetworkType();
-  const filteredAssets = PRESET_ASSETS.filter((asset) => asset.network === currentNetwork);
+  const filteredAssets = networkType
+    ? PRESET_ASSETS.filter((asset) => asset.network === networkType)
+    : [];
 
   const isAssetAlreadyTrustline = (asset: PresetAsset) => {
     const [code, issuer] = asset.id.split(":");
@@ -65,34 +69,24 @@ export const AddPresetAssetModal = ({
     );
   };
 
-  const handleAssetToggle = (assetId: string) => {
-    setCheckedAssets((prev) => ({
-      ...prev,
-      [assetId]: !prev[assetId],
-    }));
-  };
-
   const handleClose = () => {
-    setCheckedAssets({});
+    setSelectedAsset(null);
     onClose();
   };
 
   const handleSubmit = async () => {
-    // Add each selected asset as a trustline
-    for (const assetId of Object.keys(checkedAssets)) {
-      if (checkedAssets[assetId]) {
-        const [code, issuer] = assetId.split(":");
-        await onSubmit({
-          assetCode: code,
-          assetIssuer: issuer,
-        });
-      }
-    }
+    if (!selectedAsset) return;
 
-    setCheckedAssets({});
+    const [code, issuer] = selectedAsset.split(":");
+    await onSubmit({
+      assetCode: code,
+      assetIssuer: issuer,
+    });
+
+    setSelectedAsset(null);
   };
 
-  const hasSelectedAssets = Object.values(checkedAssets).some(Boolean);
+  const hasSelectedAsset = selectedAsset !== null;
 
   return (
     <Modal visible={isVisible} onClose={handleClose}>
@@ -102,28 +96,31 @@ export const AddPresetAssetModal = ({
           const isAlreadyTrustline = isAssetAlreadyTrustline(asset);
           const isDisabled = isLoading || isAlreadyTrustline;
           return (
-            <div
+            <Box
               key={`preset-asset-${asset.id}`}
-              className={`PresetAssetRow ${isAlreadyTrustline ? "PresetAssetRow--disabled" : ""}`}
-              onClick={() => !isDisabled && handleAssetToggle(asset.id)}
+              gap="sm"
+              direction="row"
+              align="start"
+              data-is-disabled={isAlreadyTrustline}
+              addlClassName="PresetAssetRow"
             >
-              <Checkbox
+              <RadioButton
                 fieldSize="sm"
                 id={asset.id}
+                name="preset-asset"
                 label=""
-                checked={Boolean(checkedAssets[asset.id])}
-                onChange={() => handleAssetToggle(asset.id)}
+                value={asset.id}
+                checked={selectedAsset === asset.id}
+                onChange={() => setSelectedAsset(asset.id)}
                 disabled={isDisabled}
               />
-              <div className="PresetAssetRow__asset">
-                <div className="PresetAssetRow__asset__info">
-                  <div>
-                    {asset.name} {isAlreadyTrustline ? "(Already added)" : ""}
-                  </div>
-                  <span title={asset.id}>{asset.id}</span>
+              <Box gap="xs" direction="column" addlClassName="PresetAssetRow__asset">
+                <div>
+                  {asset.name} {isAlreadyTrustline ? "(Already added)" : ""}
                 </div>
-              </div>
-            </div>
+                <span title={asset.id}>{asset.id}</span>
+              </Box>
+            </Box>
           );
         })}
       </Modal.Body>
@@ -132,7 +129,7 @@ export const AddPresetAssetModal = ({
           size="md"
           variant="primary"
           onClick={handleSubmit}
-          disabled={!hasSelectedAssets}
+          disabled={!hasSelectedAsset}
           isLoading={isLoading}
         >
           Confirm

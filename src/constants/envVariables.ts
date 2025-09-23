@@ -77,12 +77,3 @@ export const {
   OIDC_SCOPE,
   OIDC_USERNAME_MAPPING,
 } = await generateEnvConfig();
-
-// Network utilities
-export type NetworkType = "testnet" | "mainnet" | "futurenet";
-
-export const getNetworkType = (): NetworkType => {
-  if (HORIZON_URL.includes("testnet")) return "testnet";
-  if (HORIZON_URL.includes("futurenet")) return "futurenet";
-  return "mainnet";
-};
