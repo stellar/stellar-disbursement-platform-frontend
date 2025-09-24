@@ -100,7 +100,7 @@ export const AddPresetAssetModal = ({
               key={`preset-asset-${asset.id}`}
               gap="sm"
               direction="row"
-              align="start"
+              align="center"
               data-is-disabled={isAlreadyTrustline}
               addlClassName="PresetAssetRow"
             >
@@ -108,18 +108,19 @@ export const AddPresetAssetModal = ({
                 fieldSize="sm"
                 id={asset.id}
                 name="preset-asset"
-                label=""
+                label={
+                  <Box gap="xs" direction="column" addlClassName="PresetAssetRow__asset">
+                    <div>
+                      {asset.name} {isAlreadyTrustline ? "(Already added)" : ""}
+                    </div>
+                    <span title={asset.id}>{asset.id}</span>
+                  </Box>
+                }
                 value={asset.id}
                 checked={selectedAsset === asset.id}
                 onChange={() => setSelectedAsset(asset.id)}
                 disabled={isDisabled}
               />
-              <Box gap="xs" direction="column" addlClassName="PresetAssetRow__asset">
-                <div>
-                  {asset.name} {isAlreadyTrustline ? "(Already added)" : ""}
-                </div>
-                <span title={asset.id}>{asset.id}</span>
-              </Box>
             </Box>
           );
         })}
