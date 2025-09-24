@@ -7,6 +7,7 @@ import { CsvUpload } from "@/components/CsvUpload";
 import { CsvUploadButton } from "@/components/CsvUploadButton";
 import { CsvPreview } from "@/components/CsvPreview";
 import { InfoTooltip } from "@/components/InfoTooltip";
+import { ShowForRoles } from "@/components/ShowForRoles";
 import { Title } from "@/components/Title";
 
 import { RegistrationContactType } from "@/types";
@@ -118,15 +119,17 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
             Download CSV template
           </Button>
 
-          {variant === "preview" ? (
-            <CsvUploadButton
-              size="sm"
-              variant="tertiary"
-              onChange={(file) => onChange(file)}
-              label={csvFile ? "Reupload CSV" : "Upload CSV"}
-              isStandalone={true}
-            />
-          ) : null}
+          <ShowForRoles acceptedRoles={["owner", "financial_controller", "initiator"]}>
+            {variant === "preview" ? (
+              <CsvUploadButton
+                size="sm"
+                variant="tertiary"
+                onChange={(file) => onChange(file)}
+                label={csvFile ? "Reupload CSV" : "Upload CSV"}
+                isStandalone={true}
+              />
+            ) : null}
+          </ShowForRoles>
         </div>
       </div>
 
