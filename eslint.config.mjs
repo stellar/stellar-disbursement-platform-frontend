@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import reactHooks from "eslint-plugin-react-hooks";
+import importPlugin from "eslint-plugin-import";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
@@ -14,6 +15,7 @@ export default tseslint.config(
     },
     plugins: {
       "react-hooks": reactHooks,
+      "import": importPlugin,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -27,6 +29,18 @@ export default tseslint.config(
       "react/jsx-key": "off",
       "react/no-unescaped-entities": "off",
       "import/named": "off",
+      "import/order": ["error", {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc" }
+      }]
     },
   },
 );

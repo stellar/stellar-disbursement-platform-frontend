@@ -1,21 +1,19 @@
-import { useState } from "react";
 import { Button, Card, Input, Modal, Notification } from "@stellar/design-system";
+import { useState } from "react";
 
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { DropdownMenu } from "@/components/DropdownMenu";
-import { MoreMenuButton } from "@/components/MoreMenuButton";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { AddPresetAssetModal } from "@/components/AddPresetAssetModal";
-
-import { useBalanceTrustline } from "@/apiQueries/useBalanceTrustline";
 import { useAssetsAdd } from "@/apiQueries/useAssetsAdd";
 import { useAssetsDelete } from "@/apiQueries/useAssetsDelete";
-import { parseApiError } from "@/helpers/parseApiError";
-
-import { ApiError, AccountBalanceItem } from "@/types";
-import { getNetworkTypeFromPassphrase } from "@/constants/network";
+import { useBalanceTrustline } from "@/apiQueries/useBalanceTrustline";
 import { useHorizonNetworkInfo } from "@/apiQueries/useHorizonNetworkInfo";
+import { AddPresetAssetModal } from "@/components/AddPresetAssetModal";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { getNetworkTypeFromPassphrase } from "@/constants/network";
+import { parseApiError } from "@/helpers/parseApiError";
+import { ApiError, AccountBalanceItem } from "@/types";
 
 import "./styles.scss";
 

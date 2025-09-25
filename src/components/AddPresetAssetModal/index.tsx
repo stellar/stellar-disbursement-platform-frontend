@@ -1,9 +1,9 @@
-import { useState } from "react";
 import { Button, RadioButton, Modal } from "@stellar/design-system";
+import { useState } from "react";
 
 import { Box } from "@/components/Box";
-import { Trustline } from "@/types";
 import { NetworkType } from "@/constants/network";
+import { Trustline } from "@/types";
 
 import "./styles.scss";
 
