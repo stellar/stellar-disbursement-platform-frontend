@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
 import { useAllAssets } from "@/apiQueries/useAllAssets";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
 import { useSearchReceivers } from "@/apiQueries/useSearchReceivers";
 import { useWallets } from "@/apiQueries/useWallets";
 
@@ -13,6 +14,7 @@ import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { SelectedReceiverInfo } from "@/components/SelectedReceiverInfo/SelectedReceiverInfo";
 
 import { directPayment } from "@/constants/directPayment";
+import { getEnhancedWalletErrorMessage } from "@/helpers/walletErrorMessages";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
 
 import { ApiAssetWithTrustline, ApiReceiver, CreateDirectPaymentRequest } from "@/types";
@@ -50,6 +52,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [paymentDataToConfirm, setPaymentDataToConfirm] =
     useState<CreateDirectPaymentRequest | null>(null);
+  const [selectedReceiverId, setSelectedReceiverId] = useState<string | undefined>(undefined);
   const queryClient = useQueryClient();
   const debouncedReceiverSearch = useDebounce(
     formData.receiverSearch,
@@ -57,6 +60,13 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   );
   const previousVisible = usePrevious(visible);
   const { data: allAssets } = useAllAssets({ enabled: true });
+
+  // Fetch full receiver details including verifications when a receiver is selected
+  // Using dataFormat 'raw' to get raw API response without formatting
+  const { data: receiverDetailsRaw } = useReceiversReceiverId<ApiReceiver>({
+    receiverId: selectedReceiverId,
+    dataFormat: "raw",
+  });
   const selectedAsset = useMemo(
     () =>
       allAssets?.find((asset) => asset.id === formData.assetId) as
@@ -64,8 +74,13 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
         | undefined,
     [allAssets, formData.assetId],
   );
+  // Fetch wallets - for verified receivers, explicitly get only SEP-24 wallets
+  const isReceiverVerified = Boolean(formData.selectedReceiver?.verifications?.length);
   const { data: supportedWallets = [], isLoading: walletsLoading } = useWallets({
     supportedAssets: selectedAsset ? [selectedAsset.code] : [],
+    // For verified receivers, only get SEP-24 wallets (user_managed = false)
+    // For non-verified, get all wallets (undefined = no filter)
+    userManaged: isReceiverVerified ? false : undefined,
   });
   const { data: searchResults, isLoading: searchLoading } = useSearchReceivers(
     debouncedReceiverSearch,
@@ -77,6 +92,14 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     }
 
     const receiverWalletIds = formData.selectedReceiver.wallets.map((w) => w.wallet.id);
+    const isReceiverVerified = Boolean(formData.selectedReceiver.verifications?.length);
+
+    // For verified receivers with SEP-24 wallets, show all enabled SEP-24 wallets
+    // For regular receivers, only show pre-registered wallets
+    if (isReceiverVerified) {
+      return supportedWallets.filter((wallet) => wallet.enabled && !wallet.user_managed);
+    }
+
     return supportedWallets.filter(
       (wallet) => wallet.enabled && receiverWalletIds.includes(wallet.id),
     );
@@ -89,6 +112,20 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (!formData.selectedReceiver) return "Select a receiver first";
     if (isWalletFieldLoading) return "Loading compatible wallets…";
     if (filteredWallets.length === 0) return "No compatible wallets available for this receiver";
+
+    const isReceiverVerified = Boolean(formData.selectedReceiver.verifications?.length);
+    if (isReceiverVerified) {
+      const registeredCount = filteredWallets.filter((w) => {
+        const rw = formData.selectedReceiver?.wallets?.find((wr) => wr.wallet.id === w.id);
+        return rw && rw.stellar_address;
+      })?.length;
+
+      if (registeredCount === filteredWallets.length) {
+        return `${filteredWallets.length} wallet(s) available`;
+      } else {
+        return `${filteredWallets.length} wallet(s) available - Not Registered wallets will receive an invitation after payment creation`;
+      }
+    }
     return `${filteredWallets.length} compatible wallet(s) available`;
   };
 
@@ -110,8 +147,21 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       setFormErrors({});
       setShowConfirmation(false);
       setPaymentDataToConfirm(null);
+      setSelectedReceiverId(undefined);
     }
   }, [visible, previousVisible]);
+
+  useEffect(() => {
+    if (receiverDetailsRaw && formData.selectedReceiver?.id === receiverDetailsRaw.id) {
+      setFormData((prev) => ({
+        ...prev,
+        selectedReceiver: {
+          ...prev.selectedReceiver!,
+          verifications: receiverDetailsRaw.verifications || [],
+        },
+      }));
+    }
+  }, [receiverDetailsRaw, formData.selectedReceiver?.id]);
 
   const handleClose = () => {
     if (showConfirmation) {
@@ -160,6 +210,11 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
         selectedReceiver: shouldClearReceiver ? null : prev.selectedReceiver,
         walletId: "",
       }));
+
+      if (shouldClearReceiver) {
+        setSelectedReceiverId(undefined);
+      }
+
       setFormErrors((prev) => ({ ...prev, walletId: "" }));
       if (value.trim().length < directPayment.SEARCH_MIN_CHARS) {
         // Proactively remove cached results so we don't show stale data
@@ -172,6 +227,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   };
 
   const handleReceiverSelect = (receiver: ApiReceiver) => {
+    setSelectedReceiverId(receiver.id);
+
     setFormData((prev) => ({
       ...prev,
       receiverSearch: getReceiverDisplayInfo(receiver, formData.receiverSearch),
@@ -321,10 +378,27 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
 
   const renderWalletOptions = () => {
     return filteredWallets.map((wallet) => {
-      const recvWallet = formData.selectedReceiver!.wallets.find((w) => w.wallet.id === wallet.id);
+      const recvWallet = formData.selectedReceiver?.wallets?.find((w) => w.wallet.id === wallet.id);
       const addr = recvWallet?.stellar_address || "";
       const shortAddr = addr && `${addr.slice(0, 4)}…${addr.slice(-4)}`;
-      const label = `${wallet.name}${shortAddr ? ` (${shortAddr})` : ""}`;
+      const isRegistered = Boolean(recvWallet && addr);
+
+      // Show registration status and address based on wallet state
+      let label = wallet.name;
+      if (isRegistered) {
+        label = `${wallet.name} - Registered (${shortAddr})`;
+      } else if (recvWallet) {
+        // Wallet exists but no address yet - in registration process
+        label = `${wallet.name} - Not Registered (pending)`;
+      } else {
+        // Will be auto-registered for verified receivers
+        const isVerified = Boolean(formData.selectedReceiver?.verifications?.length);
+        if (isVerified && !wallet.user_managed) {
+          label = `${wallet.name} - Not Registered`;
+        } else {
+          label = `${wallet.name}`;
+        }
+      }
 
       return (
         <option key={wallet.id} value={wallet.id}>
@@ -344,7 +418,9 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
           <Modal.Body>
             {errorMessage && (
               <Notification variant="error" title="Error" isFilled={true}>
-                <ErrorWithExtras appError={{ message: errorMessage }} />
+                <ErrorWithExtras
+                  appError={{ message: getEnhancedWalletErrorMessage(errorMessage) }}
+                />
               </Notification>
             )}
             {paymentDataToConfirm && (
@@ -352,6 +428,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                 paymentData={paymentDataToConfirm}
                 selectedReceiver={formData.selectedReceiver}
                 receiverSearch={formData.receiverSearch}
+                selectedWalletInfo={supportedWallets.find((w) => w.id === formData.walletId)}
               />
             )}
           </Modal.Body>
@@ -384,7 +461,9 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
             </div>
             {errorMessage && (
               <Notification variant="error" title="Error" isFilled={true}>
-                <ErrorWithExtras appError={{ message: errorMessage }} />
+                <ErrorWithExtras
+                  appError={{ message: getEnhancedWalletErrorMessage(errorMessage) }}
+                />
               </Notification>
             )}
 

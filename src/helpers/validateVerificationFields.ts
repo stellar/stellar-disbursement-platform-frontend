@@ -157,11 +157,11 @@ export const validatePin = (value: string): ValidationResult => {
     };
   }
 
-  if (!/^\d+$/.test(value)) {
+  if (!/^[a-zA-Z0-9]+$/.test(value)) {
     return {
       isValid: false,
       formattedValue: value,
-      errorMessage: "PIN must contain only digits",
+      errorMessage: "PIN must contain only alphanumeric characters",
     };
   }
 

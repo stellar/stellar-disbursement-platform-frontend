@@ -176,7 +176,13 @@ export type JwtUser = {
   roles: UserRole[] | null;
 };
 
-export type UserRole = "owner" | "financial_controller" | "developer" | "business";
+export type UserRole =
+  | "owner"
+  | "financial_controller"
+  | "developer"
+  | "business"
+  | "initiator"
+  | "approver";
 
 export type NewUser = {
   first_name: string;
@@ -1065,3 +1071,11 @@ export type BridgeKYCStatusType =
   | "offboarded";
 
 export type BridgeTOSStatusType = "pending" | "approved";
+
+export type Trustline = {
+  id: string | null;
+  code: string;
+  issuer: string;
+  balance: string;
+  isNative: boolean;
+};

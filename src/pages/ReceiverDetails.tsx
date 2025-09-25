@@ -155,12 +155,6 @@ export const ReceiverDetails = () => {
   };
 
   const renderRetryInvitationButton = () => {
-    const isWalletRegistered = Boolean(selectedWallet?.stellarAddress);
-    const hasVerificationChannel = receiverDetails?.verifications?.some(
-      (verification) => verification.verificationChannel != null,
-    );
-    const shouldDisableButton = isWalletRegistered || !hasVerificationChannel;
-
     return (
       <Button
         variant="tertiary"
@@ -170,12 +164,10 @@ export const ReceiverDetails = () => {
           retryReceiverInvitation();
         }}
         isLoading={isInvitationRetryFetching}
-        disabled={shouldDisableButton}
-        {...(isWalletRegistered
+        disabled={Boolean(selectedWallet?.stellarAddress)}
+        {...(selectedWallet?.stellarAddress
           ? { title: "This wallet has already been registered" }
-          : !hasVerificationChannel
-            ? { title: "No verification channel available for this receiver" }
-            : {})}
+          : {})}
       >
         Retry invitation message
       </Button>

@@ -19,7 +19,13 @@ import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 
 export const Home = () => {
   const { disbursements, userAccount } = useRedux("disbursements", "userAccount");
-  const { isRoleAccepted } = useIsUserRoleAccepted(["business", "financial_controller", "owner"]);
+  const { isRoleAccepted } = useIsUserRoleAccepted([
+    "business",
+    "financial_controller",
+    "owner",
+    "initiator",
+    "approver",
+  ]);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -70,7 +76,9 @@ export const Home = () => {
         <DashboardAnalytics />
       </div>
 
-      <ShowForRoles acceptedRoles={["business", "financial_controller", "owner"]}>
+      <ShowForRoles
+        acceptedRoles={["business", "financial_controller", "owner", "initiator", "approver"]}
+      >
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
@@ -82,7 +90,7 @@ export const Home = () => {
               <Button size="md" variant="tertiary" onClick={goToDisbursements}>
                 View all
               </Button>
-              <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+              <ShowForRoles acceptedRoles={["owner", "financial_controller", "initiator"]}>
                 <NewDisbursementButton />
               </ShowForRoles>
             </SectionHeader.Content>

@@ -4,11 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.1...4.1.0))
+
+### Added
+- Add initiator and approver roles with separated disbursement operations to enforce role-based workflow controls.
+  [#346](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/346)
+- Allow adding trustline from preset assets. [#350](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/350)
+- Create Direct Payment Modal: Display registered wallets and SEP24 compatible wallets. [#343](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/343)
+
+### Changed
+- Improve CSV parsing robustness in `csvTotalAmount` helper by using PapaParse library to handle edge cases. [#344](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/344)
+- Create Direct Payment Modal: Allow alphanumeric pin in Verifications. [#347](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/347)
+
+### Fixed
+- Re-enabled the retry invitation message button. [#339](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/339)
+
 ## [4.0.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.0...4.0.1))
 
 ### Changed
 
 - Using immutable data handling in React Query. [#331](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/331)
+- Re-Enabeled the retry invitation message button. [#339](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/339)
 
 ### Fixed
 
@@ -284,7 +300,7 @@ option to set different distribution account signers per tenant, as well as
 Circle support, so the tenant can choose to run their payments through the
 Circle API rather than directly on the Stellar network.
 
-> [!WARNING]  
+> [!WARNING]
 > This version is only compatible with the
 > [stellar/stellar-disbursement-platform-backend] version `2.1.0`.
 
@@ -326,7 +342,7 @@ platform simultaneously.
 
 Each organization has its own set of users, receivers, disbursements, etc.
 
-> [!WARNING]  
+> [!WARNING]
 > This version is only compatible with the
 > [stellar/stellar-disbursement-platform-backend] version 2.x.x. In order to
 > migrate from 1.x.x to 2.x.x, please consult the
