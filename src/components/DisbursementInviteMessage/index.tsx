@@ -120,10 +120,10 @@ export const DisbursementInviteMessage = ({
                 rows={5}
                 value={
                   isEditMessage
-                    ? (organization.data.receiverRegistrationMessageTemplate ?? standardOrgMessage)
-                    : (draftMessage ??
-                      organization.data.receiverRegistrationMessageTemplate ??
-                      standardOrgMessage)
+                    ? organization.data.receiverRegistrationMessageTemplate || standardOrgMessage
+                    : (draftMessage && draftMessage.trim()) ||
+                      organization.data.receiverRegistrationMessageTemplate ||
+                      standardOrgMessage
                 }
               ></Textarea>
             </div>

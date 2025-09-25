@@ -19,7 +19,13 @@ import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 
 export const Home = () => {
   const { disbursements, userAccount } = useRedux("disbursements", "userAccount");
-  const { isRoleAccepted } = useIsUserRoleAccepted(["business", "financial_controller", "owner"]);
+  const { isRoleAccepted } = useIsUserRoleAccepted([
+    "business",
+    "financial_controller",
+    "owner",
+    "initiator",
+    "approver",
+  ]);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
