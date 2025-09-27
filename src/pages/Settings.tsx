@@ -1,12 +1,14 @@
 import { Heading } from "@stellar/design-system";
 
-import { SectionHeader } from "@/components/SectionHeader";
-import { SettingsTeamMembers } from "@/components/SettingsTeamMembers";
 import { ReceiverInviteMessage } from "@/components/ReceiverInviteMessage";
-import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLinking";
+import { SectionHeader } from "@/components/SectionHeader";
+import { SettingsDisableCaptcha } from "@/components/SettingsDisableCaptcha";
+import { SettingsDisableMfa } from "@/components/SettingsDisableMfa";
+import { SettingsEnableMemoTracking } from "@/components/SettingsEnableMemoTracking";
 import { SettingsEnablePaymentCancellation } from "@/components/SettingsEnablePaymentCancellation";
 import { SettingsEnableReceiverInvitationRetry } from "@/components/SettingsEnableReceiverInvitationRetry";
-import { SettingsEnableMemoTracking } from "@/components/SettingsEnableMemoTracking";
+import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLinking";
+import { SettingsTeamMembers } from "@/components/SettingsTeamMembers";
 
 export const Settings = () => {
   return (
@@ -22,6 +24,12 @@ export const Settings = () => {
       </SectionHeader>
 
       <div className="CardStack">
+        {/* Disable MFA */}
+        <SettingsDisableMfa />
+
+        {/* Disable CAPTCHA */}
+        <SettingsDisableCaptcha />
+
         {/* Enable short link */}
         <SettingsEnableShortLinking />
 
