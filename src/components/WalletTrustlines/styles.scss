@@ -37,5 +37,6 @@
   &__button {
     display: flex;
     justify-content: flex-end;
+    gap: pxToRem(8px);
   }
 }

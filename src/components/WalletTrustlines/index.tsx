@@ -1,17 +1,18 @@
-import { useState } from "react";
 import { Button, Card, Input, Modal, Notification } from "@stellar/design-system";
+import { useState } from "react";
 
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { DropdownMenu } from "@/components/DropdownMenu";
-import { MoreMenuButton } from "@/components/MoreMenuButton";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-
-import { useBalanceTrustline } from "@/apiQueries/useBalanceTrustline";
 import { useAssetsAdd } from "@/apiQueries/useAssetsAdd";
 import { useAssetsDelete } from "@/apiQueries/useAssetsDelete";
+import { useBalanceTrustline } from "@/apiQueries/useBalanceTrustline";
+import { useHorizonNetworkInfo } from "@/apiQueries/useHorizonNetworkInfo";
+import { AddPresetAssetModal } from "@/components/AddPresetAssetModal";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { getNetworkTypeFromPassphrase } from "@/constants/network";
 import { parseApiError } from "@/helpers/parseApiError";
-
 import { ApiError, AccountBalanceItem } from "@/types";
 
 import "./styles.scss";
@@ -34,6 +35,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
 
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isRemoveModalVisible, setIsRemoveModalVisible] = useState(false);
+  const [isAddPresetAssetModalVisible, setIsAddPresetAssetModalVisible] = useState(false);
   const [formItems, setFormItems] = useState<FormItems>(initForm);
   const [formError, setFormError] = useState<string[]>([]);
   const [removeAssetId, setRemoveAssetId] = useState<string>();
@@ -55,6 +57,11 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
     data: trustlines,
     error: trustlinesError,
   } = useBalanceTrustline(balances);
+
+  const { data: networkInfo } = useHorizonNetworkInfo();
+  const networkType = networkInfo?.network_passphrase
+    ? getNetworkTypeFromPassphrase(networkInfo.network_passphrase)
+    : null;
 
   const {
     isPending: isTrustlineAddPending,
@@ -93,6 +100,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
   const handleCloseModal = () => {
     setIsAddModalVisible(false);
     setIsRemoveModalVisible(false);
+    setIsAddPresetAssetModalVisible(false);
     setFormItems(initForm);
     setFormError([]);
     setRemoveAssetId(undefined);
@@ -201,6 +209,15 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
             }}
           >
             Add trustline
+          </Button>
+          <Button
+            size="md"
+            variant="tertiary"
+            onClick={() => {
+              setIsAddPresetAssetModalVisible(true);
+            }}
+          >
+            Add from preset assets
           </Button>
         </div>
       </>
@@ -364,6 +381,16 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
           </Modal.Footer>
         </form>
       </Modal>
+
+      {/* Add preset asset modal */}
+      <AddPresetAssetModal
+        isVisible={isAddPresetAssetModalVisible}
+        onClose={handleCloseModal}
+        onSubmit={trustlineAdd}
+        trustlines={trustlines}
+        networkType={networkType}
+        isLoading={isTrustlineAddPending}
+      />
     </>
   );
 };

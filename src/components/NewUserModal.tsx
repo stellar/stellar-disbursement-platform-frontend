@@ -100,6 +100,10 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
         return "Has read access to data, can submit new disbursements, cannot manage users";
       case "owner":
         return "Has full access over disbursements and account management";
+      case "initiator":
+        return "Has read access to data, can create draft disbursements, cannot submit disbursements or manage users";
+      case "approver":
+        return "Has read access to data, can submit draft disbursements, cannot create new disbursements or manage users";
       default:
         return "Select a role to see the level of permissions";
     }

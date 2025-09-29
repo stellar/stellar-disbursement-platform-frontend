@@ -4,14 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [4.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.1...4.1.0))
 
 ### Added
 - Add initiator and approver roles with separated disbursement operations to enforce role-based workflow controls.
   [#346](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/346)
+- Allow adding trustline from preset assets. [#350](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/350)
+- Create Direct Payment Modal: Display registered wallets and SEP24 compatible wallets. [#343](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/343)
 
 ### Changed
-- Improve CSV parsing robustness in `csvTotalAmount` helper by using PapaParse library to handle edge cases.  [#344](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/344)
+- Improve CSV parsing robustness in `csvTotalAmount` helper by using PapaParse library to handle edge cases. [#344](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/344)
+- Create Direct Payment Modal: Allow alphanumeric pin in Verifications. [#347](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/347)
+
+### Fixed
+- Re-enabled the retry invitation message button. [#339](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/339)
 
 ## [4.0.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.0...4.0.1))
 

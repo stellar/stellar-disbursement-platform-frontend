@@ -1077,3 +1077,11 @@ export type BridgeKYCStatusType =
   | "offboarded";
 
 export type BridgeTOSStatusType = "pending" | "approved";
+
+export type Trustline = {
+  id: string | null;
+  code: string;
+  issuer: string;
+  balance: string;
+  isNative: boolean;
+};
