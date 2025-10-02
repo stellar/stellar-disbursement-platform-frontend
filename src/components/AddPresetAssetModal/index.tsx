@@ -30,7 +30,7 @@ const PRESET_ASSETS: PresetAsset[] = [
     network: "testnet",
   },
   {
-    id: "EURC:GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+    id: "EURC:GB3Q6QDZYTHWT7E5PVS3W7FUT5GVAFC5KSZFFLPU25GO7VTC3NM2ZTVO",
     name: "EURC",
     network: "testnet",
   },
