@@ -1,10 +1,9 @@
-import { useEffect } from "react";
 import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-
 import { useUpdateOrgMemoTrackingEnabled } from "@/apiQueries/useUpdateOrgMemoTrackingEnabled";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { getOrgInfoAction } from "@/store/ducks/organization";
@@ -46,9 +45,14 @@ export const SettingsEnableMemoTracking = () => {
             </div>
           </div>
           <div className="Note">
-            When enabled, payments will include an organization-specific memo if the receiver's
-            wallet doesn't have an associated memo. This memo is derived from your server URL and
-            will update if the URL changes (e.g. <code>sdp-100680ad546c</code>).
+            <span>
+              When enabled, payments will include an organization-specific memo if the receiver's
+              wallet doesn't have an associated memo. This memo is derived from your server URL and
+              will update if the URL changes (e.g. <code>sdp-100680ad546c</code>).
+            </span>
+            <span className="Note__emphasis">
+              Note: Memo tracing is ignored for Embedded Wallets due to memo fields not supported.
+            </span>
           </div>
         </div>
       </div>
