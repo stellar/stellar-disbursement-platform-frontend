@@ -75,6 +75,10 @@ export type OrganizationInitialState = {
     isMemoTracingEnabled: boolean;
     baseUrl: string;
     paymentCancellationPeriodDays: number;
+    mfa_enabled?: boolean;
+    captcha_enabled?: boolean;
+    mfa_disabled?: boolean;
+    captcha_disabled?: boolean;
     distributionAccount?: {
       circleWalletId?: string;
       status: string;
@@ -817,6 +821,8 @@ export type ApiOrgInfo = {
   is_memo_tracing_enabled: boolean;
   base_url: string;
   payment_cancellation_period_days: string;
+  mfa_enabled?: boolean;
+  captcha_enabled?: boolean;
   distribution_account?: {
     address?: string;
     circle_wallet_id?: string;
@@ -1071,3 +1077,11 @@ export type BridgeKYCStatusType =
   | "offboarded";
 
 export type BridgeTOSStatusType = "pending" | "approved";
+
+export type Trustline = {
+  id: string | null;
+  code: string;
+  issuer: string;
+  balance: string;
+  isNative: boolean;
+};

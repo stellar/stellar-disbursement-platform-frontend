@@ -3,6 +3,18 @@
 .DirectPaymentConfirmation {
   padding: pxToRem(20px) 0;
 
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+  }
+
+  &__notification {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(8px);
+  }
+
   &__details {
     display: flex;
     flex-direction: column;

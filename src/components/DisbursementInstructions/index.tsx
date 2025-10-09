@@ -1,14 +1,14 @@
 import { Button, Card } from "@stellar/design-system";
 
-import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
-import { saveFile } from "@/helpers/saveFile";
 
+import { CsvPreview } from "@/components/CsvPreview";
 import { CsvUpload } from "@/components/CsvUpload";
 import { CsvUploadButton } from "@/components/CsvUploadButton";
-import { CsvPreview } from "@/components/CsvPreview";
 import { InfoTooltip } from "@/components/InfoTooltip";
+import { ShowForRoles } from "@/components/ShowForRoles";
 import { Title } from "@/components/Title";
-
+import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
+import { saveFile } from "@/helpers/saveFile";
 import { RegistrationContactType } from "@/types";
 
 import "./styles.scss";
@@ -118,15 +118,17 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
             Download CSV template
           </Button>
 
-          {variant === "preview" ? (
-            <CsvUploadButton
-              size="sm"
-              variant="tertiary"
-              onChange={(file) => onChange(file)}
-              label={csvFile ? "Reupload CSV" : "Upload CSV"}
-              isStandalone={true}
-            />
-          ) : null}
+          <ShowForRoles acceptedRoles={["owner", "financial_controller", "initiator"]}>
+            {variant === "preview" ? (
+              <CsvUploadButton
+                size="sm"
+                variant="tertiary"
+                onChange={(file) => onChange(file)}
+                label={csvFile ? "Reupload CSV" : "Upload CSV"}
+                isStandalone={true}
+              />
+            ) : null}
+          </ShowForRoles>
         </div>
       </div>
 

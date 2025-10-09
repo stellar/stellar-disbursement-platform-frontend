@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { Card, RadioButton, Textarea } from "@stellar/design-system";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { InfoTooltip } from "@/components/InfoTooltip";
@@ -120,10 +120,10 @@ export const DisbursementInviteMessage = ({
                 rows={5}
                 value={
                   isEditMessage
-                    ? (organization.data.receiverRegistrationMessageTemplate ?? standardOrgMessage)
-                    : (draftMessage ??
-                      organization.data.receiverRegistrationMessageTemplate ??
-                      standardOrgMessage)
+                    ? organization.data.receiverRegistrationMessageTemplate || standardOrgMessage
+                    : (draftMessage && draftMessage.trim()) ||
+                      organization.data.receiverRegistrationMessageTemplate ||
+                      standardOrgMessage
                 }
               ></Textarea>
             </div>

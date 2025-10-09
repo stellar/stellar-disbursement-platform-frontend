@@ -1,15 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { API_URL } from "@/constants/envVariables";
 import { fetchApi } from "@/helpers/fetchApi";
-import { ApiAsset, AppError, AccountBalanceItem } from "@/types";
-
-type Trustline = {
-  id: string | null;
-  code: string;
-  issuer: string;
-  balance: string;
-  isNative: boolean;
-};
+import { ApiAsset, AppError, AccountBalanceItem, Trustline } from "@/types";
 
 export const useBalanceTrustline = (balances?: AccountBalanceItem[] | undefined) => {
   const query = useQuery<Trustline[] | undefined, AppError>({
