@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
 import { Button, Icon, Input, Modal, Select, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "@/components/InfoTooltip";
+import { useEffect, useState } from "react";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
 import { USER_ROLES_ARRAY } from "@/constants/settings";
 import { userRoleText } from "@/helpers/userRoleText";
 import { usePrevious } from "@/hooks/usePrevious";
@@ -100,6 +101,10 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
         return "Has read access to data, can submit new disbursements, cannot manage users";
       case "owner":
         return "Has full access over disbursements and account management";
+      case "initiator":
+        return "Has read access to data, can create draft disbursements, cannot submit disbursements or manage users";
+      case "approver":
+        return "Has read access to data, can submit draft disbursements, cannot create new disbursements or manage users";
       default:
         return "Select a role to see the level of permissions";
     }
