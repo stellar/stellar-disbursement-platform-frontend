@@ -1,30 +1,24 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  Icon,
-  Modal,
-  Notification,
-} from "@stellar/design-system";
+import { Button, Card, Icon, Modal, Notification } from "@stellar/design-system";
 
-import { InfoTooltip } from "components/InfoTooltip";
-import { DropdownMenu } from "components/DropdownMenu";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { Table } from "components/Table";
-import { NewUserModal } from "components/NewUserModal";
-import { LoadingContent } from "components/LoadingContent";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { Table } from "@/components/Table";
+import { NewUserModal } from "@/components/NewUserModal";
+import { LoadingContent } from "@/components/LoadingContent";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { USER_ROLES_ARRAY } from "constants/settings";
-import { userRoleText } from "helpers/userRoleText";
+import { USER_ROLES_ARRAY } from "@/constants/settings";
+import { userRoleText } from "@/helpers/userRoleText";
 
-import { useUsers } from "apiQueries/useUsers";
-import { useUpdateUserRole } from "apiQueries/useUpdateUserRole";
-import { useUpdateUserStatus } from "apiQueries/useUpdateUserStatus";
-import { useCreateNewUser } from "apiQueries/useCreateNewUser";
+import { useUsers } from "@/apiQueries/useUsers";
+import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
+import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
+import { useCreateNewUser } from "@/apiQueries/useCreateNewUser";
 
-import { ApiUser, NewUser, UserRole } from "types";
+import { ApiUser, NewUser, UserRole } from "@/types";
 
 export const SettingsTeamMembers = () => {
   const [selectedUser, setSelectedUser] = useState<ApiUser | null>(null);
@@ -160,18 +154,14 @@ export const SettingsTeamMembers = () => {
       return `Account of ${getUserNameText(
         user?.first_name,
         user?.last_name,
-      )} was updated successfully. New status is ${
-        updatedUser?.isActive ? "active" : "inactive"
-      }.`;
+      )} was updated successfully. New status is ${updatedUser?.isActive ? "active" : "inactive"}.`;
     }
 
     if (isRoleSuccess) {
       return `Account of ${getUserNameText(
         user?.first_name,
         user?.last_name,
-      )} was updated successfully. New role is ${userRoleText(
-        updatedUser?.role,
-      )}.`;
+      )} was updated successfully. New role is ${userRoleText(updatedUser?.role)}.`;
     }
 
     return "Account was updated successfully.";
@@ -205,15 +195,11 @@ export const SettingsTeamMembers = () => {
             {usersData.map((u) => (
               <Table.BodyRow key={u.id}>
                 <Table.BodyCell>
-                  {u.first_name || u.last_name
-                    ? `${u.first_name} ${u.last_name}`
-                    : u.email}
+                  {u.first_name || u.last_name ? `${u.first_name} ${u.last_name}` : u.email}
                 </Table.BodyCell>
                 <Table.BodyCell width="12rem">{u.email}</Table.BodyCell>
                 <Table.BodyCell>{userRoleText(u.roles?.[0])}</Table.BodyCell>
-                <Table.BodyCell>
-                  {u.is_active ? "Active" : "Inactive"}
-                </Table.BodyCell>
+                <Table.BodyCell>{u.is_active ? "Active" : "Inactive"}</Table.BodyCell>
                 <Table.BodyCell>
                   <div className="FlexCellRight">
                     <DropdownMenu triggerEl={<MoreMenuButton />}>
@@ -260,15 +246,13 @@ export const SettingsTeamMembers = () => {
                 }
               }}
             >
-              <Icon.PersonAdd />
+              <Icon.UserPlus02 />
             </div>
           </div>
 
           {usersError || roleError || statusError ? (
-            <Notification variant="error" title="Error">
-              <ErrorWithExtras
-                appError={usersError || roleError || statusError}
-              />
+            <Notification variant="error" title="Error" isFilled={true}>
+              <ErrorWithExtras appError={usersError || roleError || statusError} />
             </Notification>
           ) : null}
 
@@ -308,9 +292,7 @@ export const SettingsTeamMembers = () => {
                 },
               ]}
             >
-              {`Team member ${newUser.first_name} ${
-                newUser.last_name
-              } with role ${userRoleText(
+              {`Team member ${newUser.first_name} ${newUser.last_name} with role ${userRoleText(
                 newUser.roles[0],
               )} was added successfully.`}
             </NotificationWithButtons>
@@ -329,23 +311,15 @@ export const SettingsTeamMembers = () => {
           <div>
             {`Please confirm account ${
               selectedUser?.is_active ? "deactivation" : "activation"
-            } for ${getUserNameText(
-              selectedUser?.first_name,
-              selectedUser?.last_name,
-            )}.`}
+            } for ${getUserNameText(selectedUser?.first_name, selectedUser?.last_name)}.`}
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={hideModal}
-            isLoading={isStatusPending}
-          >
+          <Button size="md" variant="tertiary" onClick={hideModal} isLoading={isStatusPending}>
             Cancel
           </Button>
           <Button
-            size="sm"
+            size="md"
             variant="primary"
             onClick={() => {
               if (selectedUser?.id) {
@@ -380,16 +354,11 @@ export const SettingsTeamMembers = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={hideModal}
-            isLoading={isRolePending}
-          >
+          <Button size="md" variant="tertiary" onClick={hideModal} isLoading={isRolePending}>
             Cancel
           </Button>
           <Button
-            size="sm"
+            size="md"
             variant="primary"
             onClick={() => {
               if (selectedUser?.id && newRole) {

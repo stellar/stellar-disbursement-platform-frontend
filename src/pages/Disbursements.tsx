@@ -3,30 +3,26 @@ import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { FilterMenu } from "components/FilterMenu";
-import { DisbursementsTable } from "components/DisbursementsTable";
-import { NewDisbursementButton } from "components/NewDisbursementButton";
-import { Pagination } from "components/Pagination";
-import { SearchInput } from "components/SearchInput";
-import { SectionHeader } from "components/SectionHeader";
-import { ShowForRoles } from "components/ShowForRoles";
+import { FilterMenu } from "@/components/FilterMenu";
+import { DisbursementsTable } from "@/components/DisbursementsTable";
+import { NewDisbursementButton } from "@/components/NewDisbursementButton";
+import { Pagination } from "@/components/Pagination";
+import { SearchInput } from "@/components/SearchInput";
+import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "@/components/ShowForRoles";
 
-import {
-  PAGE_LIMIT_OPTIONS,
-  Routes,
-  UI_STATUS_DISBURSEMENT,
-} from "constants/settings";
-import { number } from "helpers/formatIntlNumber";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
+import { PAGE_LIMIT_OPTIONS, Routes, UI_STATUS_DISBURSEMENT } from "@/constants/settings";
+import { number } from "@/helpers/formatIntlNumber";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
 import {
   getDisbursementsAction,
   getDisbursementsWithParamsAction,
-} from "store/ducks/disbursements";
-import { exportDataAction } from "store/ducks/dataExport";
-import { resetDisbursementDetailsAction } from "store/ducks/disbursementDetails";
-import { setDraftIdAction } from "store/ducks/disbursementDrafts";
-import { CommonFilters, SortByDisbursements, SortDirection } from "types";
+} from "@/store/ducks/disbursements";
+import { exportDataAction } from "@/store/ducks/dataExport";
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
+import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+import { CommonFilters, SortByDisbursements, SortDirection } from "@/types";
 
 export const Disbursements = () => {
   const { disbursements } = useRedux("disbursements");
@@ -85,9 +81,7 @@ export const Disbursements = () => {
     setCurrentPage(1);
   };
 
-  const handleFilterChange = (
-    event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>,
-  ) => {
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     setFilters({
       ...filters,
       [event.target.id]: event.target.value,
@@ -117,10 +111,7 @@ export const Disbursements = () => {
     setCurrentPage(1);
   };
 
-  const handleSort = (
-    sort?: SortByDisbursements,
-    direction?: SortDirection,
-  ) => {
+  const handleSort = (sort?: SortByDisbursements, direction?: SortDirection) => {
     if (!sort || !direction || direction === "default") {
       dispatch(
         getDisbursementsWithParamsAction({
@@ -142,9 +133,7 @@ export const Disbursements = () => {
     setCurrentPage(1);
   };
 
-  const handleExport = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleExport = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
 
     if (disbursements.status === "PENDING") {
@@ -159,9 +148,7 @@ export const Disbursements = () => {
     );
   };
 
-  const handlePageLimitChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
+  const handlePageLimitChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault();
 
     const pageLimit = Number(event.target.value);
@@ -183,19 +170,20 @@ export const Disbursements = () => {
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              {disbursements.pagination?.total &&
-              disbursements.pagination.total > 0
+              {disbursements.pagination?.total && disbursements.pagination.total > 0
                 ? `${number.format(disbursements.pagination.total)} `
                 : ""}
               Disbursements
             </Heading>
           </SectionHeader.Content>
           <SectionHeader.Content align="right">
-            <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+            <ShowForRoles
+              acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
+            >
               <Button
-                variant="secondary"
-                size="sm"
-                icon={<Icon.Draft />}
+                variant="tertiary"
+                size="md"
+                icon={<Icon.Edit05 />}
                 iconPosition="right"
                 onClick={goToDrafts}
               >
@@ -264,9 +252,9 @@ export const Disbursements = () => {
             </FilterMenu>
 
             <Button
-              variant="secondary"
-              size="sm"
-              icon={<Icon.Download />}
+              variant="tertiary"
+              size="md"
+              icon={<Icon.Download01 />}
               onClick={handleExport}
               isLoading={disbursements.status === "PENDING"}
             >
@@ -278,7 +266,7 @@ export const Disbursements = () => {
             <div className="FiltersWithSearch__pageLimit">
               <Select
                 id="disbursements-page-limit"
-                fieldSize="sm"
+                fieldSize="md"
                 value={pageLimit}
                 onChange={handlePageLimitChange}
               >
@@ -293,9 +281,7 @@ export const Disbursements = () => {
               maxPages={Number(maxPages)}
               onSetPage={(page) => {
                 setCurrentPage(page);
-                dispatch(
-                  getDisbursementsWithParamsAction({ page: page.toString() }),
-                );
+                dispatch(getDisbursementsWithParamsAction({ page: page.toString() }));
               }}
               isLoading={disbursements.status === "PENDING"}
             />

@@ -1,4 +1,4 @@
-import { ApiPayment, PaymentDetails } from "types";
+import { ApiPayment, PaymentDetails } from "@/types";
 
 export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
   return {

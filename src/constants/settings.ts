@@ -1,4 +1,4 @@
-import { UserRole } from "types";
+import { UserRole } from "@/types";
 
 export const PROJECT_NAME = "stellarDisbursementPlatform";
 export const LOCALE = "en-US";
@@ -45,6 +45,8 @@ export const USER_ROLES_ARRAY: UserRole[] = [
   "financial_controller",
   "developer",
   "business",
+  "initiator",
+  "approver",
 ];
 
 export const TIME_ZONES = [

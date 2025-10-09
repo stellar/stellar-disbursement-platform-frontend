@@ -1,0 +1,48 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.BridgeStatusTracker {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: pxToRem(16px);
+  }
+
+  &__steps {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(12px);
+  }
+
+  &__step {
+    padding: pxToRem(16px);
+    border: 1px solid var(--sds-clr-gray-03);
+    border-radius: pxToRem(8px);
+    background: var(--sds-clr-white);
+  }
+
+  &__stepContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: pxToRem(16px);
+  }
+
+  &__stepInfo {
+    display: flex;
+    align-items: center;
+    gap: pxToRem(8px);
+    flex: 1;
+  }
+
+  &__stepTitle {
+    font-size: pxToRem(14px);
+    font-weight: 500;
+    line-height: pxToRem(20px);
+    color: var(--sds-clr-gray-12);
+  }
+}

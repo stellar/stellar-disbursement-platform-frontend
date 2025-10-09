@@ -1,13 +1,9 @@
 import { useState } from "react";
-import { SortDirection } from "types";
+import { SortDirection } from "@/types";
 
-export const useSort = <T>(
-  onSort?: (sort?: T, direction?: SortDirection) => void,
-) => {
+export const useSort = <T>(onSort?: (sort?: T, direction?: SortDirection) => void) => {
   const [sortBy, setSortBy] = useState<T>();
-  const [sortDir, setSortDir] = useState<SortDirection | undefined>(
-    onSort ? "default" : undefined,
-  );
+  const [sortDir, setSortDir] = useState<SortDirection | undefined>(onSort ? "default" : undefined);
 
   const handleSort = (id: T) => {
     let _sortDir: SortDirection;

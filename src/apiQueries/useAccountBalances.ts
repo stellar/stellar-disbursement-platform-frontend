@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Asset, Networks, rpc } from "@stellar/stellar-sdk";
-import { API_URL, HORIZON_URL, RPC_URL } from "constants/envVariables";
-import { fetchApi } from "helpers/fetchApi";
-import { fetchStellarApi } from "helpers/fetchStellarApi";
-import { ApiStellarAccountBalance, AppError } from "types";
+import { API_URL, HORIZON_URL, RPC_URL } from "@/constants/envVariables";
+import { fetchApi } from "@/helpers/fetchApi";
+import { fetchStellarApi } from "@/helpers/fetchStellarApi";
+import { ApiStellarAccountBalance, AppError } from "@/types";
 
 const STROOP_CONVERSION_FACTOR = 10000000;
 
@@ -23,21 +23,13 @@ const getKnownBalances = async (
   network: Networks,
 ): Promise<ApiStellarAccountBalance> => {
   const asset =
-    apiAsset.code === "XLM"
-      ? Asset.native()
-      : new Asset(apiAsset.code, apiAsset.issuer);
+    apiAsset.code === "XLM" ? Asset.native() : new Asset(apiAsset.code, apiAsset.issuer);
 
   try {
-    const balance = await rpcServer.getSACBalance(
-      stellarAddress,
-      asset,
-      network,
-    );
+    const balance = await rpcServer.getSACBalance(stellarAddress, asset, network);
 
     const balanceAmount = balance?.balanceEntry?.amount
-      ? (
-          Number(balance.balanceEntry.amount) / STROOP_CONVERSION_FACTOR
-        ).toString()
+      ? (Number(balance.balanceEntry.amount) / STROOP_CONVERSION_FACTOR).toString()
       : "0";
 
     return {

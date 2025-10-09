@@ -1,0 +1,33 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.BridgePaymentMethods {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(8px);
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(8px);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: pxToRem(8px);
+    padding: pxToRem(8px) pxToRem(12px);
+    background-color: var(--sds-clr-green-02);
+    border: 1px solid var(--sds-clr-green-06);
+    border-radius: 6px;
+    font-size: pxToRem(14px);
+    font-weight: 500;
+    color: var(--sds-clr-gray-12);
+  }
+
+  &__icon {
+    color: var(--sds-clr-green-09);
+    width: pxToRem(16px);
+    height: pxToRem(16px);
+    flex-shrink: 0;
+  }
+}

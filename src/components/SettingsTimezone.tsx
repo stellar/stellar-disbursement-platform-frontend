@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Card, Select, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "components/InfoTooltip";
-import { DropdownMenu } from "components/DropdownMenu";
-import { MoreMenuButton } from "components/MoreMenuButton";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { TIME_ZONES } from "constants/settings";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { TIME_ZONES } from "@/constants/settings";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
 import {
   updateOrgInfoAction,
   clearUpdateMessageAction,
   getOrgInfoAction,
-} from "store/ducks/organization";
+} from "@/store/ducks/organization";
 
 export const SettingsTimezone = () => {
   const { organization } = useRedux("organization");
@@ -73,7 +73,7 @@ export const SettingsTimezone = () => {
       ) : null}
 
       {organization.errorString ? (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras
             appError={{
               message: organization.errorString,
@@ -110,9 +110,7 @@ export const SettingsTimezone = () => {
                 name="timezone"
                 disabled={!isEdit}
                 note="All times will be reflected in this timezone"
-                value={
-                  isEdit ? newTimezone : organization.data.timezoneUtcOffset
-                }
+                value={isEdit ? newTimezone : organization.data.timezoneUtcOffset}
                 onChange={(event) => {
                   setNewTimezone(event.target.value);
                 }}
@@ -127,12 +125,12 @@ export const SettingsTimezone = () => {
 
             {isEdit ? (
               <div className="CardStack__buttons">
-                <Button variant="secondary" size="xs" type="reset">
+                <Button variant="tertiary" size="md" type="reset">
                   Cancel
                 </Button>
                 <Button
                   variant="primary"
-                  size="xs"
+                  size="md"
                   type="submit"
                   isLoading={organization.status === "PENDING"}
                   disabled={newTimezone === organization.data.timezoneUtcOffset}

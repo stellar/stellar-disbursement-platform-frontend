@@ -1,4 +1,4 @@
-@use "../../styles-utils.scss" as *;
+@use "../../styles/styles-utils.scss" as *;
 
 .InfoTooltip {
   display: inline-flex;
@@ -17,18 +17,18 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    color: var(--color-gray-60);
+    color: var(--sds-clr-gray-09);
 
     svg {
       display: block;
       width: pxToRem(12px);
       height: pxToRem(12px);
-      fill: currentColor;
+      stroke: currentColor;
     }
 
     @media (hover: hover) {
       &:hover {
-        color: var(--color-gray-70);
+        color: var(--sds-clr-gray-10);
       }
     }
   }

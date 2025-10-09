@@ -1,28 +1,69 @@
-import {
-  Card,
-  Heading,
-  Profile,
-  Title,
-  Notification,
-} from "@stellar/design-system";
+import { useState } from "react";
+import { Card, Heading, Profile, Notification } from "@stellar/design-system";
 
-import { InfoTooltip } from "components/InfoTooltip";
-import { SectionHeader } from "components/SectionHeader";
-import { AccountBalances } from "components/AccountBalances";
-import { WalletTrustlines } from "components/WalletTrustlines";
-import { LoadingContent } from "components/LoadingContent";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { SectionHeader } from "@/components/SectionHeader";
+import { AccountBalances } from "@/components/AccountBalances";
+import { WalletTrustlines } from "@/components/WalletTrustlines";
+import { LoadingContent } from "@/components/LoadingContent";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { BridgeIntegrationSection } from "@/components/BridgeIntegrationSection";
+import { BridgeOptInModal } from "@/components/BridgeOptInModal";
+import { Title } from "@/components/Title";
 
-import { useRedux } from "hooks/useRedux";
-import { useOrgAccountInfo } from "hooks/useOrgAccountInfo";
+import { useRedux } from "@/hooks/useRedux";
+import { useOrgAccountInfo } from "@/hooks/useOrgAccountInfo";
+import { useUpdateBridgeIntegration } from "@/apiQueries/useUpdateBridgeIntegration";
+
+import { BridgeIntegrationUpdate } from "@/types";
+import { ShowForRoles } from "./ShowForRoles";
 
 export const DistributionAccountStellar = () => {
+  const [isBridgeOptInModalVisible, setIsBridgeOptInModalVisible] = useState(false);
+
   const { organization } = useRedux("organization");
   const { distributionAccountPublicKey } = organization.data;
 
-  const { balances, fetchAccountBalances } = useOrgAccountInfo(
-    distributionAccountPublicKey,
-  );
+  const { balances, fetchAccountBalances } = useOrgAccountInfo(distributionAccountPublicKey);
+
+  const {
+    mutateAsync: updateBridgeIntegration,
+    isPending: isBridgeUpdatePending,
+    error: bridgeUpdateError,
+    reset: resetBridgeUpdate,
+  } = useUpdateBridgeIntegration();
+
+  const handleBridgeOptIn = () => {
+    setIsBridgeOptInModalVisible(true);
+  };
+
+  const handleBridgeOptInModalClose = () => {
+    setIsBridgeOptInModalVisible(false);
+    resetBridgeUpdate();
+  };
+
+  const handleBridgeOptInSubmit = async (data: BridgeIntegrationUpdate) => {
+    try {
+      const result = await updateBridgeIntegration(data);
+      // Only close modal on success
+      setIsBridgeOptInModalVisible(false);
+
+      // Redirect to KYC link if available in the response
+      if (result?.kyc_status?.kyc_link) {
+        window.open(result.kyc_status.kyc_link, "_blank", "noopener,noreferrer");
+      }
+    } catch {
+      // do nothing
+    }
+  };
+
+  const handleCreateVirtualAccount = async () => {
+    try {
+      await updateBridgeIntegration({ status: "READY_FOR_DEPOSIT" });
+    } catch {
+      // Error is handled by the mutation hook
+    }
+  };
 
   const renderContent = () => {
     if (organization.status === "PENDING") {
@@ -31,7 +72,7 @@ export const DistributionAccountStellar = () => {
 
     if (organization.errorString) {
       return (
-        <Notification variant="error" title="Error">
+        <Notification variant="error" title="Error" isFilled={true}>
           <ErrorWithExtras
             appError={{
               message: organization.errorString,
@@ -49,21 +90,15 @@ export const DistributionAccountStellar = () => {
     return (
       <>
         <div>
-          <Profile
-            publicAddress={distributionAccountPublicKey}
-            size="sm"
-            isCopy
-            hideAvatar
-          />
-          <div className="Note Note--small">
-            Add funds to your distribution account by sending Stellar-based
-            digital assets to the public key above.
+          <Profile publicAddress={distributionAccountPublicKey} size="md" isCopy hideAvatar />
+          <div className="Note">
+            Add funds to your distribution account by sending Stellar-based digital assets to the
+            public key above.
           </div>
-          <div className="Note Note--small">
-            It is strongly recommended that you only fund the distribution
-            account when you are ready to send disbursements. It is not meant to
-            be a long-term store of value, as any SDP user with permission to
-            send disbursements can trigger payments from this account.
+          <div className="Note">
+            It is strongly recommended that you only fund the distribution account when you are
+            ready to send disbursements. It is not meant to be a long-term store of value, as any
+            SDP user with permission to send disbursements can trigger payments from this account.
           </div>
         </div>
 
@@ -107,7 +142,22 @@ export const DistributionAccountStellar = () => {
             fetchAccountBalances();
           }}
         />
+
+        <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+          <BridgeIntegrationSection
+            onOptIn={handleBridgeOptIn}
+            onCreateVirtualAccount={handleCreateVirtualAccount}
+          />
+        </ShowForRoles>
       </div>
+
+      <BridgeOptInModal
+        visible={isBridgeOptInModalVisible}
+        onClose={handleBridgeOptInModalClose}
+        onSubmit={handleBridgeOptInSubmit}
+        isLoading={isBridgeUpdatePending}
+        error={bridgeUpdateError}
+      />
     </>
   );
 };

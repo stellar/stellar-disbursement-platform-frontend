@@ -3,27 +3,28 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Heading, Icon, Notification } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 
-import { getApiKey } from "api/getApiKey";
-import { UpdateApiKeyRequest } from "api/updateApiKey";
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { SectionHeader } from "components/SectionHeader";
-import { CopyWithIcon } from "components/CopyWithIcon";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { ShowForRoles } from "components/ShowForRoles";
-import { EditApiKeyModal } from "components/ApiKeyUpdateModal/EditApiKeyModal";
-import { DeleteApiKeyModal } from "components/ApiKeyDeleteModal/DeleteApiKeyModal";
-import { ValuesList } from "components/ValueList/ValueList";
-import { API_KEY_PERMISSION_RESOURCES } from "constants/apiKeyPermissions";
-import { Routes } from "constants/settings";
-import { formatDateTime } from "helpers/formatIntlDateTime";
-import { useRedux } from "hooks/useRedux";
-import { AppDispatch } from "store";
+import { getApiKey } from "@/api/getApiKey";
+import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SectionHeader } from "@/components/SectionHeader";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { ShowForRoles } from "@/components/ShowForRoles";
+import { EditApiKeyModal } from "@/components/ApiKeyUpdateModal/EditApiKeyModal";
+import { DeleteApiKeyModal } from "@/components/ApiKeyDeleteModal/DeleteApiKeyModal";
+import { ValuesList } from "@/components/ValueList/ValueList";
+import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
+import { Routes } from "@/constants/settings";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
 import {
   deleteApiKeyAction,
   updateApiKeyAction,
   clearApiKeysErrorAction,
-} from "store/ducks/apiKeys";
-import { ApiKey, UserRole } from "types";
+} from "@/store/ducks/apiKeys";
+import { ApiKey, UserRole, ApiError, AppError } from "@/types";
 
 import "./styles.scss";
 
@@ -37,7 +38,7 @@ export const ApiKeyDetails = () => {
 
   const [apiKey, setApiKey] = useState<ApiKey | undefined>();
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | undefined>();
+  const [error, setError] = useState<AppError | undefined>();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
@@ -52,7 +53,11 @@ export const ApiKeyDetails = () => {
         const keyData = await getApiKey(userAccount.token, apiKeyId);
         setApiKey(keyData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch API key details");
+        const apiError = normalizeApiError(err as ApiError);
+        setError({
+          message: `Error fetching API key details: ${apiError.message}`,
+          extras: apiError.extras,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -157,8 +162,8 @@ export const ApiKeyDetails = () => {
   const renderContent = () => {
     if (error) {
       return (
-        <Notification variant="error" title="Error">
-          <ErrorWithExtras appError={{ message: error }} />
+        <Notification variant="error" title="Error" isFilled={true}>
+          <ErrorWithExtras appError={error} />
         </Notification>
       );
     }
@@ -178,7 +183,7 @@ export const ApiKeyDetails = () => {
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
-              <Heading as="h2" size="sm">
+              <Heading as="h2" size="xs">
                 <CopyWithIcon textToCopy={apiKey.name} iconSizeRem="1.5">
                   {apiKey.name}
                 </CopyWithIcon>
@@ -186,10 +191,10 @@ export const ApiKeyDetails = () => {
             </SectionHeader.Content>
 
             <SectionHeader.Content align="right">
-              <Button variant="secondary" size="sm" icon={<Icon.Edit />} onClick={handleEditKey}>
+              <Button variant="tertiary" size="md" icon={<Icon.Edit01 />} onClick={handleEditKey}>
                 Update
               </Button>
-              <Button variant="error" size="sm" icon={<Icon.Delete />} onClick={handleDeleteKey}>
+              <Button variant="error" size="md" icon={<Icon.Delete />} onClick={handleDeleteKey}>
                 Delete
               </Button>
             </SectionHeader.Content>
@@ -326,7 +331,11 @@ export const ApiKeyDetails = () => {
         onSubmit={handleSubmitEditApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={apiKey}
       />
 
@@ -336,7 +345,11 @@ export const ApiKeyDetails = () => {
         onSubmit={handleDeleteApiKey}
         onResetQuery={handleResetQuery}
         isLoading={apiKeys.status === "PENDING"}
-        errorMessage={apiKeys.errorString}
+        appError={
+          apiKeys.errorString
+            ? { message: apiKeys.errorString, extras: apiKeys.errorExtras }
+            : undefined
+        }
         apiKey={apiKey}
       />
     </>

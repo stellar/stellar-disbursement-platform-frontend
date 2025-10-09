@@ -1,23 +1,19 @@
 import { useEffect } from "react";
 import { Banner, Icon, Link, Loader } from "@stellar/design-system";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePaymentsRetry } from "apiQueries/usePaymentsRetry";
-import { PaymentStatus } from "types";
+import { usePaymentsRetry } from "@/apiQueries/usePaymentsRetry";
+import { PaymentStatus } from "@/types";
 
 interface RetryFailedPaymentProps {
   paymentId: string;
   paymentStatus: PaymentStatus;
 }
 
-export const RetryFailedPayment = ({
-  paymentId,
-  paymentStatus,
-}: RetryFailedPaymentProps) => {
+export const RetryFailedPayment = ({ paymentId, paymentStatus }: RetryFailedPaymentProps) => {
   console.log("paymentStatus", paymentStatus);
   const isFailed = paymentStatus === "FAILED";
 
-  const { isFetching, data, isError, isSuccess, error, refetch } =
-    usePaymentsRetry([paymentId]);
+  const { isFetching, data, isError, isSuccess, error, refetch } = usePaymentsRetry([paymentId]);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -53,7 +49,7 @@ export const RetryFailedPayment = ({
                 size="sm"
                 onClick={() => refetch()}
                 isDisabled={isFetching}
-                icon={isFetching ? <Loader /> : <Icon.RefreshVert />}
+                icon={isFetching ? <Loader /> : <Icon.RefreshCcw04 />}
               >
                 Retry
               </Link>

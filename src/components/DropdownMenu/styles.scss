@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "../../styles/styles-utils.scss" as *;
 
 .DropdownMenu {
   display: flex;
@@ -11,35 +11,35 @@
     width: pxToRem(168px);
     padding: pxToRem(4px) pxToRem(8px);
     border-radius: pxToRem(4px);
-    background-color: var(--color-gray-00);
+    background-color: var(--sds-clr-gray-01);
     text-decoration: none;
-    color: var(--color-gray-80);
+    color: var(--sds-clr-gray-12);
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
-    font-weight: var(--font-weight-medium);
-    transition: all var(--anim-transition-default);
+    font-weight: var(--sds-fw-medium);
+    transition: all var(--sds-anim-transition-default);
     cursor: pointer;
 
     &--highlight {
-      color: var(--color-red-60);
+      color: var(--sds-clr-red-09);
 
       &[aria-disabled="true"] {
-        color: var(--color-red-50);
+        color: var(--sds-clr-red-08);
       }
     }
 
     @media (hover: hover) {
       &:hover {
-        background-color: var(--color-gray-10);
+        background-color: var(--sds-clr-gray-03);
 
         &[aria-disabled="true"] {
-          background-color: var(--color-gray-00);
+          background-color: var(--sds-clr-gray-02);
         }
       }
     }
 
     &--current {
-      background-color: var(--color-gray-10);
+      background-color: var(--sds-clr-gray-03);
       cursor: default;
     }
 

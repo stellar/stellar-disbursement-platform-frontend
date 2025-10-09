@@ -1,24 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Card,
-  Heading,
-  Button,
-  Input,
-  Icon,
-  Notification,
-} from "@stellar/design-system";
+import { Card, Heading, Button, Input, Icon, Notification } from "@stellar/design-system";
 
-import { useReceiversReceiverId } from "apiQueries/useReceiversReceiverId";
-import { GENERIC_ERROR_MESSAGE, Routes } from "constants/settings";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "components/Breadcrumbs";
-import { CopyWithIcon } from "components/CopyWithIcon";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
-import { InfoTooltip } from "components/InfoTooltip";
-import { LoadingContent } from "components/LoadingContent";
-import { NotificationWithButtons } from "components/NotificationWithButtons";
-import { SectionHeader } from "components/SectionHeader";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
 
 import {
   DisbursementVerificationField,
@@ -26,24 +19,23 @@ import {
   ReceiverEditFields,
   ReceiverVerification,
   VerificationFieldMap,
-} from "types";
-import { useUpdateReceiverDetails } from "apiQueries/useUpdateReceiverDetails";
+} from "@/types";
+import { useUpdateReceiverDetails } from "@/apiQueries/useUpdateReceiverDetails";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();
 
   const navigate = useNavigate();
 
-  const [receiverEditFields, setReceiverEditFields] =
-    useState<ReceiverEditFields>({
-      email: "",
-      phoneNumber: "",
-      externalId: "",
-      dateOfBirth: "",
-      yearMonth: "",
-      pin: "",
-      nationalId: "",
-    });
+  const [receiverEditFields, setReceiverEditFields] = useState<ReceiverEditFields>({
+    email: "",
+    phoneNumber: "",
+    externalId: "",
+    dateOfBirth: "",
+    yearMonth: "",
+    pin: "",
+    nationalId: "",
+  });
 
   const {
     data: receiverDetails,
@@ -66,28 +58,22 @@ export const ReceiverDetailsEdit = () => {
 
   const getReadyOnlyValue = useCallback(
     (field: DisbursementVerificationField) => {
-      return (
-        receiverDetails?.verifications.find(
-          (v) => v.verificationField === field,
-        )?.value ?? ""
-      );
+      return receiverDetails?.verifications.find((v) => v.verificationField === field)?.value ?? "";
     },
     [receiverDetails?.verifications],
   );
 
-  const isVerificationFieldSubmitted = (
-    field: DisbursementVerificationField,
-  ): boolean => {
-    const verification: ReceiverVerification | undefined =
-      receiverDetails?.verifications.find((v) => v.verificationField === field);
+  const isVerificationFieldSubmitted = (field: DisbursementVerificationField): boolean => {
+    const verification: ReceiverVerification | undefined = receiverDetails?.verifications.find(
+      (v) => v.verificationField === field,
+    );
     return verification !== undefined;
   };
 
-  const isVerificationFieldConfirmed = (
-    field: DisbursementVerificationField,
-  ): boolean => {
-    const verification: ReceiverVerification | undefined =
-      receiverDetails?.verifications.find((v) => v.verificationField === field);
+  const isVerificationFieldConfirmed = (field: DisbursementVerificationField): boolean => {
+    const verification: ReceiverVerification | undefined = receiverDetails?.verifications.find(
+      (v) => v.verificationField === field,
+    );
     return !verification ? false : verification.confirmedAt !== null;
   };
 
@@ -128,46 +114,22 @@ export const ReceiverDetailsEdit = () => {
     return newValue === oldValue ? "" : newValue;
   };
 
-  const handleReceiverEditSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
-  ) => {
+  const handleReceiverEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const {
-      email,
-      phoneNumber,
-      externalId,
-      dateOfBirth,
-      yearMonth,
-      pin,
-      nationalId,
-    } = receiverEditFields;
+    const { email, phoneNumber, externalId, dateOfBirth, yearMonth, pin, nationalId } =
+      receiverEditFields;
 
     if (receiverId) {
       try {
         await mutateAsync({
           email: emptyValueIfNotChanged(email, receiverDetails?.email ?? ""),
-          phoneNumber: emptyValueIfNotChanged(
-            phoneNumber,
-            receiverDetails?.phoneNumber ?? "",
-          ),
-          externalId: emptyValueIfNotChanged(
-            externalId,
-            receiverDetails?.orgId ?? "",
-          ),
-          dataOfBirth: emptyValueIfNotChanged(
-            dateOfBirth,
-            getReadyOnlyValue("DATE_OF_BIRTH"),
-          ),
-          yearMonth: emptyValueIfNotChanged(
-            yearMonth,
-            getReadyOnlyValue("YEAR_MONTH"),
-          ),
+          phoneNumber: emptyValueIfNotChanged(phoneNumber, receiverDetails?.phoneNumber ?? ""),
+          externalId: emptyValueIfNotChanged(externalId, receiverDetails?.orgId ?? ""),
+          dataOfBirth: emptyValueIfNotChanged(dateOfBirth, getReadyOnlyValue("DATE_OF_BIRTH")),
+          yearMonth: emptyValueIfNotChanged(yearMonth, getReadyOnlyValue("YEAR_MONTH")),
           pin: emptyValueIfNotChanged(pin, getReadyOnlyValue("PIN")),
-          nationalId: emptyValueIfNotChanged(
-            nationalId,
-            getReadyOnlyValue("NATIONAL_ID_NUMBER"),
-          ),
+          nationalId: emptyValueIfNotChanged(nationalId, getReadyOnlyValue("NATIONAL_ID_NUMBER")),
         });
       } catch {
         // do nothing
@@ -211,12 +173,8 @@ export const ReceiverDetailsEdit = () => {
 
     if (receiverDetailsError || !receiverDetails) {
       return (
-        <Notification variant="error" title="Error">
-          <ErrorWithExtras
-            appError={
-              receiverDetailsError || { message: GENERIC_ERROR_MESSAGE }
-            }
-          />
+        <Notification variant="error" title="Error" isFilled={true}>
+          <ErrorWithExtras appError={receiverDetailsError || { message: GENERIC_ERROR_MESSAGE }} />
         </Notification>
       );
     }
@@ -230,10 +188,8 @@ export const ReceiverDetailsEdit = () => {
       receiverEditFields.pin === getReadyOnlyValue("PIN") &&
       receiverEditFields.nationalId === getReadyOnlyValue("NATIONAL_ID_NUMBER");
 
-    const alreadyConfirmedText =
-      "This field was already confirmed by the user.";
-    const notConfirmedText =
-      "This field has not been confirmed by the user yet.";
+    const alreadyConfirmedText = "This field was already confirmed by the user.";
+    const notConfirmedText = "This field has not been confirmed by the user yet.";
     const dummyInputPlaceholder = "******";
 
     return (
@@ -243,18 +199,12 @@ export const ReceiverDetailsEdit = () => {
             <SectionHeader.Content>
               <Heading as="h2" size="sm">
                 {receiverDetails?.phoneNumber ? (
-                  <CopyWithIcon
-                    textToCopy={receiverDetails.phoneNumber}
-                    iconSizeRem="1.5"
-                  >
+                  <CopyWithIcon textToCopy={receiverDetails.phoneNumber} iconSizeRem="1.5">
                     {receiverDetails.phoneNumber}
                   </CopyWithIcon>
                 ) : null}
                 {receiverDetails?.email ? (
-                  <CopyWithIcon
-                    textToCopy={receiverDetails.email}
-                    iconSizeRem="1.5"
-                  >
+                  <CopyWithIcon textToCopy={receiverDetails.email} iconSizeRem="1.5">
                     {receiverDetails.email}
                   </CopyWithIcon>
                 ) : null}
@@ -265,7 +215,7 @@ export const ReceiverDetailsEdit = () => {
 
         <div className="CardStack">
           {updateError ? (
-            <Notification variant="error" title="Error">
+            <Notification variant="error" title="Error" isFilled={true}>
               <ErrorWithExtras appError={updateError} />
             </Notification>
           ) : null}
@@ -336,11 +286,7 @@ export const ReceiverDetailsEdit = () => {
                       label={
                         <InfoTooltip
                           hideTooltip={!isVerificationFieldSubmitted("PIN")}
-                          icon={
-                            isVerificationFieldConfirmed("PIN")
-                              ? "check"
-                              : "info"
-                          }
+                          icon={isVerificationFieldConfirmed("PIN") ? "check" : "info"}
                           infoText={
                             isVerificationFieldConfirmed("PIN")
                               ? alreadyConfirmedText
@@ -351,11 +297,7 @@ export const ReceiverDetailsEdit = () => {
                         </InfoTooltip>
                       }
                       fieldSize="sm"
-                      placeholder={
-                        receiverEditFields.pin === ""
-                          ? ""
-                          : dummyInputPlaceholder
-                      }
+                      placeholder={receiverEditFields.pin === "" ? "" : dummyInputPlaceholder}
                       onChange={handleDetailsChange}
                     />
                     <Input
@@ -363,13 +305,9 @@ export const ReceiverDetailsEdit = () => {
                       name="nationalId"
                       label={
                         <InfoTooltip
-                          hideTooltip={
-                            !isVerificationFieldSubmitted("NATIONAL_ID_NUMBER")
-                          }
+                          hideTooltip={!isVerificationFieldSubmitted("NATIONAL_ID_NUMBER")}
                           icon={
-                            isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
-                              ? "check"
-                              : "info"
+                            isVerificationFieldConfirmed("NATIONAL_ID_NUMBER") ? "check" : "info"
                           }
                           infoText={
                             isVerificationFieldConfirmed("NATIONAL_ID_NUMBER")
@@ -382,9 +320,7 @@ export const ReceiverDetailsEdit = () => {
                       }
                       fieldSize="sm"
                       placeholder={
-                        receiverEditFields.nationalId === ""
-                          ? ""
-                          : dummyInputPlaceholder
+                        receiverEditFields.nationalId === "" ? "" : dummyInputPlaceholder
                       }
                       onChange={handleDetailsChange}
                     />
@@ -393,14 +329,8 @@ export const ReceiverDetailsEdit = () => {
                       name="yearMonth"
                       label={
                         <InfoTooltip
-                          hideTooltip={
-                            !isVerificationFieldSubmitted("YEAR_MONTH")
-                          }
-                          icon={
-                            isVerificationFieldConfirmed("YEAR_MONTH")
-                              ? "check"
-                              : "info"
-                          }
+                          hideTooltip={!isVerificationFieldSubmitted("YEAR_MONTH")}
+                          icon={isVerificationFieldConfirmed("YEAR_MONTH") ? "check" : "info"}
                           infoText={
                             isVerificationFieldConfirmed("YEAR_MONTH")
                               ? alreadyConfirmedText
@@ -420,14 +350,8 @@ export const ReceiverDetailsEdit = () => {
                       name="dateOfBirth"
                       label={
                         <InfoTooltip
-                          hideTooltip={
-                            !isVerificationFieldSubmitted("DATE_OF_BIRTH")
-                          }
-                          icon={
-                            isVerificationFieldConfirmed("DATE_OF_BIRTH")
-                              ? "check"
-                              : "info"
-                          }
+                          hideTooltip={!isVerificationFieldSubmitted("DATE_OF_BIRTH")}
+                          icon={isVerificationFieldConfirmed("DATE_OF_BIRTH") ? "check" : "info"}
                           infoText={
                             isVerificationFieldConfirmed("DATE_OF_BIRTH")
                               ? alreadyConfirmedText
@@ -449,16 +373,16 @@ export const ReceiverDetailsEdit = () => {
             <div className="CardStack__buttons CardStack__buttons--spaceBetween">
               <Button
                 variant="error"
-                size="xs"
+                size="md"
                 type="reset"
-                icon={<Icon.DeleteForever />}
+                icon={<Icon.Trash01 />}
                 isLoading={isUpdatePending}
               >
                 Discard changes
               </Button>
               <Button
                 variant="primary"
-                size="xs"
+                size="md"
                 type="submit"
                 isLoading={isUpdatePending}
                 disabled={isSubmitDisabled}

@@ -1,31 +1,20 @@
 import { useEffect, useState } from "react";
-import {
-  Heading,
-  Input,
-  Button,
-  Notification,
-  Link,
-} from "@stellar/design-system";
+import { Heading, Input, Button, Notification, Link } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { USE_SSO } from "constants/envVariables";
-import { singleUserStore } from "helpers/singleSingOn";
-import { validateNewPassword } from "helpers/validateNewPassword";
-import { validatePasswordMatch } from "helpers/validatePasswordMatch";
-import { localStorageSessionToken } from "helpers/localStorageSessionToken";
+import { USE_SSO } from "@/constants/envVariables";
+import { singleUserStore } from "@/helpers/singleSingOn";
+import { validateNewPassword } from "@/helpers/validateNewPassword";
+import { validatePasswordMatch } from "@/helpers/validatePasswordMatch";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 
-import { useNewPassword } from "apiQueries/useNewPassword";
-import { AppDispatch, resetStoreAction } from "store";
-import { ErrorWithExtras } from "components/ErrorWithExtras";
+import { useNewPassword } from "@/apiQueries/useNewPassword";
+import { AppDispatch, resetStoreAction } from "@/store";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 export const SetNewPassword = () => {
-  const {
-    isSuccess,
-    isPending,
-    error,
-    mutateAsync: submitNewPassword,
-  } = useNewPassword();
+  const { isSuccess, isPending, error, mutateAsync: submitNewPassword } = useNewPassword();
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -53,9 +42,7 @@ export const SetNewPassword = () => {
     }
   }, [dispatch, isSuccess]);
 
-  const goToSignIn = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-  ) => {
+  const goToSignIn = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
     navigate("/");
   };
@@ -74,9 +61,7 @@ export const SetNewPassword = () => {
     return false;
   };
 
-  const handleResetCurrentPassword = (
-    event: React.FormEvent<HTMLFormElement>,
-  ) => {
+  const handleResetCurrentPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     submitNewPassword({ currentPassword, newPassword });
   };
@@ -85,14 +70,14 @@ export const SetNewPassword = () => {
     <>
       <div className="CardLayout">
         {isSuccess ? (
-          <Notification variant="success" title="Password reset">
-            Password reset successfully. You can{" "}
-            <Link onClick={goToSignIn}>sign in</Link> using your new password.
+          <Notification variant="success" title="Password reset" isFilled={true}>
+            Password reset successfully. You can <Link onClick={goToSignIn}>sign in</Link> using
+            your new password.
           </Notification>
         ) : null}
 
         {error ? (
-          <Notification variant="error" title="Reset password error">
+          <Notification variant="error" title="Reset password error" isFilled={true}>
             <ErrorWithExtras appError={error} />
           </Notification>
         ) : null}
@@ -108,8 +93,7 @@ export const SetNewPassword = () => {
               <ul>
                 <li>at least 12 characters long,</li>
                 <li>
-                  a combination of uppercase letters, lowercase letters,
-                  numbers, and symbols.
+                  a combination of uppercase letters, lowercase letters, numbers, and symbols.
                 </li>
               </ul>
             </div>
@@ -143,9 +127,7 @@ export const SetNewPassword = () => {
               setErrorNewPassword(validateNewPassword(newPassword));
 
               if (confirmNewPassword) {
-                setErrorPasswordMatch(
-                  validatePasswordMatch(newPassword, confirmNewPassword),
-                );
+                setErrorPasswordMatch(validatePasswordMatch(newPassword, confirmNewPassword));
               }
             }}
             value={newPassword}
@@ -163,9 +145,7 @@ export const SetNewPassword = () => {
               setConfirmNewPassword(e.target.value);
             }}
             onBlur={() => {
-              setErrorPasswordMatch(
-                validatePasswordMatch(newPassword, confirmNewPassword),
-              );
+              setErrorPasswordMatch(validatePasswordMatch(newPassword, confirmNewPassword));
             }}
             value={confirmNewPassword}
             isPassword
@@ -174,7 +154,7 @@ export const SetNewPassword = () => {
 
           <Button
             variant="primary"
-            size="sm"
+            size="md"
             type="submit"
             disabled={!allInputsValid()}
             isLoading={isPending}

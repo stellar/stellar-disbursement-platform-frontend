@@ -1,4 +1,4 @@
-@use "./styles-utils.scss" as *;
+@use "../../styles/styles-utils.scss" as *;
 
 .CsvPreview {
   max-height: pxToRem(400px);
@@ -13,20 +13,20 @@
     td {
       font-size: pxToRem(8px);
       line-height: 1;
-      color: var(--color-gray-90);
-      font-weight: var(--font-weight-regular);
+      color: var(--sds-clr-gray-12);
+      font-weight: var(--sds-fw-regular);
       padding: 0 pxToRem(8px);
-      border: 1px solid var(--color-gray-50);
+      border: 1px solid var(--sds-clr-gray-08);
       box-sizing: border-box;
       height: pxToRem(16px);
     }
 
     th {
-      background-color: var(--color-gray-40);
+      background-color: var(--sds-clr-gray-05);
     }
 
     td {
-      background-color: var(--color-gray-00);
+      background-color: var(--sds-clr-gray-01);
     }
 
     th:first-child,

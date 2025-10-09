@@ -1,8 +1,8 @@
-import { handleApiResponse } from "api/handleApiResponse";
-import { API_URL } from "constants/envVariables";
-import { getSdpTenantName } from "helpers/getSdpTenantName";
-import { sanitizeObject } from "helpers/sanitizeObject";
-import { OrgUpdateInfo } from "types";
+import { handleApiResponse } from "@/api/handleApiResponse";
+import { API_URL } from "@/constants/envVariables";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { sanitizeObject } from "@/helpers/sanitizeObject";
+import { OrgUpdateInfo } from "@/types";
 
 export const patchOrgInfo = async (
   token: string,
@@ -11,9 +11,7 @@ export const patchOrgInfo = async (
   const fieldsToSubmit = sanitizeObject(fields);
 
   if (Object.keys(fieldsToSubmit).length === 0) {
-    throw Error(
-      "Update organization info requires at least one field to submit",
-    );
+    throw Error("Update organization info requires at least one field to submit");
   }
 
   const formData = new FormData();
