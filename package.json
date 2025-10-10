@@ -43,7 +43,8 @@
     "uuid": "^13.0.0"
   },
   "scripts": {
-    "start": "yarn git-info && vite",
+    "start": "yarn git-info && NODE_OPTIONS='--no-warnings' vite",
+    "start:https": "yarn git-info && NODE_OPTIONS='--no-warnings' USE_HTTPS=true vite",
     "build": "yarn git-info && vite build",
     "preview": "vite preview",
     "refresh-lock": "yarn-deduplicate yarn.lock && yarn install",
