@@ -99,6 +99,15 @@ body {
   }
 }
 
+.Note__emphasis {
+  display: block;
+  font-size: pxToRem(12px);
+  line-height: pxToRem(18px);
+  font-weight: 500;
+  color: var(--sds-clr-gray-10);
+  letter-spacing: 0.01em;
+}
+
 .Table-v2__cell--secondary {
   color: var(--sds-clr-gray-09);
 }
