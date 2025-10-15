@@ -40,6 +40,8 @@ import { NotFound } from "@/pages/NotFound";
 import { Unauthorized } from "@/pages/Unauthorized";
 import { SigninOidc } from "@/pages/Redirect";
 import { ApiKeys } from "@/pages/ApiKeys";
+import { EmbeddedWallet } from "@/pages/EmbeddedWallet";
+import { EmbeddedWalletHome } from "@/pages/EmbeddedWalletHome";
 
 import "@/styles/styles.scss";
 
@@ -109,6 +111,23 @@ export const App = () => {
               element={
                 <InnerPage isCardLayout>
                   <MFAuth />
+                </InnerPage>
+              }
+            />
+            {/* Embedded Wallet Routes */}
+            <Route
+              path="/wallet"
+              element={
+                <InnerPage isCardLayout>
+                  <EmbeddedWallet />
+                </InnerPage>
+              }
+            />
+            <Route
+              path="/wallet/home"
+              element={
+                <InnerPage isCardLayout>
+                  <EmbeddedWalletHome />
                 </InnerPage>
               }
             />
