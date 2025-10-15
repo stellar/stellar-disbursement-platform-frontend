@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "REACT_APP_");
 
   // Optional HTTPS support using mkcert certificates
-  const useHttps = process.env.USE_HTTPS === "true";
+  const useHttps = process.env.VITE_USE_HTTPS === "true";
   const certPath = resolve(__dirname, "certs/localhost.pem");
   const keyPath = resolve(__dirname, "certs/localhost-key.pem");
   const httpsConfig =

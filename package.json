@@ -2,6 +2,7 @@
   "name": "stellar-disbursement-platform-frontend",
   "version": "4.1.0",
   "license": "Apache-2.0",
+  "type": "module",
   "engines": {
     "node": ">=22.x"
   },
@@ -43,8 +44,8 @@
     "uuid": "^13.0.0"
   },
   "scripts": {
-    "start": "yarn git-info && NODE_OPTIONS='--no-warnings' vite",
-    "start:https": "yarn git-info && NODE_OPTIONS='--no-warnings' USE_HTTPS=true vite",
+    "start": "yarn git-info && vite",
+    "start:https": "yarn git-info && VITE_USE_HTTPS=true vite",
     "build": "yarn git-info && vite build",
     "preview": "vite preview",
     "refresh-lock": "yarn-deduplicate yarn.lock && yarn install",
