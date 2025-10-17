@@ -1,10 +1,13 @@
-import { Fragment } from "react";
 import { Loader, Notification } from "@stellar/design-system";
+import { Fragment } from "react";
+
+import { InfoTooltip } from "./InfoTooltip";
+
 import { useAccountBalances } from "@/apiQueries/useAccountBalances";
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { RPC_URL } from "@/constants/envVariables";
-import { InfoTooltip } from "./InfoTooltip";
+import { RPC_ENABLED } from "@/constants/envVariables";
+
 
 interface ReceiverWalletBalanceProps {
   stellarAddress: string | undefined;
@@ -31,7 +34,7 @@ export const ReceiverWalletBalance = ({ stellarAddress }: ReceiverWalletBalanceP
     );
   }
 
-  if (stellarAddress?.startsWith("C") && !RPC_URL) {
+  if (stellarAddress?.startsWith("C") && !RPC_ENABLED) {
     return (
       <InfoTooltip
         infoText="Fetching balances is disabled. Please check with your technical support team to enable."
