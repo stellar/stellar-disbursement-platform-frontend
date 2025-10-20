@@ -1,13 +1,12 @@
 import { Loader, Notification } from "@stellar/design-system";
 import { Fragment } from "react";
 
-import { InfoTooltip } from "./InfoTooltip";
-
 import { useAccountBalances } from "@/apiQueries/useAccountBalances";
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { RPC_ENABLED } from "@/constants/envVariables";
 
+import { InfoTooltip } from "./InfoTooltip";
 
 interface ReceiverWalletBalanceProps {
   stellarAddress: string | undefined;
