@@ -1,6 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { Asset, Networks, rpc } from "@stellar/stellar-sdk";
-import { API_URL, HORIZON_URL, RPC_URL } from "@/constants/envVariables";
+import { useQuery } from "@tanstack/react-query";
+
+import { API_URL, HORIZON_URL, RPC_ENABLED } from "@/constants/envVariables";
+import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { fetchApi } from "@/helpers/fetchApi";
 import { fetchStellarApi } from "@/helpers/fetchStellarApi";
 import { ApiStellarAccountBalance, AppError } from "@/types";
@@ -72,7 +74,7 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
         const assetsUrl = new URL(`${API_URL}/assets`);
         const assets: ApiAsset[] = await fetchApi(assetsUrl.toString());
 
-        const rpcServer = new rpc.Server(RPC_URL);
+        const rpcServer = createAuthenticatedRpcServer("user");
         const passphrase = (await rpcServer.getNetwork()).passphrase;
         let network: Networks;
         if (passphrase === Networks.PUBLIC) {
@@ -94,7 +96,7 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
       Boolean(stellarAddress) &&
       (stellarAddress!.startsWith("G")
         ? Boolean(HORIZON_URL)
-        : Boolean(RPC_URL) && Boolean(API_URL)),
+        : Boolean(RPC_ENABLED) && Boolean(API_URL)),
   });
 
   return query;

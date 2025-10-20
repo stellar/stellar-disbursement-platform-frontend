@@ -14,7 +14,7 @@ declare global {
       API_URL: string;
       STELLAR_EXPERT_URL: string;
       HORIZON_URL: string;
-      RPC_URL: string;
+      RPC_ENABLED: boolean;
       RECAPTCHA_SITE_KEY: string;
       SINGLE_TENANT_MODE: boolean;
 
@@ -47,7 +47,7 @@ const generateEnvConfig = async () => {
     STELLAR_EXPERT_URL:
       process?.env?.REACT_APP_STELLAR_EXPERT_URL || window._env_.STELLAR_EXPERT_URL,
     HORIZON_URL: process?.env?.REACT_APP_HORIZON_URL || window._env_.HORIZON_URL,
-    RPC_URL: process?.env?.REACT_APP_RPC_URL || window._env_.RPC_URL,
+    RPC_ENABLED: Boolean(process?.env?.REACT_APP_RPC_ENABLED || window._env_.RPC_ENABLED),
     RECAPTCHA_SITE_KEY:
       process?.env?.REACT_APP_RECAPTCHA_SITE_KEY || window._env_.RECAPTCHA_SITE_KEY,
     SINGLE_TENANT_MODE: Boolean(
@@ -70,7 +70,7 @@ export const {
   API_URL,
   STELLAR_EXPERT_URL,
   HORIZON_URL,
-  RPC_URL,
+  RPC_ENABLED,
   RECAPTCHA_SITE_KEY,
   SINGLE_TENANT_MODE,
   USE_SSO,
