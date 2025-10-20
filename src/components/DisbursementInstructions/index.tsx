@@ -141,8 +141,8 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
                 </li>
                 <li>
                   <span className="Note__emphasis">
-                    memo (optional) - if required, the Stellar transaction memo to be included
-                    alongside the address.
+                    walletAddressMemo (optional) - if required, the Stellar transaction memo to be
+                    included alongside the address.
                   </span>
                 </li>
               </ul>
