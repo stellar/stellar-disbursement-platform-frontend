@@ -1,15 +1,13 @@
 import { Button, Card } from "@stellar/design-system";
 
-import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
-import { saveFile } from "@/helpers/saveFile";
-
+import { CsvPreview } from "@/components/CsvPreview";
 import { CsvUpload } from "@/components/CsvUpload";
 import { CsvUploadButton } from "@/components/CsvUploadButton";
-import { CsvPreview } from "@/components/CsvPreview";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { ShowForRoles } from "@/components/ShowForRoles";
 import { Title } from "@/components/Title";
-
+import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
+import { saveFile } from "@/helpers/saveFile";
 import { RegistrationContactType } from "@/types";
 
 import "./styles.scss";
@@ -62,8 +60,10 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
     if (variant === "upload") {
       return (
         <>
+          <div className="Note">Upload the list of receivers you want to pay.</div>
           <div className="Note">
-            Please complete all fields above before uploading a disbursement file
+            Please complete the details above before uploading a disbursement file. The CSV template
+            will automatically update to match the options you selected above.
           </div>
 
           <CsvUpload initFile={csvFile} onChange={onChange} isDisabled={isDisabled} />
@@ -104,7 +104,51 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
   return (
     <Card>
       <div className="DisbursementInstructions__titleWrapper">
-        <InfoTooltip infoText="Upload a list of recipients you wish to pay">
+        <InfoTooltip
+          infoText={
+            <div className="Note">
+              File format
+              <ul>
+                <li>
+                  <span className="Note__emphasis">
+                    phone or email (mandatory) - the phone number or email address of the receiver.
+                    Phone number must be in international format and include + at the beginning.
+                  </span>
+                </li>
+                <li>
+                  <span className="Note__emphasis">
+                    walletAddress (included only if sending via address) - the Stellar blockchain
+                    address of the receiver.
+                  </span>
+                </li>
+                <li>
+                  <span className="Note__emphasis">
+                    id (mandatory) - a unique person identifier tied to the receiver, typically to
+                    trace back to source systems.
+                  </span>
+                </li>
+                <li>
+                  <span className="Note__emphasis">
+                    amount (mandatory) - the amount to be sent to the receiver in the asset selected
+                    above.
+                  </span>
+                </li>
+                <li>
+                  <span className="Note__emphasis">
+                    paymentID (optional) - a unique payment identifier tied to the specific payment,
+                    typically to trace back to source systems.
+                  </span>
+                </li>
+                <li>
+                  <span className="Note__emphasis">
+                    memo (optional) - if required, the Stellar transaction memo to be included
+                    alongside the address.
+                  </span>
+                </li>
+              </ul>
+            </div>
+          }
+        >
           <Title size="md">Disbursement instructions</Title>
         </InfoTooltip>
 
