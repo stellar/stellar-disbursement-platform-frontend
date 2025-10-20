@@ -12,6 +12,33 @@ import { RegistrationContactType } from "@/types";
 
 import "./styles.scss";
 
+const FILE_FORMAT_NOTE_ITEMS = [
+  {
+    id: "phoneOrEmail",
+    text: "phone or email (mandatory) - the phone number or email address of the receiver. Phone number must be in international format and include + at the beginning.",
+  },
+  {
+    id: "walletAddress",
+    text: "walletAddress (included only if sending via address) - the Stellar blockchain address of the receiver.",
+  },
+  {
+    id: "id",
+    text: "id (mandatory) - a unique person identifier tied to the receiver, typically to trace back to source systems.",
+  },
+  {
+    id: "amount",
+    text: "amount (mandatory) - the amount to be sent to the receiver in the asset selected above.",
+  },
+  {
+    id: "paymentId",
+    text: "paymentID (optional) - a unique payment identifier tied to the specific payment, typically to trace back to source systems.",
+  },
+  {
+    id: "walletAddressMemo",
+    text: "walletAddressMemo (optional) - if required, the Stellar transaction memo to be included alongside the address.",
+  },
+];
+
 interface DisbursementInstructionsProps {
   variant: "upload" | "preview";
   csvFile?: File;
@@ -107,44 +134,13 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
         <InfoTooltip
           infoText={
             <div className="Note">
-              File format
+              <span>File format:</span>
               <ul>
-                <li>
-                  <span className="Note__emphasis">
-                    phone or email (mandatory) - the phone number or email address of the receiver.
-                    Phone number must be in international format and include + at the beginning.
-                  </span>
-                </li>
-                <li>
-                  <span className="Note__emphasis">
-                    walletAddress (included only if sending via address) - the Stellar blockchain
-                    address of the receiver.
-                  </span>
-                </li>
-                <li>
-                  <span className="Note__emphasis">
-                    id (mandatory) - a unique person identifier tied to the receiver, typically to
-                    trace back to source systems.
-                  </span>
-                </li>
-                <li>
-                  <span className="Note__emphasis">
-                    amount (mandatory) - the amount to be sent to the receiver in the asset selected
-                    above.
-                  </span>
-                </li>
-                <li>
-                  <span className="Note__emphasis">
-                    paymentID (optional) - a unique payment identifier tied to the specific payment,
-                    typically to trace back to source systems.
-                  </span>
-                </li>
-                <li>
-                  <span className="Note__emphasis">
-                    walletAddressMemo (optional) - if required, the Stellar transaction memo to be
-                    included alongside the address.
-                  </span>
-                </li>
+                {FILE_FORMAT_NOTE_ITEMS.map(({ id, text }) => (
+                  <li key={id} className="Note__emphasis">
+                    {text}
+                  </li>
+                ))}
               </ul>
             </div>
           }
