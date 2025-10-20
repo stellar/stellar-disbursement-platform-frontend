@@ -1,22 +1,21 @@
-import { useEffect, useState } from "react";
 import { Card, Heading, Input, Button, Notification } from "@stellar/design-system";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import { SectionHeader } from "@/components/SectionHeader";
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { Box } from "@/components/Box";
-import { LoadingContent } from "@/components/LoadingContent";
-import { AssetAmount } from "@/components/AssetAmount";
-import { DropdownMenu } from "@/components/DropdownMenu";
-import { MoreMenuButton } from "@/components/MoreMenuButton";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
-
-import { AppDispatch } from "@/store";
-import { getOrgCircleInfoAction } from "@/store/ducks/organization";
-import { useRedux } from "@/hooks/useRedux";
 import { useCircleBalances } from "@/apiQueries/useCircleBalances";
 import { useUpdateCircleConfig } from "@/apiQueries/useUpdateCircleConfig";
+import { AssetAmount } from "@/components/AssetAmount";
+import { Box } from "@/components/Box";
+import { DropdownMenu } from "@/components/DropdownMenu";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { getOrgCircleInfoAction } from "@/store/ducks/organization";
 
 export const DistributionAccountCircle = () => {
   const CIRCLE_API_MASKED_VALUE = "**************";
@@ -239,14 +238,19 @@ export const DistributionAccountCircle = () => {
 
             <Box gap="lg">
               <div className="Note Note--noMargin">
-                Add funds to your distribution account by sending Stellar-based digital assets to
-                the public key above.
+                Fund your distribution account by sending Stellar-based digital assets to the public
+                key above.
               </div>
               <div className="Note Note--noMargin">
-                It is strongly recommended that you only fund the distribution account when you are
-                ready to send disbursements. It is not meant to be a long-term store of value, as
-                any SDP user with permission to send disbursements can trigger payments from this
-                account.
+                Your distribution account serves as the source of funds for all outgoing payments.
+                It is a standard Stellar account that can also receive incoming payments. To receive
+                payments, provide your public key to the sender (no memo required). Assets sent to
+                this address will appear immediately in your distribution account.
+              </div>
+              <div className="Note Note--noMargin">
+                Note: For security and operational best practice, only fund this account when you’re
+                ready to send disbursements. Any authorized SDP user with disbursement permissions
+                can initiate payments from this account.
               </div>
 
               {renderInputs()}

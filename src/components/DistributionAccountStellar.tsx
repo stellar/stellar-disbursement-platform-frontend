@@ -1,22 +1,22 @@
-import { useState } from "react";
 import { Card, Heading, Profile, Notification } from "@stellar/design-system";
+import { useState } from "react";
 
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "./ShowForRoles";
+
+import { useUpdateBridgeIntegration } from "@/apiQueries/useUpdateBridgeIntegration";
 import { AccountBalances } from "@/components/AccountBalances";
-import { WalletTrustlines } from "@/components/WalletTrustlines";
-import { LoadingContent } from "@/components/LoadingContent";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { BridgeIntegrationSection } from "@/components/BridgeIntegrationSection";
 import { BridgeOptInModal } from "@/components/BridgeOptInModal";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { SectionHeader } from "@/components/SectionHeader";
 import { Title } from "@/components/Title";
-
-import { useRedux } from "@/hooks/useRedux";
+import { WalletTrustlines } from "@/components/WalletTrustlines";
 import { useOrgAccountInfo } from "@/hooks/useOrgAccountInfo";
-import { useUpdateBridgeIntegration } from "@/apiQueries/useUpdateBridgeIntegration";
-
+import { useRedux } from "@/hooks/useRedux";
 import { BridgeIntegrationUpdate } from "@/types";
-import { ShowForRoles } from "./ShowForRoles";
+
 
 export const DistributionAccountStellar = () => {
   const [isBridgeOptInModalVisible, setIsBridgeOptInModalVisible] = useState(false);
@@ -92,13 +92,19 @@ export const DistributionAccountStellar = () => {
         <div>
           <Profile publicAddress={distributionAccountPublicKey} size="md" isCopy hideAvatar />
           <div className="Note">
-            Add funds to your distribution account by sending Stellar-based digital assets to the
-            public key above.
+            Fund your distribution account by sending Stellar-based digital assets to the public key
+            above.
           </div>
           <div className="Note">
-            It is strongly recommended that you only fund the distribution account when you are
-            ready to send disbursements. It is not meant to be a long-term store of value, as any
-            SDP user with permission to send disbursements can trigger payments from this account.
+            Your distribution account serves as the source of funds for all outgoing payments. It is
+            a standard Stellar account that can also receive incoming payments. To receive payments,
+            provide your public key to the sender (no memo required). Assets sent to this address
+            will appear immediately in your distribution account.
+          </div>
+          <div className="Note">
+            Note: For security and operational best practice, only fund this account when you’re
+            ready to send disbursements. Any authorized SDP user with disbursement permissions can
+            initiate payments from this account.
           </div>
         </div>
 
