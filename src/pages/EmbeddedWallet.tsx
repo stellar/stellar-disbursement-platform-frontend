@@ -78,7 +78,12 @@ export const EmbeddedWallet = () => {
 
   useEffect(() => {
     if (isAuthSuccess && authData) {
-      navigate("/wallet/home");
+      navigate("/wallet/home", {
+        state: {
+          contract_address: authData.contract_address,
+          credential_id: authData.credential_id,
+        },
+      });
     }
   }, [isAuthSuccess, authData, navigate]);
 
