@@ -1,4 +1,5 @@
 import { Button } from "@stellar/design-system";
+import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 interface WalletHomeState {
@@ -11,13 +12,14 @@ export const EmbeddedWalletHome = () => {
   const location = useLocation();
   const { contract_address } = (location.state as WalletHomeState | undefined) || {};
 
-  if (!contract_address) {
-    navigate("/wallet");
-    return null;
-  }
+  useEffect(() => {
+    if (!contract_address) {
+      navigate("/wallet");
+    }
+  }, [contract_address, navigate]);
 
   const handleLogout = () => {
-    navigate("/wallet");
+    navigate("/wallet", { replace: true, state: null });
   };
 
   return (
