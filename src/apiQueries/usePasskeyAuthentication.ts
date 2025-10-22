@@ -15,12 +15,6 @@ export const usePasskeyAuthentication = () => {
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as PasskeyAuthenticationFinishResponse,
-    mutateAsync: async () => {
-      try {
-        await mutation.mutateAsync();
-      } catch {
-        // do nothing
-      }
-    },
+    mutateAsync: () => mutation.mutateAsync(),
   };
 };

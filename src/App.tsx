@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
+import { BrowserRouter, Routes as RouterRoutes, Route, Outlet } from "react-router-dom";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -11,6 +11,9 @@ import { ApiKeyDetails } from "@/components/ApiKeyDetails/ApiKeyDetails";
 import { PrivateRoute } from "@/components/PrivateRoute";
 import { InnerPage } from "@/components/InnerPage";
 import { UserSession } from "@/components/UserSession";
+import { WalletSession } from "@/components/WalletSession";
+import { WalletSessionRefresher } from "@/components/WalletSessionRefresher";
+import { WalletPrivateRoute } from "@/components/WalletPrivateRoute";
 import { GlobalBanner } from "@/components/GlobalBanner";
 import { SessionTokenRefresher } from "@/components/SessionTokenRefresher";
 
@@ -53,6 +56,16 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const WalletLayout = () => {
+  return (
+    <>
+      <WalletSession />
+      <WalletSessionRefresher />
+      <Outlet />
+    </>
+  );
+};
 
 export const App = () => {
   useEffect(() => {
@@ -111,23 +124,6 @@ export const App = () => {
               element={
                 <InnerPage isCardLayout>
                   <MFAuth />
-                </InnerPage>
-              }
-            />
-            {/* Embedded Wallet Routes */}
-            <Route
-              path="/wallet"
-              element={
-                <InnerPage isCardLayout>
-                  <EmbeddedWallet />
-                </InnerPage>
-              }
-            />
-            <Route
-              path="/wallet/home"
-              element={
-                <InnerPage isCardLayout>
-                  <EmbeddedWalletHome />
                 </InnerPage>
               }
             />
@@ -408,6 +404,27 @@ export const App = () => {
               }
             />
             <Route path="/signin-oidc" element={<SigninOidc />} />
+            {/* Embedded Wallet Routes */}
+            <Route element={<WalletLayout />}>
+              <Route
+                path="/wallet"
+                element={
+                  <InnerPage isCardLayout>
+                    <EmbeddedWallet />
+                  </InnerPage>
+                }
+              />
+              <Route
+                path="/wallet/home"
+                element={
+                  <WalletPrivateRoute>
+                    <InnerPage isCardLayout>
+                      <EmbeddedWalletHome />
+                    </InnerPage>
+                  </WalletPrivateRoute>
+                }
+              />
+            </Route>
           </RouterRoutes>
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpen={false} />

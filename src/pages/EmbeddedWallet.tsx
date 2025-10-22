@@ -1,28 +1,33 @@
 import { Button, Notification } from "@stellar/design-system";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useCreateEmbeddedWallet } from "@/apiQueries/useCreateEmbeddedWallet";
 import { usePasskeyAuthentication } from "@/apiQueries/usePasskeyAuthentication";
+import { usePasskeyRefresh } from "@/apiQueries/usePasskeyRefresh";
 import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { setWalletTokenAction } from "@/store/ducks/walletAccount";
 
 export const EmbeddedWallet = () => {
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { walletAccount } = useRedux("walletAccount");
   const [token, setToken] = useState("");
 
   const {
     mutateAsync: authenticatePasskey,
     isPending: isAuthenticating,
-    isSuccess: isAuthSuccess,
     error: authError,
-    data: authData,
     reset: resetAuthError,
   } = usePasskeyAuthentication();
 
   const {
     mutateAsync: registerPasskey,
-    data: registrationData,
+    isPending: isRegistering,
     error: registerError,
     reset: resetRegisterError,
   } = usePasskeyRegistration();
@@ -30,10 +35,16 @@ export const EmbeddedWallet = () => {
   const {
     mutateAsync: createWallet,
     isPending: isCreatingWallet,
-    isSuccess: isWalletCreated,
     error: createWalletError,
     reset: resetCreateWalletError,
   } = useCreateEmbeddedWallet();
+
+  const {
+    mutateAsync: refreshToken,
+    isPending: isRefreshing,
+    error: refreshError,
+    reset: resetRefreshError,
+  } = usePasskeyRefresh();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -43,9 +54,34 @@ export const EmbeddedWallet = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (
+      walletAccount.isAuthenticated &&
+      walletAccount.contractAddress &&
+      !walletAccount.isSessionExpired
+    ) {
+      navigate("/wallet/home", { replace: true });
+    }
+  }, [
+    navigate,
+    walletAccount.isAuthenticated,
+    walletAccount.contractAddress,
+    walletAccount.isSessionExpired,
+  ]);
+
   const handleLogin = async () => {
     resetAuthError();
-    await authenticatePasskey();
+    resetRefreshError();
+    resetRegisterError();
+    resetCreateWalletError();
+
+    try {
+      const result = await authenticatePasskey();
+      dispatch(setWalletTokenAction(result.token));
+      navigate("/wallet/home");
+    } catch {
+      // mutation handles error state
+    }
   };
 
   const handleSignup = async () => {
@@ -56,45 +92,35 @@ export const EmbeddedWallet = () => {
     resetRegisterError();
     resetCreateWalletError();
     resetAuthError();
+    resetRefreshError();
 
-    await registerPasskey({ token });
-  };
+    try {
+      const registration = await registerPasskey({ token });
 
-  useEffect(() => {
-    if (registrationData && !createWalletError && !isCreatingWallet) {
-      createWallet({
+      await createWallet({
         token,
-        public_key: registrationData.public_key,
-        credential_id: registrationData.credential_id,
+        public_key: registration.public_key,
+        credential_id: registration.credential_id,
       });
-    }
-  }, [registrationData, createWallet, token, createWalletError, isCreatingWallet]);
 
-  useEffect(() => {
-    if (isWalletCreated && !authError && !isAuthenticating) {
-      authenticatePasskey();
-    }
-  }, [isWalletCreated, authenticatePasskey, authError, isAuthenticating]);
+      const refreshed = await refreshToken({ token: registration.token });
 
-  useEffect(() => {
-    if (isAuthSuccess && authData) {
-      navigate("/wallet/home", {
-        state: {
-          contract_address: authData.contract_address,
-          credential_id: authData.credential_id,
-        },
-      });
+      dispatch(setWalletTokenAction(refreshed.token));
+      navigate("/wallet/home");
+    } catch {
+      // mutation handles error state
     }
-  }, [isAuthSuccess, authData, navigate]);
+  };
 
   const errorMessage =
     authError?.message ||
     registerError?.message ||
     createWalletError?.message ||
-    (!token.trim() && "No wallet token provided") ||
+    refreshError?.message ||
     "";
 
-  const isLoading = isAuthenticating || isCreatingWallet;
+  const isSignupProcessing = isRegistering || isCreatingWallet || isRefreshing;
+  const isLoading = isAuthenticating || isSignupProcessing;
 
   return (
     <div className="SignIn">
@@ -116,7 +142,7 @@ export const EmbeddedWallet = () => {
               size="lg"
               onClick={handleSignup}
               disabled={isLoading || !token.trim()}
-              isLoading={isCreatingWallet}
+              isLoading={isSignupProcessing}
             >
               Create Wallet
             </Button>

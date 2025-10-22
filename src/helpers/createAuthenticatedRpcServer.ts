@@ -3,6 +3,7 @@ import { rpc } from "@stellar/stellar-sdk";
 import { API_URL } from "@/constants/envVariables";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 
 export type RpcAuthType = "user" | "wallet";
 
@@ -10,7 +11,8 @@ export const createAuthenticatedRpcServer = (
   authType: RpcAuthType,
   organizationName?: string,
 ): rpc.Server => {
-  const token = localStorageSessionToken.get();
+  const token =
+    authType === "wallet" ? localStorageWalletSessionToken.get() : localStorageSessionToken.get();
 
   if (!token) {
     throw new Error("Authentication required for RPC requests");
