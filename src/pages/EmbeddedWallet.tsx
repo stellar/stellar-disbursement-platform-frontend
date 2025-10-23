@@ -7,10 +7,11 @@ import { useCreateEmbeddedWallet } from "@/apiQueries/useCreateEmbeddedWallet";
 import { usePasskeyAuthentication } from "@/apiQueries/usePasskeyAuthentication";
 import { usePasskeyRefresh } from "@/apiQueries/usePasskeyRefresh";
 import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
+import { Box } from "@/components/Box";
+import { Routes } from "@/constants/settings";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { setWalletTokenAction } from "@/store/ducks/walletAccount";
-import { Routes } from "@/constants/settings";
 
 export const EmbeddedWallet = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -129,25 +130,27 @@ export const EmbeddedWallet = () => {
         <div className="SignIn__content">
           {errorMessage && <Notification variant="error" title={errorMessage} />}
 
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={handleSignup}
-            disabled={isLoading || !token.trim()}
-            isLoading={isSignupProcessing}
-          >
-            Create Wallet
-          </Button>
+          <Box gap="md">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={handleSignup}
+              disabled={isLoading || !token.trim()}
+              isLoading={isSignupProcessing}
+            >
+              Create Wallet
+            </Button>
 
-          <Button
-            variant="secondary"
-            size="lg"
-            onClick={handleLogin}
-            disabled={isLoading}
-            isLoading={isAuthenticating}
-          >
-            Sign In
-          </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={handleLogin}
+              disabled={isLoading}
+              isLoading={isAuthenticating}
+            >
+              Sign In
+            </Button>
+          </Box>
         </div>
       </div>
     </div>

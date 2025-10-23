@@ -3,11 +3,12 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
+import { Box } from "@/components/Box";
+import { Routes } from "@/constants/settings";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { clearWalletInfoAction } from "@/store/ducks/walletAccount";
-import { Routes } from "@/constants/settings";
 
 export const EmbeddedWalletHome = () => {
   const { walletAccount } = useRedux("walletAccount");
@@ -28,19 +29,21 @@ export const EmbeddedWalletHome = () => {
     <div className="SignIn">
       <div className="SignIn__container">
         <div className="SignIn__content">
-          {isLoadingBalance ? (
-            <strong>Loading...</strong>
-          ) : (
-            <strong>
-              {balanceData?.balance || "0"} {balanceData?.asset_code || "XLM"}
-            </strong>
-          )}
+          <Box gap="md">
+            {isLoadingBalance ? (
+              <strong>Loading...</strong>
+            ) : (
+              <strong>
+                {balanceData?.balance || "0"} {balanceData?.asset_code || "XLM"}
+              </strong>
+            )}
 
-          <p>{contractAddress}</p>
+            <p>{contractAddress}</p>
 
-          <Button variant="secondary" size="lg" onClick={handleLogout}>
-            Sign Out
-          </Button>
+            <Button variant="secondary" size="lg" onClick={handleLogout}>
+              Sign Out
+            </Button>
+          </Box>
         </div>
       </div>
     </div>
