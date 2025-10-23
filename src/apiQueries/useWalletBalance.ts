@@ -1,10 +1,11 @@
 import { Asset, Networks } from "@stellar/stellar-sdk";
 import { useQuery } from "@tanstack/react-query";
+import BigNumber from "bignumber.js";
 
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { AppError } from "@/types";
 
-const STROOP_CONVERSION_FACTOR = 10000000;
+const STROOP_CONVERSION_FACTOR = new BigNumber("10000000");
 
 interface WalletBalance {
   asset_code: string;
@@ -20,14 +21,14 @@ export const useWalletBalance = (contractAddress: string | undefined) => {
       }
 
       const rpcServer = createAuthenticatedRpcServer("wallet");
-      const passphrase = (await rpcServer.getNetwork()).passphrase;
+      const passphrase = (await rpcServer.getNetwork())?.passphrase;
       let network: Networks;
       if (passphrase === Networks.PUBLIC) {
         network = Networks.PUBLIC;
-      } else if (passphrase === Networks.TESTNET) {
-        network = Networks.TESTNET;
-      } else {
+      } else if (passphrase === Networks.FUTURENET) {
         network = Networks.FUTURENET;
+      } else {
+        network = Networks.TESTNET;
       }
 
       // For now, we only support native XLM balance in embedded wallets
@@ -37,7 +38,9 @@ export const useWalletBalance = (contractAddress: string | undefined) => {
         const balance = await rpcServer.getSACBalance(contractAddress, asset, network);
 
         const balanceAmount = balance?.balanceEntry?.amount
-          ? (Number(balance.balanceEntry.amount) / STROOP_CONVERSION_FACTOR).toString()
+          ? new BigNumber(balance.balanceEntry.amount)
+              .dividedBy(STROOP_CONVERSION_FACTOR)
+              .toString(10)
           : "0";
 
         return {
@@ -45,7 +48,6 @@ export const useWalletBalance = (contractAddress: string | undefined) => {
           balance: balanceAmount,
         };
       } catch (error) {
-        console.error("Error fetching wallet balance:", error);
         // Return zero balance if fetching fails
         return {
           asset_code: "XLM",

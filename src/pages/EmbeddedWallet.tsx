@@ -10,6 +10,7 @@ import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { setWalletTokenAction } from "@/store/ducks/walletAccount";
+import { Routes } from "@/constants/settings";
 
 export const EmbeddedWallet = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -60,7 +61,7 @@ export const EmbeddedWallet = () => {
       walletAccount.contractAddress &&
       !walletAccount.isSessionExpired
     ) {
-      navigate("/wallet/home", { replace: true });
+      navigate(Routes.WALLET_HOME, { replace: true });
     }
   }, [
     navigate,
@@ -78,7 +79,7 @@ export const EmbeddedWallet = () => {
     try {
       const result = await authenticatePasskey();
       dispatch(setWalletTokenAction(result.token));
-      navigate("/wallet/home");
+      navigate(Routes.WALLET_HOME);
     } catch {
       // mutation handles error state
     }
@@ -106,7 +107,7 @@ export const EmbeddedWallet = () => {
       const refreshed = await refreshToken({ token: registration.token });
 
       dispatch(setWalletTokenAction(refreshed.token));
-      navigate("/wallet/home");
+      navigate(Routes.WALLET_HOME);
     } catch {
       // mutation handles error state
     }
@@ -128,35 +129,25 @@ export const EmbeddedWallet = () => {
         <div className="SignIn__content">
           {errorMessage && <Notification variant="error" title={errorMessage} />}
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              maxWidth: "300px",
-              margin: "0 auto",
-            }}
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={handleSignup}
+            disabled={isLoading || !token.trim()}
+            isLoading={isSignupProcessing}
           >
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleSignup}
-              disabled={isLoading || !token.trim()}
-              isLoading={isSignupProcessing}
-            >
-              Create Wallet
-            </Button>
+            Create Wallet
+          </Button>
 
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={handleLogin}
-              disabled={isLoading}
-              isLoading={isAuthenticating}
-            >
-              Sign In
-            </Button>
-          </div>
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={handleLogin}
+            disabled={isLoading}
+            isLoading={isAuthenticating}
+          >
+            Sign In
+          </Button>
         </div>
       </div>
     </div>

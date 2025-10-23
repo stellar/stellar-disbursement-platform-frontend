@@ -7,6 +7,7 @@ import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSess
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { clearWalletInfoAction } from "@/store/ducks/walletAccount";
+import { Routes } from "@/constants/settings";
 
 export const EmbeddedWalletHome = () => {
   const { walletAccount } = useRedux("walletAccount");
@@ -20,53 +21,26 @@ export const EmbeddedWalletHome = () => {
   const handleLogout = () => {
     localStorageWalletSessionToken.remove();
     dispatch(clearWalletInfoAction());
-    navigate("/wallet", { replace: true });
+    navigate(Routes.WALLET, { replace: true });
   };
 
   return (
     <div className="SignIn">
       <div className="SignIn__container">
         <div className="SignIn__content">
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              maxWidth: "300px",
-              margin: "0 auto",
-            }}
-          >
-            <div style={{ textAlign: "center" }}>
-              {isLoadingBalance ? (
-                <div
-                  style={{
-                    fontSize: "2rem",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Loading...
-                </div>
-              ) : (
-                <div style={{ fontSize: "2.5rem", fontWeight: "bold" }}>
-                  {balanceData?.balance || "0"} {balanceData?.asset_code || "XLM"}
-                </div>
-              )}
-            </div>
+          {isLoadingBalance ? (
+            <strong>Loading...</strong>
+          ) : (
+            <strong>
+              {balanceData?.balance || "0"} {balanceData?.asset_code || "XLM"}
+            </strong>
+          )}
 
-            <div
-              style={{
-                fontSize: "0.875rem",
-                wordBreak: "break-all",
-                textAlign: "center",
-              }}
-            >
-              {contractAddress}
-            </div>
+          <p>{contractAddress}</p>
 
-            <Button variant="secondary" size="lg" onClick={handleLogout}>
-              Sign Out
-            </Button>
-          </div>
+          <Button variant="secondary" size="lg" onClick={handleLogout}>
+            Sign Out
+          </Button>
         </div>
       </div>
     </div>

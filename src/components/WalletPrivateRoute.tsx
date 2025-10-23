@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 
 import { useRedux } from "@/hooks/useRedux";
+import { Routes } from "@/constants/settings";
 
 type WalletPrivateRouteProps = {
   children: React.ReactElement;
@@ -19,7 +20,7 @@ export const WalletPrivateRoute = ({ children }: WalletPrivateRouteProps) => {
     return (
       <Navigate
         to={{
-          pathname: "/wallet",
+          pathname: Routes.WALLET,
           search: location.search,
         }}
         replace

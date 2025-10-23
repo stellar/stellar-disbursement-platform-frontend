@@ -32,6 +32,8 @@ export enum Routes {
   PAYMENTS = "/payments",
   DISTRIBUTION_ACCOUNT = "/distribution-account",
   WALLET_PROVIDERS = "/wallet-providers",
+  WALLET = "/wallet",
+  WALLET_HOME = "/wallet/home",
   ANALYTICS = "/analytics",
   PROFILE = "/profile",
   SETTINGS = "/settings",

@@ -19,6 +19,8 @@ import { SessionTokenRefresher } from "@/components/SessionTokenRefresher";
 
 import { SignIn } from "@/pages/SignIn";
 import { MFAuth } from "@/pages/MFAuth";
+import { EmbeddedWallet } from "@/pages/EmbeddedWallet";
+import { EmbeddedWalletHome } from "@/pages/EmbeddedWalletHome";
 import { ForgotPassword } from "@/pages/ForgotPassword";
 import { ResetPassword } from "@/pages/ResetPassword";
 import { SetNewPassword } from "@/pages/SetNewPassword";
@@ -43,9 +45,6 @@ import { NotFound } from "@/pages/NotFound";
 import { Unauthorized } from "@/pages/Unauthorized";
 import { SigninOidc } from "@/pages/Redirect";
 import { ApiKeys } from "@/pages/ApiKeys";
-import { EmbeddedWallet } from "@/pages/EmbeddedWallet";
-import { EmbeddedWalletHome } from "@/pages/EmbeddedWalletHome";
-
 import "@/styles/styles.scss";
 
 const queryClient = new QueryClient({
@@ -407,7 +406,7 @@ export const App = () => {
             {/* Embedded Wallet Routes */}
             <Route element={<WalletLayout />}>
               <Route
-                path="/wallet"
+                path={Routes.WALLET}
                 element={
                   <InnerPage isCardLayout>
                     <EmbeddedWallet />
@@ -415,7 +414,7 @@ export const App = () => {
                 }
               />
               <Route
-                path="/wallet/home"
+                path={Routes.WALLET_HOME}
                 element={
                   <WalletPrivateRoute>
                     <InnerPage isCardLayout>
