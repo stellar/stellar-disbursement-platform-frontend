@@ -1,48 +1,49 @@
 import { Button } from "@stellar/design-system";
-import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-interface WalletHomeState {
-  contract_address: string;
-  credential_id: string;
-}
+import { useWalletBalance } from "@/apiQueries/useWalletBalance";
+import { Box } from "@/components/Box";
+import { Routes } from "@/constants/settings";
+import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
+import { useRedux } from "@/hooks/useRedux";
+import { AppDispatch } from "@/store";
+import { clearWalletInfoAction } from "@/store/ducks/walletAccount";
 
 export const EmbeddedWalletHome = () => {
+  const { walletAccount } = useRedux("walletAccount");
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const { contract_address } = (location.state as WalletHomeState | undefined) || {};
 
-  useEffect(() => {
-    if (!contract_address) {
-      navigate("/wallet");
-    }
-  }, [contract_address, navigate]);
+  const contractAddress = walletAccount.contractAddress;
+
+  const { data: balanceData, isLoading: isLoadingBalance } = useWalletBalance(contractAddress);
 
   const handleLogout = () => {
-    navigate("/wallet", { replace: true, state: null });
+    localStorageWalletSessionToken.remove();
+    dispatch(clearWalletInfoAction());
+    navigate(Routes.WALLET, { replace: true });
   };
 
   return (
     <div className="SignIn">
       <div className="SignIn__container">
         <div className="SignIn__content">
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              maxWidth: "300px",
-              margin: "0 auto",
-            }}
-          >
-            <div style={{ fontSize: "0.875rem", wordBreak: "break-all", textAlign: "center" }}>
-              {contract_address}
-            </div>
+          <Box gap="md">
+            {isLoadingBalance ? (
+              <strong>Loading...</strong>
+            ) : (
+              <strong>
+                {balanceData?.balance || "0"} {balanceData?.asset_code || "XLM"}
+              </strong>
+            )}
+
+            <p>{contractAddress}</p>
 
             <Button variant="secondary" size="lg" onClick={handleLogout}>
               Sign Out
             </Button>
-          </div>
+          </Box>
         </div>
       </div>
     </div>

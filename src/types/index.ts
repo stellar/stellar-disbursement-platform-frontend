@@ -35,6 +35,17 @@ export type UserAccountInitialState = {
   restoredPathname?: string;
 };
 
+export type WalletAccountInitialState = {
+  token: string;
+  contractAddress: string;
+  credentialId: string;
+  isAuthenticated: boolean;
+  isSessionExpired: boolean;
+  isTokenRefresh: boolean;
+  status: ActionStatus | undefined;
+  errorString?: string;
+};
+
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -106,6 +117,7 @@ export interface Store {
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
   userAccount: UserAccountInitialState;
+  walletAccount: WalletAccountInitialState;
   apiKeys: ApiKeysInitialState;
   apiKeyDetails: ApiKeyDetailsInitialState;
 }

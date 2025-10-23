@@ -8,6 +8,7 @@ export const GENERIC_ERROR_MESSAGE = "Something went wrong, please try again";
 export const SESSION_EXPIRED = "SESSION EXPIRED";
 export const SESSION_EXPIRED_EVENT = "sdp_session_expired_event";
 export const LOCAL_STORAGE_SESSION_TOKEN = "sdp_session";
+export const LOCAL_STORAGE_WALLET_SESSION_TOKEN = "sdp_wallet_session";
 export const LOCAL_STORAGE_DEVICE_ID = "sdp_deviceID";
 export const LOCAL_STORAGE_TENANT_NAME = "sdp_tenant_name";
 export const UI_STATUS_DISBURSEMENT = "STARTED,PAUSED,COMPLETED";
@@ -31,6 +32,8 @@ export enum Routes {
   PAYMENTS = "/payments",
   DISTRIBUTION_ACCOUNT = "/distribution-account",
   WALLET_PROVIDERS = "/wallet-providers",
+  WALLET = "/wallet",
+  WALLET_HOME = "/wallet/home",
   ANALYTICS = "/analytics",
   PROFILE = "/profile",
   SETTINGS = "/settings",

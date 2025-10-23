@@ -17,6 +17,7 @@ export interface PasskeyRegistrationStartResponse {
 }
 
 export interface PasskeyRegistrationFinishResponse {
+  token: string;
   credential_id: string;
   public_key: string;
 }

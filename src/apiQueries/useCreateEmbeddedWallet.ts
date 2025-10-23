@@ -18,12 +18,6 @@ export const useCreateEmbeddedWallet = () => {
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as WalletResponse,
-    mutateAsync: async (request: CreateWalletRequest) => {
-      try {
-        await mutation.mutateAsync(request);
-      } catch {
-        // do nothing
-      }
-    },
+    mutateAsync: (request: CreateWalletRequest) => mutation.mutateAsync(request),
   };
 };
