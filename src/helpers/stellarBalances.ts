@@ -17,7 +17,7 @@ type FetchSACBalancesParams = {
   network?: Networks;
 };
 
-export const fetchSACBalances = async ({
+export const fetchSacBalances = async ({
   rpcServer,
   stellarAddress,
   assets,

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
-import { fetchSACBalances } from "@/helpers/stellarBalances";
+import { fetchSacBalances } from "@/helpers/stellarBalances";
 import { AppError } from "@/types";
 
 interface WalletBalance {
@@ -20,7 +20,7 @@ export const useWalletBalance = (contractAddress: string | undefined) => {
       const rpcServer = createAuthenticatedRpcServer("wallet");
 
       const [walletBalance] =
-        (await fetchSACBalances({
+        (await fetchSacBalances({
           rpcServer,
           stellarAddress: contractAddress,
           assets: [{ code: "XLM", issuer: null }],

@@ -4,7 +4,7 @@ import { API_URL, HORIZON_URL, RPC_ENABLED } from "@/constants/envVariables";
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { fetchApi } from "@/helpers/fetchApi";
 import { fetchStellarApi } from "@/helpers/fetchStellarApi";
-import { fetchSACBalances } from "@/helpers/stellarBalances";
+import { fetchSacBalances } from "@/helpers/stellarBalances";
 import { ApiStellarAccountBalance, AppError } from "@/types";
 
 interface ApiAsset {
@@ -40,7 +40,7 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
         const assets: ApiAsset[] = await fetchApi(assetsUrl.toString());
         const rpcServer = createAuthenticatedRpcServer("user");
 
-        return await fetchSACBalances({
+        return await fetchSacBalances({
           rpcServer,
           stellarAddress,
           assets: assets.map((apiAsset) => ({
