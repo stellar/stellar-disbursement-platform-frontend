@@ -1,13 +1,11 @@
-import { Asset, Networks, rpc } from "@stellar/stellar-sdk";
 import { useQuery } from "@tanstack/react-query";
 
 import { API_URL, HORIZON_URL, RPC_ENABLED } from "@/constants/envVariables";
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { fetchApi } from "@/helpers/fetchApi";
 import { fetchStellarApi } from "@/helpers/fetchStellarApi";
+import { fetchSacBalances } from "@/helpers/stellarBalances";
 import { ApiStellarAccountBalance, AppError } from "@/types";
-
-const STROOP_CONVERSION_FACTOR = 10000000;
 
 interface ApiAsset {
   id: string;
@@ -17,39 +15,6 @@ interface ApiAsset {
   updated_at: string;
   deleted_at: string | null;
 }
-
-const getKnownBalances = async (
-  rpcServer: rpc.Server,
-  stellarAddress: string,
-  apiAsset: ApiAsset,
-  network: Networks,
-): Promise<ApiStellarAccountBalance> => {
-  const asset =
-    apiAsset.code === "XLM" ? Asset.native() : new Asset(apiAsset.code, apiAsset.issuer);
-
-  try {
-    const balance = await rpcServer.getSACBalance(stellarAddress, asset, network);
-
-    const balanceAmount = balance?.balanceEntry?.amount
-      ? (Number(balance.balanceEntry.amount) / STROOP_CONVERSION_FACTOR).toString()
-      : "0";
-
-    return {
-      asset_code: apiAsset.code,
-      asset_issuer: apiAsset.issuer,
-      asset_type: asset.getAssetType(),
-      balance: balanceAmount,
-    };
-  } catch {
-    // Return zero balance if fetching fails for a specific asset
-    return {
-      asset_code: apiAsset.code,
-      asset_issuer: apiAsset.issuer,
-      asset_type: asset.getAssetType(),
-      balance: "0",
-    };
-  }
-};
 
 export const useAccountBalances = (stellarAddress: string | undefined) => {
   const query = useQuery<ApiStellarAccountBalance[], AppError>({
@@ -73,23 +38,16 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
       else {
         const assetsUrl = new URL(`${API_URL}/assets`);
         const assets: ApiAsset[] = await fetchApi(assetsUrl.toString());
-
         const rpcServer = createAuthenticatedRpcServer("user");
-        const passphrase = (await rpcServer.getNetwork()).passphrase;
-        let network: Networks;
-        if (passphrase === Networks.PUBLIC) {
-          network = Networks.PUBLIC;
-        } else if (passphrase === Networks.TESTNET) {
-          network = Networks.TESTNET;
-        } else {
-          network = Networks.FUTURENET;
-        }
 
-        const balancePromises = assets.map((apiAsset) =>
-          getKnownBalances(rpcServer, stellarAddress, apiAsset, network),
-        );
-
-        return await Promise.all(balancePromises);
+        return await fetchSacBalances({
+          rpcServer,
+          stellarAddress,
+          assets: assets.map((apiAsset) => ({
+            code: apiAsset.code,
+            issuer: apiAsset.issuer,
+          })),
+        });
       }
     },
     enabled:
