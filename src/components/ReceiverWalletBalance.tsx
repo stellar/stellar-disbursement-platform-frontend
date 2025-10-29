@@ -6,6 +6,7 @@ import { InfoTooltip } from "./InfoTooltip";
 import { useStellarAccountInfo } from "@/apiQueries/useStellarAccountInfo";
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { isContractAddress } from "@/helpers/walletValidate";
 
 
 interface ReceiverWalletBalanceProps {
@@ -15,7 +16,7 @@ interface ReceiverWalletBalanceProps {
 export const ReceiverWalletBalance = ({ stellarAddress }: ReceiverWalletBalanceProps) => {
   const { isLoading, isFetching, data, error } = useStellarAccountInfo(stellarAddress);
 
-  if (stellarAddress?.startsWith("C")) {
+  if (stellarAddress && isContractAddress(stellarAddress)) {
     return (
       <InfoTooltip
         infoText="Fetching balances is currently unsupported for contract accounts."

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update description for stellar distribution account. [#366](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/366)
 - Update description for creating disbursements. [#368](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/368)
+- Support contract addresses in receiver create. [#373](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/373)
 
 ## [4.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.1...4.1.0))
 
