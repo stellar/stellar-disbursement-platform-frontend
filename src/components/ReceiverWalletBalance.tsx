@@ -1,8 +1,13 @@
-import { Fragment } from "react";
 import { Loader, Notification } from "@stellar/design-system";
+import { Fragment } from "react";
+
+import { InfoTooltip } from "./InfoTooltip";
+
 import { useStellarAccountInfo } from "@/apiQueries/useStellarAccountInfo";
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { isContractAddress } from "@/helpers/walletValidate";
+
 
 interface ReceiverWalletBalanceProps {
   stellarAddress: string | undefined;
@@ -10,6 +15,17 @@ interface ReceiverWalletBalanceProps {
 
 export const ReceiverWalletBalance = ({ stellarAddress }: ReceiverWalletBalanceProps) => {
   const { isLoading, isFetching, data, error } = useStellarAccountInfo(stellarAddress);
+
+  if (stellarAddress && isContractAddress(stellarAddress)) {
+    return (
+      <InfoTooltip
+        infoText="Fetching balances is currently unsupported for contract accounts."
+        placement="bottom"
+      >
+        Unavailable
+      </InfoTooltip>
+    );
+  }
 
   const balances =
     data?.balances.filter((b) => b.asset_type == "native" || (b.asset_issuer && b.asset_code)) ||
