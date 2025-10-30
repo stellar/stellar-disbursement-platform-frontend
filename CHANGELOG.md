@@ -4,12 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [5.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/5.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.1.0...5.0.0))
+
+### Added
+- Add MFA and reCAPTCHA organization settings toggles. [#345](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/345)
 
 ### Changed
 - Update description for stellar distribution account. [#366](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/366)
 - Update description for creating disbursements. [#368](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/368)
 - Support contract addresses in receiver create. [#373](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/373)
+- Disable balance and history fetching for contract accounts. [#372](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/372)
+
+### Fixed
+- Align testnet EURC issuer with backend configuration. [#356](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/356)
 
 ## [4.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.1...4.1.0))
 
