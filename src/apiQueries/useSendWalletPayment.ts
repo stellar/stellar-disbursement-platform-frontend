@@ -39,6 +39,8 @@ interface UseSendWalletPaymentOptions {
   onSuccess?: (result: SendWalletPaymentResult) => void | Promise<void>;
 }
 
+const SIGNATURE_EXPIRATION_LEDGER_BUFFER = 10;
+
 const resolveDestination = (rawDestination: string): string => {
   const trimmed = rawDestination.trim();
 
@@ -46,29 +48,29 @@ const resolveDestination = (rawDestination: string): string => {
     return trimmed;
   }
 
-  throw { message: "Destination must be a valid Stellar account or contract address" } as AppError;
+  throw new Error("Destination must be a valid Stellar account or contract address");
 };
 
 const resolveAmountInStroops = (rawAmount: string, balance: string): bigint => {
   const parsedAmount = new BigNumber(rawAmount);
 
   if (!parsedAmount.isFinite() || parsedAmount.lte(0)) {
-    throw { message: "Enter a valid amount greater than zero" } as AppError;
+    throw new Error("Enter a valid amount greater than zero");
   }
 
   const decimalPlaces = parsedAmount.decimalPlaces();
   if (decimalPlaces !== null && decimalPlaces > 7) {
-    throw { message: "Amount cannot have more than 7 decimal places" } as AppError;
+    throw new Error("Amount cannot have more than 7 decimal places");
   }
 
   const availableBalance = new BigNumber(balance || "0");
   if (parsedAmount.gt(availableBalance)) {
-    throw { message: "Insufficient balance" } as AppError;
+    throw new Error("Insufficient balance");
   }
 
   const stroops = parsedAmount.multipliedBy(10 ** 7);
   if (!stroops.isInteger()) {
-    throw { message: "Amount must resolve to a whole number of stroops" } as AppError;
+    throw new Error("Amount must resolve to a whole number of stroops");
   }
 
   return BigInt(stroops.toFixed(0));
@@ -121,7 +123,7 @@ const simulateTransferOperation = async ({
       "error" in simulationResult && simulationResult.error
         ? simulationResult.error
         : "Simulation failed";
-    throw { message: simulationError } as AppError;
+    throw new Error(simulationError);
   }
 
   return simulationResult;
@@ -136,10 +138,10 @@ export const useSendWalletPayment = ({
   const mutation = useMutation<SendWalletPaymentResult, AppError, SendWalletPaymentParams>({
     mutationFn: async ({ destination: rawDestination, amount: rawAmount }) => {
       if (!contractAddress) {
-        throw { message: "Wallet contract address is missing" } as AppError;
+        throw new Error("Wallet contract address is missing");
       }
       if (!credentialId) {
-        throw { message: "Credential ID is required" } as AppError;
+        throw new Error("Credential ID is required");
       }
 
       const destination = resolveDestination(rawDestination);
@@ -165,7 +167,7 @@ export const useSendWalletPayment = ({
       const authEntries = simulationResult.result?.auth ?? [];
 
       if (!authEntries.length) {
-        throw { message: "Simulation did not return any authorization entries" } as AppError;
+        throw new Error("Simulation did not return any authorization entries");
       }
 
       const signedAuthEntries = await signSorobanAuthorizationEntries({
@@ -174,7 +176,8 @@ export const useSendWalletPayment = ({
         credentialId,
         networkPassphrase,
         rpId: window.location.hostname,
-        signatureExpirationLedger: simulationResult.latestLedger + 10,
+        signatureExpirationLedger:
+          simulationResult.latestLedger + SIGNATURE_EXPIRATION_LEDGER_BUFFER,
       });
 
       const finalOperation = buildTransferOperation({
@@ -194,7 +197,7 @@ export const useSendWalletPayment = ({
       const finalStatus = await pollSponsoredTransactionStatus(id);
 
       if (finalStatus.status === "FAILED") {
-        throw { message: "Sponsored transaction failed" } as AppError;
+        throw new Error("Sponsored transaction failed");
       }
 
       return {

@@ -36,7 +36,12 @@ const shouldSignEntry = (entry: xdr.SorobanAuthorizationEntry, contractBytes: Bu
     return false;
   }
 
-  const entryContractBytes = Buffer.from(address.contractId() ?? Buffer.alloc(0));
+  const contractId = address.contractId();
+  if (!contractId) {
+    throw new Error("Contract address is missing contractId.");
+  }
+
+  const entryContractBytes = Buffer.from(contractId);
   return entryContractBytes.equals(contractBytes);
 };
 

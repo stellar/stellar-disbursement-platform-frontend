@@ -1,6 +1,9 @@
 import { API_URL } from "@/constants/envVariables";
 import { fetchWalletApi } from "@/helpers/fetchWalletApi";
 
+const SPONSORED_TRANSACTION_POLL_INTERVAL_MS = 2000;
+const SPONSORED_TRANSACTION_MAX_ATTEMPTS = 120;
+
 export interface CreateSponsoredTransactionRequest {
   operation_xdr: string;
 }
@@ -41,8 +44,8 @@ export const getSponsoredTransactionStatus = async (
 export const pollSponsoredTransactionStatus = async (
   transactionId: string,
   {
-    intervalMs = 2000,
-    maxAttempts = 120,
+    intervalMs = SPONSORED_TRANSACTION_POLL_INTERVAL_MS,
+    maxAttempts = SPONSORED_TRANSACTION_MAX_ATTEMPTS,
   }: {
     intervalMs?: number;
     maxAttempts?: number;
@@ -58,5 +61,5 @@ export const pollSponsoredTransactionStatus = async (
     await new Promise((resolve) => setTimeout(resolve, intervalMs));
   }
 
-  throw new Error("Timed out waiting for sponsored transaction to complete");
+  throw new Error(`Timed out waiting for sponsored transaction ${transactionId} to complete`);
 };

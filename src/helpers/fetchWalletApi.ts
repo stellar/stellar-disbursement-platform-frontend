@@ -1,5 +1,5 @@
 import { handleApiResponse } from "@/api/handleApiResponse";
-import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
+import { SESSION_EXPIRED, SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 
@@ -11,7 +11,7 @@ export const fetchWalletApi = async <ResponseType>(
 
   if (!token) {
     document.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
-    return Promise.reject();
+    throw new Error(SESSION_EXPIRED);
   }
 
   const headers: HeadersInit = {
@@ -28,7 +28,7 @@ export const fetchWalletApi = async <ResponseType>(
 
   if (response.status === 401) {
     document.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
-    return Promise.reject();
+    throw new Error(SESSION_EXPIRED);
   }
 
   return (await handleApiResponse(response)) as ResponseType;
