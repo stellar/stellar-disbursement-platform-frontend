@@ -41,7 +41,7 @@ interface UseSendWalletPaymentOptions {
 
 const SIGNATURE_EXPIRATION_LEDGER_BUFFER = 10;
 
-const resolveDestination = (rawDestination: string): string => {
+const validateDestination = (rawDestination: string): string => {
   const trimmed = rawDestination.trim();
 
   if (StrKey.isValidEd25519PublicKey(trimmed) || StrKey.isValidContract(trimmed)) {
@@ -144,7 +144,7 @@ export const useSendWalletPayment = ({
         throw new Error("Credential ID is required");
       }
 
-      const destination = resolveDestination(rawDestination);
+      const destination = validateDestination(rawDestination);
       const amountInStroops = resolveAmountInStroops(rawAmount, balance);
 
       const rpcServer = createAuthenticatedRpcServer("wallet");

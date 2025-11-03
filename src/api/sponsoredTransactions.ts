@@ -58,7 +58,12 @@ export const pollSponsoredTransactionStatus = async (
       return status;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    await new Promise<void>((resolve) => {
+      const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
+        clearTimeout(timeoutId);
+        resolve();
+      }, intervalMs);
+    });
   }
 
   throw new Error(`Timed out waiting for sponsored transaction ${transactionId} to complete`);
