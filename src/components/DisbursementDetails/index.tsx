@@ -26,6 +26,11 @@ import {
 import "./styles.scss";
 
 const NONE_VERIFICATION_VALUE = "None";
+const SEP24_VERIFICATION_VALUE = "SEP24_REGISTRATION";
+const SDP_EMBEDDED_WALLET_NAME = "sdp embedded wallet";
+
+const isSdpEmbeddedWallet = (walletName: string): boolean =>
+  walletName.trim().toLowerCase() === SDP_EMBEDDED_WALLET_NAME;
 
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
@@ -137,6 +142,7 @@ const deriveFormState = ({
 }: DeriveFormStateArgs): DerivedFormState => {
   const isWalletAddressProvided = hasWallet(details.registrationContactType);
   const isWalletRegistrationEnabled = isUserManagedWalletEnabled(wallets);
+  const isEmbeddedWallet = isSdpEmbeddedWallet(details.wallet.name);
 
   const enabledWallets = (wallets ?? []).filter((wallet) => wallet.enabled);
   const enabledUserManagedWallets = enabledWallets.find((wallet) => wallet.user_managed);
@@ -149,9 +155,18 @@ const deriveFormState = ({
     isWalletAddressProvided ? true : !wallet.user_managed,
   );
 
-  const verificationOptions = isWalletAddressProvided
-    ? Array.from(new Set([...(verificationTypes ?? []), NONE_VERIFICATION_VALUE]))
-    : (verificationTypes ?? []);
+  const allVerificationTypes = verificationTypes ?? [];
+  const verificationOptions = (() => {
+    if (isEmbeddedWallet) {
+      return [NONE_VERIFICATION_VALUE, SEP24_VERIFICATION_VALUE];
+    }
+
+    if (isWalletAddressProvided) {
+      return [NONE_VERIFICATION_VALUE];
+    }
+
+    return allVerificationTypes.filter((type) => type !== SEP24_VERIFICATION_VALUE);
+  })();
 
   const assetOptions = (walletAssets ?? []).filter((asset) => {
     if (asset.code === "XLM" && asset.issuer === "") {

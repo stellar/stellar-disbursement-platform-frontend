@@ -225,13 +225,15 @@ export type DisbursementVerificationField =
   | "DATE_OF_BIRTH"
   | "YEAR_MONTH"
   | "PIN"
-  | "NATIONAL_ID_NUMBER";
+  | "NATIONAL_ID_NUMBER"
+  | "SEP24_REGISTRATION";
 
 export const VerificationFieldMap: Record<DisbursementVerificationField | string, string> = {
   DATE_OF_BIRTH: "Date of Birth",
   YEAR_MONTH: "Date of Birth (Year & Month only)",
   PIN: "PIN",
   NATIONAL_ID_NUMBER: "National ID Number",
+  SEP24_REGISTRATION: "SEP24 Registration",
 };
 
 export type DisbursementDraftAction = "save" | "submit" | "delete";
