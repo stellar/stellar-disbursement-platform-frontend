@@ -1,7 +1,9 @@
-import { Button } from "@stellar/design-system";
+import { Button, Input, Notification } from "@stellar/design-system";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import { useSendWalletPayment } from "@/apiQueries/useSendWalletPayment";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
 import { Routes } from "@/constants/settings";
@@ -15,15 +17,53 @@ export const EmbeddedWalletHome = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [destination, setDestination] = useState("");
+  const [amount, setAmount] = useState("");
   const contractAddress = walletAccount.contractAddress;
+  const isWalletReady = Boolean(contractAddress);
 
-  const { data: balanceData, isLoading: isLoadingBalance } = useWalletBalance(contractAddress);
+  const {
+    data: balanceData,
+    isLoading: isLoadingBalance,
+    refetch: refetchBalance,
+  } = useWalletBalance(contractAddress);
 
   const handleLogout = () => {
     localStorageWalletSessionToken.remove();
     dispatch(clearWalletInfoAction());
     navigate(Routes.WALLET, { replace: true });
   };
+
+  const sendPaymentMutation = useSendWalletPayment({
+    contractAddress,
+    credentialId: walletAccount.credentialId,
+    balance: balanceData?.balance ?? "0",
+    onSuccess: async () => {
+      setDestination("");
+      setAmount("");
+      await refetchBalance();
+    },
+  });
+
+  const handleSendPayment = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!isWalletReady) {
+      return;
+    }
+
+    try {
+      await sendPaymentMutation.mutateAsync({ destination, amount });
+    } catch {
+      // hook handles error reporting
+    }
+  };
+
+  const isSendDisabled =
+    !isWalletReady || sendPaymentMutation.isPending || !destination.trim() || !amount.trim();
+
+  const errorNotification = sendPaymentMutation.error ? (
+    <Notification variant="error" title={sendPaymentMutation.error.message} isFilled role="alert" />
+  ) : null;
 
   return (
     <div className="SignIn">
@@ -39,6 +79,45 @@ export const EmbeddedWalletHome = () => {
             )}
 
             <p>{contractAddress}</p>
+
+            <>{errorNotification}</>
+
+            <form onSubmit={handleSendPayment}>
+              <Box gap="sm">
+                <Input
+                  id="wallet-send-destination"
+                  label="Destination address"
+                  fieldSize="md"
+                  value={destination}
+                  onChange={(event) => setDestination(event.currentTarget.value)}
+                  required
+                  disabled={!isWalletReady || sendPaymentMutation.isPending}
+                />
+
+                <Input
+                  id="wallet-send-amount"
+                  label="Amount"
+                  fieldSize="md"
+                  type="number"
+                  step="0.0000001"
+                  min="0"
+                  value={amount}
+                  onChange={(event) => setAmount(event.currentTarget.value)}
+                  required
+                  disabled={!isWalletReady || sendPaymentMutation.isPending}
+                />
+
+                <Button
+                  variant="primary"
+                  type="submit"
+                  size="lg"
+                  isLoading={sendPaymentMutation.isPending}
+                  disabled={isSendDisabled}
+                >
+                  Send Payment
+                </Button>
+              </Box>
+            </form>
 
             <Button variant="secondary" size="lg" onClick={handleLogout}>
               Sign Out
