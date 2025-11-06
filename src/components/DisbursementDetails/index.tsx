@@ -26,7 +26,6 @@ import {
 import "./styles.scss";
 
 const NONE_VERIFICATION_VALUE = "None";
-const SEP24_VERIFICATION_VALUE = "SEP24_REGISTRATION";
 const SDP_EMBEDDED_WALLET_NAME = "sdp embedded wallet";
 
 const isSdpEmbeddedWallet = (walletName: string): boolean =>
@@ -158,14 +157,14 @@ const deriveFormState = ({
   const allVerificationTypes = verificationTypes ?? [];
   const verificationOptions = (() => {
     if (isEmbeddedWallet) {
-      return [NONE_VERIFICATION_VALUE, SEP24_VERIFICATION_VALUE];
+      return [NONE_VERIFICATION_VALUE, ...allVerificationTypes];
     }
 
     if (isWalletAddressProvided) {
       return [NONE_VERIFICATION_VALUE];
     }
 
-    return allVerificationTypes.filter((type) => type !== SEP24_VERIFICATION_VALUE);
+    return allVerificationTypes;
   })();
 
   const assetOptions = (walletAssets ?? []).filter((asset) => {
