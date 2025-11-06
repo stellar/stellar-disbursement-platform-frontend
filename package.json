@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "@noble/curves": "1.5.0",
     "@reduxjs/toolkit": "^2.8.2",
     "@simplewebauthn/browser": "^13.2.2",
     "@stellar/design-system": "^3.1.4",
