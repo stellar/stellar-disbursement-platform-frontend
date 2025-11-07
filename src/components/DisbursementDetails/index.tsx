@@ -19,13 +19,13 @@ import {
   DisbursementStep,
   hasWallet,
   isUserManagedWalletEnabled,
+  NONE_VERIFICATION_VALUE,
   RegistrationContactType,
   VerificationFieldMap,
 } from "@/types";
 
 import "./styles.scss";
 
-const NONE_VERIFICATION_VALUE = "None";
 const SDP_EMBEDDED_WALLET_NAME = "sdp embedded wallet";
 
 const isSdpEmbeddedWallet = (walletName: string): boolean =>
