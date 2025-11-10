@@ -234,6 +234,8 @@ export const VerificationFieldMap: Record<DisbursementVerificationField | string
   NATIONAL_ID_NUMBER: "National ID Number",
 };
 
+export const NONE_VERIFICATION_VALUE = "None";
+
 export type DisbursementDraftAction = "save" | "submit" | "delete";
 
 export interface DisbursementInstructions {
