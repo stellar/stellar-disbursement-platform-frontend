@@ -122,6 +122,13 @@ export const EmbeddedWalletHome = () => {
             <Button variant="secondary" size="lg" onClick={handleLogout}>
               Sign Out
             </Button>
+            {walletAccount.isVerificationPending ? (
+              <Button variant="secondary" size="lg" onClick={() => {}}>
+                Pending Verification
+              </Button>
+            ) : (
+              <></>
+            )}
           </Box>
         </div>
       </div>

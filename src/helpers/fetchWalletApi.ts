@@ -7,7 +7,8 @@ export const fetchWalletApi = async <ResponseType>(
   fetchUrl: string,
   fetchOptions?: RequestInit,
 ): Promise<ResponseType> => {
-  const token = localStorageWalletSessionToken.get();
+  const walletSession = localStorageWalletSessionToken.get();
+  const token = walletSession?.token;
 
   if (!token) {
     document.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));

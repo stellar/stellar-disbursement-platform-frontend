@@ -12,7 +12,9 @@ export const createAuthenticatedRpcServer = (
   organizationName?: string,
 ): rpc.Server => {
   const token =
-    authType === "wallet" ? localStorageWalletSessionToken.get() : localStorageSessionToken.get();
+    authType === "wallet"
+      ? localStorageWalletSessionToken.get()?.token
+      : localStorageSessionToken.get();
 
   if (!token) {
     throw new Error("Authentication required for RPC requests");
