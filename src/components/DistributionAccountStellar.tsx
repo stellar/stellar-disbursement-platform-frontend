@@ -13,6 +13,7 @@ import { InfoTooltip } from "@/components/InfoTooltip";
 import { LoadingContent } from "@/components/LoadingContent";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Title } from "@/components/Title";
+import { WalletHistory } from "@/components/WalletHistory";
 import { WalletTrustlines } from "@/components/WalletTrustlines";
 import { useOrgAccountInfo } from "@/hooks/useOrgAccountInfo";
 import { useRedux } from "@/hooks/useRedux";
@@ -150,6 +151,17 @@ export const DistributionAccountStellar = () => {
             fetchAccountBalances();
           }}
         />
+
+        <Card>
+          <div className="CardStack__card">
+            <div className="CardStack__title">
+              <Heading as="h4" size="xs">
+                Wallet history
+              </Heading>
+            </div>
+            <WalletHistory stellarAddress={distributionAccountPublicKey} />
+          </div>
+        </Card>
 
         <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
           <BridgeIntegrationSection
