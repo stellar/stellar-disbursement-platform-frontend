@@ -112,6 +112,13 @@ body {
   color: var(--sds-clr-gray-09);
 }
 
+.Table__emptyState {
+  background-color: var(--sds-clr-gray-02);
+  border-bottom-left-radius: pxToRem(8px);
+  border-bottom-right-radius: pxToRem(8px);
+  color: var(--sds-clr-gray-10) !important;
+}
+
 .FiltersWithSearch {
   &__search {
     width: pxToRem(336px);
@@ -440,12 +447,6 @@ body {
     flex-shrink: 0;
   }
 
-  &__noRecentPayments {
-    background-color: var(--sds-clr-gray-02);
-    border-bottom-left-radius: pxToRem(8px);
-    border-bottom-right-radius: pxToRem(8px);
-    color: var(--sds-clr-gray-10) !important;
-  }
 }
 
 .ReceiverContactInfo {

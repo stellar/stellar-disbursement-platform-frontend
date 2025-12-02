@@ -65,7 +65,7 @@ export const WalletHistory = ({ stellarAddress }: WalletHistoryProps) => {
             ))
           ) : (
             <Table.BodyRow>
-              <td colSpan={5} className="WalletHistory__noRecentPayments">
+              <td colSpan={5} className="Table__emptyState">
                 No recent payments
               </td>
             </Table.BodyRow>

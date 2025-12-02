@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 ### Added
-- Added Wallet History for Stellar Distribution Accounts. [#385](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/385)
+- Add Wallet History for Stellar Distribution Accounts. [#385](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/385)
 
 
 ## [5.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/5.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.1.0...5.0.0))
