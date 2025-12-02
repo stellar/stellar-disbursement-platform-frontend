@@ -1,17 +1,17 @@
 import { Card, Link, Profile, Notification } from "@stellar/design-system";
-import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
-import { useStellarAccountPayments } from "@/apiQueries/useStellarAccountPayments";
-import { formatDateTime } from "@/helpers/formatIntlDateTime";
 
-import { Table } from "@/components/Table";
+import { useStellarAccountPayments } from "@/apiQueries/useStellarAccountPayments";
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { Table } from "@/components/Table";
+import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
 
-interface ReceiverWalletHistoryProps {
+interface WalletHistoryProps {
   stellarAddress: string | undefined;
 }
 
-export const ReceiverWalletHistory = ({ stellarAddress }: ReceiverWalletHistoryProps) => {
+export const WalletHistory = ({ stellarAddress }: WalletHistoryProps) => {
   const { isLoading, isFetching, data, error } = useStellarAccountPayments(stellarAddress);
 
   if (stellarAddress && (isLoading || isFetching)) {
@@ -65,7 +65,7 @@ export const ReceiverWalletHistory = ({ stellarAddress }: ReceiverWalletHistoryP
             ))
           ) : (
             <Table.BodyRow>
-              <td colSpan={5} className="ReceiverDetails__wallets__noRecentPayments">
+              <td colSpan={5} className="Table__emptyState">
                 No recent payments
               </td>
             </Table.BodyRow>
