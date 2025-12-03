@@ -457,6 +457,10 @@ body {
 }
 
 // Wallets
+.WalletHistory__amount {
+  display: inline-flex;
+}
+
 .WalletBalances {
   display: flex;
   flex-direction: column;
