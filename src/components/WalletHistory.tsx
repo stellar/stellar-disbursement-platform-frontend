@@ -28,7 +28,7 @@ export const WalletHistory = ({ stellarAddress }: WalletHistoryProps) => {
 
   return (
     <Card noPadding>
-      <Table>
+      <Table isScrollable>
         <Table.Header>
           <Table.HeaderCell>Operation ID</Table.HeaderCell>
           <Table.HeaderCell>Date/time</Table.HeaderCell>
@@ -58,8 +58,10 @@ export const WalletHistory = ({ stellarAddress }: WalletHistoryProps) => {
                   {p.memo ? <span className="Table-v2__cell--secondary">{p.memo}</span> : null}
                 </Table.BodyCell>
                 <Table.BodyCell textAlign="right">
-                  {p.operationKind === "send" ? "-" : "+"}
-                  <AssetAmount amount={p.amount} assetCode={p.assetCode} fallback="-" />
+                  <span style={{ display: "inline-flex" }}>
+                    {p.operationKind === "send" ? "-" : "+"}
+                    <AssetAmount amount={p.amount} assetCode={p.assetCode} fallback="-" />
+                  </span>
                 </Table.BodyCell>
               </Table.BodyRow>
             ))
