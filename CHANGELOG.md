@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add Wallet History for Stellar Distribution Accounts. [#385](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/385)
 
+### Fixed 
+- Fix message when adding unknown trustline [#388](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/388)
+
 ### Security and Dependencies
 - Bump the minor-and-patch group across 1 directory with 30 updates. [#386](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/386)
 - Bump the all-actions group across 1 directory with 4 updates. [#383](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/383)
