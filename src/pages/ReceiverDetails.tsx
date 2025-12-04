@@ -23,8 +23,8 @@ import { LoadingContent } from "@/components/LoadingContent";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ReceiverPayments } from "@/components/ReceiverPayments";
 import { ReceiverWalletBalance } from "@/components/ReceiverWalletBalance";
-import { ReceiverWalletHistory } from "@/components/ReceiverWalletHistory";
 import { SectionHeader } from "@/components/SectionHeader";
+import { WalletHistory } from "@/components/WalletHistory";
 import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import { percent } from "@/helpers/formatIntlNumber";
@@ -487,7 +487,7 @@ export const ReceiverDetails = () => {
                   </SectionHeader.Row>
                 </SectionHeader>
 
-                <ReceiverWalletHistory stellarAddress={selectedWallet.stellarAddress} />
+                <WalletHistory stellarAddress={selectedWallet.stellarAddress} />
               </div>
             ) : null}
           </>

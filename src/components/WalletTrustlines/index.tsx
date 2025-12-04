@@ -51,6 +51,10 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
     SRT: "Stellar Reference Token",
   };
 
+  const getAssetDisplayName = (assetCode: string) => ASSET_NAME[assetCode] ?? assetCode;
+  const getAssetLabel = (assetCode: string) =>
+    ASSET_NAME[assetCode] ? `${ASSET_NAME[assetCode]} (${assetCode})` : assetCode;
+
   const {
     isFetching: isTrustlinesFetching,
     isPending: isTrustlinesPending,
@@ -75,7 +79,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
       onSuccess();
       setSuccessNotification({
         title: "Trustline added",
-        message: `Trustline ${ASSET_NAME[addedAsset.code]} (${addedAsset.code}) was added.`,
+        message: `Trustline ${getAssetLabel(addedAsset.code)} was added.`,
       });
     },
   });
@@ -92,7 +96,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
       onSuccess();
       setSuccessNotification({
         title: "Trustline removed",
-        message: `Trustline ${ASSET_NAME[removeAsset.code]} (${removeAsset.code}) was removed.`,
+        message: `Trustline ${getAssetLabel(removeAsset.code)} was removed.`,
       });
     },
   });
@@ -167,7 +171,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
           return (
             <div className="WalletTrustlines__asset" key={`${a.code}-${a.issuer}`}>
               <div className="WalletTrustlines__asset__info">
-                {ASSET_NAME?.[a.code] && <div>{ASSET_NAME?.[a.code]}</div>}
+                <div>{getAssetDisplayName(a.code)}</div>
                 <span title={`${a.code}:${a.issuer}`}>
                   {a.code}:{a.issuer}
                 </span>
@@ -228,7 +232,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
     const asset = trustlines?.find((a) => a.id === removeAssetId);
 
     if (asset) {
-      return `Are you sure you want to remove ${ASSET_NAME[asset.code] ?? asset.code}?`;
+      return `Are you sure you want to remove ${getAssetDisplayName(asset.code)}?`;
     }
 
     return "Something went wrong, the asset was not found.";
