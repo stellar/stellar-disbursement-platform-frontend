@@ -1,5 +1,5 @@
 import { Button, Input, Notification } from "@stellar/design-system";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +10,7 @@ import { Routes } from "@/constants/settings";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
-import { clearWalletInfoAction } from "@/store/ducks/walletAccount";
+import { clearWalletInfoAction, fetchWalletProfileAction } from "@/store/ducks/walletAccount";
 
 export const EmbeddedWalletHome = () => {
   const { walletAccount } = useRedux("walletAccount");
@@ -33,6 +33,12 @@ export const EmbeddedWalletHome = () => {
     dispatch(clearWalletInfoAction());
     navigate(Routes.WALLET, { replace: true });
   };
+
+  useEffect(() => {
+    if (walletAccount.isAuthenticated && walletAccount.token) {
+      dispatch(fetchWalletProfileAction());
+    }
+  }, [dispatch, walletAccount.isAuthenticated, walletAccount.token]);
 
   const sendPaymentMutation = useSendWalletPayment({
     contractAddress,
@@ -123,8 +129,20 @@ export const EmbeddedWalletHome = () => {
               Sign Out
             </Button>
             {walletAccount.isVerificationPending ? (
-              <Button variant="secondary" size="lg" onClick={() => {}}>
-                Pending Verification
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => {
+                  console.log(
+                    walletAccount.isVerificationPending +
+                      " " +
+                      walletAccount.pendingAsset?.code +
+                      " " +
+                      walletAccount.pendingAsset?.issuer,
+                  );
+                }}
+              >
+                Start Verification
               </Button>
             ) : (
               <></>

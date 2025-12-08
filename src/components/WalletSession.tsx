@@ -31,24 +31,13 @@ export const WalletSession = () => {
         }
       }
 
-      localStorageWalletSessionToken.set({
-        token: walletAccount.token,
-        isVerificationPending: walletAccount.isVerificationPending,
-        pendingAsset: walletAccount.pendingAsset,
-      });
+      localStorageWalletSessionToken.set(walletAccount.token);
     } else if (!walletAccount.token && walletAccount.contractAddress) {
       // Clear wallet info on logout
       dispatch(clearWalletInfoAction());
       localStorageWalletSessionToken.remove();
     }
-  }, [
-    dispatch,
-    walletAccount.token,
-    walletAccount.contractAddress,
-    walletAccount.isTokenRefresh,
-    walletAccount.isVerificationPending,
-    walletAccount.pendingAsset,
-  ]);
+  }, [dispatch, walletAccount.token, walletAccount.contractAddress, walletAccount.isTokenRefresh]);
 
   useEffect(() => {
     // Clear local storage when session expired
@@ -59,10 +48,10 @@ export const WalletSession = () => {
     }
 
     // Start session from saved token
-    const storedSession = localStorageWalletSessionToken.get();
+    const sessionToken = localStorageWalletSessionToken.get();
 
-    if (storedSession?.token && !isSessionExpired) {
-      dispatch(restoreWalletSession(storedSession));
+    if (sessionToken && !isSessionExpired) {
+      dispatch(restoreWalletSession(sessionToken));
     }
   }, [dispatch, isSessionExpired]);
 

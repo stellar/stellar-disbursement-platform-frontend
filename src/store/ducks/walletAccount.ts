@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+import { getEmbeddedWalletProfile } from "@/api/embeddedWallet";
 import { refreshPasskeyToken } from "@/api/passkeyRefresh";
 import { SESSION_EXPIRED } from "@/constants/settings";
 import { RootState } from "@/store";
@@ -9,12 +10,6 @@ export interface JwtWallet {
   contract_address: string;
   sub: string; // credential_id
 }
-
-type WalletSessionPayload = {
-  token: string;
-  isVerificationPending?: boolean;
-  pendingAsset?: ApiAsset;
-};
 
 const initialState: WalletAccountInitialState = {
   token: "",
@@ -30,7 +25,7 @@ const initialState: WalletAccountInitialState = {
 };
 
 export const refreshWalletTokenAction = createAsyncThunk<
-  WalletSessionPayload,
+  string,
   void,
   { rejectValue: RejectMessage; state: RootState }
 >("walletAccount/refreshWalletTokenAction", async (_, { getState, rejectWithValue }) => {
@@ -44,11 +39,7 @@ export const refreshWalletTokenAction = createAsyncThunk<
 
   try {
     const response = await refreshPasskeyToken(token);
-    return {
-      token: response.token,
-      isVerificationPending: response.is_verification_pending,
-      pendingAsset: response.pending_asset,
-    };
+    return response.token;
   } catch (error: unknown) {
     if (error === SESSION_EXPIRED) {
       return rejectWithValue({
@@ -58,6 +49,36 @@ export const refreshWalletTokenAction = createAsyncThunk<
 
     const appError = error as AppError;
     const message = appError?.message || "Unable to refresh wallet session";
+
+    return rejectWithValue({
+      errorString: message,
+      errorExtras: appError?.extras,
+    });
+  }
+});
+
+export const fetchWalletProfileAction = createAsyncThunk<
+  { isVerificationPending: boolean; pendingAsset?: ApiAsset },
+  void,
+  { rejectValue: RejectMessage; state: RootState }
+>("walletAccount/fetchWalletProfileAction", async (_, { getState, rejectWithValue }) => {
+  const { token } = getState().walletAccount;
+
+  if (!token) {
+    return rejectWithValue({
+      errorString: "Wallet session token is missing",
+    });
+  }
+
+  try {
+    const profile = await getEmbeddedWalletProfile(token);
+    return {
+      isVerificationPending: profile.is_verification_pending,
+      pendingAsset: profile.pending_asset,
+    };
+  } catch (error) {
+    const appError = error as AppError;
+    const message = appError?.message || "Unable to fetch wallet profile";
 
     return rejectWithValue({
       errorString: message,
@@ -79,15 +100,13 @@ const walletAccountSlice = createSlice({
       state.errorString = undefined;
       state.isTokenRefresh = false;
     },
-    setWalletTokenAction: (state, { payload }: PayloadAction<WalletSessionPayload>) => {
-      state.token = payload.token;
+    setWalletTokenAction: (state, { payload }: PayloadAction<string>) => {
+      state.token = payload;
       state.isAuthenticated = true;
       state.isSessionExpired = false;
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.isTokenRefresh = false;
-      state.isVerificationPending = payload.isVerificationPending ?? false;
-      state.pendingAsset = payload.pendingAsset;
     },
     clearWalletInfoAction: (state) => {
       state.token = "";
@@ -101,10 +120,8 @@ const walletAccountSlice = createSlice({
       state.status = undefined;
       state.errorString = undefined;
     },
-    restoreWalletSession: (state, action: PayloadAction<WalletSessionPayload>) => {
-      state.token = action.payload.token;
-      state.isVerificationPending = action.payload.isVerificationPending ?? false;
-      state.pendingAsset = action.payload.pendingAsset;
+    restoreWalletSession: (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
       state.isSessionExpired = false;
       state.status = "SUCCESS";
       state.errorString = undefined;
@@ -123,9 +140,7 @@ const walletAccountSlice = createSlice({
       state.errorString = undefined;
     });
     builder.addCase(refreshWalletTokenAction.fulfilled, (state, action) => {
-      state.token = action.payload.token;
-      state.isVerificationPending = action.payload.isVerificationPending ?? false;
-      state.pendingAsset = action.payload.pendingAsset;
+      state.token = action.payload;
       state.isTokenRefresh = true;
       state.status = "SUCCESS";
       state.errorString = undefined;
@@ -137,6 +152,18 @@ const walletAccountSlice = createSlice({
       if (action.payload?.errorString === SESSION_EXPIRED) {
         state.isSessionExpired = true;
       }
+    });
+    builder.addCase(fetchWalletProfileAction.pending, (state) => {
+      state.status = "PENDING";
+    });
+    builder.addCase(fetchWalletProfileAction.fulfilled, (state, action) => {
+      state.status = "SUCCESS";
+      state.isVerificationPending = action.payload.isVerificationPending;
+      state.pendingAsset = action.payload.pendingAsset;
+    });
+    builder.addCase(fetchWalletProfileAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString ?? action.error.message;
     });
   },
 });

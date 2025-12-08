@@ -79,16 +79,7 @@ export const EmbeddedWallet = () => {
 
     try {
       const result = await authenticatePasskey();
-      const refreshed = await refreshToken({ token: result.token });
-
-      dispatch(
-        setWalletTokenAction({
-          token: refreshed.token,
-          isVerificationPending: refreshed.is_verification_pending,
-          pendingAsset: refreshed.pending_asset,
-        }),
-      );
-
+      dispatch(setWalletTokenAction(result.token));
       navigate(Routes.WALLET_HOME);
     } catch {
       // mutation handles error state
@@ -116,13 +107,7 @@ export const EmbeddedWallet = () => {
 
       const refreshed = await refreshToken({ token: registration.token });
 
-      dispatch(
-        setWalletTokenAction({
-          token: refreshed.token,
-          isVerificationPending: refreshed.is_verification_pending,
-          pendingAsset: refreshed.pending_asset,
-        }),
-      );
+      dispatch(setWalletTokenAction(refreshed.token));
       navigate(Routes.WALLET_HOME);
     } catch {
       // mutation handles error state
