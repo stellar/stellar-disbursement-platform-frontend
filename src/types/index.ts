@@ -42,6 +42,8 @@ export type WalletAccountInitialState = {
   isAuthenticated: boolean;
   isSessionExpired: boolean;
   isTokenRefresh: boolean;
+  isVerificationPending: boolean;
+  pendingAsset?: ApiAsset;
   status: ActionStatus | undefined;
   errorString?: string;
 };

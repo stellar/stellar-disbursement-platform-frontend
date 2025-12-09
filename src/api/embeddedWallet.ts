@@ -1,6 +1,7 @@
 import { handleApiResponse } from "@/api/handleApiResponse";
 import { API_URL } from "@/constants/envVariables";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { ApiAsset } from "@/types";
 
 export type EmbeddedWalletStatus = "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED";
 
@@ -62,4 +63,24 @@ export const pollWalletStatus = async (
   }
 
   throw new Error("Wallet creation timeout");
+};
+
+export interface EmbeddedWalletProfileResponse {
+  is_verification_pending: boolean;
+  pending_asset?: ApiAsset;
+}
+
+export const getEmbeddedWalletProfile = async (
+  token: string,
+): Promise<EmbeddedWalletProfileResponse> => {
+  const response = await fetch(`${API_URL}/embedded-wallets/profile`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      "SDP-Tenant-Name": getSdpTenantName(),
+    },
+  });
+
+  return handleApiResponse(response);
 };
