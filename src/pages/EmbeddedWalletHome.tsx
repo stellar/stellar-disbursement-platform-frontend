@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { useSendWalletPayment } from "@/apiQueries/useSendWalletPayment";
-import { useSep45Authentication } from "@/apiQueries/useSep45Authentication";
+import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
 import { Routes } from "@/constants/settings";
@@ -12,6 +12,8 @@ import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSess
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { clearWalletInfoAction, fetchWalletProfileAction } from "@/store/ducks/walletAccount";
+
+export declare const createPopup: (popupUrl: string) => Window;
 
 export const EmbeddedWalletHome = () => {
   const { walletAccount } = useRedux("walletAccount");
@@ -52,11 +54,7 @@ export const EmbeddedWalletHome = () => {
     },
   });
 
-  const {
-    mutateAsync: authenticateSep45,
-    isPending: isAuthenticatingSep45,
-    error: sep45AuthenticationError,
-  } = useSep45Authentication();
+  const sep24VerificationMutation = useSep24Verification();
 
   const handleSendPayment = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -77,12 +75,14 @@ export const EmbeddedWalletHome = () => {
     }
 
     try {
-      await authenticateSep45({
+      const depositResp = await sep24VerificationMutation.mutateAsync({
+        assetCode: walletAccount.pendingAsset?.code,
         contractAddress,
         credentialId: walletAccount.credentialId,
+        lang: "en",
       });
 
-      // SEP-24
+      window.open(depositResp.url, "_blank", "noopener,noreferrer");
     } catch {
       // hook handles error reporting
     }
@@ -95,8 +95,13 @@ export const EmbeddedWalletHome = () => {
     <Notification variant="error" title={sendPaymentMutation.error.message} isFilled role="alert" />
   ) : null;
 
-  const sep45ErrorNotification = sep45AuthenticationError ? (
-    <Notification variant="error" title={sep45AuthenticationError.message} isFilled role="alert" />
+  const sep24VerificationErrorNotification = sep24VerificationMutation.error ? (
+    <Notification
+      variant="error"
+      title={sep24VerificationMutation.error.message}
+      isFilled
+      role="alert"
+    />
   ) : null;
 
   return (
@@ -116,7 +121,7 @@ export const EmbeddedWalletHome = () => {
 
             <>
               {sendPaymentErrorNotification}
-              {sep45ErrorNotification}
+              {sep24VerificationErrorNotification}
             </>
 
             <form onSubmit={handleSendPayment}>
@@ -164,8 +169,8 @@ export const EmbeddedWalletHome = () => {
                 variant="secondary"
                 size="lg"
                 onClick={handleSep24Verification}
-                isLoading={isAuthenticatingSep45}
-                disabled={!isWalletReady || isAuthenticatingSep45}
+                isLoading={sep24VerificationMutation.isPending}
+                disabled={!isWalletReady || sep24VerificationMutation.isPending}
               >
                 Start Verification
               </Button>
