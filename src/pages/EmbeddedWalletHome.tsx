@@ -13,8 +13,6 @@ import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { clearWalletInfoAction, fetchWalletProfileAction } from "@/store/ducks/walletAccount";
 
-export declare const createPopup: (popupUrl: string) => Window;
-
 export const EmbeddedWalletHome = () => {
   const { walletAccount } = useRedux("walletAccount");
   const dispatch: AppDispatch = useDispatch();
@@ -75,16 +73,15 @@ export const EmbeddedWalletHome = () => {
     }
 
     try {
-      const depositResp = await sep24VerificationMutation.mutateAsync({
+      await sep24VerificationMutation.mutateAsync({
         assetCode: walletAccount.pendingAsset?.code,
         contractAddress,
         credentialId: walletAccount.credentialId,
-        lang: "en",
       });
-
-      window.open(depositResp.url, "_blank", "noopener,noreferrer");
     } catch {
       // hook handles error reporting
+    } finally {
+      await dispatch(fetchWalletProfileAction());
     }
   };
 

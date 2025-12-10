@@ -4,8 +4,6 @@ import { send } from "./send";
 import { sign } from "./sign";
 import { start } from "./start";
 
-import { API_URL } from "@/constants/envVariables";
-
 const SEP45_REQUIRED_TOML_FIELDS = [
   "SIGNING_KEY",
   "WEB_AUTH_CONTRACT_ID",
@@ -17,7 +15,7 @@ export const authenticateWithSep45 = async (
   credentialId: string,
 ): Promise<string> => {
   const tomlValues = await getRequiredTomlInfo(SEP45_REQUIRED_TOML_FIELDS);
-  const homeDomain = new URL(API_URL).host;
+  const homeDomain = window.location.host;
   const webAuthDomain = new URL(tomlValues.WEB_AUTH_FOR_CONTRACTS_ENDPOINT).host;
 
   const authEntries = await start({
