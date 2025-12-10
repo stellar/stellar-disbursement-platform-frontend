@@ -1,4 +1,4 @@
-import * as xdrParser from "@stellar/js-xdr";
+import { XdrWriter } from "@stellar/js-xdr";
 import {
   Account,
   Address,
@@ -14,22 +14,60 @@ import { Api } from "@stellar/stellar-sdk/rpc";
 import { createAuthenticatedRpcServer } from "../createAuthenticatedRpcServer";
 import { signSorobanAuthorizationEntries } from "../signSorobanAuthorization";
 
-type Sep45SigntParams = {
+type Sep45SignParams = {
   authEntries: string;
   contractAddress: string;
   credentialId?: string;
+  expectedArgs: Record<string, string>;
   serverSigningKey: string;
   webAuthContractId: string;
 };
 
-const decodeAuthorizationEntries = (base64: string) => {
-  try {
-    const buffer = Buffer.from(base64, "base64");
-    const authEntriesType = new xdrParser.VarArray(xdr.SorobanAuthorizationEntry, 3);
-    const reader = new xdrParser.XdrReader(buffer);
-    return authEntriesType.read(reader);
-  } catch (err) {
-    throw new Error(`Invalid SorobanAuthorizationEntry data: ${err}`);
+const validateAuthorizationEntry = (
+  entry: xdr.SorobanAuthorizationEntry,
+  expectedArgs: Record<string, string>,
+  webAuthContractId: string,
+) => {
+  const invocation = entry.rootInvocation();
+  if (invocation.subInvocations().length) {
+    throw new Error("Invocation authorizes sub-invocations to another contract");
+  }
+
+  const contractFn = invocation.function().contractFn();
+  const contractId = Address.fromScAddress(contractFn.contractAddress()).toString();
+  if (contractId !== webAuthContractId) {
+    throw new Error(`contractId is invalid! Expected: ${webAuthContractId} but got: ${contractId}`);
+  }
+
+  const fnName = contractFn.functionName().toString();
+  if (fnName !== "web_auth_verify") {
+    throw new Error(`Function name is invalid! Expected: web_auth_verify but got: ${fnName}`);
+  }
+
+  const args = contractFn.args();
+  if (!args.length) {
+    throw new Error("web_auth_verify invocation missing arguments");
+  }
+
+  const argMap = args[0].map();
+  if (!argMap) {
+    throw new Error("web_auth_verify arguments must be a map");
+  }
+
+  const actualArgs: Record<string, string> = Object.fromEntries(
+    argMap.map((arg) => [arg.key().sym().toString(), arg.val().str().toString()]),
+  );
+
+  for (const [key, expectedValue] of Object.entries(expectedArgs)) {
+    const actualValue = actualArgs[key];
+    if (actualValue === undefined) {
+      throw new Error(`Missing expected arg: "${key}"`);
+    }
+    if (actualValue !== expectedValue) {
+      throw new Error(
+        `Value mismatch for "${key}": expected "${expectedValue}", got "${actualValue}"`,
+      );
+    }
   }
 };
 
@@ -86,7 +124,7 @@ const verifyLedgerFootprint = ({
     throw new Error("Simulation response missing read/write footprint");
   }
 
-  const allowedContracts = new Set([contractAddress, serverSigningKey]);
+  const allowedLedgerAddresses = new Set([contractAddress, serverSigningKey]);
 
   for (const ledgerKey of readWrite) {
     const entryType = ledgerKey.switch().value;
@@ -99,10 +137,10 @@ const verifyLedgerFootprint = ({
     }
 
     const contractData = ledgerKey.contractData();
-    const contractAddress = Address.fromScAddress(contractData.contract()).toString();
+    const ledgerAccount = Address.fromScAddress(contractData.contract()).toString();
 
-    if (!allowedContracts.has(contractAddress)) {
-      throw new Error(`Unauthorized contract access: ${contractAddress}`);
+    if (!allowedLedgerAddresses.has(ledgerAccount)) {
+      throw new Error(`Unauthorized contract access: ${ledgerAccount}`);
     }
 
     if (
@@ -114,26 +152,18 @@ const verifyLedgerFootprint = ({
   }
 };
 
-const encodeAuthorizationEntries = (entries: xdr.SorobanAuthorizationEntry[]) => {
-  try {
-    const authEntriesType = new xdrParser.VarArray(xdr.SorobanAuthorizationEntry, 3);
-    const writer = new xdrParser.XdrWriter();
-    authEntriesType.write(entries, writer);
-    const buffer = writer.finalize();
-    return buffer.toString("base64");
-  } catch (err) {
-    throw new Error(`Failed to encode SorobanAuthorizationEntry array: ${err}`);
-  }
-};
-
 export const sign = async ({
   authEntries,
   contractAddress,
   credentialId,
+  expectedArgs,
   serverSigningKey,
   webAuthContractId,
-}: Sep45SigntParams): Promise<string> => {
-  const decodedEntries = decodeAuthorizationEntries(authEntries);
+}: Sep45SignParams): Promise<string> => {
+  const decodedEntries = xdr.SorobanAuthorizationEntries.fromXDR(authEntries, "base64");
+  decodedEntries.forEach((entry) =>
+    validateAuthorizationEntry(entry, expectedArgs, webAuthContractId),
+  );
 
   const rpcServer = createAuthenticatedRpcServer("wallet");
   const network = await rpcServer.getNetwork();
@@ -159,5 +189,7 @@ export const sign = async ({
     transactionData: simulatedTx.transactionData,
   });
 
-  return encodeAuthorizationEntries(signedEntries);
+  const writer = new XdrWriter();
+  xdr.SorobanAuthorizationEntries.write(signedEntries, writer);
+  return writer.finalize().toString("base64");
 };

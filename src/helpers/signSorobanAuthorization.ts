@@ -39,8 +39,6 @@ const shouldSignEntry = (
     return false;
   }
 
-  // Compare StrKeys so the logic works the same in Node and browsers; `contractId()` exposes
-  // a raw Uint8Array that `Buffer.from` can't safely handle outside Node.
   return Address.fromScAddress(address).toString() === contractAddress;
 };
 
