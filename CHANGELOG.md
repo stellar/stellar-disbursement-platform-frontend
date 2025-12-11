@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [6.0.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.0.1) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.0.0...6.0.1))
+
+### Fixed
+- display MFA and reCAPTCHA toggle status in organization settings. [#403](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/403)
+
 ## [6.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/5.0.0...6.0.0))
 
 ### Added

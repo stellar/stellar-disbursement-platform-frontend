@@ -75,8 +75,6 @@ export type OrganizationInitialState = {
     isMemoTracingEnabled: boolean;
     baseUrl: string;
     paymentCancellationPeriodDays: number;
-    mfa_enabled?: boolean;
-    captcha_enabled?: boolean;
     mfa_disabled?: boolean;
     captcha_disabled?: boolean;
     distributionAccount?: {
@@ -821,8 +819,8 @@ export type ApiOrgInfo = {
   is_memo_tracing_enabled: boolean;
   base_url: string;
   payment_cancellation_period_days: string;
-  mfa_enabled?: boolean;
-  captcha_enabled?: boolean;
+  mfa_disabled?: boolean;
+  captcha_disabled?: boolean;
   distribution_account?: {
     address?: string;
     circle_wallet_id?: string;
@@ -891,8 +889,7 @@ export interface ApiStellarOperationPayment extends ApiStellarOperationBase {
 }
 
 export interface ApiStellarOperationPathPayment
-  extends ApiStellarOperationBase,
-    ApiStellarOperationPayment {
+  extends ApiStellarOperationBase, ApiStellarOperationPayment {
   path: {
     asset_type: string;
     asset_code: string;
@@ -904,8 +901,7 @@ export interface ApiStellarOperationPathPayment
   source_asset_issuer: string;
 }
 
-export interface ApiStellarOperationPathPaymentStrictReceive
-  extends ApiStellarOperationPathPayment {
+export interface ApiStellarOperationPathPaymentStrictReceive extends ApiStellarOperationPathPayment {
   source_max: string;
 }
 
