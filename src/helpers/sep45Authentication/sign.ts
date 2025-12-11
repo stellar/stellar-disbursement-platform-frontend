@@ -143,9 +143,11 @@ const verifyLedgerFootprint = ({
       throw new Error(`Unauthorized contract access: ${ledgerAccount}`);
     }
 
+    const contractDataKeyType = contractData.key().switch().value;
+
     if (
-      contractData.key().switch().value !== xdr.ScValType.scvLedgerKeyNonce().value &&
-      contractData.key().switch().value !== xdr.ScValType.scvLedgerKeyContractInstance().value
+      contractDataKeyType !== xdr.ScValType.scvLedgerKeyNonce().value &&
+      contractDataKeyType !== xdr.ScValType.scvLedgerKeyContractInstance().value
     ) {
       throw new Error(`Invalid contract data access. Key: ${contractData.key().switch().name}`);
     }
