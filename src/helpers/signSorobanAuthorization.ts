@@ -24,7 +24,10 @@ const decodeBase64Url = (value: string): Buffer => {
   return Buffer.from(base64, "base64");
 };
 
-const shouldSignEntry = (entry: xdr.SorobanAuthorizationEntry, contractBytes: Buffer): boolean => {
+const shouldSignEntry = (
+  entry: xdr.SorobanAuthorizationEntry,
+  contractAddress: string,
+): boolean => {
   if (entry.credentials().switch() !== xdr.SorobanCredentialsType.sorobanCredentialsAddress()) {
     return false;
   }
@@ -36,13 +39,7 @@ const shouldSignEntry = (entry: xdr.SorobanAuthorizationEntry, contractBytes: Bu
     return false;
   }
 
-  const contractId = address.contractId();
-  if (!contractId) {
-    throw new Error("Contract address is missing contractId.");
-  }
-
-  const entryContractBytes = Buffer.from(contractId);
-  return entryContractBytes.equals(contractBytes);
+  return Address.fromScAddress(address).toString() === contractAddress;
 };
 
 export const signSorobanAuthorizationEntries = async ({
@@ -53,7 +50,6 @@ export const signSorobanAuthorizationEntries = async ({
   rpId,
   signatureExpirationLedger,
 }: SignSorobanAuthorizationParams): Promise<xdr.SorobanAuthorizationEntry[]> => {
-  const contractAddressBytes = Buffer.from(Address.fromString(contractAddress).toBuffer());
   const networkId = hash(Buffer.from(networkPassphrase, "utf8"));
 
   const signedEntries: xdr.SorobanAuthorizationEntry[] = [];
@@ -61,7 +57,7 @@ export const signSorobanAuthorizationEntries = async ({
   for (const entry of authEntries) {
     const cloned = xdr.SorobanAuthorizationEntry.fromXDR(entry.toXDR());
 
-    if (!shouldSignEntry(cloned, contractAddressBytes)) {
+    if (!shouldSignEntry(cloned, contractAddress)) {
       signedEntries.push(cloned);
       continue;
     }
