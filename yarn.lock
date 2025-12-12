@@ -790,10 +790,10 @@
   resolved "https://registry.yarnpkg.com/@standard-schema/utils/-/utils-0.3.0.tgz#3d5e608f16c2390c10528e98e59aef6bf73cae7b"
   integrity sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==
 
-"@stellar/design-system@^3.2.6":
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/@stellar/design-system/-/design-system-3.2.6.tgz#6be9094735180e968ebf1362075dca86af629b1b"
-  integrity sha512-A2RCUT1K0HC+H19mcKannP0LeAXWjdJWz/o0Gcwr/PmOaBLTDYKBYybCF+0k0LcLXApsKO3qgdbRv1IkhIPcLg==
+"@stellar/design-system@^3.2.7":
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/@stellar/design-system/-/design-system-3.2.7.tgz#78df49bf5303cc358c6e99868a711e6bd64ddaa7"
+  integrity sha512-ad0MCpeIy8cwHq5ptGlciBaVpKczYZibMe8g12pzslu3XeiaHLMpjZ5iTOLaxSw1q1INa9vIlHg3uIPRQdo1rQ==
   dependencies:
     "@floating-ui/dom" "^1.7.4"
     bignumber.js "^9.3.1"
