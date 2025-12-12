@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { useSendWalletPayment } from "@/apiQueries/useSendWalletPayment";
-import { useSep45Authentication } from "@/apiQueries/useSep45Authentication";
+import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
 import { Routes } from "@/constants/settings";
@@ -52,11 +52,7 @@ export const EmbeddedWalletHome = () => {
     },
   });
 
-  const {
-    mutateAsync: authenticateSep45,
-    isPending: isAuthenticatingSep45,
-    error: sep45AuthenticationError,
-  } = useSep45Authentication();
+  const sep24VerificationMutation = useSep24Verification();
 
   const handleSendPayment = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -77,14 +73,15 @@ export const EmbeddedWalletHome = () => {
     }
 
     try {
-      await authenticateSep45({
+      await sep24VerificationMutation.mutateAsync({
+        assetCode: walletAccount.pendingAsset?.code,
         contractAddress,
         credentialId: walletAccount.credentialId,
       });
-
-      // SEP-24
     } catch {
       // hook handles error reporting
+    } finally {
+      await dispatch(fetchWalletProfileAction());
     }
   };
 
@@ -95,8 +92,13 @@ export const EmbeddedWalletHome = () => {
     <Notification variant="error" title={sendPaymentMutation.error.message} isFilled role="alert" />
   ) : null;
 
-  const sep45ErrorNotification = sep45AuthenticationError ? (
-    <Notification variant="error" title={sep45AuthenticationError.message} isFilled role="alert" />
+  const sep24VerificationErrorNotification = sep24VerificationMutation.error ? (
+    <Notification
+      variant="error"
+      title={sep24VerificationMutation.error.message}
+      isFilled
+      role="alert"
+    />
   ) : null;
 
   return (
@@ -116,7 +118,7 @@ export const EmbeddedWalletHome = () => {
 
             <>
               {sendPaymentErrorNotification}
-              {sep45ErrorNotification}
+              {sep24VerificationErrorNotification}
             </>
 
             <form onSubmit={handleSendPayment}>
@@ -164,8 +166,8 @@ export const EmbeddedWalletHome = () => {
                 variant="secondary"
                 size="lg"
                 onClick={handleSep24Verification}
-                isLoading={isAuthenticatingSep45}
-                disabled={!isWalletReady || isAuthenticatingSep45}
+                isLoading={sep24VerificationMutation.isPending}
+                disabled={!isWalletReady || sep24VerificationMutation.isPending}
               >
                 Start Verification
               </Button>
