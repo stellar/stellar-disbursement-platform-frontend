@@ -1,5 +1,5 @@
 import { Button, Input, Notification } from "@stellar/design-system";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -7,20 +7,23 @@ import { useSendWalletPayment } from "@/apiQueries/useSendWalletPayment";
 import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
+import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
 import { Routes } from "@/constants/settings";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { clearWalletInfoAction, fetchWalletProfileAction } from "@/store/ducks/walletAccount";
 
 export const EmbeddedWalletHome = () => {
-  const { walletAccount } = useRedux("walletAccount");
+  const { walletAccount, organization } = useRedux("walletAccount", "organization");
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
   const [destination, setDestination] = useState("");
   const [amount, setAmount] = useState("");
-  const contractAddress = walletAccount.contractAddress;
+  const { contractAddress, credentialId, isVerificationPending, isAuthenticated, token } =
+    walletAccount;
   const isWalletReady = Boolean(contractAddress);
 
   const {
@@ -36,14 +39,14 @@ export const EmbeddedWalletHome = () => {
   };
 
   useEffect(() => {
-    if (walletAccount.isAuthenticated && walletAccount.token) {
+    if (isAuthenticated && token) {
       dispatch(fetchWalletProfileAction());
     }
-  }, [dispatch, walletAccount.isAuthenticated, walletAccount.token]);
+  }, [dispatch, isAuthenticated, token]);
 
   const sendPaymentMutation = useSendWalletPayment({
     contractAddress,
-    credentialId: walletAccount.credentialId,
+    credentialId,
     balance: balanceData?.balance ?? "0",
     onSuccess: async () => {
       setDestination("");
@@ -101,82 +104,85 @@ export const EmbeddedWalletHome = () => {
     />
   ) : null;
 
+  const organizationName = useMemo(
+    () => organization?.data?.name || getSdpTenantName() || "Your organization",
+    [organization?.data?.name],
+  );
+
   return (
-    <div className="SignIn">
-      <div className="SignIn__container">
-        <div className="SignIn__content">
-          <Box gap="md">
-            {isLoadingBalance ? (
-              <strong>Loading...</strong>
-            ) : (
-              <strong>
-                {balanceData?.balance || "0"} {balanceData?.asset_code || "XLM"}
-              </strong>
-            )}
+    <EmbeddedWalletLayout
+      organizationName={organizationName}
+      organizationLogo={organization.data.logo}
+      headerRight="Profile"
+    >
+      <Box gap="md">
+        {isLoadingBalance ? (
+          <strong>Loading...</strong>
+        ) : (
+          <strong>
+            {balanceData?.balance || "0"} {balanceData?.asset_code || "XLM"}
+          </strong>
+        )}
 
-            <p>{contractAddress}</p>
+        <p>{contractAddress}</p>
 
-            <>
-              {sendPaymentErrorNotification}
-              {sep24VerificationErrorNotification}
-            </>
+        {sendPaymentErrorNotification ?? <></>}
+        {sep24VerificationErrorNotification ?? <></>}
 
-            <form onSubmit={handleSendPayment}>
-              <Box gap="sm">
-                <Input
-                  id="wallet-send-destination"
-                  label="Destination address"
-                  fieldSize="md"
-                  value={destination}
-                  onChange={(event) => setDestination(event.currentTarget.value)}
-                  required
-                  disabled={!isWalletReady || sendPaymentMutation.isPending}
-                />
+        <form onSubmit={handleSendPayment}>
+          <Box gap="sm">
+            <Input
+              id="wallet-send-destination"
+              label="Destination address"
+              fieldSize="md"
+              value={destination}
+              onChange={(event) => setDestination(event.currentTarget.value)}
+              required
+              disabled={!isWalletReady || sendPaymentMutation.isPending}
+            />
 
-                <Input
-                  id="wallet-send-amount"
-                  label="Amount"
-                  fieldSize="md"
-                  type="number"
-                  step="0.0000001"
-                  min="0"
-                  value={amount}
-                  onChange={(event) => setAmount(event.currentTarget.value)}
-                  required
-                  disabled={!isWalletReady || sendPaymentMutation.isPending}
-                />
+            <Input
+              id="wallet-send-amount"
+              label="Amount"
+              fieldSize="md"
+              type="number"
+              step="0.0000001"
+              min="0"
+              value={amount}
+              onChange={(event) => setAmount(event.currentTarget.value)}
+              required
+              disabled={!isWalletReady || sendPaymentMutation.isPending}
+            />
 
-                <Button
-                  variant="primary"
-                  type="submit"
-                  size="lg"
-                  isLoading={sendPaymentMutation.isPending}
-                  disabled={isSendDisabled}
-                >
-                  Send Payment
-                </Button>
-              </Box>
-            </form>
-
-            <Button variant="secondary" size="lg" onClick={handleLogout}>
-              Sign Out
+            <Button
+              variant="primary"
+              type="submit"
+              size="lg"
+              isLoading={sendPaymentMutation.isPending}
+              disabled={isSendDisabled}
+            >
+              Send Payment
             </Button>
-            {walletAccount.isVerificationPending ? (
-              <Button
-                variant="secondary"
-                size="lg"
-                onClick={handleSep24Verification}
-                isLoading={sep24VerificationMutation.isPending}
-                disabled={!isWalletReady || sep24VerificationMutation.isPending}
-              >
-                Start Verification
-              </Button>
-            ) : (
-              <></>
-            )}
           </Box>
-        </div>
-      </div>
-    </div>
+        </form>
+
+        <Button variant="secondary" size="lg" onClick={handleLogout}>
+          Sign Out
+        </Button>
+        {isVerificationPending ? (
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={handleSep24Verification}
+            isLoading={sep24VerificationMutation.isPending}
+            disabled={!isWalletReady || sep24VerificationMutation.isPending}
+          >
+            Start Verification
+          </Button>
+        ) : (
+          <></>
+        )}
+      </Box>
+    </EmbeddedWalletLayout>
   );
 };

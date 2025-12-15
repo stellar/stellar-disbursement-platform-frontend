@@ -1,5 +1,10 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes as RouterRoutes, Route, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Outlet,
+  Route,
+  Routes as RouterRoutes,
+} from "react-router-dom";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -177,7 +182,9 @@ export const App = () => {
             <Route
               path={Routes.DISBURSEMENT_NEW}
               element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "initiator"]}>
+                <PrivateRoute
+                  acceptedRoles={["owner", "financial_controller", "initiator"]}
+                >
                   <InnerPage isNarrow>
                     <DisbursementsNew />
                   </InnerPage>
@@ -188,7 +195,12 @@ export const App = () => {
               path={Routes.DISBURSEMENT_DRAFTS}
               element={
                 <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "initiator",
+                    "approver",
+                  ]}
                 >
                   <InnerPage isNarrow>
                     <DisbursementsDrafts />
@@ -200,7 +212,12 @@ export const App = () => {
               path={`${Routes.DISBURSEMENT_DRAFTS}/:id`}
               element={
                 <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "initiator",
+                    "approver",
+                  ]}
                 >
                   <InnerPage isNarrow>
                     <DisbursementDraftDetails />
@@ -418,7 +435,7 @@ export const App = () => {
                 element={
                   <WalletPrivateRoute>
                     <InnerPage isCardLayout>
-                      <EmbeddedWalletHome />
+                    <EmbeddedWalletHome />
                     </InnerPage>
                   </WalletPrivateRoute>
                 }

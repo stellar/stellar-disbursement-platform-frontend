@@ -1,0 +1,133 @@
+.EmbeddedWalletLayout {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--sds-clr-gray-02);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.EmbeddedWalletHeader {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  height: 56px;
+  background: var(--sds-clr-gray-01);
+  border-bottom: 1px solid var(--sds-clr-gray-05);
+  z-index: 2;
+}
+
+.EmbeddedWalletHeader__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+.EmbeddedWalletHeader__brand img {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+}
+
+.EmbeddedWalletHeader__title {
+  color: var(--sds-clr-gray-11);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+}
+
+.EmbeddedWalletLayout__container {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+}
+
+#root .EmbeddedWalletLayout .Card {
+  --ew-card-min: 360px;
+  --ew-card-max: 560px;
+  --ew-card-padding: 56px 24px;
+  --ew-card-padding-sm: 48px 16px;
+
+  width: clamp(var(--ew-card-min), 94vw, var(--ew-card-max));
+  padding: var(--ew-card-padding);
+  background: var(--sds-clr-gray-01);
+  border-radius: 8px;
+  border: none;
+  box-shadow: none;
+}
+
+.EmbeddedWalletCard__content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.EmbeddedWalletCard__content .EmbeddedWalletText {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.EmbeddedWalletCard__logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: var(--sds-clr-gray-02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--sds-clr-gray-11);
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.EmbeddedWalletCard__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.EmbeddedWalletLayout .EmbeddedWalletSubtitle {
+  margin: 0;
+  text-align: left;
+  color: var(--sds-clr-gray-11);
+  line-height: 22px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .EmbeddedWalletLayout__container {
+    padding: 16px;
+    align-items: flex-start;
+  }
+
+  #root .EmbeddedWalletLayout .Card {
+    width: 100%;
+    max-width: 500px;
+    padding: var(--ew-card-padding-sm);
+  }
+
+  .EmbeddedWalletCard__logo {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 360px) {
+  #root .EmbeddedWalletLayout .Card {
+    width: 100%;
+  }
+}

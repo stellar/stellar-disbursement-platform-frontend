@@ -1,5 +1,5 @@
-import { Button, Notification } from "@stellar/design-system";
-import { useEffect, useState } from "react";
+import { Button, Heading, Notification } from "@stellar/design-system";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -8,16 +8,19 @@ import { usePasskeyAuthentication } from "@/apiQueries/usePasskeyAuthentication"
 import { usePasskeyRefresh } from "@/apiQueries/usePasskeyRefresh";
 import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
 import { Box } from "@/components/Box";
+import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
 import { Routes } from "@/constants/settings";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
+import { getOrgLogoAction } from "@/store/ducks/organization";
 import { setWalletTokenAction } from "@/store/ducks/walletAccount";
 
 export const EmbeddedWallet = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { walletAccount } = useRedux("walletAccount");
+  const { walletAccount, organization } = useRedux("walletAccount", "organization");
   const [token, setToken] = useState("");
 
   const {
@@ -48,13 +51,32 @@ export const EmbeddedWallet = () => {
     reset: resetRefreshError,
   } = usePasskeyRefresh();
 
+  const resetAllErrors = useCallback(() => {
+    resetAuthError();
+    resetRefreshError();
+    resetRegisterError();
+    resetCreateWalletError();
+  }, [resetAuthError, resetCreateWalletError, resetRefreshError, resetRegisterError]);
+
+  const goHomeWithToken = useCallback(
+    (walletToken: string) => {
+      dispatch(setWalletTokenAction(walletToken));
+      navigate(Routes.WALLET_HOME);
+    },
+    [dispatch, navigate],
+  );
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tokenFromUrl = searchParams.get("token");
-    if (tokenFromUrl) {
-      setToken(tokenFromUrl);
+    setToken(tokenFromUrl ?? "");
+  }, [location.search]);
+
+  useEffect(() => {
+    if (!organization.data.logo) {
+      dispatch(getOrgLogoAction());
     }
-  }, [location]);
+  }, [dispatch, organization.data.logo]);
 
   useEffect(() => {
     if (
@@ -72,43 +94,36 @@ export const EmbeddedWallet = () => {
   ]);
 
   const handleLogin = async () => {
-    resetAuthError();
-    resetRefreshError();
-    resetRegisterError();
-    resetCreateWalletError();
+    resetAllErrors();
 
     try {
       const result = await authenticatePasskey();
-      dispatch(setWalletTokenAction(result.token));
-      navigate(Routes.WALLET_HOME);
+      goHomeWithToken(result.token);
     } catch {
       // mutation handles error state
     }
   };
 
   const handleSignup = async () => {
-    if (!token.trim()) {
+    const trimmedToken = token.trim();
+    if (!trimmedToken) {
       return;
     }
 
-    resetRegisterError();
-    resetCreateWalletError();
-    resetAuthError();
-    resetRefreshError();
+    resetAllErrors();
 
     try {
-      const registration = await registerPasskey({ token });
+      const registration = await registerPasskey({ token: trimmedToken });
 
       await createWallet({
-        token,
+        token: trimmedToken,
         public_key: registration.public_key,
         credential_id: registration.credential_id,
       });
 
       const refreshed = await refreshToken({ token: registration.token });
 
-      dispatch(setWalletTokenAction(refreshed.token));
-      navigate(Routes.WALLET_HOME);
+      goHomeWithToken(refreshed.token);
     } catch {
       // mutation handles error state
     }
@@ -123,36 +138,77 @@ export const EmbeddedWallet = () => {
 
   const isSignupProcessing = isRegistering || isCreatingWallet || isRefreshing;
   const isLoading = isAuthenticating || isSignupProcessing;
+  const inviteToken = token.trim();
+  const hasInviteToken = Boolean(inviteToken);
+
+  const organizationName = useMemo(() => {
+    if (organization?.data?.name) {
+      return organization.data.name;
+    }
+    const tenantName = getSdpTenantName();
+    return tenantName || "Your organization";
+  }, [organization?.data?.name]);
+
+  const organizationInitial = useMemo(() => {
+    const first = organizationName.match(/[A-Za-z0-9]/);
+    return (first ? first[0] : "O").toUpperCase();
+  }, [organizationName]);
+
+  const title = hasInviteToken ? "You're invited to create your wallet account" : "Login to wallet";
+  const subtitle = hasInviteToken
+    ? `Once your wallet is set up, you'll be able to receive funds sent by ${organizationName}. To begin, add a passkey to securely access your account.`
+    : "Use your passkey to login to wallet";
+
+  const primaryCtaProps = hasInviteToken
+    ? {
+        onClick: handleSignup,
+        disabled: isLoading || !inviteToken,
+        isLoading: isSignupProcessing,
+      }
+    : {
+        onClick: handleLogin,
+        disabled: isLoading,
+        isLoading: isAuthenticating,
+      };
 
   return (
-    <div className="SignIn">
-      <div className="SignIn__container">
-        <div className="SignIn__content">
-          {errorMessage && <Notification variant="error" title={errorMessage} />}
+    <EmbeddedWalletLayout
+      organizationName={organizationName}
+      organizationLogo={organization.data.logo}
+      headerRight={hasInviteToken ? "Create an account" : undefined}
+      showHeader={hasInviteToken}
+      contentAlign={hasInviteToken ? "left" : "center"}
+    >
+      {errorMessage && <Notification variant="error" title={errorMessage} isFilled />}
 
-          <Box gap="md">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={handleSignup}
-              disabled={isLoading || !token.trim()}
-              isLoading={isSignupProcessing}
-            >
-              Create Wallet
-            </Button>
-
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={handleLogin}
-              disabled={isLoading}
-              isLoading={isAuthenticating}
-            >
-              Sign In
-            </Button>
-          </Box>
+      {!hasInviteToken ? (
+        <div className="EmbeddedWalletCard__logo" role="img">
+          {organization.data.logo ? (
+            <img src={organization.data.logo} alt={`${organizationName} logo`} />
+          ) : (
+            organizationInitial
+          )}
         </div>
-      </div>
-    </div>
+      ) : null}
+
+      <Box
+        gap="xs"
+        align={hasInviteToken ? "start" : "center"}
+        addlClassName={
+          hasInviteToken ? "EmbeddedWalletText EmbeddedWalletText--left" : "EmbeddedWalletText"
+        }
+      >
+        <Heading size="xs" as="h1">
+          {title}
+        </Heading>
+        <p className="EmbeddedWalletSubtitle">{subtitle}</p>
+      </Box>
+
+      <Box gap="md" align="center">
+        <Button variant="primary" size="lg" isFullWidth {...primaryCtaProps}>
+          Log in with passkey
+        </Button>
+      </Box>
+    </EmbeddedWalletLayout>
   );
 };
