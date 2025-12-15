@@ -15,18 +15,17 @@ export const authenticateWithSep45 = async (
   credentialId: string,
 ): Promise<string> => {
   const tomlValues = await getRequiredTomlInfo(SEP45_REQUIRED_TOML_FIELDS);
-  const homeDomain = window.location.host;
   const webAuthDomain = new URL(tomlValues.WEB_AUTH_FOR_CONTRACTS_ENDPOINT).host;
 
   const authEntries = await start({
     authEndpoint: tomlValues.WEB_AUTH_FOR_CONTRACTS_ENDPOINT,
     contractAddress,
-    homeDomain,
+    homeDomain: webAuthDomain,
   });
 
   const expectedArgs = {
     account: contractAddress,
-    home_domain: homeDomain,
+    home_domain: webAuthDomain,
     web_auth_domain: webAuthDomain,
     web_auth_domain_account: tomlValues.SIGNING_KEY,
   } as const;
