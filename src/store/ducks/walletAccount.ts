@@ -73,8 +73,8 @@ export const fetchWalletProfileAction = createAsyncThunk<
   try {
     const profile = await getEmbeddedWalletProfile(token);
     return {
-      isVerificationPending: profile.is_verification_pending,
-      pendingAsset: profile.pending_asset,
+      isVerificationPending: profile.verification.is_pending,
+      pendingAsset: profile.verification.pending_asset,
     };
   } catch (error) {
     const appError = error as AppError;
