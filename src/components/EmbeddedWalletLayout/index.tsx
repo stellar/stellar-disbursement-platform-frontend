@@ -39,11 +39,7 @@ export const EmbeddedWalletLayout = ({
               <span className="EmbeddedWalletBrand">{organizationName}</span>
             )}
           </div>
-          {headerRight ? (
-            <span className="EmbeddedWalletHeader__title" role="heading">
-              {headerRight}
-            </span>
-          ) : null}
+          {headerRight ? <h2 className="EmbeddedWalletHeader__title">{headerRight}</h2> : null}
         </header>
       ) : null}
 

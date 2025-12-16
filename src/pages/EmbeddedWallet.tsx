@@ -154,10 +154,14 @@ export const EmbeddedWallet = () => {
     return (first ? first[0] : "O").toUpperCase();
   }, [organizationName]);
 
-  const title = hasInviteToken ? "You're invited to create your wallet account" : "Login to wallet";
+  const organizationLogo = organization?.data?.logo;
+
+  const title = hasInviteToken
+    ? "You're invited to create your wallet account"
+    : "Log in to wallet";
   const subtitle = hasInviteToken
     ? `Once your wallet is set up, you'll be able to receive funds sent by ${organizationName}. To begin, add a passkey to securely access your account.`
-    : "Use your passkey to login to wallet";
+    : "Use your passkey to log in to wallet";
 
   const primaryCtaProps = hasInviteToken
     ? {
@@ -174,7 +178,7 @@ export const EmbeddedWallet = () => {
   return (
     <EmbeddedWalletLayout
       organizationName={organizationName}
-      organizationLogo={organization.data.logo}
+      organizationLogo={organizationLogo}
       headerRight={hasInviteToken ? "Create an account" : undefined}
       showHeader={hasInviteToken}
       contentAlign={hasInviteToken ? "left" : "center"}
@@ -183,8 +187,8 @@ export const EmbeddedWallet = () => {
 
       {!hasInviteToken ? (
         <div className="EmbeddedWalletCard__logo" role="img">
-          {organization.data.logo ? (
-            <img src={organization.data.logo} alt={`${organizationName} logo`} />
+          {organizationLogo ? (
+            <img src={organizationLogo} alt={`${organizationName} logo`} />
           ) : (
             organizationInitial
           )}

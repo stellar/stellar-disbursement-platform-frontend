@@ -112,7 +112,7 @@ export const EmbeddedWalletHome = () => {
   return (
     <EmbeddedWalletLayout
       organizationName={organizationName}
-      organizationLogo={organization.data.logo}
+      organizationLogo={organization?.data?.logo}
       headerRight="Profile"
     >
       <Box gap="md">
