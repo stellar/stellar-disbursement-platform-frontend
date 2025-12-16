@@ -73,7 +73,7 @@ export const EmbeddedWallet = () => {
   }, [location.search]);
 
   useEffect(() => {
-    if (!organization.data.logo) {
+    if (!organization?.data?.logo) {
       dispatch(getOrgLogoAction());
     }
   }, [dispatch, organization.data.logo]);
@@ -186,7 +186,7 @@ export const EmbeddedWallet = () => {
       {errorMessage && <Notification variant="error" title={errorMessage} isFilled />}
 
       {!hasInviteToken ? (
-        <div className="EmbeddedWalletCard__logo" role="img">
+        <div className="EmbeddedWalletCard__logo">
           {organizationLogo ? (
             <img src={organizationLogo} alt={`${organizationName} logo`} />
           ) : (

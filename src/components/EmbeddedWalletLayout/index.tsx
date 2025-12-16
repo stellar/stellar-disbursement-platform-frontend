@@ -39,18 +39,20 @@ export const EmbeddedWalletLayout = ({
               <span className="EmbeddedWalletBrand">{organizationName}</span>
             )}
           </div>
-          {headerRight ? <h2 className="EmbeddedWalletHeader__title">{headerRight}</h2> : null}
+          {headerRight ? <div className="EmbeddedWalletHeader__title">{headerRight}</div> : null}
         </header>
       ) : null}
 
       <div className="EmbeddedWalletLayout__container">
-        <Card borderRadiusSize="md" noPadding>
-          <div
-            className={`EmbeddedWalletCard__content EmbeddedWalletCard__content--${contentAlign}`}
-          >
-            {children}
-          </div>
-        </Card>
+        <div className="EmbeddedWalletLayout__cardWrapper">
+          <Card borderRadiusSize="md" noPadding>
+            <div
+              className={`EmbeddedWalletCard__content EmbeddedWalletCard__content--${contentAlign}`}
+            >
+              {children}
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );
