@@ -66,8 +66,24 @@ export const pollWalletStatus = async (
 };
 
 export interface EmbeddedWalletProfileResponse {
-  is_verification_pending: boolean;
+  verification: EmbeddedWalletVerificationDetails;
+  wallet?: EmbeddedWalletDetails;
+}
+
+export interface EmbeddedWalletVerificationDetails {
+  is_pending: boolean;
   pending_asset?: ApiAsset;
+}
+
+export interface EmbeddedWalletDetails {
+  supported_assets: Array<{
+    code: string;
+    issuer: string;
+  }>;
+  receiver_contact: {
+    type: string;
+    value: string;
+  };
 }
 
 export const getEmbeddedWalletProfile = async (
