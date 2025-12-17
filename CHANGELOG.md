@@ -4,6 +4,54 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+### Security and Dependencies
+
+- Upgrade React to 19.2.3 and @stellar/design-system to 3.2.7 to address CVE-2025-55184 denial of service and source code exposure vulnerability in React Server Components [#407](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/407)
+
+## [6.0.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.0.1) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.0.0...6.0.1))
+
+### Changed
+- Update links to the dev docs and api docs. [#399](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/399)
+
+### Fixed
+- display MFA and reCAPTCHA toggle status in organization settings. [#403](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/403)
+
+### Security and Dependencies
+- Bump the major group with 2 updates (@types/uuid, eslint-plugin-react-hooks). [#397](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/397)
+- Bump the minor-and-patch group across 1 directory with 11 updates. [#398](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/398)
+
+## [6.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/5.0.0...6.0.0))
+
+### Added
+- Add Wallet History for Stellar Distribution Accounts. [#385](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/385)
+
+### Fixed 
+- Fix message when adding unknown trustline [#388](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/388)
+
+### Security and Dependencies
+- Upgrade React to 19.2.1 to address CVE-2025-66478 and CVE-2025-55182 [#390](https://github.com/stellar/stellar-disbursement-platform-backend/pull/390)
+- Bump the minor-and-patch group across 1 directory with 30 updates. [#386](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/386)
+- Bump the all-actions group across 1 directory with 4 updates. [#383](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/383)
+- Bump js-yaml from 4.1.0 to 4.1.1. [#381](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/381)
+- Bump vite from 7.1.5 to 7.1.11 in the npm_and_yarn group across 1 directory. [#369](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/369)
+
+
+## [5.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/5.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.1.0...5.0.0))
+
+### Added
+- Add MFA and reCAPTCHA organization settings toggles. [#345](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/345)
+
+### Changed
+- Update description for stellar distribution account. [#366](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/366)
+- Update description for creating disbursements. [#368](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/368)
+- Support contract addresses in receiver create. [#373](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/373)
+- Disable balance and history fetching for contract accounts. [#372](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/372)
+
+### Fixed
+- Align testnet EURC issuer with backend configuration. [#356](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/356)
+
 ## [4.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/4.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/4.0.1...4.1.0))
 
 ### Added

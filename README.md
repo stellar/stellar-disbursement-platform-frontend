@@ -8,9 +8,9 @@ payments to recipients using Stellar.
 This repo contains the SDP dashboard UI, which is to be used with the
 [Stellar Disbursement Platform Backend](https://github.com/stellar/stellar-disbursement-platform-backend).
 For more information on how to get started, see the Stellar
-[dev docs](https://developers.stellar.org/docs/category/use-the-stellar-disbursement-platform)
+[dev docs](https://developers.stellar.org/docs/platforms/stellar-disbursement-platform)
 and
-[API reference](https://developers.stellar.org/api/stellar-disbursement-platform).
+[API reference](https://developers.stellar.org/docs/platforms/stellar-disbursement-platform/api-reference).
 
 The SDP's comprehensive dashboard includes the following pages:
 

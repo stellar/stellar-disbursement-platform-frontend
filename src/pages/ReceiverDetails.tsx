@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Card,
@@ -10,9 +7,13 @@ import {
   Select,
   Modal,
 } from "@stellar/design-system";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
-
+import { useReceiverWalletInviteSmsRetry } from "@/apiQueries/useReceiverWalletInviteSmsRetry";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { useUpdateReceiverWalletStatus } from "@/apiQueries/useUpdateReceiverWalletStatus";
 import { AssetAmount } from "@/components/AssetAmount";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CopyWithIcon } from "@/components/CopyWithIcon";
@@ -22,19 +23,15 @@ import { LoadingContent } from "@/components/LoadingContent";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ReceiverPayments } from "@/components/ReceiverPayments";
 import { ReceiverWalletBalance } from "@/components/ReceiverWalletBalance";
-import { ReceiverWalletHistory } from "@/components/ReceiverWalletHistory";
 import { SectionHeader } from "@/components/SectionHeader";
-
-import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
-import { useReceiverWalletInviteSmsRetry } from "@/apiQueries/useReceiverWalletInviteSmsRetry";
-import { useUpdateReceiverWalletStatus } from "@/apiQueries/useUpdateReceiverWalletStatus";
-
+import { WalletHistory } from "@/components/WalletHistory";
+import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import { percent } from "@/helpers/formatIntlNumber";
 import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
 import { renderTextWithCount } from "@/helpers/renderTextWithCount";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
-
+import { isClassicWalletAddress } from "@/helpers/walletValidate";
 import { ReceiverDetails as ReceiverDetailsType, ReceiverWallet } from "@/types";
 
 export const ReceiverDetails = () => {
@@ -481,7 +478,8 @@ export const ReceiverDetails = () => {
               </div>
             </Card>
 
-            {selectedWallet.stellarAddress?.startsWith("G") ? (
+            {selectedWallet.stellarAddress &&
+            isClassicWalletAddress(selectedWallet.stellarAddress) ? (
               <div className="DetailsSection DetailsSection">
                 <SectionHeader>
                   <SectionHeader.Row>
@@ -493,7 +491,7 @@ export const ReceiverDetails = () => {
                   </SectionHeader.Row>
                 </SectionHeader>
 
-                <ReceiverWalletHistory stellarAddress={selectedWallet.stellarAddress} />
+                <WalletHistory stellarAddress={selectedWallet.stellarAddress} />
               </div>
             ) : null}
           </>
