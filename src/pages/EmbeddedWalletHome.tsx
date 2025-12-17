@@ -1,5 +1,5 @@
-import { Button, Input, Notification } from "@stellar/design-system";
-import { useEffect, useMemo, useState } from "react";
+import { Button, Icon, Input, Link, Notification } from "@stellar/design-system";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -7,12 +7,13 @@ import { useSendWalletPayment } from "@/apiQueries/useSendWalletPayment";
 import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
-import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
+import { EmbeddedWalletLayout, type EmbeddedWalletNotice } from "@/components/EmbeddedWalletLayout";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
 import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
 import { EmbeddedWalletProfileModal } from "@/components/EmbeddedWalletProfileModal";
 import { Routes } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { localStorageWalletNotices } from "@/helpers/localStorageWalletNotices";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
@@ -26,9 +27,20 @@ export const EmbeddedWalletHome = () => {
   const [destination, setDestination] = useState("");
   const [amount, setAmount] = useState("");
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const { contractAddress, credentialId, isVerificationPending, isAuthenticated, token } =
-    walletAccount;
+  const {
+    contractAddress,
+    credentialId,
+    isVerificationPending,
+    isAuthenticated,
+    token,
+    profileStatus,
+    pendingAsset,
+  } = walletAccount;
   const isWalletReady = Boolean(contractAddress);
+  const [, bumpNoticeVersion] = useReducer((value: number) => value + 1, 0);
+  const noticeState = localStorageWalletNotices.get(credentialId);
+  const isVerificationNoticeDismissed = noticeState.verifiedDismissed;
+  const isTransactionsNoticeDismissed = noticeState.transactionsDismissed;
 
   const {
     data: balanceData,
@@ -44,9 +56,15 @@ export const EmbeddedWalletHome = () => {
 
   useEffect(() => {
     if (isAuthenticated && token) {
-      dispatch(fetchWalletProfileAction());
+      void dispatch(fetchWalletProfileAction());
     }
   }, [dispatch, isAuthenticated, token]);
+
+  useEffect(() => {
+    if (isVerificationPending) {
+      localStorageWalletNotices.reset(credentialId);
+    }
+  }, [credentialId, isVerificationPending]);
 
   const sendPaymentMutation = useSendWalletPayment({
     contractAddress,
@@ -81,9 +99,9 @@ export const EmbeddedWalletHome = () => {
 
     try {
       await sep24VerificationMutation.mutateAsync({
-        assetCode: walletAccount.pendingAsset?.code,
+        assetCode: pendingAsset?.code,
         contractAddress,
-        credentialId: walletAccount.credentialId,
+        credentialId,
       });
     } catch {
       // hook handles error reporting
@@ -99,6 +117,92 @@ export const EmbeddedWalletHome = () => {
     <Notification variant="error" title={sendPaymentMutation.error.message} isFilled role="alert" />
   ) : null;
 
+  const sep24VerificationErrorNotification = sep24VerificationMutation.error ? (
+    <Notification
+      variant="error"
+      title={sep24VerificationMutation.error.message}
+      isFilled
+      role="alert"
+    />
+  ) : null;
+
+  const topNotices: EmbeddedWalletNotice[] = [];
+  const isVerified = profileStatus === "SUCCESS" && !isVerificationPending;
+  if (isVerified && !isVerificationNoticeDismissed) {
+    topNotices.push({
+      id: "sep24-verification-success",
+      content: (
+        <Notification
+          variant="success"
+          title="You're all set!"
+          icon={<Icon.CheckCircle />}
+          isFilled
+          role="status"
+        >
+          <div className="EmbeddedWalletNotice__content">
+            <div>
+              Now you can receive crypto or withdraw using cash pick-up service or a crypto wallet
+              transfer.
+            </div>
+            <Link
+              role="button"
+              variant="primary"
+              onClick={() => {
+                localStorageWalletNotices.set(credentialId, { verifiedDismissed: true });
+                bumpNoticeVersion();
+              }}
+              addlClassName="EmbeddedWalletNotice__dismiss"
+            >
+              Dismiss
+            </Link>
+          </div>
+        </Notification>
+      ),
+    });
+  }
+  if (isVerified && !isTransactionsNoticeDismissed) {
+    topNotices.push({
+      id: "sep24-transactions-info",
+      content: (
+        <Notification
+          variant="primary"
+          title="Once you receive assets or make transactions, they'll appear here."
+          isFilled
+          role="status"
+        >
+          <div className="EmbeddedWalletNotice__content">
+            <Link
+              role="button"
+              variant="primary"
+              onClick={() => {
+                localStorageWalletNotices.set(credentialId, { transactionsDismissed: true });
+                bumpNoticeVersion();
+              }}
+              addlClassName="EmbeddedWalletNotice__dismiss"
+            >
+              Dismiss
+            </Link>
+          </div>
+        </Notification>
+      ),
+    });
+  }
+  if (sendPaymentErrorNotification) {
+    topNotices.push({
+      id: "send-payment-error",
+      content: sendPaymentErrorNotification,
+      onDismiss: sendPaymentMutation.reset,
+      dismissLabel: "Dismiss send payment error",
+    });
+  }
+  if (sep24VerificationErrorNotification) {
+    topNotices.push({
+      id: "sep24-verification-error",
+      content: sep24VerificationErrorNotification,
+      onDismiss: sep24VerificationMutation.reset,
+      dismissLabel: "Dismiss verification error",
+    });
+  }
   const organizationName = useMemo(
     () => organization?.data?.name || getSdpTenantName() || "Your organization",
     [organization?.data?.name],
@@ -119,6 +223,7 @@ export const EmbeddedWalletHome = () => {
           />
         ) : null
       }
+      topNotices={topNotices}
     >
       <Box gap="md">
         {isLoadingBalance ? (
@@ -130,9 +235,6 @@ export const EmbeddedWalletHome = () => {
         )}
 
         <p>{contractAddress}</p>
-
-        {sendPaymentErrorNotification ?? <></>}
-
         <form onSubmit={handleSendPayment}>
           <Box gap="sm">
             <Input
