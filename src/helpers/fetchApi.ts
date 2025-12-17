@@ -1,11 +1,13 @@
 import { differenceInMinutes, fromUnixTime } from "date-fns";
+
+import { getSdpTenantName } from "./getSdpTenantName";
+
 import { refreshToken } from "@/api/refreshToken";
 import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
-import { parseJwt } from "@/helpers/parseJwt";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { parseJwt } from "@/helpers/parseJwt";
 import { AnyObject } from "@/types";
-import { getSdpTenantName } from "./getSdpTenantName";
 
 type FetchApiOptions = {
   withoutAuth?: boolean;

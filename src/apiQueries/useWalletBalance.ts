@@ -2,15 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { fetchSacBalances } from "@/helpers/stellarBalances";
-import { AppError } from "@/types";
+import { ApiStellarAccountBalance, AppError, EmbeddedWalletSupportedAsset } from "@/types";
 
-interface WalletBalance {
-  asset_code: string;
-  balance: string;
-}
-
-export const useWalletBalance = (contractAddress: string | undefined) => {
-  const query = useQuery<WalletBalance, AppError>({
+export const useWalletBalance = (
+  contractAddress: string | undefined,
+  assets: EmbeddedWalletSupportedAsset[],
+) => {
+  const query = useQuery<ApiStellarAccountBalance[], AppError>({
     queryKey: ["wallet-balance", contractAddress],
     queryFn: async () => {
       if (!contractAddress) {
@@ -18,18 +16,18 @@ export const useWalletBalance = (contractAddress: string | undefined) => {
       }
 
       const rpcServer = createAuthenticatedRpcServer("wallet");
+      const assetDescriptors = assets.length
+        ? assets.map((asset) => ({
+            code: asset.code,
+            issuer: asset.issuer || null,
+          }))
+        : [{ code: "XLM", issuer: null }];
 
-      const [walletBalance] =
-        (await fetchSacBalances({
-          rpcServer,
-          stellarAddress: contractAddress,
-          assets: [{ code: "XLM", issuer: null }],
-        })) ?? [];
-
-      return {
-        asset_code: walletBalance?.asset_code ?? "XLM",
-        balance: walletBalance?.balance ?? "0",
-      };
+      return fetchSacBalances({
+        rpcServer,
+        stellarAddress: contractAddress,
+        assets: assetDescriptors,
+      });
     },
     enabled: Boolean(contractAddress),
     refetchInterval: 10000,

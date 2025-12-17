@@ -67,19 +67,13 @@
   --ew-card-padding-sm: #{pxToRem(48px)} #{pxToRem(16px)};
 
   width: clamp(var(--ew-card-min), 94vw, var(--ew-card-max));
-  background: var(--sds-clr-gray-01);
   border-radius: pxToRem(8px);
   box-shadow: none;
-  padding: var(--ew-card-padding);
 }
 
-.EmbeddedWalletLayout__cardWrapper > .Card {
-  width: 100%;
-  height: auto;
-  background: transparent;
+.EmbeddedWalletLayout__cardWrapper .Card {
   border: none;
   box-shadow: none;
-  padding: 0;
 }
 
 .EmbeddedWalletCard__content {

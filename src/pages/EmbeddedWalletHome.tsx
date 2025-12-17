@@ -1,40 +1,51 @@
-import { Button, Input, Notification } from "@stellar/design-system";
+import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { useSendWalletPayment } from "@/apiQueries/useSendWalletPayment";
 import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
+import { AssetAmount } from "@/components/AssetAmount";
 import { Box } from "@/components/Box";
+import { EmbeddedWalletCard } from "@/components/EmbeddedWalletCard";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
 import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
 import { EmbeddedWalletProfileModal } from "@/components/EmbeddedWalletProfileModal";
+import {
+  DEFAULT_EMBEDDED_WALLET_ASSET_CODE,
+  getEmbeddedWalletAssetMetadata,
+} from "@/constants/embeddedWalletAssets";
 import { Routes } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { clearWalletInfoAction, fetchWalletProfileAction } from "@/store/ducks/walletAccount";
+import { ApiStellarAccountBalance } from "@/types";
 
 export const EmbeddedWalletHome = () => {
   const { walletAccount, organization } = useRedux("walletAccount", "organization");
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [destination, setDestination] = useState("");
-  const [amount, setAmount] = useState("");
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const { contractAddress, credentialId, isVerificationPending, isAuthenticated, token } =
+  const { contractAddress, isVerificationPending, isAuthenticated, token, supportedAssets } =
     walletAccount;
   const isWalletReady = Boolean(contractAddress);
 
-  const {
-    data: balanceData,
-    isLoading: isLoadingBalance,
-    refetch: refetchBalance,
-  } = useWalletBalance(contractAddress);
+  const { data: balanceData, isLoading: isLoadingBalance } = useWalletBalance(
+    contractAddress,
+    supportedAssets ?? [],
+  );
+
+  const nonZeroWalletBalances = useMemo<ApiStellarAccountBalance[]>(() => {
+    if (!balanceData) {
+      return [];
+    }
+
+    return balanceData.filter((balance) => !new BigNumber(balance.balance || "0").isZero());
+  }, [balanceData]);
 
   const handleLogout = () => {
     localStorageWalletSessionToken.remove();
@@ -48,31 +59,7 @@ export const EmbeddedWalletHome = () => {
     }
   }, [dispatch, isAuthenticated, token]);
 
-  const sendPaymentMutation = useSendWalletPayment({
-    contractAddress,
-    credentialId,
-    balance: balanceData?.balance ?? "0",
-    onSuccess: async () => {
-      setDestination("");
-      setAmount("");
-      await refetchBalance();
-    },
-  });
-
   const sep24VerificationMutation = useSep24Verification();
-
-  const handleSendPayment = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!isWalletReady) {
-      return;
-    }
-
-    try {
-      await sendPaymentMutation.mutateAsync({ destination, amount });
-    } catch {
-      // hook handles error reporting
-    }
-  };
 
   const handleSep24Verification = async () => {
     if (!isWalletReady) {
@@ -92,12 +79,39 @@ export const EmbeddedWalletHome = () => {
     }
   };
 
-  const isSendDisabled =
-    !isWalletReady || sendPaymentMutation.isPending || !destination.trim() || !amount.trim();
+  const renderAssetRows = () => {
+    if (isLoadingBalance) {
+      return <div className="EmbeddedWalletCard__empty">Loading assets…</div>;
+    }
 
-  const sendPaymentErrorNotification = sendPaymentMutation.error ? (
-    <Notification variant="error" title={sendPaymentMutation.error.message} isFilled role="alert" />
-  ) : null;
+    if (!nonZeroWalletBalances.length) {
+      return <div className="EmbeddedWalletCard__empty">No assets</div>;
+    }
+
+    return nonZeroWalletBalances.map((balance) => {
+      const assetCode = balance.asset_code || DEFAULT_EMBEDDED_WALLET_ASSET_CODE;
+      const { logo, label } = getEmbeddedWalletAssetMetadata(assetCode);
+
+      return (
+        <div className="EmbeddedWalletCard__row" key={`${assetCode}-${label}`}>
+          <div className="EmbeddedWalletCard__asset">
+            <img
+              className="EmbeddedWalletCard__assetLogo"
+              src={logo}
+              alt={`${assetCode} logo`}
+              width={32}
+              height={32}
+            />
+            <div className="EmbeddedWalletCard__assetText">
+              <div>{label}</div>
+              <div className="EmbeddedWalletCard__assetCode">{assetCode}</div>
+            </div>
+          </div>
+          <AssetAmount amount={balance.balance} assetCode={assetCode} />
+        </div>
+      );
+    });
+  };
 
   const organizationName = useMemo(
     () => organization?.data?.name || getSdpTenantName() || "Your organization",
@@ -122,54 +136,21 @@ export const EmbeddedWalletHome = () => {
       }
     >
       <Box gap="md">
-        {isLoadingBalance ? (
-          <strong>Loading...</strong>
-        ) : (
-          <strong>
-            {balanceData?.balance || "0"} {balanceData?.asset_code || "XLM"}
-          </strong>
-        )}
+        <EmbeddedWalletCard
+          title="My assets"
+          tableHeaders={["Asset", "Amount"]}
+          renderTableContent={renderAssetRows}
+          actionLabel="Withdraw"
+          onAction={() => {}}
+        />
 
-        <p>{contractAddress}</p>
-
-        {sendPaymentErrorNotification ?? <></>}
-
-        <form onSubmit={handleSendPayment}>
-          <Box gap="sm">
-            <Input
-              id="wallet-send-destination"
-              label="Destination address"
-              fieldSize="md"
-              value={destination}
-              onChange={(event) => setDestination(event.currentTarget.value)}
-              required
-              disabled={!isWalletReady || sendPaymentMutation.isPending}
-            />
-
-            <Input
-              id="wallet-send-amount"
-              label="Amount"
-              fieldSize="md"
-              type="number"
-              step="0.0000001"
-              min="0"
-              value={amount}
-              onChange={(event) => setAmount(event.currentTarget.value)}
-              required
-              disabled={!isWalletReady || sendPaymentMutation.isPending}
-            />
-
-            <Button
-              variant="primary"
-              type="submit"
-              size="lg"
-              isLoading={sendPaymentMutation.isPending}
-              disabled={isSendDisabled}
-            >
-              Send Payment
-            </Button>
-          </Box>
-        </form>
+        <EmbeddedWalletCard
+          title="Recent transactions"
+          tableHeaders={["Type", "Amount"]}
+          renderTableContent={() => (
+            <div className="EmbeddedWalletCard__empty">No recent transactions</div>
+          )}
+        />
       </Box>
 
       <EmbeddedWalletModal
