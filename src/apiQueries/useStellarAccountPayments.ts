@@ -1,32 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { getStellarTransaction } from "@/api/getStellarTransaction";
 import { HORIZON_URL } from "@/constants/envVariables";
 import { fetchStellarApi } from "@/helpers/fetchStellarApi";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
-import {
-  ApiStellarOperationRecord,
-  ApiStellarPaymentType,
-  AppError,
-  ReceiverWalletPayment,
-} from "@/types";
+import { ApiStellarOperationRecord, AppError, ReceiverWalletPayment } from "@/types";
 
-const ACCEPTED_TYPE: ApiStellarPaymentType[] = [
-  "payment",
-  "path_payment_strict_send",
-  "path_payment_strict_receive",
-];
+/** Minimum amount to filter out dust/spam transactions */
+const MIN_PAYMENT_AMOUNT = 0.001;
 
-export const useStellarAccountPayments = (stellarAddress: string | undefined) => {
+/** Default number of payments to return */
+export const DEFAULT_PAYMENT_LIMIT = 10;
+
+export const useStellarAccountPayments = (
+  stellarAddress: string | undefined,
+  limit: number = DEFAULT_PAYMENT_LIMIT,
+) => {
+  // Fetch more records than needed to account for filtered dust transactions
+  // Using 2x multiplier since /payments endpoint only returns payment types
+  const fetchLimit = Math.min(limit * 2, 200);
+
   const query = useQuery<ReceiverWalletPayment[], AppError>({
-    queryKey: ["stellar", "accounts", "payments", stellarAddress],
+    queryKey: ["stellar", "accounts", "payments", stellarAddress, limit],
     queryFn: async () => {
       if (!stellarAddress) {
         return [];
       }
 
-      // TODO: make params dynamic
       const response = await fetchStellarApi(
-        `${HORIZON_URL}/accounts/${stellarAddress}/operations?limit=20&order=desc`,
+        `${HORIZON_URL}/accounts/${stellarAddress}/payments?limit=${fetchLimit}&order=desc`,
         undefined,
         {
           notFoundMessage: `${shortenAccountKey(stellarAddress)} address was not found.`,
@@ -35,13 +37,17 @@ export const useStellarAccountPayments = (stellarAddress: string | undefined) =>
 
       const { records } = response._embedded;
 
-      const paymentRecords = records.filter((r: ApiStellarOperationRecord) =>
-        ACCEPTED_TYPE.includes(r.type),
+      // Filter out dust/spam transactions below minimum amount
+      const filteredRecords = records.filter(
+        (r: ApiStellarOperationRecord) => parseFloat(r.amount) >= MIN_PAYMENT_AMOUNT,
       );
+
+      // Take only the requested number of payments
+      const limitedRecords = filteredRecords.slice(0, limit);
 
       const payments = [];
 
-      for await (const record of paymentRecords) {
+      for (const record of limitedRecords) {
         const payment = await formatWalletPayment(record, stellarAddress);
         payments.push(payment);
       }
