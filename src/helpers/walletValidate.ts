@@ -1,17 +1,35 @@
-export const isValidWalletAddress = (address: string): boolean => {
-  const WALLET_ADDRESS_PREFIX = "G";
-  const WALLET_ADDRESS_LENGTH = 56;
+const WALLET_ADDRESS_LENGTH = 56;
 
-  // Check if address is a string and not empty
-  if (!address || typeof address !== "string") {
+const normalize = (address: string) => address.trim().toUpperCase();
+
+export const isContractAddress = (address: string): boolean => {
+  if (typeof address !== "string") {
     return false;
   }
 
-  const trimmedAddress = address.trim();
+  const normalized = normalize(address);
+  return normalized.length === WALLET_ADDRESS_LENGTH && normalized.startsWith("C");
+};
 
-  // Check if it starts with G and has the correct length
-  return (
-    trimmedAddress.startsWith(WALLET_ADDRESS_PREFIX) &&
-    trimmedAddress.length === WALLET_ADDRESS_LENGTH
-  );
+export const isClassicWalletAddress = (address: string): boolean => {
+  if (typeof address !== "string") {
+    return false;
+  }
+
+  const normalized = normalize(address);
+  return normalized.length === WALLET_ADDRESS_LENGTH && normalized.startsWith("G");
+};
+
+export const isValidWalletAddress = (address: string): boolean => {
+  if (typeof address !== "string") {
+    return false;
+  }
+
+  const normalized = normalize(address);
+
+  if (normalized.length !== WALLET_ADDRESS_LENGTH) {
+    return false;
+  }
+
+  return normalized.startsWith("G") || normalized.startsWith("C");
 };

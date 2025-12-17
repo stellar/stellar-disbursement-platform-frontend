@@ -97,6 +97,15 @@ body {
   &--noMargin {
     margin-top: 0;
   }
+
+  &__emphasis {
+    display: block;
+    font-size: pxToRem(12px);
+    line-height: pxToRem(18px);
+    font-weight: 500;
+    color: var(--sds-clr-gray-10);
+    letter-spacing: 0.01em;
+  }
 }
 
 .Note__emphasis {
@@ -110,6 +119,13 @@ body {
 
 .Table-v2__cell--secondary {
   color: var(--sds-clr-gray-09);
+}
+
+.Table__emptyState {
+  background-color: var(--sds-clr-gray-02);
+  border-bottom-left-radius: pxToRem(8px);
+  border-bottom-right-radius: pxToRem(8px);
+  color: var(--sds-clr-gray-10) !important;
 }
 
 .FiltersWithSearch {
@@ -440,12 +456,6 @@ body {
     flex-shrink: 0;
   }
 
-  &__noRecentPayments {
-    background-color: var(--sds-clr-gray-02);
-    border-bottom-left-radius: pxToRem(8px);
-    border-bottom-right-radius: pxToRem(8px);
-    color: var(--sds-clr-gray-10) !important;
-  }
 }
 
 .ReceiverContactInfo {
@@ -456,6 +466,10 @@ body {
 }
 
 // Wallets
+.WalletHistory__amount {
+  display: inline-flex;
+}
+
 .WalletBalances {
   display: flex;
   flex-direction: column;

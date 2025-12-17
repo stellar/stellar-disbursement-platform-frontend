@@ -12,6 +12,33 @@ import { NONE_VERIFICATION_VALUE, RegistrationContactType } from "@/types";
 
 import "./styles.scss";
 
+const FILE_FORMAT_NOTE_ITEMS = [
+  {
+    id: "phoneOrEmail",
+    text: "phone or email (mandatory) - the phone number or email address of the receiver. Phone number must be in international format and include + at the beginning.",
+  },
+  {
+    id: "walletAddress",
+    text: "walletAddress (included only if sending via address) - the Stellar blockchain address of the receiver.",
+  },
+  {
+    id: "id",
+    text: "id (mandatory) - a unique person identifier tied to the receiver, typically to trace back to source systems.",
+  },
+  {
+    id: "amount",
+    text: "amount (mandatory) - the amount to be sent to the receiver in the asset selected above.",
+  },
+  {
+    id: "paymentId",
+    text: "paymentID (optional) - a unique payment identifier tied to the specific payment, typically to trace back to source systems.",
+  },
+  {
+    id: "walletAddressMemo",
+    text: "walletAddressMemo (optional) - if required, the Stellar transaction memo to be included alongside the address.",
+  },
+];
+
 interface DisbursementInstructionsProps {
   variant: "upload" | "preview";
   csvFile?: File;
@@ -64,8 +91,10 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
     if (variant === "upload") {
       return (
         <>
+          <div className="Note">Upload the list of receivers you want to pay.</div>
           <div className="Note">
-            Please complete all fields above before uploading a disbursement file
+            Please complete the details above before uploading a disbursement file. The CSV template
+            will automatically update to match the options you selected above.
           </div>
 
           <CsvUpload initFile={csvFile} onChange={onChange} isDisabled={isDisabled} />
@@ -106,7 +135,20 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
   return (
     <Card>
       <div className="DisbursementInstructions__titleWrapper">
-        <InfoTooltip infoText="Upload a list of recipients you wish to pay">
+        <InfoTooltip
+          infoText={
+            <div className="Note">
+              <span>File format:</span>
+              <ul>
+                {FILE_FORMAT_NOTE_ITEMS.map(({ id, text }) => (
+                  <li key={id} className="Note__emphasis">
+                    {text}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          }
+        >
           <Title size="md">Disbursement instructions</Title>
         </InfoTooltip>
 

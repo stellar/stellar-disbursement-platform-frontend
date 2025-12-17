@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-
 import { Button, Icon, Input, Modal, Notification, Select, Text } from "@stellar/design-system";
+import { useEffect, useState } from "react";
 
 import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
 import {
@@ -11,10 +10,9 @@ import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { ReceiverConfirmation } from "@/components/ReceiverConfirmation/ReceiverConfirmation";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { validateVerificationField } from "@/helpers/validateVerificationFields";
-import { isValidWalletAddress } from "@/helpers/walletValidate";
+import { isContractAddress, isValidWalletAddress } from "@/helpers/walletValidate";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePrevious } from "@/hooks/usePrevious";
-
 import { AppError, CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
 import "./styles.scss";
@@ -104,7 +102,8 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
     if (!isValid) {
       setFormErrors((prev) => ({
         ...prev,
-        walletAddress: "Please enter a valid Stellar wallet address (GXXX... format)",
+        walletAddress:
+          "Please enter a valid Stellar wallet or contract address (GXXX... or CXXX... format)",
       }));
     } else {
       setFormErrors((prev) => ({ ...prev, walletAddress: "" }));
@@ -243,17 +242,31 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   };
 
   const handleWalletAddressChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      currentWallet: { ...prev.currentWallet, address: value },
-    }));
+    setFormData((prev) => {
+      const shouldClearMemo = isContractAddress(value);
+
+      return {
+        ...prev,
+        currentWallet: {
+          ...prev.currentWallet,
+          address: value,
+          memo: shouldClearMemo ? "" : prev.currentWallet.memo,
+        },
+      };
+    });
   };
 
   const handleWalletMemoChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      currentWallet: { ...prev.currentWallet, memo: value },
-    }));
+    setFormData((prev) => {
+      if (isContractAddress(prev.currentWallet.address)) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        currentWallet: { ...prev.currentWallet, memo: value },
+      };
+    });
   };
 
   const getCurrentWalletAddress = () => formData?.currentWallet?.address?.trim();
@@ -498,6 +511,8 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
   };
 
   const renderWalletFields = () => {
+    const isCurrentWalletContract = isContractAddress(formData.currentWallet.address);
+
     return (
       <>
         {/* Wallet address input row */}
@@ -507,7 +522,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             fieldSize="sm"
             type="text"
             label="Wallet Address"
-            placeholder="Enter Stellar wallet address (GXXX...)"
+            placeholder="Enter Stellar wallet or contract address (GXXX... or CXXX...)"
             value={formData.currentWallet.address}
             onChange={(e) => handleWalletAddressChange(e.target.value)}
             error={formErrors.walletAddress}
@@ -525,6 +540,12 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
             value={formData.currentWallet.memo}
             onChange={(e) => handleWalletMemoChange(e.target.value)}
             className="ReceiverCreateModal__wallet-memo-field"
+            disabled={isCurrentWalletContract}
+            infoText={
+              isCurrentWalletContract
+                ? "Memos are not supported for contract addresses."
+                : undefined
+            }
           />
 
           <Button
