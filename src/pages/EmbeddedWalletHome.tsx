@@ -8,6 +8,7 @@ import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
+import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
 import { Routes } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
@@ -95,15 +96,6 @@ export const EmbeddedWalletHome = () => {
     <Notification variant="error" title={sendPaymentMutation.error.message} isFilled role="alert" />
   ) : null;
 
-  const sep24VerificationErrorNotification = sep24VerificationMutation.error ? (
-    <Notification
-      variant="error"
-      title={sep24VerificationMutation.error.message}
-      isFilled
-      role="alert"
-    />
-  ) : null;
-
   const organizationName = useMemo(
     () => organization?.data?.name || getSdpTenantName() || "Your organization",
     [organization?.data?.name],
@@ -127,7 +119,6 @@ export const EmbeddedWalletHome = () => {
         <p>{contractAddress}</p>
 
         {sendPaymentErrorNotification ?? <></>}
-        {sep24VerificationErrorNotification ?? <></>}
 
         <form onSubmit={handleSendPayment}>
           <Box gap="sm">
@@ -169,20 +160,19 @@ export const EmbeddedWalletHome = () => {
         <Button variant="secondary" size="lg" onClick={handleLogout}>
           Sign Out
         </Button>
-        {isVerificationPending ? (
-          <Button
-            variant="secondary"
-            size="lg"
-            onClick={handleSep24Verification}
-            isLoading={sep24VerificationMutation.isPending}
-            disabled={!isWalletReady || sep24VerificationMutation.isPending}
-          >
-            Start Verification
-          </Button>
-        ) : (
-          <></>
-        )}
       </Box>
+
+      <EmbeddedWalletModal
+        visible={isVerificationPending}
+        onClose={() => {}}
+        title="Complete verification"
+        description="Verify your account to complete your wallet setup and to get started."
+        primaryActionLabel="Start verification"
+        onPrimaryAction={handleSep24Verification}
+        isPrimaryActionLoading={sep24VerificationMutation.isPending}
+        isPrimaryActionDisabled={!isWalletReady || sep24VerificationMutation.isPending}
+        contentAlign="left"
+      />
     </EmbeddedWalletLayout>
   );
 };

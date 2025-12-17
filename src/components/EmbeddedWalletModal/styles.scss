@@ -1,0 +1,119 @@
+@use "../../styles/styles-utils.scss" as *;
+
+#embedded-wallet-modal-root {
+  --EmbeddedWalletModal-max-width: #{pxToRem(420px)};
+  --EmbeddedWalletModal-padding: #{pxToRem(24px)};
+  --EmbeddedWalletModal-radius: #{pxToRem(8px)};
+  --EmbeddedWalletModal-shadow: 0 #{pxToRem(20px)} #{pxToRem(40px)} rgba(0, 0, 0, 0.16);
+  --EmbeddedWalletModal-overlay: rgba(0, 0, 0, 0.35);
+
+  .Modal {
+    min-width: 0;
+    width: 100vw;
+  }
+
+  .Modal__container {
+    width: min(92vw, var(--EmbeddedWalletModal-max-width));
+    max-width: var(--EmbeddedWalletModal-max-width);
+    padding: var(--EmbeddedWalletModal-padding);
+    border-radius: var(--EmbeddedWalletModal-radius);
+    box-shadow: var(--EmbeddedWalletModal-shadow);
+    animation: embedded-wallet-modal-pop 180ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+  }
+
+  .Modal__content {
+    gap: pxToRem(8px);
+  }
+
+  .ModalHeading {
+    width: 100%;
+    margin-bottom: pxToRem(8px);
+    padding-left: pxToRem(4px);
+    margin-right: pxToRem(-4px);
+  }
+
+  .ModalBody {
+    font-size: pxToRem(16px);
+    line-height: pxToRem(24px);
+  }
+
+  .Modal__close {
+    display: none;
+  }
+
+  .Modal__background {
+    background-color: var(--EmbeddedWalletModal-overlay);
+    cursor: default;
+    animation: embedded-wallet-modal-fade 180ms ease-out 60ms both;
+  }
+}
+
+.EmbeddedWalletModal__heading {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(8px);
+}
+
+.EmbeddedWalletModal__heading--center {
+  align-items: center;
+  text-align: center;
+}
+
+.EmbeddedWalletModal__heading--left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.EmbeddedWalletModal__title {
+  color: var(--sds-clr-gray-12);
+}
+
+.EmbeddedWalletModal__content {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+}
+
+.EmbeddedWalletModal__content--center {
+  align-items: center;
+  text-align: center;
+}
+
+.EmbeddedWalletModal__content--left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.EmbeddedWalletModal__description {
+  margin: 0;
+  color: var(--sds-clr-gray-11);
+}
+
+@keyframes embedded-wallet-modal-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -35%) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -35%) scale(1);
+  }
+}
+
+@keyframes embedded-wallet-modal-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #embedded-wallet-modal-root {
+    .Modal__container,
+    .Modal__background {
+      animation: none;
+    }
+  }
+}
