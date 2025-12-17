@@ -1,0 +1,11 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.EmbeddedWalletDismissibleNotice__content {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(12px);
+}
+
+.EmbeddedWalletDismissibleNotice__dismiss {
+  align-self: flex-start;
+}

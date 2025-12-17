@@ -59,12 +59,54 @@
   padding: pxToRem(24px) pxToRem(16px);
 }
 
-.EmbeddedWalletLayout__cardWrapper {
+.EmbeddedWalletLayout__stack {
   --ew-card-min: #{pxToRem(360px)};
   --ew-card-max: #{pxToRem(560px)};
   --ew-card-padding: #{pxToRem(56px)} #{pxToRem(24px)};
   --ew-card-padding-sm: #{pxToRem(48px)} #{pxToRem(16px)};
 
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.EmbeddedWalletLayout__notices {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: pxToRem(12px);
+  margin-bottom: pxToRem(16px);
+}
+
+.EmbeddedWalletLayout__notices:empty {
+  margin-bottom: 0;
+}
+
+.EmbeddedWalletLayout__noticeItem {
+  width: clamp(var(--ew-card-min), 94vw, var(--ew-card-max));
+  position: relative;
+  --ew-notice-title-offset: 1.5rem;
+
+  .Notification {
+    width: 100%;
+    background: var(--sds-clr-gray-01);
+    border: 1px solid var(--sds-clr-gray-05);
+    box-shadow: none;
+  }
+
+  .Notification__title {
+    align-items: flex-start;
+  }
+
+  .Notification__message {
+    padding-left: var(--ew-notice-title-offset);
+  }
+}
+
+.EmbeddedWalletLayout__cardWrapper {
   width: clamp(var(--ew-card-min), 94vw, var(--ew-card-max));
   background: var(--sds-clr-gray-01);
   border-radius: pxToRem(8px);
@@ -128,10 +170,23 @@
     align-items: flex-start;
   }
 
+  .EmbeddedWalletLayout__stack {
+    align-items: stretch;
+  }
+
   .EmbeddedWalletLayout__cardWrapper {
     width: 100%;
     max-width: pxToRem(500px);
     padding: var(--ew-card-padding-sm);
+  }
+
+  .EmbeddedWalletLayout__notices {
+    align-items: stretch;
+  }
+
+  .EmbeddedWalletLayout__noticeItem {
+    width: 100%;
+    max-width: pxToRem(500px);
   }
 
   .EmbeddedWalletCard__logo {
@@ -143,5 +198,9 @@
 @media (max-width: 360px) {
   .EmbeddedWalletLayout__cardWrapper {
     width: 100%;
+  }
+
+  .EmbeddedWalletLayout__noticeItem {
+    max-width: 100%;
   }
 }
