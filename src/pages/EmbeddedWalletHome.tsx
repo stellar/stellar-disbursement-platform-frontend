@@ -164,7 +164,7 @@ export const EmbeddedWalletHome = () => {
 
       <EmbeddedWalletModal
         visible={isVerificationPending}
-        onClose={() => {}}
+        isDismissible={false}
         title="Complete verification"
         description="Verify your account to complete your wallet setup and to get started."
         primaryActionLabel="Start verification"

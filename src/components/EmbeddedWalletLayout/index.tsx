@@ -54,7 +54,7 @@ export const EmbeddedWalletLayout = ({
           </Card>
         </div>
       </div>
-      <div id="embedded-wallet-modal-root" />
+      <div id="embedded-wallet-modal-root" className="EmbeddedWalletModalRoot" />
     </div>
   );
 };
