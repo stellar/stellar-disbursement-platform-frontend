@@ -156,12 +156,14 @@ export const DistributionAccountStellar = () => {
         <Card>
           <div className="CardStack__card">
             <div className="CardStack__title">
-              <InfoTooltip infoText="A record of payments to and from your distribution account, sourced directly from the Stellar network">
-                Wallet history
+              <Box gap="xs" direction="row" align="center">
+                <InfoTooltip infoText="A record of payments to and from your distribution account, sourced directly from the Stellar network">
+                  Wallet history
+                </InfoTooltip>
                 <Link href={`${STELLAR_EXPERT_URL}/account/${distributionAccountPublicKey}`}>
                   <Icon.LinkExternal01 className="ExternalLinkIcon" />
                 </Link>
-              </InfoTooltip>
+              </Box>
             </div>
             <WalletHistory stellarAddress={distributionAccountPublicKey} />
           </div>

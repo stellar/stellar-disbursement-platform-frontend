@@ -17,7 +17,7 @@ export const useStellarAccountPayments = (
   limit: number = DEFAULT_PAYMENT_LIMIT,
 ) => {
   // Fetch more records than needed to account for filtered dust transactions
-  // Using 2x multiplier since /payments endpoint only returns payment types
+  // Using 2x multiplier to offset records that will be filtered out as dust/spam
   const fetchLimit = Math.min(limit * 2, 200);
 
   const query = useQuery<ReceiverWalletPayment[], AppError>({
