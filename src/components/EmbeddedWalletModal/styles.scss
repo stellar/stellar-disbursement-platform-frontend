@@ -65,9 +65,9 @@
 }
 
 .EmbeddedWalletModal__heading {
-  display: flex;
-  flex-direction: column;
-  gap: pxToRem(8px);
+  font-size: pxToRem(16px);
+  font-weight: var(--sds-fw-medium);
+  margin: 0;
 
   &[data-align="center"] {
     align-items: center;
@@ -80,17 +80,7 @@
   }
 }
 
-.EmbeddedWalletModal__title {
-  font-size: pxToRem(16px);
-  color: var(--sds-clr-gray-12);
-  font-weight: var(--sds-fw-medium);
-}
-
 .EmbeddedWalletModal__body {
-  display: flex;
-  flex-direction: column;
-  gap: pxToRem(16px);
-  font-size: pxToRem(16px);
   line-height: pxToRem(24px);
   color: var(--sds-clr-gray-11);
   font-weight: var(--sds-fw-regular);
@@ -104,14 +94,6 @@
     align-items: flex-start;
     text-align: left;
   }
-}
-
-.EmbeddedWalletModal__description {
-  margin: 0;
-  color: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  font-weight: inherit;
 }
 
 .EmbeddedWalletModal__footer {

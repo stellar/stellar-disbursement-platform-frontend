@@ -1,4 +1,4 @@
-import { Button, Icon, NavButton } from "@stellar/design-system";
+import { Button, Heading, Icon, NavButton } from "@stellar/design-system";
 import { useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 
@@ -17,8 +17,7 @@ interface EmbeddedWalletModalProps {
   isPrimaryActionDisabled?: boolean;
 }
 
-const MODAL_OPEN_CLASS_NAME = "modal-open";
-const MODAL_PARENT_ID = "embedded-wallet-modal-root";
+export const MODAL_PARENT_ID = "embedded-wallet-modal-root";
 
 export const EmbeddedWalletModal = ({
   visible,
@@ -52,7 +51,7 @@ export const EmbeddedWalletModal = ({
 
   useEffect(() => {
     if (!visible || !isModalDismissible) {
-      return undefined;
+      return;
     }
 
     document.addEventListener("keyup", closeOnEscape);
@@ -60,18 +59,6 @@ export const EmbeddedWalletModal = ({
       document.removeEventListener("keyup", closeOnEscape);
     };
   }, [closeOnEscape, isModalDismissible, visible]);
-
-  useEffect(() => {
-    if (visible) {
-      document.body.classList.add(MODAL_OPEN_CLASS_NAME);
-      return () => {
-        document.body.classList.remove(MODAL_OPEN_CLASS_NAME);
-      };
-    }
-
-    document.body.classList.remove(MODAL_OPEN_CLASS_NAME);
-    return undefined;
-  }, [visible]);
 
   const shouldShowFooter = Boolean(primaryActionLabel && onPrimaryAction);
 
@@ -95,12 +82,16 @@ export const EmbeddedWalletModal = ({
             </div>
           ) : null}
 
-          <div className="EmbeddedWalletModal__heading" data-align={contentAlign}>
-            <span className="EmbeddedWalletModal__title">{title}</span>
-          </div>
+          <Heading
+            className="EmbeddedWalletModal__heading"
+            data-align={contentAlign}
+            children={title}
+            as={"h2"}
+            size={"sm"}
+          />
 
           <div className="EmbeddedWalletModal__body" data-align={contentAlign}>
-            <p className="EmbeddedWalletModal__description">{description}</p>
+            {description}
           </div>
 
           {shouldShowFooter ? (

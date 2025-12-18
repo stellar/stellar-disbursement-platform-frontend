@@ -2,6 +2,7 @@ import { Card } from "@stellar/design-system";
 import { useEffect, type ReactNode } from "react";
 
 import "./styles.scss";
+import { MODAL_PARENT_ID } from "../EmbeddedWalletModal";
 
 type EmbeddedWalletLayoutProps = {
   organizationName: string;
@@ -54,7 +55,7 @@ export const EmbeddedWalletLayout = ({
           </Card>
         </div>
       </div>
-      <div id="embedded-wallet-modal-root" className="EmbeddedWalletModalRoot" />
+      <div id={MODAL_PARENT_ID} className="EmbeddedWalletModalRoot" />
     </div>
   );
 };
