@@ -44,6 +44,9 @@ export type WalletAccountInitialState = {
   isTokenRefresh: boolean;
   isVerificationPending: boolean;
   pendingAsset?: ApiAsset;
+  walletProfile?: EmbeddedWalletProfileResponse;
+  supportedAssets?: EmbeddedWalletSupportedAsset[];
+  receiverContact?: EmbeddedWalletReceiverContact;
   status: ActionStatus | undefined;
   errorString?: string;
 };
@@ -535,6 +538,31 @@ export type ApiAssetWithTrustline = ApiAsset & {
   balance: number;
 };
 
+export type EmbeddedWalletSupportedAsset = {
+  code: string;
+  issuer: string;
+};
+
+export type EmbeddedWalletReceiverContact = {
+  type: string;
+  value: string;
+};
+
+export type EmbeddedWalletDetails = {
+  supported_assets: EmbeddedWalletSupportedAsset[];
+  receiver_contact: EmbeddedWalletReceiverContact;
+};
+
+export type EmbeddedWalletVerificationDetails = {
+  is_pending: boolean;
+  pending_asset?: ApiAsset;
+};
+
+export type EmbeddedWalletProfileResponse = {
+  verification: EmbeddedWalletVerificationDetails;
+  wallet?: EmbeddedWalletDetails;
+};
+
 export type ApiWallet = {
   id: string;
   name: string;
@@ -905,8 +933,7 @@ export interface ApiStellarOperationPayment extends ApiStellarOperationBase {
 }
 
 export interface ApiStellarOperationPathPayment
-  extends ApiStellarOperationBase,
-    ApiStellarOperationPayment {
+  extends ApiStellarOperationBase, ApiStellarOperationPayment {
   path: {
     asset_type: string;
     asset_code: string;
@@ -918,8 +945,7 @@ export interface ApiStellarOperationPathPayment
   source_asset_issuer: string;
 }
 
-export interface ApiStellarOperationPathPaymentStrictReceive
-  extends ApiStellarOperationPathPayment {
+export interface ApiStellarOperationPathPaymentStrictReceive extends ApiStellarOperationPathPayment {
   source_max: string;
 }
 

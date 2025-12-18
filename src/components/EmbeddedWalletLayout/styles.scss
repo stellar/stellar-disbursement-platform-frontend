@@ -41,6 +41,9 @@
 }
 
 .EmbeddedWalletHeader__title {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   color: var(--sds-clr-gray-11);
   font-size: pxToRem(12px);
   font-weight: 500;

@@ -8,12 +8,16 @@ import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
+import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
+import { EmbeddedWalletProfileModal } from "@/components/EmbeddedWalletProfileModal";
 import { Routes } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { clearWalletInfoAction, fetchWalletProfileAction } from "@/store/ducks/walletAccount";
+
+const EMBEDDED_WALLET_CURRENCIES = ["USD"];
 
 export const EmbeddedWalletHome = () => {
   const { walletAccount, organization } = useRedux("walletAccount", "organization");
@@ -22,6 +26,7 @@ export const EmbeddedWalletHome = () => {
 
   const [destination, setDestination] = useState("");
   const [amount, setAmount] = useState("");
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { contractAddress, credentialId, isVerificationPending, isAuthenticated, token } =
     walletAccount;
   const isWalletReady = Boolean(contractAddress);
@@ -109,11 +114,22 @@ export const EmbeddedWalletHome = () => {
     [organization?.data?.name],
   );
 
+  const receiverContact = walletAccount.receiverContact;
+  if (!receiverContact) {
+    throw new Error("Receiver contact is missing");
+  }
+
   return (
     <EmbeddedWalletLayout
       organizationName={organizationName}
       organizationLogo={organization?.data?.logo}
-      headerRight="Profile"
+      headerRight={
+        <EmbeddedWalletProfileDropdown
+          contact={receiverContact}
+          onOpenProfile={() => setIsProfileModalOpen(true)}
+          onLogout={handleLogout}
+        />
+      }
     >
       <Box gap="md">
         {isLoadingBalance ? (
@@ -166,9 +182,6 @@ export const EmbeddedWalletHome = () => {
           </Box>
         </form>
 
-        <Button variant="secondary" size="lg" onClick={handleLogout}>
-          Sign Out
-        </Button>
         {isVerificationPending ? (
           <Button
             variant="secondary"
@@ -183,6 +196,13 @@ export const EmbeddedWalletHome = () => {
           <></>
         )}
       </Box>
+      <EmbeddedWalletProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        contact={receiverContact}
+        contractAddress={contractAddress}
+        currencies={EMBEDDED_WALLET_CURRENCIES}
+      />
     </EmbeddedWalletLayout>
   );
 };

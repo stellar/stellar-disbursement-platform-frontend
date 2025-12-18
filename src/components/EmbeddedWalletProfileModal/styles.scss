@@ -1,0 +1,65 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.EmbeddedWalletProfileModal__content {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(24px);
+  padding: pxToRem(20px);
+}
+
+.EmbeddedWalletProfileModal__title {
+  margin: 0;
+  text-align: center;
+  font-size: pxToRem(20px);
+  font-weight: var(--sds-fw-medium);
+  color: var(--sds-clr-gray-13, #000000);
+}
+
+.EmbeddedWalletProfileModal__contact {
+  margin: 0;
+  font-size: pxToRem(16px);
+  text-align: center;
+  color: var(--sds-clr-gray-09);
+  margin-bottom: pxToRem(16px);
+}
+
+.EmbeddedWalletProfileModal__field {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(8px);
+}
+
+.EmbeddedWalletProfileModal__label {
+  font-size: pxToRem(16px);
+  color: var(--sds-clr-gray-11);
+}
+
+.EmbeddedWalletProfileModal__addressRow {
+  display: flex;
+  align-items: stretch;
+}
+
+.EmbeddedWalletProfileModal__copyText {
+  flex: 1;
+  margin: 0;
+  padding: pxToRem(12px) 0;
+  font-size: pxToRem(18px);
+  color: var(--sds-clr-gray-12);
+  word-break: break-word;
+}
+
+.EmbeddedWalletProfileModal__copyAction {
+  display: flex;
+  align-items: center;
+  padding: 0 pxToRem(12px);
+}
+
+.EmbeddedWalletProfileModal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(12px);
+}
+
+.EmbeddedWalletProfileModal__field .Select {
+  width: 100%;
+}
