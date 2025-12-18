@@ -1,4 +1,4 @@
-import { Card, Heading, Profile, Notification } from "@stellar/design-system";
+import { Card, Heading, Icon, Link, Profile, Notification } from "@stellar/design-system";
 import { useState } from "react";
 
 import { ShowForRoles } from "./ShowForRoles";
@@ -15,6 +15,7 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { Title } from "@/components/Title";
 import { WalletHistory } from "@/components/WalletHistory";
 import { WalletTrustlines } from "@/components/WalletTrustlines";
+import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
 import { useOrgAccountInfo } from "@/hooks/useOrgAccountInfo";
 import { useRedux } from "@/hooks/useRedux";
 import { BridgeIntegrationUpdate } from "@/types";
@@ -155,9 +156,14 @@ export const DistributionAccountStellar = () => {
         <Card>
           <div className="CardStack__card">
             <div className="CardStack__title">
-              <Heading as="h4" size="xs">
-                Wallet history
-              </Heading>
+              <Box gap="xs" direction="row" align="center">
+                <InfoTooltip infoText="A record of payments to and from your distribution account, sourced directly from the Stellar network">
+                  Wallet history
+                </InfoTooltip>
+                <Link href={`${STELLAR_EXPERT_URL}/account/${distributionAccountPublicKey}`}>
+                  <Icon.LinkExternal01 className="ExternalLinkIcon" />
+                </Link>
+              </Box>
             </div>
             <WalletHistory stellarAddress={distributionAccountPublicKey} />
           </div>

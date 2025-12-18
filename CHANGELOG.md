@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+
+- Improve Wallet History: filter spam/dust transactions (<0.001), show last 10 payments, add Stellar Expert link, add info tooltip, and increase asset amount decimal precision from 2 to 3 digits. [#414](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/414)
+
 ### Security and Dependencies
 
 - Upgrade React to 19.2.3 and @stellar/design-system to 3.2.7 to address CVE-2025-55184 denial of service and source code exposure vulnerability in React Server Components [#407](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/407)
