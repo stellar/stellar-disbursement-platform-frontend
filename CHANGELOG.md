@@ -8,7 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- Improve Wallet History: filter spam/dust transactions (<0.001), show last 10 payments, add Stellar Expert link, add info tooltip, and increase asset amount decimal precision from 2 to 3 digits. [#414](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/414)
+- Improve Wallet History Component functionality:
+   - Filter spam/dust transactions (<0.001), show last 10 payments, add Stellar Expert link, add info tooltip, and increase asset amount decimal precision from 2 to 3 digits. [#414](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/414)
+   - Add support for contract accounts operations in the Wallet History component. [#419](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/419)
 
 ### Security and Dependencies
 
