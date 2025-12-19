@@ -1,8 +1,9 @@
 import { Card } from "@stellar/design-system";
 import { useEffect, type ReactNode } from "react";
 
-import "./styles.scss";
 import { MODAL_PARENT_ID } from "../EmbeddedWalletModal";
+
+import "./styles.scss";
 
 type EmbeddedWalletLayoutProps = {
   organizationName: string;
