@@ -1,0 +1,129 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.EmbeddedWalletModalRoot {
+  --EmbeddedWalletModal-max-width: #{pxToRem(420px)};
+  --EmbeddedWalletModal-padding: #{pxToRem(24px)};
+  --EmbeddedWalletModal-radius: #{pxToRem(8px)};
+  --EmbeddedWalletModal-shadow: 0 #{pxToRem(20px)} #{pxToRem(40px)} rgba(0, 0, 0, 0.16);
+  --EmbeddedWalletModal-overlay: rgba(0, 0, 0, 0.35);
+}
+
+.EmbeddedWalletModal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: var(--sds-z-index-modal);
+  min-height: 100vh;
+
+  .EmbeddedWalletModal__container {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -35%);
+    width: min(92vw, var(--EmbeddedWalletModal-max-width));
+    max-width: var(--EmbeddedWalletModal-max-width);
+    padding: var(--EmbeddedWalletModal-padding);
+    border-radius: var(--EmbeddedWalletModal-radius);
+    box-shadow: var(--EmbeddedWalletModal-shadow);
+    background-color: var(--sds-clr-gray-01);
+    border: 1px solid var(--sds-clr-gray-06);
+    z-index: calc(var(--sds-z-index-modal) + 1);
+    animation: embedded-wallet-modal-pop 180ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+  }
+
+  .EmbeddedWalletModal__background {
+    position: absolute;
+    background-color: var(--EmbeddedWalletModal-overlay);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    cursor: default;
+    animation: embedded-wallet-modal-fade 180ms ease-out 60ms both;
+  }
+}
+
+.EmbeddedWalletModal__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+}
+
+.EmbeddedWalletModal__close {
+  position: absolute;
+  top: pxToRem(-8px);
+  right: pxToRem(-12px);
+  cursor: pointer;
+
+  .NavButton {
+    --NavButton-size: 2rem;
+    --NavButton-icon-size: 1.25rem;
+  }
+}
+
+.EmbeddedWalletModal__heading {
+  font-size: pxToRem(16px);
+  font-weight: var(--sds-fw-medium);
+  margin: 0;
+
+  &[data-align="center"] {
+    align-items: center;
+    text-align: center;
+  }
+
+  &[data-align="left"] {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.EmbeddedWalletModal__body {
+  line-height: pxToRem(24px);
+  color: var(--sds-clr-gray-11);
+  font-weight: var(--sds-fw-regular);
+
+  &[data-align="center"] {
+    align-items: center;
+    text-align: center;
+  }
+
+  &[data-align="left"] {
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+.EmbeddedWalletModal__footer {
+  display: flex;
+  width: 100%;
+}
+
+@keyframes embedded-wallet-modal-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -35%) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -35%) scale(1);
+  }
+}
+
+@keyframes embedded-wallet-modal-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .EmbeddedWalletModal__container,
+  .EmbeddedWalletModal__background {
+    animation: none;
+  }
+}
