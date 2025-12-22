@@ -9,6 +9,8 @@ import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
+import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
+import { EmbeddedWalletProfileModal } from "@/components/EmbeddedWalletProfileModal";
 import { Routes } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
@@ -23,6 +25,7 @@ export const EmbeddedWalletHome = () => {
 
   const [destination, setDestination] = useState("");
   const [amount, setAmount] = useState("");
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { contractAddress, credentialId, isVerificationPending, isAuthenticated, token } =
     walletAccount;
   const isWalletReady = Boolean(contractAddress);
@@ -101,11 +104,22 @@ export const EmbeddedWalletHome = () => {
     [organization?.data?.name],
   );
 
+  const receiverContact = walletAccount.receiverContact;
+  if (!receiverContact) {
+    return null;
+  }
+
   return (
     <EmbeddedWalletLayout
       organizationName={organizationName}
       organizationLogo={organization?.data?.logo}
-      headerRight="Profile"
+      headerRight={
+        <EmbeddedWalletProfileDropdown
+          contact={receiverContact}
+          onOpenProfile={() => setIsProfileModalOpen(true)}
+          onLogout={handleLogout}
+        />
+      }
     >
       <Box gap="md">
         {isLoadingBalance ? (
@@ -156,10 +170,6 @@ export const EmbeddedWalletHome = () => {
             </Button>
           </Box>
         </form>
-
-        <Button variant="secondary" size="lg" onClick={handleLogout}>
-          Sign Out
-        </Button>
       </Box>
 
       <EmbeddedWalletModal
@@ -172,6 +182,13 @@ export const EmbeddedWalletHome = () => {
         isPrimaryActionLoading={sep24VerificationMutation.isPending}
         isPrimaryActionDisabled={!isWalletReady || sep24VerificationMutation.isPending}
         contentAlign="left"
+      />
+
+      <EmbeddedWalletProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        contact={receiverContact}
+        contractAddress={contractAddress}
       />
     </EmbeddedWalletLayout>
   );

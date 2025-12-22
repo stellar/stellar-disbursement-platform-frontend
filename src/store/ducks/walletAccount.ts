@@ -4,7 +4,12 @@ import { getEmbeddedWalletProfile } from "@/api/embeddedWallet";
 import { refreshPasskeyToken } from "@/api/passkeyRefresh";
 import { SESSION_EXPIRED } from "@/constants/settings";
 import { RootState } from "@/store";
-import { ApiAsset, AppError, RejectMessage, WalletAccountInitialState } from "@/types";
+import {
+  AppError,
+  EmbeddedWalletProfileResponse,
+  RejectMessage,
+  WalletAccountInitialState,
+} from "@/types";
 
 export interface JwtWallet {
   contract_address: string;
@@ -20,6 +25,8 @@ const initialState: WalletAccountInitialState = {
   isTokenRefresh: false,
   isVerificationPending: false,
   pendingAsset: undefined,
+  supportedAssets: undefined,
+  receiverContact: undefined,
   status: undefined,
   errorString: undefined,
 };
@@ -58,7 +65,7 @@ export const refreshWalletTokenAction = createAsyncThunk<
 });
 
 export const fetchWalletProfileAction = createAsyncThunk<
-  { isVerificationPending: boolean; pendingAsset?: ApiAsset },
+  EmbeddedWalletProfileResponse,
   void,
   { rejectValue: RejectMessage; state: RootState }
 >("walletAccount/fetchWalletProfileAction", async (_, { getState, rejectWithValue }) => {
@@ -72,10 +79,7 @@ export const fetchWalletProfileAction = createAsyncThunk<
 
   try {
     const profile = await getEmbeddedWalletProfile(token);
-    return {
-      isVerificationPending: profile.verification.is_pending,
-      pendingAsset: profile.verification.pending_asset,
-    };
+    return profile;
   } catch (error) {
     const appError = error as AppError;
     const message = appError?.message || "Unable to fetch wallet profile";
@@ -117,6 +121,8 @@ const walletAccountSlice = createSlice({
       state.isTokenRefresh = false;
       state.isVerificationPending = false;
       state.pendingAsset = undefined;
+      state.supportedAssets = undefined;
+      state.receiverContact = undefined;
       state.status = undefined;
       state.errorString = undefined;
     },
@@ -158,8 +164,10 @@ const walletAccountSlice = createSlice({
     });
     builder.addCase(fetchWalletProfileAction.fulfilled, (state, action) => {
       state.status = "SUCCESS";
-      state.isVerificationPending = action.payload.isVerificationPending;
-      state.pendingAsset = action.payload.pendingAsset;
+      state.isVerificationPending = action.payload.verification.is_pending;
+      state.pendingAsset = action.payload.verification.pending_asset;
+      state.supportedAssets = action.payload.wallet?.supported_assets;
+      state.receiverContact = action.payload.wallet?.receiver_contact;
     });
     builder.addCase(fetchWalletProfileAction.rejected, (state, action) => {
       state.status = "ERROR";

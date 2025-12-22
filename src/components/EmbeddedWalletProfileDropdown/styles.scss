@@ -1,0 +1,120 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.WalletHeaderProfileTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: pxToRem(4px);
+  padding: pxToRem(6px) pxToRem(14px);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-color: var(--sds-clr-gray-01);
+  color: var(--sds-clr-gray-12);
+  font-size: pxToRem(14px);
+  font-weight: var(--sds-fw-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--sds-anim-transition-default),
+    box-shadow var(--sds-anim-transition-default);
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--sds-clr-gray-03);
+      box-shadow: 0 0 0 pxToRem(3px) rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sds-clr-violet-08);
+    outline-offset: 2px;
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: pxToRem(4px);
+  }
+
+  &__name {
+    font-weight: var(--sds-fw-semibold);
+    max-width: pxToRem(120px);
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  &__chevron {
+    width: pxToRem(16px);
+    height: pxToRem(16px);
+    color: var(--sds-clr-gray-09);
+  }
+}
+
+.WalletHeaderProfileMenu {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(8px);
+  width: pxToRem(232px);
+  padding: pxToRem(8px);
+  margin: pxToRem(-4px);
+  background: var(--sds-clr-gray-01);
+  border-radius: pxToRem(16px);
+  box-shadow: 0 pxToRem(24px) pxToRem(60px) rgba(22, 22, 22, 0.18);
+}
+
+.WalletHeaderProfileMenu__divider {
+  height: 2px;
+  background: var(--sds-clr-gray-06);
+}
+
+.WalletHeaderProfileMenu__contact {
+  display: flex;
+  align-items: center;
+  gap: pxToRem(10px);
+  padding: pxToRem(10px);
+  color: var(--sds-clr-gray-11);
+  font-size: pxToRem(13px);
+}
+
+.WalletHeaderProfileMenu__contactIcon {
+  width: pxToRem(18px);
+  height: pxToRem(18px);
+}
+
+.WalletHeaderProfileMenu__contactValue {
+  word-break: break-all;
+}
+
+.WalletHeaderProfileMenu__item {
+  display: flex;
+  align-items: center;
+  gap: pxToRem(10px);
+  padding: pxToRem(10px);
+  border: none;
+  border-radius: pxToRem(10px);
+  background: transparent;
+  font-size: pxToRem(14px);
+  font-weight: var(--sds-fw-medium);
+  color: var(--sds-clr-gray-12);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--sds-anim-transition-default);
+
+  @media (hover: hover) {
+    &:hover {
+      background: var(--sds-clr-gray-03);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sds-clr-violet-08);
+    outline-offset: 2px;
+  }
+
+  &--danger {
+    color: var(--sds-clr-red-09);
+  }
+}
+
+.WalletHeaderProfileMenu__itemIcon {
+  width: pxToRem(18px);
+  height: pxToRem(18px);
+}

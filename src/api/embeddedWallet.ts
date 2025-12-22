@@ -1,7 +1,7 @@
 import { handleApiResponse } from "@/api/handleApiResponse";
 import { API_URL } from "@/constants/envVariables";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
-import { ApiAsset } from "@/types";
+import type { EmbeddedWalletProfileResponse } from "@/types";
 
 export type EmbeddedWalletStatus = "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED";
 
@@ -64,27 +64,6 @@ export const pollWalletStatus = async (
 
   throw new Error("Wallet creation timeout");
 };
-
-export interface EmbeddedWalletProfileResponse {
-  verification: EmbeddedWalletVerificationDetails;
-  wallet?: EmbeddedWalletDetails;
-}
-
-export interface EmbeddedWalletVerificationDetails {
-  is_pending: boolean;
-  pending_asset?: ApiAsset;
-}
-
-export interface EmbeddedWalletDetails {
-  supported_assets: Array<{
-    code: string;
-    issuer: string;
-  }>;
-  receiver_contact: {
-    type: string;
-    value: string;
-  };
-}
 
 export const getEmbeddedWalletProfile = async (
   token: string,
