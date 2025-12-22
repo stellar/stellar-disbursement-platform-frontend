@@ -1,5 +1,4 @@
-import { Button, Icon, Modal, Select } from "@stellar/design-system";
-import { useEffect, useState } from "react";
+import { Button, Heading, Icon, Modal } from "@stellar/design-system";
 
 import { CopyWithIcon } from "@/components/CopyWithIcon";
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
@@ -13,7 +12,6 @@ type Props = {
   onClose: () => void;
   contact: EmbeddedWalletReceiverContact;
   contractAddress: string;
-  currencies: string[];
 };
 
 export const EmbeddedWalletProfileModal = ({
@@ -21,15 +19,7 @@ export const EmbeddedWalletProfileModal = ({
   onClose,
   contact,
   contractAddress,
-  currencies,
 }: Props) => {
-  const defaultCurrency = currencies[0];
-  const [currency, setCurrency] = useState(defaultCurrency);
-
-  useEffect(() => {
-    setCurrency(defaultCurrency);
-  }, [defaultCurrency]);
-
   const formattedAddress = contractAddress
     ? shortenAccountKey(contractAddress, 5, 5)
     : "Wallet address unavailable";
@@ -39,7 +29,7 @@ export const EmbeddedWalletProfileModal = ({
       return;
     }
 
-    const url = `${STELLAR_EXPERT_URL}/account/${contractAddress}`;
+    const url = `${STELLAR_EXPERT_URL}/contract/${contractAddress}`;
     window.open(url, "_blank", "noopener");
   };
 
@@ -47,7 +37,9 @@ export const EmbeddedWalletProfileModal = ({
     <Modal visible={isOpen} onClose={onClose}>
       <Modal.Body>
         <div className="EmbeddedWalletProfileModal__content">
-          <div className="EmbeddedWalletProfileModal__title">My profile</div>
+          <Heading as="h2" size="sm" className="EmbeddedWalletProfileModal__title">
+            My profile
+          </Heading>
           <div className="EmbeddedWalletProfileModal__contact">{contact.value}</div>
 
           <div className="EmbeddedWalletProfileModal__field">
@@ -62,22 +54,6 @@ export const EmbeddedWalletProfileModal = ({
                 </div>
               ) : null}
             </div>
-          </div>
-
-          <div className="EmbeddedWalletProfileModal__field">
-            <div className="EmbeddedWalletProfileModal__label">Currency</div>
-            <Select
-              id="embedded-wallet-currency"
-              fieldSize="lg"
-              value={currency}
-              onChange={(event) => setCurrency(event.target.value)}
-            >
-              {currencies.map((currency) => (
-                <option key={currency} value={currency}>
-                  {currency}
-                </option>
-              ))}
-            </Select>
           </div>
 
           <div className="EmbeddedWalletProfileModal__actions">

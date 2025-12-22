@@ -11,14 +11,36 @@ type Props = {
   onLogout: () => void;
 };
 
-const CONTACT_ICON_MAP: Record<string, typeof Icon.UserCircle> = {
-  PHONE_NUMBER: Icon.Phone01,
-  EMAIL: Icon.Mail01,
-};
+const MenuItem = ({
+  icon: IconComponent,
+  label,
+  onClick,
+  isDanger,
+}: {
+  icon: typeof Icon.UserCircle;
+  label: string;
+  onClick: () => void;
+  isDanger?: boolean;
+}) => (
+  <button
+    type="button"
+    className={`WalletHeaderProfileMenu__item ${isDanger ? "WalletHeaderProfileMenu__item--danger" : ""}`}
+    onClick={onClick}
+  >
+    <IconComponent className="WalletHeaderProfileMenu__itemIcon" />
+    <span>{label}</span>
+  </button>
+);
 
 export const EmbeddedWalletProfileDropdown = ({ contact, onOpenProfile, onLogout }: Props) => {
   const contactValue = contact.value.trim() || "—";
-  const IconComponent = CONTACT_ICON_MAP[contact?.type?.toUpperCase() || ""] || Icon.UserCircle;
+  const contactType = contact.type.trim().toUpperCase();
+  const ContactIcon =
+    contactType === "PHONE_NUMBER"
+      ? Icon.Phone01
+      : contactType === "EMAIL"
+        ? Icon.Mail01
+        : Icon.UserCircle;
 
   return (
     <DropdownMenu
@@ -33,36 +55,16 @@ export const EmbeddedWalletProfileDropdown = ({ contact, onOpenProfile, onLogout
       }
     >
       <div className="WalletHeaderProfileMenu" role="menu">
-        <div className="WalletHeaderProfileMenu__info">
-          <IconComponent className="WalletHeaderProfileMenu__infoIcon" />
-          <span className="WalletHeaderProfileMenu__infoValue">{contactValue}</span>
+        <div className="WalletHeaderProfileMenu__contact">
+          <ContactIcon className="WalletHeaderProfileMenu__contactIcon" />
+          <span className="WalletHeaderProfileMenu__contactValue">{contactValue}</span>
         </div>
 
         <div className="WalletHeaderProfileMenu__divider" aria-hidden="true" />
 
-        <Button
-          variant="tertiary"
-          size="md"
-          type="button"
-          className="WalletHeaderProfileMenu__item"
-          onClick={onOpenProfile}
-          role="menuitem"
-        >
-          <Icon.UserCircle className="WalletHeaderProfileMenu__itemIcon" />
-          <span>My profile</span>
-        </Button>
+        <MenuItem icon={Icon.UserCircle} label="My profile" onClick={onOpenProfile} />
 
-        <Button
-          variant="tertiary"
-          size="md"
-          type="button"
-          className="WalletHeaderProfileMenu__item WalletHeaderProfileMenu__item--danger"
-          onClick={onLogout}
-          role="menuitem"
-        >
-          <Icon.LogOut01 className="WalletHeaderProfileMenu__itemIcon" />
-          <span>Log out</span>
-        </Button>
+        <MenuItem icon={Icon.LogOut01} label="Log out" onClick={onLogout} isDanger />
       </div>
     </DropdownMenu>
   );

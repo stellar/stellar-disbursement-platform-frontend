@@ -65,7 +65,7 @@
   background: var(--sds-clr-gray-06);
 }
 
-.WalletHeaderProfileMenu__info {
+.WalletHeaderProfileMenu__contact {
   display: flex;
   align-items: center;
   gap: pxToRem(10px);
@@ -74,12 +74,12 @@
   font-size: pxToRem(13px);
 }
 
-.WalletHeaderProfileMenu__infoIcon {
+.WalletHeaderProfileMenu__contactIcon {
   width: pxToRem(18px);
   height: pxToRem(18px);
 }
 
-.WalletHeaderProfileMenu__infoValue {
+.WalletHeaderProfileMenu__contactValue {
   word-break: break-all;
 }
 

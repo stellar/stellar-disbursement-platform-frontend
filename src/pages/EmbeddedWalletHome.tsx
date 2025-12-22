@@ -18,8 +18,6 @@ import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import { clearWalletInfoAction, fetchWalletProfileAction } from "@/store/ducks/walletAccount";
 
-const EMBEDDED_WALLET_CURRENCIES = ["USD"];
-
 export const EmbeddedWalletHome = () => {
   const { walletAccount, organization } = useRedux("walletAccount", "organization");
   const dispatch: AppDispatch = useDispatch();
@@ -108,7 +106,7 @@ export const EmbeddedWalletHome = () => {
 
   const receiverContact = walletAccount.receiverContact;
   if (!receiverContact) {
-    throw new Error("Receiver contact is missing");
+    return null;
   }
 
   return (
@@ -185,13 +183,12 @@ export const EmbeddedWalletHome = () => {
         isPrimaryActionDisabled={!isWalletReady || sep24VerificationMutation.isPending}
         contentAlign="left"
       />
-      
+
       <EmbeddedWalletProfileModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         contact={receiverContact}
         contractAddress={contractAddress}
-        currencies={EMBEDDED_WALLET_CURRENCIES}
       />
     </EmbeddedWalletLayout>
   );
