@@ -1,5 +1,5 @@
 import { Button, Heading, Icon, NavButton } from "@stellar/design-system";
-import { useCallback, useEffect } from "react";
+import { ReactNode, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 import "./styles.scss";
@@ -8,8 +8,8 @@ interface EmbeddedWalletModalProps {
   visible: boolean;
   onClose?: () => void;
   isDismissible?: boolean;
-  title: string;
-  description: string;
+  title: ReactNode;
+  content: ReactNode;
   contentAlign?: "center" | "left";
   primaryActionLabel?: string;
   onPrimaryAction?: () => void;
@@ -24,7 +24,7 @@ export const EmbeddedWalletModal = ({
   onClose,
   isDismissible = true,
   title,
-  description,
+  content,
   contentAlign = "center",
   primaryActionLabel,
   onPrimaryAction,
@@ -91,7 +91,7 @@ export const EmbeddedWalletModal = ({
           />
 
           <div className="EmbeddedWalletModal__body" data-align={contentAlign}>
-            {description}
+            {content}
           </div>
 
           {shouldShowFooter ? (
