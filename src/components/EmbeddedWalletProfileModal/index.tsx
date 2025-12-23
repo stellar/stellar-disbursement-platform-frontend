@@ -1,6 +1,7 @@
-import { Button, Heading, Icon, Modal } from "@stellar/design-system";
+import { Button, Heading, Icon } from "@stellar/design-system";
 
 import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { EmbeddedWalletReceiverContact } from "@/types";
@@ -34,14 +35,19 @@ export const EmbeddedWalletProfileModal = ({
   };
 
   return (
-    <Modal visible={isOpen} onClose={onClose}>
-      <Modal.Body>
-        <div className="EmbeddedWalletProfileModal__content">
+    <EmbeddedWalletModal
+      visible={isOpen}
+      onClose={onClose}
+      title={
+        <div>
           <Heading as="h2" size="sm" className="EmbeddedWalletProfileModal__title">
             My profile
           </Heading>
           <div className="EmbeddedWalletProfileModal__contact">{contact.value}</div>
-
+        </div>
+      }
+      content={
+        <div className="EmbeddedWalletProfileModal__content">
           <div className="EmbeddedWalletProfileModal__field">
             <div className="EmbeddedWalletProfileModal__label">Stellar wallet address</div>
             <div className="EmbeddedWalletProfileModal__addressRow">
@@ -73,7 +79,8 @@ export const EmbeddedWalletProfileModal = ({
             </Button>
           </div>
         </div>
-      </Modal.Body>
-    </Modal>
+      }
+      contentAlign="left"
+    />
   );
 };
