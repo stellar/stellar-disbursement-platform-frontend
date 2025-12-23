@@ -105,20 +105,19 @@ export const EmbeddedWalletHome = () => {
   );
 
   const receiverContact = walletAccount.receiverContact;
-  if (!receiverContact) {
-    return null;
-  }
 
   return (
     <EmbeddedWalletLayout
       organizationName={organizationName}
       organizationLogo={organization?.data?.logo}
       headerRight={
-        <EmbeddedWalletProfileDropdown
-          contact={receiverContact}
-          onOpenProfile={() => setIsProfileModalOpen(true)}
-          onLogout={handleLogout}
-        />
+        receiverContact ? (
+          <EmbeddedWalletProfileDropdown
+            contact={receiverContact}
+            onOpenProfile={() => setIsProfileModalOpen(true)}
+            onLogout={handleLogout}
+          />
+        ) : null
       }
     >
       <Box gap="md">
@@ -184,12 +183,14 @@ export const EmbeddedWalletHome = () => {
         contentAlign="left"
       />
 
-      <EmbeddedWalletProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-        contact={receiverContact}
-        contractAddress={contractAddress}
-      />
+      {receiverContact ? (
+        <EmbeddedWalletProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          contact={receiverContact}
+          contractAddress={contractAddress}
+        />
+      ) : null}
     </EmbeddedWalletLayout>
   );
 };
