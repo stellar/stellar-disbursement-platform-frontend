@@ -143,14 +143,6 @@ export const EmbeddedWalletHome = () => {
           actionLabel="Withdraw"
           onAction={() => {}}
         />
-
-        <EmbeddedWalletCard
-          title="Recent transactions"
-          tableHeaders={["Type", "Amount"]}
-          renderTableContent={() => (
-            <div className="EmbeddedWalletCard__empty">No recent transactions</div>
-          )}
-        />
       </Box>
 
       <EmbeddedWalletModal
