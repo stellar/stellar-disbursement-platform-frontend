@@ -119,20 +119,19 @@ export const EmbeddedWalletHome = () => {
   );
 
   const receiverContact = walletAccount.receiverContact;
-  if (!receiverContact) {
-    return null;
-  }
 
   return (
     <EmbeddedWalletLayout
       organizationName={organizationName}
       organizationLogo={organization?.data?.logo}
       headerRight={
-        <EmbeddedWalletProfileDropdown
-          contact={receiverContact}
-          onOpenProfile={() => setIsProfileModalOpen(true)}
-          onLogout={handleLogout}
-        />
+        receiverContact ? (
+          <EmbeddedWalletProfileDropdown
+            contact={receiverContact}
+            onOpenProfile={() => setIsProfileModalOpen(true)}
+            onLogout={handleLogout}
+          />
+        ) : null
       }
     >
       <Box gap="md">
@@ -149,7 +148,7 @@ export const EmbeddedWalletHome = () => {
         visible={isVerificationPending}
         isDismissible={false}
         title="Complete verification"
-        description="Verify your account to complete your wallet setup and to get started."
+        content="Verify your account to complete your wallet setup and to get started."
         primaryActionLabel="Start verification"
         onPrimaryAction={handleSep24Verification}
         isPrimaryActionLoading={sep24VerificationMutation.isPending}
@@ -157,12 +156,14 @@ export const EmbeddedWalletHome = () => {
         contentAlign="left"
       />
 
-      <EmbeddedWalletProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-        contact={receiverContact}
-        contractAddress={contractAddress}
-      />
+      {receiverContact ? (
+        <EmbeddedWalletProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          contact={receiverContact}
+          contractAddress={contractAddress}
+        />
+      ) : null}
     </EmbeddedWalletLayout>
   );
 };
