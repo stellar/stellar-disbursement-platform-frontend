@@ -81,6 +81,12 @@ export const fetchWalletProfileAction = createAsyncThunk<
     const profile = await getEmbeddedWalletProfile(token);
     return profile;
   } catch (error) {
+    if (error === SESSION_EXPIRED) {
+      return rejectWithValue({
+        errorString: SESSION_EXPIRED,
+      });
+    }
+
     const appError = error as AppError;
     const message = appError?.message || "Unable to fetch wallet profile";
 
@@ -171,7 +177,11 @@ const walletAccountSlice = createSlice({
     });
     builder.addCase(fetchWalletProfileAction.rejected, (state, action) => {
       state.status = "ERROR";
-      state.errorString = action.payload?.errorString ?? action.error.message;
+      const errorString = action.payload?.errorString ?? action.error.message;
+      state.errorString = errorString;
+      if (errorString === SESSION_EXPIRED) {
+        state.isSessionExpired = true;
+      }
     });
   },
 });

@@ -13,6 +13,17 @@ import {
   walletSessionExpiredAction,
 } from "@/store/ducks/walletAccount";
 
+const isTokenExpired = (token: string): boolean => {
+  const parsedToken = parseJwt(token);
+  const exp = typeof parsedToken.exp === "number" ? parsedToken.exp : Number(parsedToken.exp);
+
+  if (!Number.isFinite(exp)) {
+    return false;
+  }
+
+  return exp <= Math.floor(Date.now() / 1000);
+};
+
 export const WalletSession = () => {
   const { walletAccount } = useRedux("walletAccount");
   const dispatch: AppDispatch = useDispatch();
@@ -22,6 +33,11 @@ export const WalletSession = () => {
   // Sync token between Redux and localStorage
   useEffect(() => {
     if (walletAccount.token) {
+      if (isTokenExpired(walletAccount.token)) {
+        dispatch(walletSessionExpiredAction());
+        return;
+      }
+
       const shouldSyncInfo = !walletAccount.contractAddress || walletAccount.isTokenRefresh;
 
       if (shouldSyncInfo) {
@@ -51,9 +67,41 @@ export const WalletSession = () => {
     const sessionToken = localStorageWalletSessionToken.get();
 
     if (sessionToken && !isSessionExpired) {
+      if (isTokenExpired(sessionToken)) {
+        dispatch(walletSessionExpiredAction());
+        localStorageWalletSessionToken.remove();
+        return;
+      }
+
       dispatch(restoreWalletSession(sessionToken));
     }
   }, [dispatch, isSessionExpired]);
+
+  useEffect(() => {
+    if (!walletAccount.token || walletAccount.isSessionExpired) {
+      return;
+    }
+
+    const parsedToken = parseJwt(walletAccount.token);
+    const exp = typeof parsedToken.exp === "number" ? parsedToken.exp : Number(parsedToken.exp);
+
+    if (!Number.isFinite(exp)) {
+      return;
+    }
+
+    const msUntilExpiry = exp * 1000 - Date.now();
+
+    if (msUntilExpiry <= 0) {
+      dispatch(walletSessionExpiredAction());
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      dispatch(walletSessionExpiredAction());
+    }, msUntilExpiry);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [dispatch, walletAccount.isSessionExpired, walletAccount.token]);
 
   // Custom trigger
   useEffect(() => {
