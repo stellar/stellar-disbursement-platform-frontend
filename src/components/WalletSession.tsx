@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
+import { WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { parseJwt } from "@/helpers/parseJwt";
 import { useRedux } from "@/hooks/useRedux";
@@ -59,12 +59,13 @@ export const WalletSession = () => {
   useEffect(() => {
     const onSessionExpired = () => {
       dispatch(walletSessionExpiredAction());
+      localStorageWalletSessionToken.remove();
     };
 
-    document.addEventListener(SESSION_EXPIRED_EVENT, onSessionExpired);
+    document.addEventListener(WALLET_SESSION_EXPIRED_EVENT, onSessionExpired);
 
     return () => {
-      document.removeEventListener(SESSION_EXPIRED_EVENT, onSessionExpired);
+      document.removeEventListener(WALLET_SESSION_EXPIRED_EVENT, onSessionExpired);
     };
   }, [dispatch]);
 

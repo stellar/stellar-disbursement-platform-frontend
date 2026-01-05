@@ -1,4 +1,4 @@
-import { handleApiResponse } from "@/api/handleApiResponse";
+import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
 import { API_URL } from "@/constants/envVariables";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import type { EmbeddedWalletProfileResponse } from "@/types";
@@ -28,7 +28,7 @@ export const createEmbeddedWallet = async (
     body: JSON.stringify(request),
   });
 
-  return handleApiResponse(response);
+  return handleWalletApiResponse<WalletResponse>(response);
 };
 
 export const getWalletStatus = async (credentialId: string): Promise<WalletResponse> => {
@@ -40,7 +40,7 @@ export const getWalletStatus = async (credentialId: string): Promise<WalletRespo
     },
   });
 
-  return handleApiResponse(response);
+  return handleWalletApiResponse<WalletResponse>(response);
 };
 
 export const pollWalletStatus = async (
@@ -77,5 +77,5 @@ export const getEmbeddedWalletProfile = async (
     },
   });
 
-  return handleApiResponse(response);
+  return handleWalletApiResponse<EmbeddedWalletProfileResponse>(response);
 };
