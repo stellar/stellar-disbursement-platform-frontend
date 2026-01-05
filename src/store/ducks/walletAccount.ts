@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { getEmbeddedWalletProfile } from "@/api/embeddedWallet";
 import { refreshPasskeyToken } from "@/api/passkeyRefresh";
-import { SESSION_EXPIRED, WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
+import { WALLET_SESSION_EXPIRED, WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { RootState } from "@/store";
 import {
   AppError,
@@ -48,10 +48,10 @@ export const refreshWalletTokenAction = createAsyncThunk<
     const response = await refreshPasskeyToken(token);
     return response.token;
   } catch (error: unknown) {
-    if (error === SESSION_EXPIRED) {
+    if (error === WALLET_SESSION_EXPIRED) {
       document.dispatchEvent(new CustomEvent(WALLET_SESSION_EXPIRED_EVENT));
       return rejectWithValue({
-        errorString: SESSION_EXPIRED,
+        errorString: WALLET_SESSION_EXPIRED,
       });
     }
 
@@ -82,10 +82,10 @@ export const fetchWalletProfileAction = createAsyncThunk<
     const profile = await getEmbeddedWalletProfile(token);
     return profile;
   } catch (error) {
-    if (error === SESSION_EXPIRED) {
+    if (error === WALLET_SESSION_EXPIRED) {
       document.dispatchEvent(new CustomEvent(WALLET_SESSION_EXPIRED_EVENT));
       return rejectWithValue({
-        errorString: SESSION_EXPIRED,
+        errorString: WALLET_SESSION_EXPIRED,
       });
     }
 

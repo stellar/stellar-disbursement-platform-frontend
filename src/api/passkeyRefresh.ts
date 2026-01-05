@@ -1,4 +1,4 @@
-import { handleApiResponse } from "@/api/handleApiResponse";
+import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
 import { API_URL } from "@/constants/envVariables";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 
@@ -20,5 +20,5 @@ export const refreshPasskeyToken = async (token: string): Promise<PasskeyRefresh
     body: JSON.stringify({ token }),
   });
 
-  return handleApiResponse(response);
+  return handleWalletApiResponse<PasskeyRefreshResponse>(response);
 };

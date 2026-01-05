@@ -1,7 +1,7 @@
 import { differenceInMinutes, fromUnixTime } from "date-fns";
 
-import { handleApiResponse } from "@/api/handleApiResponse";
-import { SESSION_EXPIRED, WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
+import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
+import { WALLET_SESSION_EXPIRED, WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { parseJwt } from "@/helpers/parseJwt";
@@ -14,7 +14,7 @@ export const fetchWalletApi = async <ResponseType>(
 
   if (!token) {
     document.dispatchEvent(new CustomEvent(WALLET_SESSION_EXPIRED_EVENT));
-    throw new Error(SESSION_EXPIRED);
+    throw new Error(WALLET_SESSION_EXPIRED);
   }
 
   const jwt = parseJwt(token);
@@ -22,7 +22,7 @@ export const fetchWalletApi = async <ResponseType>(
 
   if (minRemaining <= 0) {
     document.dispatchEvent(new CustomEvent(WALLET_SESSION_EXPIRED_EVENT));
-    throw new Error(SESSION_EXPIRED);
+    throw new Error(WALLET_SESSION_EXPIRED);
   }
 
   const headers: HeadersInit = {
@@ -37,10 +37,5 @@ export const fetchWalletApi = async <ResponseType>(
     headers,
   });
 
-  if (response.status === 401) {
-    document.dispatchEvent(new CustomEvent(WALLET_SESSION_EXPIRED_EVENT));
-    throw new Error(SESSION_EXPIRED);
-  }
-
-  return (await handleApiResponse(response)) as ResponseType;
+  return handleWalletApiResponse<ResponseType>(response);
 };
