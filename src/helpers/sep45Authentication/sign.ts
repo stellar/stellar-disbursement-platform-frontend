@@ -113,10 +113,12 @@ const simulateWebAuthVerifyOp = async ({
 const verifyLedgerFootprint = ({
   contractAddress,
   serverSigningKey,
+  webAuthContractId,
   transactionData,
 }: {
   contractAddress: string;
   serverSigningKey: string;
+  webAuthContractId: string;
   transactionData: SorobanDataBuilder;
 }) => {
   const readWrite = transactionData.getReadWrite();
@@ -138,12 +140,18 @@ const verifyLedgerFootprint = ({
 
     const contractData = ledgerKey.contractData();
     const ledgerAccount = Address.fromScAddress(contractData.contract()).toString();
+    const contractDataKeyType = contractData.key().switch().value;
+    const isContractInstanceKey =
+      contractDataKeyType === xdr.ScValType.scvLedgerKeyContractInstance().value;
+
+    if (ledgerAccount === webAuthContractId && isContractInstanceKey) {
+      // Allow archived web auth contract instance in the footprint.
+      continue;
+    }
 
     if (!allowedLedgerAddresses.has(ledgerAccount)) {
       throw new Error(`Unauthorized contract access: ${ledgerAccount}`);
     }
-
-    const contractDataKeyType = contractData.key().switch().value;
 
     if (
       contractDataKeyType !== xdr.ScValType.scvLedgerKeyNonce().value &&
@@ -188,6 +196,7 @@ export const sign = async ({
   verifyLedgerFootprint({
     contractAddress,
     serverSigningKey,
+    webAuthContractId,
     transactionData: simulatedTx.transactionData,
   });
 
