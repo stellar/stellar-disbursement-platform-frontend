@@ -13,7 +13,7 @@ import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
 import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
 import { EmbeddedWalletProfileModal } from "@/components/EmbeddedWalletProfileModal";
 import {
-  DEFAULT_EMBEDDED_WALLET_ASSET_CODE,
+  DEFAULT_EMBEDDED_WALLET_FALLBACK_CODE,
   getEmbeddedWalletAssetMetadata,
 } from "@/constants/embeddedWalletAssets";
 import { Routes } from "@/constants/settings";
@@ -89,7 +89,7 @@ export const EmbeddedWalletHome = () => {
     }
 
     return nonZeroWalletBalances.map((balance) => {
-      const assetCode = balance.asset_code || DEFAULT_EMBEDDED_WALLET_ASSET_CODE;
+      const assetCode = balance.asset_code || DEFAULT_EMBEDDED_WALLET_FALLBACK_CODE;
       const { logo, label } = getEmbeddedWalletAssetMetadata(assetCode);
 
       return (

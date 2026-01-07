@@ -73,6 +73,7 @@
 .EmbeddedWalletLayout__cardWrapper .Card {
   border: none;
   box-shadow: none;
+  padding: var(--ew-card-padding);
 }
 
 .EmbeddedWalletCard__content {
@@ -125,7 +126,6 @@
   .EmbeddedWalletLayout__cardWrapper {
     width: 100%;
     max-width: pxToRem(500px);
-    padding: var(--ew-card-padding-sm);
   }
 
   .EmbeddedWalletCard__logo {

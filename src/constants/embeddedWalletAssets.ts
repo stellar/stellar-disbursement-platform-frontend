@@ -1,4 +1,5 @@
 import EurocLogoSrc from "@/assets/logo-euroc.png";
+import TokenLogoSrc from "@/assets/logo-token.png";
 import UsdcLogoSrc from "@/assets/logo-usdc.png";
 import XlmLogoSrc from "@/assets/logo-xlm.png";
 
@@ -8,7 +9,7 @@ export type EmbeddedWalletAssetMetadata = {
   logo: string;
 };
 
-export const DEFAULT_EMBEDDED_WALLET_ASSET_CODE = "XLM";
+export const DEFAULT_EMBEDDED_WALLET_FALLBACK_CODE = "UNKNOWN_ASSET";
 
 export const EMBEDDED_WALLET_ASSET_MAP: Record<string, EmbeddedWalletAssetMetadata> = {
   XLM: {
@@ -28,11 +29,12 @@ export const EMBEDDED_WALLET_ASSET_MAP: Record<string, EmbeddedWalletAssetMetada
   },
 };
 
-export const getEmbeddedWalletAssetMetadata = (assetCode?: string): EmbeddedWalletAssetMetadata => {
-  const normalizedCode = assetCode?.toUpperCase() ?? DEFAULT_EMBEDDED_WALLET_ASSET_CODE;
-
+export const getEmbeddedWalletAssetMetadata = (assetCode: string): EmbeddedWalletAssetMetadata => {
   return (
-    EMBEDDED_WALLET_ASSET_MAP[normalizedCode] ??
-    EMBEDDED_WALLET_ASSET_MAP[DEFAULT_EMBEDDED_WALLET_ASSET_CODE]
+    EMBEDDED_WALLET_ASSET_MAP[assetCode] ?? {
+      code: assetCode,
+      label: assetCode,
+      logo: TokenLogoSrc,
+    }
   );
 };
