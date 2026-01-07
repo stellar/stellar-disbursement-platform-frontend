@@ -8,7 +8,9 @@ interface EmbeddedWalletModalProps {
   visible: boolean;
   onClose?: () => void;
   isDismissible?: boolean;
+  modalAlign?: "center" | "bottom";
   title: ReactNode;
+  titleAlign?: "center" | "left";
   content: ReactNode;
   contentAlign?: "center" | "left";
   primaryActionLabel?: string;
@@ -23,7 +25,9 @@ export const EmbeddedWalletModal = ({
   visible,
   onClose,
   isDismissible = true,
+  modalAlign = "center",
   title,
+  titleAlign,
   content,
   contentAlign = "center",
   primaryActionLabel,
@@ -69,7 +73,7 @@ export const EmbeddedWalletModal = ({
 
   return createPortal(
     <div className="EmbeddedWalletModal">
-      <div className="EmbeddedWalletModal__container">
+      <div className="EmbeddedWalletModal__container" data-align={modalAlign}>
         <div className="EmbeddedWalletModal__content">
           {isModalDismissible ? (
             <div className="EmbeddedWalletModal__close">
@@ -84,7 +88,7 @@ export const EmbeddedWalletModal = ({
 
           <Heading
             className="EmbeddedWalletModal__heading"
-            data-align={contentAlign}
+            data-align={titleAlign ?? contentAlign}
             children={title}
             as={"h2"}
             size={"sm"}
