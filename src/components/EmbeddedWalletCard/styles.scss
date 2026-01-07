@@ -1,0 +1,69 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.EmbeddedWalletCard {
+  display: flex;
+  flex-direction: column;
+  gap: pxToRem(16px);
+
+  &__title {
+    font-size: pxToRem(14px);
+    color: var(--sds-clr-gray-09);
+    font-weight: var(--sds-fw-medium);
+  }
+
+  &__tableHeader {
+    display: flex;
+    justify-content: space-between;
+    font-size: pxToRem(12px);
+    color: var(--sds-clr-gray-09);
+  }
+
+  &__divider {
+    height: 1px;
+    background: var(--sds-clr-gray-06);
+  }
+
+  &__table {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__asset {
+    display: flex;
+    align-items: center;
+    gap: pxToRem(12px);
+  }
+
+  &__assetText {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(4px);
+  }
+
+  &__assetLogo {
+    width: pxToRem(32px);
+    height: pxToRem(32px);
+    object-fit: contain;
+    border-radius: 50%;
+    background-color: var(--sds-clr-gray-01);
+  }
+
+  &__assetCode {
+    font-size: pxToRem(12px);
+    color: var(--sds-clr-gray-09);
+  }
+
+  &__empty {
+    font-size: pxToRem(13px);
+    color: var(--sds-clr-gray-09);
+    padding: pxToRem(12px) 0;
+    text-align: center;
+  }
+}
