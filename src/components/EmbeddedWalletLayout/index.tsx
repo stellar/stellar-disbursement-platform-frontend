@@ -11,6 +11,7 @@ type EmbeddedWalletLayoutProps = {
   headerRight?: ReactNode;
   showHeader?: boolean;
   contentAlign?: "center" | "left";
+  topNotices?: ReactNode[];
   children: ReactNode;
 };
 
@@ -21,7 +22,10 @@ export const EmbeddedWalletLayout = ({
   headerRight,
   showHeader = true,
   contentAlign = "center",
+  topNotices = [],
 }: EmbeddedWalletLayoutProps) => {
+  const notices = topNotices.filter(Boolean);
+
   useEffect(() => {
     const previousTitle = document.title;
     document.title = `${organizationName} Wallet`;
@@ -46,14 +50,17 @@ export const EmbeddedWalletLayout = ({
       ) : null}
 
       <div className="EmbeddedWalletLayout__container">
-        <div className="EmbeddedWalletLayout__cardWrapper">
-          <Card borderRadiusSize="md" noPadding>
-            <div
-              className={`EmbeddedWalletCard__content EmbeddedWalletCard__content--${contentAlign}`}
-            >
-              {children}
-            </div>
-          </Card>
+        <div className="EmbeddedWalletLayout__stack">
+          {notices.length ? <div className="EmbeddedWalletLayout__notices">{notices}</div> : null}
+          <div className="EmbeddedWalletLayout__cardWrapper">
+            <Card borderRadiusSize="md" noPadding>
+              <div
+                className={`EmbeddedWalletCard__content EmbeddedWalletCard__content--${contentAlign}`}
+              >
+                {children}
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
       <div id={MODAL_PARENT_ID} className="EmbeddedWalletModalRoot" />

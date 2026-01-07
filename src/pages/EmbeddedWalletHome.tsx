@@ -1,5 +1,5 @@
-import { Button, Input, Notification } from "@stellar/design-system";
-import { useEffect, useMemo, useState } from "react";
+import { Button, Icon, Input } from "@stellar/design-system";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -7,12 +7,14 @@ import { useSendWalletPayment } from "@/apiQueries/useSendWalletPayment";
 import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { Box } from "@/components/Box";
+import { EmbeddedWalletDismissibleNotice } from "@/components/EmbeddedWalletDismissibleNotice";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
 import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
 import { EmbeddedWalletProfileModal } from "@/components/EmbeddedWalletProfileModal";
 import { Routes } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { localStorageWalletNotices } from "@/helpers/localStorageWalletNotices";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
@@ -26,8 +28,15 @@ export const EmbeddedWalletHome = () => {
   const [destination, setDestination] = useState("");
   const [amount, setAmount] = useState("");
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const { contractAddress, credentialId, isVerificationPending, isAuthenticated, token } =
-    walletAccount;
+  const {
+    contractAddress,
+    credentialId,
+    isVerificationPending,
+    isAuthenticated,
+    token,
+    profileStatus,
+    pendingAsset,
+  } = walletAccount;
   const isWalletReady = Boolean(contractAddress);
 
   const {
@@ -47,6 +56,12 @@ export const EmbeddedWalletHome = () => {
       dispatch(fetchWalletProfileAction());
     }
   }, [dispatch, isAuthenticated, token]);
+
+  useEffect(() => {
+    if (isVerificationPending) {
+      localStorageWalletNotices.reset(credentialId);
+    }
+  }, [credentialId, isVerificationPending]);
 
   const sendPaymentMutation = useSendWalletPayment({
     contractAddress,
@@ -81,9 +96,9 @@ export const EmbeddedWalletHome = () => {
 
     try {
       await sep24VerificationMutation.mutateAsync({
-        assetCode: walletAccount.pendingAsset?.code,
+        assetCode: pendingAsset?.code,
         contractAddress,
-        credentialId: walletAccount.credentialId,
+        credentialId,
       });
     } catch {
       // hook handles error reporting
@@ -95,10 +110,24 @@ export const EmbeddedWalletHome = () => {
   const isSendDisabled =
     !isWalletReady || sendPaymentMutation.isPending || !destination.trim() || !amount.trim();
 
-  const sendPaymentErrorNotification = sendPaymentMutation.error ? (
-    <Notification variant="error" title={sendPaymentMutation.error.message} isFilled role="alert" />
-  ) : null;
-
+  const topNotices: ReactNode[] = [];
+  const isVerified = profileStatus === "SUCCESS" && !isVerificationPending;
+  if (isVerified) {
+    topNotices.push(
+      <EmbeddedWalletDismissibleNotice
+        key={`sep24-verification-success-${credentialId ?? "unknown"}`}
+        variant="success"
+        title="You're all set!"
+        icon={<Icon.CheckCircle />}
+        isFilled
+        role="status"
+        credentialId={credentialId}
+        noticeKey="verifiedDismissed"
+      >
+        Now you can receive crypto or withdraw to a crypto wallet.
+      </EmbeddedWalletDismissibleNotice>,
+    );
+  }
   const organizationName = useMemo(
     () => organization?.data?.name || getSdpTenantName() || "Your organization",
     [organization?.data?.name],
@@ -119,6 +148,7 @@ export const EmbeddedWalletHome = () => {
           />
         ) : null
       }
+      topNotices={topNotices}
     >
       <Box gap="md">
         {isLoadingBalance ? (
@@ -130,9 +160,6 @@ export const EmbeddedWalletHome = () => {
         )}
 
         <p>{contractAddress}</p>
-
-        {sendPaymentErrorNotification ?? <></>}
-
         <form onSubmit={handleSendPayment}>
           <Box gap="sm">
             <Input

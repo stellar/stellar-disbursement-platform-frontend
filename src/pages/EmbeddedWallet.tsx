@@ -1,5 +1,5 @@
 import { Button, Heading, Notification } from "@stellar/design-system";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, type ReactNode } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -21,7 +21,6 @@ export const EmbeddedWallet = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { walletAccount, organization } = useRedux("walletAccount", "organization");
-  const [token, setToken] = useState("");
 
   const {
     mutateAsync: authenticatePasskey,
@@ -66,10 +65,9 @@ export const EmbeddedWallet = () => {
     [dispatch, navigate],
   );
 
-  useEffect(() => {
+  const token = useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
-    const tokenFromUrl = searchParams.get("token");
-    setToken(tokenFromUrl ?? "");
+    return searchParams.get("token") ?? "";
   }, [location.search]);
 
   useEffect(() => {
@@ -129,12 +127,7 @@ export const EmbeddedWallet = () => {
     }
   };
 
-  const errorMessage =
-    authError?.message ||
-    registerError?.message ||
-    createWalletError?.message ||
-    refreshError?.message ||
-    "";
+  const passkeyError = authError || registerError || createWalletError || refreshError;
 
   const isSignupProcessing = isRegistering || isCreatingWallet || isRefreshing;
   const isLoading = isAuthenticating || isSignupProcessing;
@@ -175,6 +168,21 @@ export const EmbeddedWallet = () => {
         isLoading: isAuthenticating,
       };
 
+  const passkeyErrorNotice = passkeyError ? (
+    <Notification variant="error" title="Couldn't log you in" isFilled role="alert">
+      Please try again with your passkey.
+    </Notification>
+  ) : null;
+
+  const topNotices: ReactNode[] = [];
+  if (passkeyErrorNotice) {
+    topNotices.push(
+      <div className="EmbeddedWalletLayout__noticeItem" key="passkey-error">
+        {passkeyErrorNotice}
+      </div>,
+    );
+  }
+
   return (
     <EmbeddedWalletLayout
       organizationName={organizationName}
@@ -182,9 +190,8 @@ export const EmbeddedWallet = () => {
       headerRight={hasInviteToken ? "Create an account" : undefined}
       showHeader={hasInviteToken}
       contentAlign={hasInviteToken ? "left" : "center"}
+      topNotices={topNotices}
     >
-      {errorMessage && <Notification variant="error" title={errorMessage} isFilled />}
-
       {!hasInviteToken ? (
         <div className="EmbeddedWalletCard__logo">
           {organizationLogo ? (
