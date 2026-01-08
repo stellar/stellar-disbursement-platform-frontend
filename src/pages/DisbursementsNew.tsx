@@ -57,32 +57,11 @@ export const DisbursementsNew = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!apiError && !isSavedDraftMessageVisible && !isResponseSuccess) return;
 
     notificationRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [isSavedDraftMessageVisible, apiError, isResponseSuccess]);
-
-  useEffect(() => {
-    handleScrollToTop();
-    if (disbursementDrafts.newDraftId && disbursementDrafts.status === "SUCCESS") {
-      // Show success response page
-      if (disbursementDrafts.actionType === "submit") {
-        setCurrentStep("confirmation");
-        setIsResponseSuccess(true);
-
-        setIsSavedDraftMessageVisible(false);
-      }
-
-      // Show message and toast when draft is saved
-      if (disbursementDrafts.actionType === "save") {
-        setIsSavedDraftMessageVisible(true);
-        setIsDraftInProgress(true);
-      }
-    }
-  }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const { allBalances } = useAllBalances();
 
@@ -104,8 +83,12 @@ export const DisbursementsNew = () => {
   const handleSaveDraft = async () => {
     setIsSavedDraftMessageVisible(false);
 
-    if (draftDetails) {
-      dispatch(
+    if (!draftDetails) {
+      return;
+    }
+
+    try {
+      await dispatch(
         saveDisbursementDraftAction({
           details: {
             ...draftDetails,
@@ -113,7 +96,13 @@ export const DisbursementsNew = () => {
           },
           file: csvFile,
         }),
-      );
+      ).unwrap();
+
+      setIsSavedDraftMessageVisible(true);
+      setIsDraftInProgress(true);
+      setIsResponseSuccess(false);
+    } catch {
+      // errors surface through redux notifications
     }
   };
 
@@ -128,11 +117,16 @@ export const DisbursementsNew = () => {
     setCurrentStep("edit");
   };
 
-  const handleSubmitDisbursement = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitDisbursement = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleScrollToTop();
-    if (draftDetails && csvFile) {
-      dispatch(
+
+    if (!draftDetails || !csvFile) {
+      return;
+    }
+
+    try {
+      await dispatch(
         submitDisbursementNewDraftAction({
           details: {
             ...draftDetails,
@@ -140,7 +134,14 @@ export const DisbursementsNew = () => {
           },
           file: csvFile,
         }),
-      );
+      ).unwrap();
+
+      setCurrentStep("confirmation");
+      setIsResponseSuccess(true);
+      setIsSavedDraftMessageVisible(false);
+      setIsDraftInProgress(false);
+    } catch {
+      // errors surface through redux notifications
     }
   };
 
