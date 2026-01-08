@@ -1,156 +1,158 @@
 @use "../../styles/styles-utils.scss" as *;
 
-.EmbeddedWalletTransferModal__amountField {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
+.EmbeddedWalletTransferModal {
+  &__amountField {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
 
-.EmbeddedWalletTransferModal__amountHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: pxToRem(12px);
-  width: 100%;
-}
+  &__amountHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: pxToRem(12px);
+    width: 100%;
+  }
 
-.EmbeddedWalletTransferModal__amountRow {
-  display: inline-flex;
-  align-items: baseline;
-  gap: pxToRem(4px);
-  max-width: 100%;
-  flex: 1 1 auto;
-  min-width: 0;
-}
+  &__amountRow {
+    display: inline-flex;
+    align-items: baseline;
+    gap: pxToRem(4px);
+    max-width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
-.EmbeddedWalletTransferModal__amountInput {
-  border: 0;
-  padding: 0;
-  background: transparent;
-  font-size: pxToRem(48px);
-  line-height: pxToRem(56px);
-  color: var(--sds-clr-lilac-09);
-  font-weight: var(--sds-fw-medium);
-  min-width: 1ch;
-  max-width: none;
-  flex: 0 0 auto;
-  display: inline-block;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  max-width: 100%;
-  caret-color: var(--sds-clr-lilac-09);
-}
+  &__amountInput {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    font-size: pxToRem(48px);
+    line-height: pxToRem(56px);
+    color: var(--sds-clr-lilac-09);
+    font-weight: var(--sds-fw-medium);
+    min-width: 1ch;
+    max-width: none;
+    flex: 0 0 auto;
+    display: inline-block;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+    caret-color: var(--sds-clr-lilac-09);
 
-.EmbeddedWalletTransferModal__amountInput br {
-  display: none;
-}
+    br {
+      display: none;
+    }
 
-.EmbeddedWalletTransferModal__amountInput::after {
-  content: attr(data-asset-code);
-  color: var(--sds-clr-gray-08);
-  font-weight: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  margin-left: pxToRem(4px);
-}
+    &::after {
+      content: attr(data-asset-code);
+      color: var(--sds-clr-gray-08);
+      font-weight: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      margin-left: pxToRem(4px);
+    }
 
-.EmbeddedWalletTransferModal__amountInput:focus {
-  outline: none;
-}
+    &:focus {
+      outline: none;
+    }
+  }
 
-.EmbeddedWalletTransferModal__maxButton {
-  border: 1px solid var(--sds-clr-gray-06);
-  background: var(--sds-clr-gray-01);
-  color: var(--sds-clr-gray-12);
-  font-weight: var(--sds-fw-medium);
-  font-size: pxToRem(14px);
-  line-height: pxToRem(18px);
-  padding: pxToRem(6px) pxToRem(14px);
-  border-radius: pxToRem(999px);
-  cursor: pointer;
-}
+  &__maxButton {
+    border: 1px solid var(--sds-clr-gray-06);
+    background: var(--sds-clr-gray-01);
+    color: var(--sds-clr-gray-12);
+    font-weight: var(--sds-fw-medium);
+    font-size: pxToRem(14px);
+    line-height: pxToRem(18px);
+    padding: pxToRem(6px) pxToRem(14px);
+    border-radius: pxToRem(999px);
+    cursor: pointer;
 
-.EmbeddedWalletTransferModal__maxButton:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-.EmbeddedWalletTransferModal__destinationInput .Input__side-element--right {
-  border-left: 1px solid var(--sds-clr-gray-06);
-  padding: 0;
-}
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
 
-.EmbeddedWalletTransferModal__destinationInput .Input__container {
-  gap: 0;
-  padding-right: 0;
-}
+  &__destinationInput {
+    .Input__side-element--right {
+      border-left: 1px solid var(--sds-clr-gray-06);
+      padding: 0;
+    }
 
-.EmbeddedWalletTransferModal__destinationInput .Label {
-  font-size: pxToRem(14px);
-  line-height: pxToRem(20px);
-}
+    .Input__container {
+      gap: 0;
+      padding-right: 0;
 
-.EmbeddedWalletTransferModal__destinationInput .Input__container input {
-  padding-right: pxToRem(12px);
-}
+      input {
+        padding-right: pxToRem(12px);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    }
 
-.EmbeddedWalletTransferModal__pasteButton {
-  border: 0;
-  background: transparent;
-  color: var(--sds-clr-gray-12);
-  font-weight: var(--sds-fw-medium);
-  font-size: pxToRem(14px);
-  line-height: pxToRem(18px);
-  padding: 0 pxToRem(12px);
-  height: 100%;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-}
+    .Label {
+      font-size: pxToRem(14px);
+      line-height: pxToRem(20px);
+    }
+  }
 
-.EmbeddedWalletTransferModal__pasteButton:disabled {
-  cursor: not-allowed;
-  color: var(--sds-clr-gray-09);
-}
+  &__pasteButton {
+    border: 0;
+    background: transparent;
+    color: var(--sds-clr-gray-12);
+    font-weight: var(--sds-fw-medium);
+    font-size: pxToRem(14px);
+    line-height: pxToRem(18px);
+    padding: 0 pxToRem(12px);
+    height: 100%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
 
-.EmbeddedWalletTransferModal__exchangeWarning {
-  border: 1px solid var(--sds-clr-amber-06);
-  background: var(--sds-clr-amber-02);
-  border-radius: pxToRem(12px);
-  padding: pxToRem(16px);
-  color: var(--sds-clr-amber-11);
-  display: flex;
-  flex-direction: column;
-  gap: pxToRem(8px);
-  text-align: center;
-}
+    &:disabled {
+      cursor: not-allowed;
+      color: var(--sds-clr-gray-09);
+    }
+  }
 
-.EmbeddedWalletTransferModal__exchangeWarningHeader {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: pxToRem(8px);
-  font-weight: var(--sds-fw-medium);
-  font-size: pxToRem(14px);
-  line-height: pxToRem(20px);
-}
+  &__exchangeWarning {
+    border: 1px solid var(--sds-clr-amber-06);
+    background: var(--sds-clr-amber-02);
+    border-radius: pxToRem(12px);
+    padding: pxToRem(16px);
+    color: var(--sds-clr-amber-11);
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(8px);
+    text-align: center;
+  }
 
-.EmbeddedWalletTransferModal__exchangeWarningHeader svg {
-  width: pxToRem(16px);
-  height: pxToRem(16px);
-  stroke: var(--sds-clr-amber-09);
-}
+  &__exchangeWarningHeader {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: pxToRem(8px);
+    font-weight: var(--sds-fw-medium);
+    font-size: pxToRem(14px);
+    line-height: pxToRem(20px);
 
-.EmbeddedWalletTransferModal__exchangeWarningBody {
-  font-size: pxToRem(12px);
-  line-height: pxToRem(18px);
-  display: flex;
-  flex-direction: column;
-}
+    svg {
+      width: pxToRem(16px);
+      height: pxToRem(16px);
+      stroke: var(--sds-clr-amber-09);
+    }
+  }
 
-.EmbeddedWalletTransferModal__destinationInput input {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+  &__exchangeWarningBody {
+    font-size: pxToRem(12px);
+    line-height: pxToRem(18px);
+    display: flex;
+    flex-direction: column;
+  }
 }

@@ -129,13 +129,13 @@ export const EmbeddedWalletTransferModal = ({
     : availableBalance;
   const isAddressValid = isValidWalletAddress(destination);
   const shouldShowExchangeWarning = isClassicWalletAddress(destination);
-  const isAmountInvalid = !Number.isFinite(numericAmount) || numericAmount <= 0;
-  const isAmountOverBalance =
-    Number.isFinite(numericAmount) &&
-    Number.isFinite(numericAvailableBalance) &&
-    numericAmount > numericAvailableBalance;
+  const isAmountValid = Number.isFinite(numericAmount) && numericAmount > 0;
+  const isAmountWithinBalance =
+    !Number.isFinite(numericAmount) ||
+    !Number.isFinite(numericAvailableBalance) ||
+    numericAmount <= numericAvailableBalance;
   const isReviewDisabled =
-    isSubmitDisabled || !isAddressValid || isAmountInvalid || isAmountOverBalance;
+    isSubmitDisabled || !isAddressValid || !isAmountValid || !isAmountWithinBalance;
   const isInputDisabled = !isWalletReady || isSubmitLoading;
   const isAmountEditable = !isInputDisabled;
   const isPasteDisabled = !canPaste || isInputDisabled;
