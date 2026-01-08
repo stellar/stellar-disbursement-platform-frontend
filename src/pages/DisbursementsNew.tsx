@@ -1,9 +1,25 @@
-import { useEffect, useRef, useState } from "react";
 import { Badge, Card, Heading } from "@stellar/design-system";
+import { BigNumber } from "bignumber.js";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { BigNumber } from "bignumber.js";
 
+import { AccountBalances } from "@/components/AccountBalances";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { DisbursementButtons } from "@/components/DisbursementButtons";
+import { DisbursementDetails } from "@/components/DisbursementDetails";
+import { DisbursementInstructions } from "@/components/DisbursementInstructions";
+import { DisbursementInviteMessage } from "@/components/DisbursementInviteMessage";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Title } from "@/components/Title";
+import { Toast } from "@/components/Toast";
+import { Routes } from "@/constants/settings";
+import { csvTotalAmount } from "@/helpers/csvTotalAmount";
+import { useAllBalances } from "@/hooks/useAllBalances";
+import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 import {
   clearDisbursementDraftsErrorAction,
@@ -11,24 +27,6 @@ import {
   saveDisbursementDraftAction,
   submitDisbursementNewDraftAction,
 } from "@/store/ducks/disbursementDrafts";
-import { useRedux } from "@/hooks/useRedux";
-import { useAllBalances } from "@/hooks/useAllBalances";
-import { Routes } from "@/constants/settings";
-import { csvTotalAmount } from "@/helpers/csvTotalAmount";
-
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SectionHeader } from "@/components/SectionHeader";
-import { Toast } from "@/components/Toast";
-import { DisbursementDetails } from "@/components/DisbursementDetails";
-import { DisbursementInviteMessage } from "@/components/DisbursementInviteMessage";
-import { DisbursementInstructions } from "@/components/DisbursementInstructions";
-import { DisbursementButtons } from "@/components/DisbursementButtons";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { AccountBalances } from "@/components/AccountBalances";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { Title } from "@/components/Title";
-
 import { Disbursement, DisbursementStep, hasWallet } from "@/types";
 
 export const DisbursementsNew = () => {
@@ -48,12 +46,18 @@ export const DisbursementsNew = () => {
 
   const isDraftEnabled = isDetailsValid;
   const isReviewEnabled = isDraftEnabled && Boolean(csvFile);
+  const isKWA = hasWallet(draftDetails?.registrationContactType);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
   const apiError = disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
 
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!apiError && !isSavedDraftMessageVisible && !isResponseSuccess) return;
 
@@ -78,6 +82,7 @@ export const DisbursementsNew = () => {
       }
     }
   }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const { allBalances } = useAllBalances();
 
@@ -110,10 +115,6 @@ export const DisbursementsNew = () => {
         }),
       );
     }
-  };
-
-  const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleReview = (event: React.FormEvent<HTMLFormElement>) => {
@@ -223,7 +224,9 @@ export const DisbursementsNew = () => {
             details={draftDetails}
             futureBalance={futureBalance}
           />
-          <DisbursementInviteMessage isEditMessage={false} draftMessage={customMessage} />
+          {!isKWA && (
+            <DisbursementInviteMessage isEditMessage={false} draftMessage={customMessage} />
+          )}
           <DisbursementInstructions
             variant="preview"
             csvFile={csvFile}
@@ -239,9 +242,7 @@ export const DisbursementsNew = () => {
 
     const successMessageArray: string[] = [
       "Payments will begin automatically",
-      hasWallet(draftDetails?.registrationContactType)
-        ? ""
-        : " to receivers who have registered their wallet",
+      isKWA ? "" : " to receivers who have registered their wallet",
       ". Click 'View' to track your disbursement in real-time.",
     ].filter((m) => Boolean(m));
 
@@ -278,8 +279,9 @@ export const DisbursementsNew = () => {
               futureBalance={futureBalance}
               csvFile={csvFile}
             />
-            <DisbursementInviteMessage isEditMessage={false} draftMessage={customMessage} />
-
+            {!isKWA && (
+              <DisbursementInviteMessage isEditMessage={false} draftMessage={customMessage} />
+            )}
             {renderButtons("confirmation")}
           </form>
         </>
@@ -315,17 +317,19 @@ export const DisbursementsNew = () => {
             }}
           />
 
-          <DisbursementInviteMessage
-            isEditMessage={true}
-            onChange={(updatedDisbursementInviteMessage) => {
-              setCustomMessage(updatedDisbursementInviteMessage);
-            }}
-            disabledReasonForTooltip={
-              hasWallet(draftDetails?.registrationContactType)
-                ? "No invitation message will be sent because you're registering receivers with wallets addresses."
-                : undefined
-            }
-          />
+          {!isKWA && (
+            <DisbursementInviteMessage
+              isEditMessage={true}
+              onChange={(updatedDisbursementInviteMessage) => {
+                setCustomMessage(updatedDisbursementInviteMessage);
+              }}
+              disabledReasonForTooltip={
+                hasWallet(draftDetails?.registrationContactType)
+                  ? "No invitation message will be sent because you're registering receivers with wallets addresses."
+                  : undefined
+              }
+            />
+          )}
           <DisbursementInstructions
             variant="upload"
             csvFile={csvFile}
