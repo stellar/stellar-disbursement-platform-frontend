@@ -1,6 +1,6 @@
 import { Badge, Heading, Link, Button, Icon, Modal } from "@stellar/design-system";
 import { BigNumber } from "bignumber.js";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -47,7 +47,6 @@ export const DisbursementDraftDetails = () => {
       "profile",
     );
 
-  const [draftDetails, setDraftDetails] = useState<DisbursementDraft>();
   const [csvFile, setCsvFile] = useState<File>();
   const [isCsvFileUpdated, setIsCsvFileUpdated] = useState(false);
   const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
@@ -55,7 +54,8 @@ export const DisbursementDraftDetails = () => {
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("preview");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
-  const [futureBalance, setFutureBalance] = useState<number>(0);
+
+  const [totalAmountOverride, setTotalAmountOverride] = useState<string>();
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
@@ -67,6 +67,24 @@ export const DisbursementDraftDetails = () => {
   const notificationRef = useRef<HTMLDivElement | null>(null);
   const apiError = disbursementDrafts.errorString;
   const isLoading = disbursementDetails.status === "PENDING";
+
+  const currentDraftId = disbursementDetails.details.id;
+  const draftDetails: DisbursementDraft = useMemo(() => {
+    if (!totalAmountOverride || !disbursementDetails.details.stats) {
+      return disbursementDetails;
+    }
+
+    return {
+      ...disbursementDetails,
+      details: {
+        ...disbursementDetails.details,
+        stats: {
+          ...disbursementDetails.details.stats,
+          totalAmount: totalAmountOverride,
+        },
+      },
+    };
+  }, [disbursementDetails, totalAmountOverride]);
   const isKWA = hasWallet(draftDetails?.details.registrationContactType);
 
   useEffect(() => {
@@ -110,71 +128,49 @@ export const DisbursementDraftDetails = () => {
     disbursementDetails.status,
   ]);
 
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    setDraftDetails(disbursementDetails);
-    dispatch(setDraftIdAction(disbursementDetails.details.id));
-  }, [disbursementDetails, dispatch]);
-
-  useEffect(() => {
-    if (disbursementDrafts.newDraftId && disbursementDrafts.status === "SUCCESS") {
-      // Show success response page
-      if (disbursementDrafts.actionType === "submit") {
-        setCurrentStep("confirmation");
-        setIsResponseSuccess(true);
-      }
+    if (currentDraftId) {
+      dispatch(setDraftIdAction(currentDraftId));
     }
-
-    return () => {
-      setIsResponseSuccess(false);
-      dispatch(clearCsvUpdatedAction());
-    };
-  }, [
-    disbursementDrafts.actionType,
-    disbursementDrafts.newDraftId,
-    disbursementDrafts.status,
-    dispatch,
-  ]);
-
-  useEffect(() => {
-    if (disbursementDrafts.isCsvFileUpdated && disbursementDrafts.status === "SUCCESS") {
-      setIsDraftInProgress(false);
-      setIsCsvFileUpdated(false);
-      setIsCsvUpdatedSuccess(true);
-
-      if (draftId) {
-        dispatch(getDisbursementDetailsAction(draftId));
-      }
-    }
-  }, [disbursementDrafts.isCsvFileUpdated, disbursementDrafts.status, dispatch, draftId]);
+  }, [currentDraftId, dispatch]);
 
   // Update future balance when total amount changes
-  useEffect(() => {
+  const futureBalance = useMemo(() => {
     const totalAmount = draftDetails?.details.stats?.totalAmount;
-    if (!totalAmount) return;
-
     const assetBalance =
       allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)?.balance ?? "0";
 
-    if (totalAmount) {
-      setFutureBalance(Number(assetBalance) - BigNumber(totalAmount).toNumber());
+    if (!totalAmount) {
+      return 0;
     }
+
+    return Number(assetBalance) - BigNumber(totalAmount).toNumber();
   }, [draftDetails?.details.stats?.totalAmount, draftDetails?.details.asset.code, allBalances]);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   const resetState = () => {
     setCurrentStep("edit");
-    setDraftDetails(undefined);
+    setTotalAmountOverride(undefined);
     setCsvFile(undefined);
     setIsCsvFileUpdated(false);
+    setIsCsvUpdatedSuccess(false);
+    setIsDraftInProgress(false);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
   };
 
-  const handleSaveDraft = () => {
-    if (draftId && csvFile) {
-      dispatch(saveNewCsvFileAction({ savedDraftId: draftId, file: csvFile }));
+  const handleSaveDraft = async () => {
+    if (!draftId || !csvFile) {
+      return;
+    }
+
+    try {
+      await dispatch(saveNewCsvFileAction({ savedDraftId: draftId, file: csvFile })).unwrap();
       setIsDraftInProgress(true);
+      setIsCsvFileUpdated(false);
+      setIsCsvUpdatedSuccess(true);
+      dispatch(getDisbursementDetailsAction(draftId));
+    } catch {
+      // errors handled via redux notifications
     }
   };
 
@@ -191,18 +187,9 @@ export const DisbursementDraftDetails = () => {
 
   const updateTotalAmount = (csvFile?: File) => {
     csvTotalAmount({ csvFile }).then((totalAmount) => {
-      if (!totalAmount || !draftDetails) return;
+      if (!totalAmount || !currentDraftId || !draftDetails.details.stats) return;
 
-      setDraftDetails({
-        ...draftDetails,
-        details: {
-          ...draftDetails.details,
-          stats: {
-            ...draftDetails.details.stats!,
-            totalAmount: totalAmount.toString(),
-          },
-        },
-      });
+      setTotalAmountOverride(totalAmount.toString());
     });
   };
 
@@ -211,26 +198,39 @@ export const DisbursementDraftDetails = () => {
     resetState();
   };
 
-  const handleSubmitDisbursement = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitDisbursement = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (draftDetails && csvFile) {
+    if (!draftDetails || !csvFile) {
+      return;
+    }
+
+    try {
       if (isCsvFileUpdated) {
-        // If form is dirty, save + submit (legacy behavior for backward compatibility)
-        dispatch(
+        await dispatch(
           submitDisbursementSavedDraftAction({
             savedDraftId: draftId,
             details: draftDetails.details,
             file: csvFile,
           }),
-        );
+        ).unwrap();
+        // reset all save draft status
+        setIsDraftInProgress(false);
+        setIsCsvFileUpdated(false);
+        setIsCsvUpdatedSuccess(false);
+
+        // switch to confirmation view with success banner
+        setCurrentStep("confirmation");
+        setIsResponseSuccess(true);
+        dispatch(clearCsvUpdatedAction());
       } else {
-        // If form is clean, only confirm the status (new separated behavior)
-        dispatch(
+        await dispatch(
           confirmDisbursementAction({
             savedDraftId: draftId,
           }),
-        );
+        ).unwrap();
       }
+    } catch {
+      // errors handled via redux notifications
     }
   };
 
