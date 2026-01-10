@@ -15,6 +15,7 @@ interface EmbeddedWalletModalProps {
   titleAlign?: "center" | "left";
   content: ReactNode;
   contentAlign?: "center" | "left";
+  containerClassName?: string;
   primaryActionLabel?: string;
   onPrimaryAction?: () => void;
   isPrimaryActionLoading?: boolean;
@@ -32,6 +33,7 @@ export const EmbeddedWalletModal = ({
   titleAlign,
   content,
   contentAlign = "center",
+  containerClassName,
   primaryActionLabel,
   onPrimaryAction,
   isPrimaryActionLoading = false,
@@ -75,7 +77,10 @@ export const EmbeddedWalletModal = ({
 
   return createPortal(
     <div className="EmbeddedWalletModal">
-      <div className="EmbeddedWalletModal__container" data-align={modalAlign}>
+      <div
+        className={`EmbeddedWalletModal__container${containerClassName ? ` ${containerClassName}` : ""}`}
+        data-align={modalAlign}
+      >
         <div className="EmbeddedWalletModal__content">
           {isModalDismissible ? (
             <div className="EmbeddedWalletModal__close">

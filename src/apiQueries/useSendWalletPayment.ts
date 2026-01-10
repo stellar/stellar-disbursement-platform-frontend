@@ -1,3 +1,6 @@
+import { useMutation } from "@tanstack/react-query";
+import BigNumber from "bignumber.js";
+
 import {
   Account,
   Address,
@@ -11,15 +14,15 @@ import {
   rpc,
   xdr,
 } from "@stellar/stellar-sdk";
-import { useMutation } from "@tanstack/react-query";
-import BigNumber from "bignumber.js";
 
 import {
   createSponsoredTransaction,
   pollSponsoredTransactionStatus,
 } from "@/api/sponsoredTransactions";
+
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { signSorobanAuthorizationEntries } from "@/helpers/signSorobanAuthorization";
+
 import type { AppError } from "@/types";
 
 export interface SendWalletPaymentParams {
@@ -36,10 +39,43 @@ interface UseSendWalletPaymentOptions {
   contractAddress?: string;
   credentialId?: string;
   balance: string;
+  assetCode: string;
+  assetIssuer?: string | null;
   onSuccess?: (result: SendWalletPaymentResult) => void | Promise<void>;
+  onSigned?: () => void | Promise<void>;
 }
 
 const SIGNATURE_EXPIRATION_LEDGER_BUFFER = 10;
+export const SIMULATION_ERROR_CODE = "SIMULATION_FAILED";
+export const TRANSACTION_FAILED_CODE = "TRANSACTION_FAILED";
+
+const getErrorExtras = (error: unknown) => {
+  if (!error || typeof error !== "object" || !("extras" in error)) {
+    return undefined;
+  }
+  return (error as AppError).extras;
+};
+
+export const isSimulationError = (error: unknown) =>
+  getErrorExtras(error)?.code === SIMULATION_ERROR_CODE;
+
+export const isTransactionFailedError = (error: unknown) =>
+  getErrorExtras(error)?.code === TRANSACTION_FAILED_CODE;
+
+export const getTransactionHashFromError = (error: unknown) =>
+  getErrorExtras(error)?.transactionHash as string | undefined;
+
+const createSimulationError = (message: string) => {
+  const error = new Error(message) as Error & AppError;
+  error.extras = { code: SIMULATION_ERROR_CODE };
+  return error;
+};
+
+const createTransactionFailedError = (transactionHash?: string) => {
+  const error = new Error("Transaction failed") as Error & AppError;
+  error.extras = { code: TRANSACTION_FAILED_CODE, transactionHash };
+  return error;
+};
 
 const validateDestination = (rawDestination: string): string => {
   const trimmed = rawDestination.trim();
@@ -123,7 +159,7 @@ const simulateTransferOperation = async ({
       "error" in simulationResult && simulationResult.error
         ? simulationResult.error
         : "Simulation failed";
-    throw new Error(simulationError);
+    throw createSimulationError(simulationError);
   }
 
   return simulationResult;
@@ -133,7 +169,10 @@ export const useSendWalletPayment = ({
   contractAddress,
   credentialId,
   balance,
+  assetCode,
+  assetIssuer,
   onSuccess,
+  onSigned,
 }: UseSendWalletPaymentOptions) => {
   const mutation = useMutation<SendWalletPaymentResult, AppError, SendWalletPaymentParams>({
     mutationFn: async ({ destination: rawDestination, amount: rawAmount }) => {
@@ -150,7 +189,21 @@ export const useSendWalletPayment = ({
       const rpcServer = createAuthenticatedRpcServer("wallet");
       const network = await rpcServer.getNetwork();
       const networkPassphrase = network.passphrase;
-      const assetContractId = Asset.native().contractId(networkPassphrase);
+      const normalizedAssetCode = assetCode.trim();
+      if (!normalizedAssetCode) {
+        throw new Error("Asset code is required");
+      }
+
+      const asset =
+        normalizedAssetCode === "XLM"
+          ? Asset.native()
+          : (() => {
+              if (!assetIssuer) {
+                throw new Error("Asset issuer is required for non-native assets");
+              }
+              return new Asset(normalizedAssetCode, assetIssuer);
+            })();
+      const assetContractId = asset.contractId(networkPassphrase);
 
       const transferOperation = buildTransferOperation({
         assetContractId,
@@ -159,15 +212,29 @@ export const useSendWalletPayment = ({
         amount: amountInStroops,
       });
 
-      const simulationResult = await simulateTransferOperation({
-        operation: transferOperation,
-        networkPassphrase,
-      });
+      let simulationResult;
+      try {
+        simulationResult = await simulateTransferOperation({
+          operation: transferOperation,
+          networkPassphrase,
+        });
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "extras" in error &&
+          (error as AppError).extras?.code === SIMULATION_ERROR_CODE
+        ) {
+          throw error;
+        }
+        const message = error instanceof Error ? error.message : "Simulation failed";
+        throw createSimulationError(message);
+      }
 
       const authEntries = simulationResult.result?.auth ?? [];
 
       if (!authEntries.length) {
-        throw new Error("Simulation did not return any authorization entries");
+        throw createSimulationError("Simulation did not return any authorization entries");
       }
 
       const signedAuthEntries = await signSorobanAuthorizationEntries({
@@ -179,6 +246,10 @@ export const useSendWalletPayment = ({
         signatureExpirationLedger:
           simulationResult.latestLedger + SIGNATURE_EXPIRATION_LEDGER_BUFFER,
       });
+
+      if (onSigned) {
+        await onSigned();
+      }
 
       const finalOperation = buildTransferOperation({
         assetContractId,
@@ -197,7 +268,7 @@ export const useSendWalletPayment = ({
       const finalStatus = await pollSponsoredTransactionStatus(id);
 
       if (finalStatus.status === "FAILED") {
-        throw new Error("Sponsored transaction failed");
+        throw createTransactionFailedError(finalStatus.transaction_hash);
       }
 
       return {
