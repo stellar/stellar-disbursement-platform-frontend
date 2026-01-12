@@ -15,7 +15,7 @@ export default tseslint.config(
     },
     plugins: {
       "react-hooks": reactHooks,
-      "import": importPlugin,
+      import: importPlugin,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -29,18 +29,94 @@ export default tseslint.config(
       "react/jsx-key": "off",
       "react/no-unescaped-entities": "off",
       "import/named": "off",
-      "import/order": ["error", {
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          "sibling",
-          "index"
-        ],
-        "newlines-between": "always",
-        "alphabetize": { "order": "asc" }
-      }]
+      "import/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            "parent",
+            "sibling",
+            "index",
+            "object",
+            "type",
+          ],
+          pathGroups: [
+            {
+              pattern: "react",
+              group: "external",
+              position: "before",
+            },
+            {
+              pattern: "@stellar/**",
+              group: "external",
+              position: "after",
+            },
+            {
+              pattern: "@/components/**",
+              group: "internal",
+              position: "before",
+            },
+            {
+              pattern: "@/pages/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/store/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/constants/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/api/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/apiQueries/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/helpers/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/hooks/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@/types",
+              group: "type",
+              position: "after",
+            },
+            {
+              pattern: "./**/*.scss",
+              group: "sibling",
+              position: "after",
+            },
+            {
+              pattern: "./**/*.css",
+              group: "sibling",
+              position: "after",
+            },
+          ],
+          pathGroupsExcludedImportTypes: ["react"],
+          "newlines-between": "always",
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+        },
+      ],
     },
   },
 );
