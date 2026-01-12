@@ -28,6 +28,7 @@ export default tseslint.config(
       "react/prop-types": "off",
       "react/jsx-key": "off",
       "react/no-unescaped-entities": "off",
+      "react-hooks/set-state-in-effect": "warn",
       "import/named": "off",
       "import/order": [
         "error",
