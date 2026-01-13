@@ -1,8 +1,10 @@
-import { Button, Icon, Input, Text } from "@stellar/design-system";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+
+import { Button, Icon, Input, Text } from "@stellar/design-system";
 
 import { Box } from "@/components/Box";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
+
 import { amount as amountFormatter } from "@/helpers/formatIntlNumber";
 import { isClassicWalletAddress, isValidWalletAddress } from "@/helpers/walletValidate";
 import "./styles.scss";

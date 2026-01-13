@@ -1,6 +1,8 @@
-import { Button, Heading, Icon, NavButton } from "@stellar/design-system";
 import { ReactNode, useCallback, useEffect } from "react";
+
 import { createPortal } from "react-dom";
+
+import { Button, Heading, Icon, NavButton } from "@stellar/design-system";
 
 import "./styles.scss";
 

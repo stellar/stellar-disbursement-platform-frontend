@@ -1,5 +1,7 @@
-import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
 import { API_URL } from "@/constants/envVariables";
+
+import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 
 export interface PasskeyRefreshRequest {

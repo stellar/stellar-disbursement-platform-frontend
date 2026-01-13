@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import { Card, Heading, Icon, Link, Profile, Notification } from "@stellar/design-system";
 
-
 import { AccountBalances } from "@/components/AccountBalances";
 import { Box } from "@/components/Box";
 import { BridgeIntegrationSection } from "@/components/BridgeIntegrationSection";

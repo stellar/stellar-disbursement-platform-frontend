@@ -1,15 +1,18 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+import { WALLET_SESSION_EXPIRED, WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
+
 import { getEmbeddedWalletProfile } from "@/api/embeddedWallet";
 import { refreshPasskeyToken } from "@/api/passkeyRefresh";
-import { WALLET_SESSION_EXPIRED, WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
-import { RootState } from "@/store";
+
 import {
   AppError,
   EmbeddedWalletProfileResponse,
   RejectMessage,
   WalletAccountInitialState,
 } from "@/types";
+
+import { RootState } from "@/store";
 
 export interface JwtWallet {
   contract_address: string;
