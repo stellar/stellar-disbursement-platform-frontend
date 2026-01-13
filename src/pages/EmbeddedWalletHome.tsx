@@ -177,7 +177,7 @@ export const EmbeddedWalletHome = () => {
             {assetMetadata?.logo ? (
               <img
                 className="EmbeddedWalletBalanceCard__assetLogo"
-                src={assetMetadata?.logo}
+                src={assetMetadata.logo}
                 alt={`${assetCode} logo`}
               />
             ) : (
