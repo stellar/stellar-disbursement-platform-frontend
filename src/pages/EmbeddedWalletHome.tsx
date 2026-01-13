@@ -7,7 +7,7 @@ import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 import { AssetAmount } from "@/components/AssetAmount";
 import { Box } from "@/components/Box";
-import { EmbeddedWalletCard } from "@/components/EmbeddedWalletCard";
+import { EmbeddedWalletBalanceCard } from "@/components/EmbeddedWalletBalanceCard";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
 import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
@@ -81,11 +81,11 @@ export const EmbeddedWalletHome = () => {
 
   const renderAssetRows = () => {
     if (isLoadingBalance) {
-      return <div className="EmbeddedWalletCard__empty">Loading assets…</div>;
+      return <div className="EmbeddedWalletBalanceCard__empty">Loading assets…</div>;
     }
 
     if (!nonZeroWalletBalances.length) {
-      return <div className="EmbeddedWalletCard__empty">No assets</div>;
+      return <div className="EmbeddedWalletBalanceCard__empty">No assets</div>;
     }
 
     return nonZeroWalletBalances.map((balance) => {
@@ -93,22 +93,26 @@ export const EmbeddedWalletHome = () => {
       const { logo, label } = getEmbeddedWalletAssetMetadata(assetCode);
 
       return (
-        <div className="EmbeddedWalletCard__row" key={`${assetCode}-${label}`}>
-          <div className="EmbeddedWalletCard__asset">
+        <Box
+          key={`${assetCode}-${label}`}
+          gap="sm"
+          direction="row"
+          justify="space-between"
+          align="center"
+        >
+          <Box gap="sm" direction="row" align="center">
             <img
-              className="EmbeddedWalletCard__assetLogo"
+              className="EmbeddedWalletBalanceCard__assetLogo"
               src={logo}
               alt={`${assetCode} logo`}
-              width={32}
-              height={32}
             />
-            <div className="EmbeddedWalletCard__assetText">
+            <Box gap="xs">
               <div>{label}</div>
-              <div className="EmbeddedWalletCard__assetCode">{assetCode}</div>
-            </div>
-          </div>
+              <div className="EmbeddedWalletBalanceCard__assetCode">{assetCode}</div>
+            </Box>
+          </Box>
           <AssetAmount amount={balance.balance} assetCode={assetCode} />
-        </div>
+        </Box>
       );
     });
   };
@@ -134,15 +138,13 @@ export const EmbeddedWalletHome = () => {
         ) : null
       }
     >
-      <Box gap="md">
-        <EmbeddedWalletCard
-          title="My assets"
-          tableHeaders={["Asset", "Amount"]}
-          renderTableContent={renderAssetRows}
-          actionLabel="Withdraw"
-          onAction={() => {}}
-        />
-      </Box>
+      <EmbeddedWalletBalanceCard
+        title="My assets"
+        tableHeaders={["Asset", "Amount"]}
+        renderTableContent={renderAssetRows}
+        actionLabel="Withdraw"
+        onAction={() => {}}
+      />
 
       <EmbeddedWalletModal
         visible={isVerificationPending}

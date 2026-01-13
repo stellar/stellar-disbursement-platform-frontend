@@ -69,6 +69,7 @@ export const EmbeddedWallet = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const tokenFromUrl = searchParams.get("token");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing URL token into state is intentional
     setToken(tokenFromUrl ?? "");
   }, [location.search]);
 

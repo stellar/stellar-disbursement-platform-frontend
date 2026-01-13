@@ -1,3 +1,4 @@
+import { Card } from "@stellar/design-system";
 import { useEffect, type ReactNode } from "react";
 
 import { MODAL_PARENT_ID } from "../EmbeddedWalletModal";
@@ -46,11 +47,13 @@ export const EmbeddedWalletLayout = ({
 
       <div className="EmbeddedWalletLayout__container">
         <div className="EmbeddedWalletLayout__cardWrapper">
-          <div
-            className={`EmbeddedWalletCard__content EmbeddedWalletCard__content--${contentAlign}`}
-          >
-            {children}
-          </div>
+          <Card borderRadiusSize="md" noPadding>
+            <div
+              className={`EmbeddedWalletCard__content EmbeddedWalletCard__content--${contentAlign}`}
+            >
+              {children}
+            </div>
+          </Card>
         </div>
       </div>
       <div id={MODAL_PARENT_ID} className="EmbeddedWalletModalRoot" />

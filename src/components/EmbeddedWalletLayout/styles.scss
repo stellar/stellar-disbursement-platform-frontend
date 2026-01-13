@@ -62,17 +62,23 @@
 .EmbeddedWalletLayout__cardWrapper {
   --ew-card-min: #{pxToRem(360px)};
   --ew-card-max: #{pxToRem(560px)};
-  --ew-card-padding: #{pxToRem(56px)} #{pxToRem(24px)};
-  --ew-card-padding-sm: #{pxToRem(48px)} #{pxToRem(16px)};
+  --ew-card-padding: #{pxToRem(32px)} #{pxToRem(24px)};
+  --ew-card-padding-sm: #{pxToRem(24px)} #{pxToRem(16px)};
 
   width: clamp(var(--ew-card-min), 94vw, var(--ew-card-max));
+  background: var(--sds-clr-gray-01);
   border-radius: pxToRem(8px);
   box-shadow: none;
+  padding: var(--ew-card-padding);
 }
 
-.EmbeddedWalletLayout__cardWrapper .Card {
+.EmbeddedWalletLayout__cardWrapper > .Card {
+  width: 100%;
+  height: auto;
+  background: transparent;
   border: none;
   box-shadow: none;
+  padding: 0;
 }
 
 .EmbeddedWalletCard__content {
@@ -125,6 +131,7 @@
   .EmbeddedWalletLayout__cardWrapper {
     width: 100%;
     max-width: pxToRem(500px);
+    padding: var(--ew-card-padding-sm);
   }
 
   .EmbeddedWalletCard__logo {
