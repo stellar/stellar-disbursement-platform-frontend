@@ -1,17 +1,22 @@
 import { useEffect } from "react";
+
 import { useDispatch } from "react-redux";
 
-import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
-import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
-import { parseJwt } from "@/helpers/parseJwt";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
 import {
   setWalletInfoAction,
   restoreWalletSession,
   clearWalletInfoAction,
   walletSessionExpiredAction,
 } from "@/store/ducks/walletAccount";
+
+import { WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
+
+import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
+import { parseJwt } from "@/helpers/parseJwt";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch } from "@/store";
 
 export const WalletSession = () => {
   const { walletAccount } = useRedux("walletAccount");
@@ -59,12 +64,13 @@ export const WalletSession = () => {
   useEffect(() => {
     const onSessionExpired = () => {
       dispatch(walletSessionExpiredAction());
+      localStorageWalletSessionToken.remove();
     };
 
-    document.addEventListener(SESSION_EXPIRED_EVENT, onSessionExpired);
+    document.addEventListener(WALLET_SESSION_EXPIRED_EVENT, onSessionExpired);
 
     return () => {
-      document.removeEventListener(SESSION_EXPIRED_EVENT, onSessionExpired);
+      document.removeEventListener(WALLET_SESSION_EXPIRED_EVENT, onSessionExpired);
     };
   }, [dispatch]);
 
