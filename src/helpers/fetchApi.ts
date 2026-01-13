@@ -1,12 +1,14 @@
 import { differenceInMinutes, fromUnixTime } from "date-fns";
 
+import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
 
 import { refreshToken } from "@/api/refreshToken";
-import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { parseJwt } from "@/helpers/parseJwt";
+
 import { AnyObject } from "@/types";
 
 type FetchApiOptions = {
