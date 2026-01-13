@@ -1,0 +1,13 @@
+.EmbeddedWalletHome__exchangeWarningTitle {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: column;
+  gap: var(--sds-gap-md);
+  text-align: center;
+}
+
+.EmbeddedWalletHome__exchangeWarningTitle svg {
+  color: var(--sds-clr-amber-09);
+  stroke: currentColor;
+  flex-shrink: 0;
+}
