@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { fetchSacBalances } from "@/helpers/stellarBalances";
+
 import { ApiStellarAccountBalance, AppError, EmbeddedWalletSupportedAsset } from "@/types";
 
 export const useWalletBalance = (
@@ -16,12 +17,10 @@ export const useWalletBalance = (
       }
 
       const rpcServer = createAuthenticatedRpcServer("wallet");
-      const assetDescriptors = assets.length
-        ? assets.map((asset) => ({
-            code: asset.code,
-            issuer: asset.issuer || null,
-          }))
-        : [{ code: "XLM", issuer: null }];
+      const assetDescriptors = assets.map((asset) => ({
+        code: asset.code,
+        issuer: asset.issuer || null,
+      }));
 
       return fetchSacBalances({
         rpcServer,
