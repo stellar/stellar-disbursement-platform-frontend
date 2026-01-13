@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { Icon, Notification, Text } from "@stellar/design-system";
+import { Avatar, Icon, Notification, Text } from "@stellar/design-system";
 
 import { AssetAmount } from "@/components/AssetAmount";
 import { Box } from "@/components/Box";
@@ -162,7 +162,8 @@ export const EmbeddedWalletHome = () => {
 
     return nonZeroWalletBalances.map((balance) => {
       const assetCode = balance.asset_code || DEFAULT_EMBEDDED_WALLET_FALLBACK_CODE;
-      const { logo, label } = getEmbeddedWalletAssetMetadata(assetCode);
+      const assetMetadata = getEmbeddedWalletAssetMetadata(assetCode);
+      const label = assetMetadata?.label ?? assetCode;
 
       return (
         <Box
@@ -173,11 +174,15 @@ export const EmbeddedWalletHome = () => {
           align="center"
         >
           <Box gap="sm" direction="row" align="center">
-            <img
-              className="EmbeddedWalletBalanceCard__assetLogo"
-              src={logo}
-              alt={`${assetCode} logo`}
-            />
+            {assetMetadata?.logo ? (
+              <img
+                className="EmbeddedWalletBalanceCard__assetLogo"
+                src={assetMetadata?.logo}
+                alt={`${assetCode} logo`}
+              />
+            ) : (
+              <Avatar userName={assetCode} size="lg" />
+            )}
             <Box gap="xs">
               <div>{label}</div>
               <div className="EmbeddedWalletBalanceCard__assetCode">{assetCode}</div>

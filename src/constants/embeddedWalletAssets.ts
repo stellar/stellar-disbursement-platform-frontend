@@ -1,7 +1,6 @@
-import EurocLogoSrc from "@/assets/logo-euroc.png";
-import TokenLogoSrc from "@/assets/logo-token.png";
-import UsdcLogoSrc from "@/assets/logo-usdc.png";
-import XlmLogoSrc from "@/assets/logo-xlm.png";
+import EurocLogoSrc from "@/assets/logo-euroc.svg";
+import UsdcLogoSrc from "@/assets/logo-usdc.svg";
+import XlmLogoSrc from "@/assets/logo-xlm.svg";
 
 export type EmbeddedWalletAssetMetadata = {
   code: string;
@@ -29,12 +28,8 @@ export const EMBEDDED_WALLET_ASSET_MAP: Record<string, EmbeddedWalletAssetMetada
   },
 };
 
-export const getEmbeddedWalletAssetMetadata = (assetCode: string): EmbeddedWalletAssetMetadata => {
-  return (
-    EMBEDDED_WALLET_ASSET_MAP[assetCode] ?? {
-      code: assetCode,
-      label: assetCode,
-      logo: TokenLogoSrc,
-    }
-  );
+export const getEmbeddedWalletAssetMetadata = (
+  assetCode: string,
+): EmbeddedWalletAssetMetadata | null => {
+  return EMBEDDED_WALLET_ASSET_MAP[assetCode] ?? null;
 };

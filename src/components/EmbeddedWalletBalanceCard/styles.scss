@@ -19,11 +19,9 @@
   }
 
   &__assetLogo {
-    width: pxToRem(32px);
     height: pxToRem(32px);
     object-fit: contain;
     border-radius: 50%;
-    background-color: var(--sds-clr-gray-01);
   }
 
   &__assetCode {
