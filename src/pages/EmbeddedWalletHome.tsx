@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { Box } from "@/components/Box";
 import { EmbeddedWalletDismissibleNotice } from "@/components/EmbeddedWalletDismissibleNotice";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
+import { useEmbeddedWalletNotice } from "@/components/EmbeddedWalletNoticesProvider";
 import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
 import { EmbeddedWalletProfileModal } from "@/components/EmbeddedWalletProfileModal";
 import { EmbeddedWalletTransferModal } from "@/components/EmbeddedWalletTransferModal";
@@ -30,6 +31,8 @@ import { useRedux } from "@/hooks/useRedux";
 import { AppDispatch } from "@/store";
 
 import "./EmbeddedWalletHome.scss";
+
+const VERIFIED_NOTICE_ID = "embedded-wallet-verified";
 
 export const EmbeddedWalletHome = () => {
   const { walletAccount, organization } = useRedux("walletAccount", "organization");
@@ -110,24 +113,30 @@ export const EmbeddedWalletHome = () => {
     }
   };
 
-  const topNotices: ReactNode[] = [];
   const isVerified = profileStatus === "SUCCESS" && !isVerificationPending;
-  if (isVerified) {
-    topNotices.push(
+
+  const verifiedNotice = useMemo(() => {
+    if (!isVerified) {
+      return null;
+    }
+
+    return (
       <EmbeddedWalletDismissibleNotice
-        key={`sep24-verification-success-${credentialId ?? "unknown"}`}
+        noticeId={VERIFIED_NOTICE_ID}
         variant="success"
         title="You're all set!"
-        icon={<Icon.CheckCircle />}
+        icon={<Icon.InfoCircle />}
         isFilled
         role="status"
         credentialId={credentialId}
         noticeKey="verifiedDismissed"
       >
         Now you can receive crypto or withdraw to a crypto wallet.
-      </EmbeddedWalletDismissibleNotice>,
+      </EmbeddedWalletDismissibleNotice>
     );
-  }
+  }, [credentialId, isVerified]);
+
+  useEmbeddedWalletNotice(VERIFIED_NOTICE_ID, verifiedNotice);
 
   const isWithdrawDisabled = !isWalletReady || sendPaymentMutation.isPending;
   const isSendDisabled =
@@ -179,7 +188,6 @@ export const EmbeddedWalletHome = () => {
           />
         ) : null
       }
-      topNotices={topNotices}
     >
       <Box gap="md">
         {isLoadingBalance ? (

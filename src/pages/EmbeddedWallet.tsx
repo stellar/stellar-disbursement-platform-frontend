@@ -1,20 +1,33 @@
-import { Button, Heading, Notification } from "@stellar/design-system";
-import { useCallback, useEffect, useMemo, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+
+import { Button, Heading, Notification } from "@stellar/design-system";
+
+import { Box } from "@/components/Box";
+import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
+import { useEmbeddedWalletNotice } from "@/components/EmbeddedWalletNoticesProvider";
+
+import { getOrgLogoAction } from "@/store/ducks/organization";
+import { setWalletTokenAction } from "@/store/ducks/walletAccount";
+
+import { Routes } from "@/constants/settings";
 
 import { useCreateEmbeddedWallet } from "@/apiQueries/useCreateEmbeddedWallet";
 import { usePasskeyAuthentication } from "@/apiQueries/usePasskeyAuthentication";
 import { usePasskeyRefresh } from "@/apiQueries/usePasskeyRefresh";
 import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
-import { Box } from "@/components/Box";
-import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
-import { Routes } from "@/constants/settings";
+
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
 import { useRedux } from "@/hooks/useRedux";
+
 import { AppDispatch } from "@/store";
-import { getOrgLogoAction } from "@/store/ducks/organization";
-import { setWalletTokenAction } from "@/store/ducks/walletAccount";
+
+
+const PASSKEY_ERROR_NOTICE_ID = "embedded-wallet-passkey-error";
 
 export const EmbeddedWallet = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -168,20 +181,21 @@ export const EmbeddedWallet = () => {
         isLoading: isAuthenticating,
       };
 
-  const passkeyErrorNotice = passkeyError ? (
-    <Notification variant="error" title="Couldn't log you in" isFilled role="alert">
-      Please try again with your passkey.
-    </Notification>
-  ) : null;
+  const passkeyErrorNotice = useMemo(() => {
+    if (!passkeyError) {
+      return null;
+    }
 
-  const topNotices: ReactNode[] = [];
-  if (passkeyErrorNotice) {
-    topNotices.push(
-      <div className="EmbeddedWalletLayout__noticeItem" key="passkey-error">
-        {passkeyErrorNotice}
-      </div>,
+    return (
+      <div className="EmbeddedWalletLayout__noticeItem">
+        <Notification variant="error" title="Couldn't log you in" isFilled role="alert">
+          Please try again with your passkey.
+        </Notification>
+      </div>
     );
-  }
+  }, [passkeyError]);
+
+  useEmbeddedWalletNotice(PASSKEY_ERROR_NOTICE_ID, passkeyErrorNotice);
 
   return (
     <EmbeddedWalletLayout
@@ -190,7 +204,6 @@ export const EmbeddedWallet = () => {
       headerRight={hasInviteToken ? "Create an account" : undefined}
       showHeader={hasInviteToken}
       contentAlign={hasInviteToken ? "left" : "center"}
-      topNotices={topNotices}
     >
       {!hasInviteToken ? (
         <div className="EmbeddedWalletCard__logo">

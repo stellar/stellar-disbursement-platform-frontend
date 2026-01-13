@@ -1,5 +1,8 @@
+import { Fragment, useEffect, type ReactNode } from "react";
+
 import { Card } from "@stellar/design-system";
-import { useEffect, type ReactNode } from "react";
+
+import { useEmbeddedWalletNotices } from "@/components/EmbeddedWalletNoticesProvider";
 
 import { MODAL_PARENT_ID } from "../EmbeddedWalletModal";
 
@@ -11,7 +14,6 @@ type EmbeddedWalletLayoutProps = {
   headerRight?: ReactNode;
   showHeader?: boolean;
   contentAlign?: "center" | "left";
-  topNotices?: ReactNode[];
   children: ReactNode;
 };
 
@@ -22,9 +24,9 @@ export const EmbeddedWalletLayout = ({
   headerRight,
   showHeader = true,
   contentAlign = "center",
-  topNotices = [],
 }: EmbeddedWalletLayoutProps) => {
-  const notices = topNotices.filter(Boolean);
+  const { notices } = useEmbeddedWalletNotices();
+  const noticeItems = notices.map((notice) => <Fragment key={notice.id}>{notice.node}</Fragment>);
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -51,7 +53,9 @@ export const EmbeddedWalletLayout = ({
 
       <div className="EmbeddedWalletLayout__container">
         <div className="EmbeddedWalletLayout__stack">
-          {notices.length ? <div className="EmbeddedWalletLayout__notices">{notices}</div> : null}
+          {noticeItems.length ? (
+            <div className="EmbeddedWalletLayout__notices">{noticeItems}</div>
+          ) : null}
           <div className="EmbeddedWalletLayout__cardWrapper">
             <Card borderRadiusSize="md" noPadding>
               <div

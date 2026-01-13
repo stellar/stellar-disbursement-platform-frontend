@@ -1,5 +1,8 @@
-import { Link, Notification } from "@stellar/design-system";
 import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
+
+import { Link, Notification } from "@stellar/design-system";
+
+import { useEmbeddedWalletNotices } from "@/components/EmbeddedWalletNoticesProvider";
 
 import {
   localStorageWalletNotices,
@@ -10,30 +13,24 @@ import "./styles.scss";
 
 type EmbeddedWalletNotificationProps = ComponentProps<typeof Notification>;
 
-type DismissActionRenderProps = {
-  onDismiss: () => void;
-  dismissLabel: string;
-};
-
 interface EmbeddedWalletDismissibleNoticeProps extends EmbeddedWalletNotificationProps {
   children: ReactNode;
+  noticeId: string;
   credentialId?: string;
   noticeKey?: WalletNoticeKey;
   dismissLabel?: string;
-  onDismiss?: () => void;
-  renderDismissAction?: (props: DismissActionRenderProps) => ReactNode;
 }
 
 export const EmbeddedWalletDismissibleNotice = ({
   children,
+  noticeId,
   credentialId,
   noticeKey,
   dismissLabel = "Dismiss",
-  onDismiss,
-  renderDismissAction,
   ...notificationProps
 }: EmbeddedWalletDismissibleNoticeProps) => {
   const [isDismissed, setIsDismissed] = useState(false);
+  const { removeNotice } = useEmbeddedWalletNotices();
 
   const isStoredDismissed = useMemo(() => {
     if (noticeKey && credentialId) {
@@ -52,16 +49,14 @@ export const EmbeddedWalletDismissibleNotice = ({
     }
 
     setIsDismissed(true);
-    onDismiss?.();
+    removeNotice(noticeId);
   };
 
   if (isDismissed || isStoredDismissed) {
     return null;
   }
 
-  const dismissAction = renderDismissAction ? (
-    renderDismissAction({ onDismiss: handleDismiss, dismissLabel })
-  ) : (
+  const dismissAction = (
     <Link
       role="button"
       variant="primary"
