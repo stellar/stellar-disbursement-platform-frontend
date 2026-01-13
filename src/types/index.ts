@@ -905,12 +905,14 @@ export type ApiNewUser = {
 export type ApiStellarOperationRecord =
   | ApiStellarOperationPayment
   | ApiStellarOperationPathPaymentStrictReceive
-  | ApiStellarOperationPathPaymentStrictSend;
+  | ApiStellarOperationPathPaymentStrictSend
+  | ApiStellarOperationInvokeHostFunction;
 
 export type ApiStellarPaymentType =
   | "payment"
   | "path_payment_strict_send"
-  | "path_payment_strict_receive";
+  | "path_payment_strict_receive"
+  | "invoke_host_function";
 
 export interface ApiStellarOperationBase {
   id: number;
@@ -951,6 +953,18 @@ export interface ApiStellarOperationPathPaymentStrictReceive extends ApiStellarO
 
 export interface ApiStellarOperationPathPaymentStrictSend extends ApiStellarOperationPathPayment {
   destination_min: string;
+}
+
+export interface ApiStellarOperationInvokeHostFunction extends ApiStellarOperationBase {
+  asset_balance_changes?: {
+    asset_type: string;
+    asset_code?: string;
+    asset_issuer?: string;
+    type: string;
+    from: string;
+    to: string;
+    amount: string;
+  }[];
 }
 
 export type ApiStellarTransaction = {
