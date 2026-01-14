@@ -87,9 +87,9 @@
   }
 
   &__noticeItem {
+    --ew-notice-title-offset: #{pxToRem(40px)};
     width: clamp(var(--ew-card-min), 94vw, var(--ew-card-max));
     position: relative;
-    --ew-notice-title-offset: #{pxToRem(40px)};
 
     .Notification {
       width: 100%;

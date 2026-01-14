@@ -2,14 +2,13 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
 
 import { Link, Notification } from "@stellar/design-system";
 
+import { Box } from "@/components/Box";
 import { useEmbeddedWalletNotices } from "@/components/EmbeddedWalletNoticesProvider";
 
 import {
   localStorageWalletNotices,
   type WalletNoticeKey,
 } from "@/helpers/localStorageWalletNotices";
-
-import "./styles.scss";
 
 type EmbeddedWalletNotificationProps = ComponentProps<typeof Notification>;
 
@@ -57,12 +56,7 @@ export const EmbeddedWalletDismissibleNotice = ({
   }
 
   const dismissAction = (
-    <Link
-      role="button"
-      variant="primary"
-      onClick={handleDismiss}
-      addlClassName="EmbeddedWalletDismissibleNotice__dismiss"
-    >
+    <Link role="button" variant="primary" onClick={handleDismiss}>
       {dismissLabel}
     </Link>
   );
@@ -70,10 +64,10 @@ export const EmbeddedWalletDismissibleNotice = ({
   return (
     <div className="EmbeddedWalletLayout__noticeItem">
       <Notification {...notificationProps}>
-        <div className="EmbeddedWalletDismissibleNotice__content">
+        <Box gap="md" align="start">
           <div>{children}</div>
           {dismissAction}
-        </div>
+        </Box>
       </Notification>
     </div>
   );

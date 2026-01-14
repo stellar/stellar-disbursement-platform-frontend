@@ -26,7 +26,9 @@ export const EmbeddedWalletLayout = ({
   contentAlign = "center",
 }: EmbeddedWalletLayoutProps) => {
   const { notices } = useEmbeddedWalletNotices();
-  const noticeItems = notices.map((notice) => <Fragment key={notice.id}>{notice.node}</Fragment>);
+  const noticeItems = notices
+    .map((notice) => (notice.node ? <Fragment key={notice.id}>{notice.node}</Fragment> : null))
+    .filter(Boolean);
 
   useEffect(() => {
     const previousTitle = document.title;
