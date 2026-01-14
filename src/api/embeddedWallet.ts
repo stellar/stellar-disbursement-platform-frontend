@@ -1,6 +1,9 @@
-import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
 import { API_URL } from "@/constants/envVariables";
+
+import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
 import type { EmbeddedWalletProfileResponse } from "@/types";
 
 export type EmbeddedWalletStatus = "PENDING" | "PROCESSING" | "SUCCESS" | "FAILED";

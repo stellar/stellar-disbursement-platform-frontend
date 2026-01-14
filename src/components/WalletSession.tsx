@@ -1,17 +1,22 @@
 import { useEffect } from "react";
+
 import { useDispatch } from "react-redux";
 
-import { WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
-import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
-import { parseJwt } from "@/helpers/parseJwt";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
 import {
   setWalletInfoAction,
   restoreWalletSession,
   clearWalletInfoAction,
   walletSessionExpiredAction,
 } from "@/store/ducks/walletAccount";
+
+import { WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
+
+import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
+import { parseJwt } from "@/helpers/parseJwt";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch } from "@/store";
 
 export const WalletSession = () => {
   const { walletAccount } = useRedux("walletAccount");

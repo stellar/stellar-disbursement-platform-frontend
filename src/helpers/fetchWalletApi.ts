@@ -1,7 +1,9 @@
 import { differenceInMinutes, fromUnixTime } from "date-fns";
 
-import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
 import { WALLET_SESSION_EXPIRED, WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
+
+import { handleWalletApiResponse } from "@/api/handleWalletApiResponse";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 import { parseJwt } from "@/helpers/parseJwt";

@@ -1,4 +1,5 @@
 import { WALLET_SESSION_EXPIRED } from "@/constants/settings";
+
 import type { ApiError } from "@/types";
 
 export const handleWalletApiResponse = async <ResponseType>(

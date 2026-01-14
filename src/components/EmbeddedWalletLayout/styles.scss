@@ -62,8 +62,8 @@
 .EmbeddedWalletLayout__stack {
   --ew-card-min: #{pxToRem(360px)};
   --ew-card-max: #{pxToRem(560px)};
-  --ew-card-padding: #{pxToRem(56px)} #{pxToRem(24px)};
-  --ew-card-padding-sm: #{pxToRem(48px)} #{pxToRem(16px)};
+  --ew-card-padding: #{pxToRem(32px)} #{pxToRem(24px)};
+  --ew-card-padding-sm: #{pxToRem(24px)} #{pxToRem(16px)};
 
   width: 100%;
   display: flex;
