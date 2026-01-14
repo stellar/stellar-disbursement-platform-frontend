@@ -59,12 +59,80 @@
   padding: pxToRem(24px) pxToRem(16px);
 }
 
-.EmbeddedWalletLayout__cardWrapper {
+.EmbeddedWalletLayout__stack {
   --ew-card-min: #{pxToRem(360px)};
   --ew-card-max: #{pxToRem(560px)};
   --ew-card-padding: #{pxToRem(32px)} #{pxToRem(24px)};
   --ew-card-padding-sm: #{pxToRem(24px)} #{pxToRem(16px)};
 
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.EmbeddedWalletLayout {
+  &__notices {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: pxToRem(12px);
+    margin-bottom: pxToRem(16px);
+
+    &:empty {
+      margin-bottom: 0;
+    }
+  }
+
+  &__noticeItem {
+    --ew-notice-title-offset: #{pxToRem(40px)};
+    width: clamp(var(--ew-card-min), 94vw, var(--ew-card-max));
+    position: relative;
+
+    .Notification {
+      width: 100%;
+      background: var(--sds-clr-gray-01);
+      border: 1px solid var(--sds-clr-gray-05);
+      box-shadow: none;
+      gap: 0;
+
+      &__title {
+        align-items: flex-start;
+
+        &__text {
+          font-size: pxToRem(14px);
+        }
+
+        &__icon {
+          width: pxToRem(32px);
+          height: pxToRem(32px);
+          margin-top: 0;
+          border-radius: pxToRem(8px);
+          border: 1px solid var(--sds-clr-gray-05);
+          background: var(--sds-clr-gray-02);
+          box-sizing: border-box;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          svg {
+            width: pxToRem(16px);
+            height: pxToRem(16px);
+          }
+        }
+      }
+
+      &__message {
+        margin-top: pxToRem(-6px);
+        padding-left: var(--ew-notice-title-offset);
+      }
+    }
+  }
+}
+
+.EmbeddedWalletLayout__cardWrapper {
   width: clamp(var(--ew-card-min), 94vw, var(--ew-card-max));
   background: var(--sds-clr-gray-01);
   border-radius: pxToRem(8px);
@@ -128,10 +196,23 @@
     align-items: flex-start;
   }
 
+  .EmbeddedWalletLayout__stack {
+    align-items: stretch;
+  }
+
   .EmbeddedWalletLayout__cardWrapper {
     width: 100%;
     max-width: pxToRem(500px);
     padding: var(--ew-card-padding-sm);
+  }
+
+  .EmbeddedWalletLayout__notices {
+    align-items: stretch;
+  }
+
+  .EmbeddedWalletLayout__noticeItem {
+    width: 100%;
+    max-width: pxToRem(500px);
   }
 
   .EmbeddedWalletCard__logo {
@@ -143,5 +224,9 @@
 @media (max-width: 360px) {
   .EmbeddedWalletLayout__cardWrapper {
     width: 100%;
+  }
+
+  .EmbeddedWalletLayout__noticeItem {
+    max-width: 100%;
   }
 }

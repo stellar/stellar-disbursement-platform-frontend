@@ -1,27 +1,39 @@
-import { Button, Heading, Notification } from "@stellar/design-system";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+
+import { Button, Heading, Notification } from "@stellar/design-system";
+
+import { Box } from "@/components/Box";
+import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
+import { useEmbeddedWalletNotice } from "@/components/EmbeddedWalletNoticesProvider";
+
+import { getOrgLogoAction } from "@/store/ducks/organization";
+import { setWalletTokenAction } from "@/store/ducks/walletAccount";
+
+import { Routes } from "@/constants/settings";
 
 import { useCreateEmbeddedWallet } from "@/apiQueries/useCreateEmbeddedWallet";
 import { usePasskeyAuthentication } from "@/apiQueries/usePasskeyAuthentication";
 import { usePasskeyRefresh } from "@/apiQueries/usePasskeyRefresh";
 import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
-import { Box } from "@/components/Box";
-import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
-import { Routes } from "@/constants/settings";
+
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
 import { useRedux } from "@/hooks/useRedux";
+
 import { AppDispatch } from "@/store";
-import { getOrgLogoAction } from "@/store/ducks/organization";
-import { setWalletTokenAction } from "@/store/ducks/walletAccount";
+
+
+const PASSKEY_ERROR_NOTICE_ID = "embedded-wallet-passkey-error";
 
 export const EmbeddedWallet = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { walletAccount, organization } = useRedux("walletAccount", "organization");
-  const [token, setToken] = useState("");
 
   const {
     mutateAsync: authenticatePasskey,
@@ -66,11 +78,9 @@ export const EmbeddedWallet = () => {
     [dispatch, navigate],
   );
 
-  useEffect(() => {
+  const token = useMemo(() => {
     const searchParams = new URLSearchParams(location.search);
-    const tokenFromUrl = searchParams.get("token");
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing URL token into state is intentional
-    setToken(tokenFromUrl ?? "");
+    return searchParams.get("token") ?? "";
   }, [location.search]);
 
   useEffect(() => {
@@ -130,12 +140,7 @@ export const EmbeddedWallet = () => {
     }
   };
 
-  const errorMessage =
-    authError?.message ||
-    registerError?.message ||
-    createWalletError?.message ||
-    refreshError?.message ||
-    "";
+  const passkeyError = authError || registerError || createWalletError || refreshError;
 
   const isSignupProcessing = isRegistering || isCreatingWallet || isRefreshing;
   const isLoading = isAuthenticating || isSignupProcessing;
@@ -176,6 +181,22 @@ export const EmbeddedWallet = () => {
         isLoading: isAuthenticating,
       };
 
+  const passkeyErrorNotice = useMemo(() => {
+    if (!passkeyError) {
+      return null;
+    }
+
+    return (
+      <div className="EmbeddedWalletLayout__noticeItem">
+        <Notification variant="error" title="Couldn't log you in" isFilled role="alert">
+          Please try again with your passkey.
+        </Notification>
+      </div>
+    );
+  }, [passkeyError]);
+
+  useEmbeddedWalletNotice(PASSKEY_ERROR_NOTICE_ID, passkeyErrorNotice);
+
   return (
     <EmbeddedWalletLayout
       organizationName={organizationName}
@@ -184,8 +205,6 @@ export const EmbeddedWallet = () => {
       showHeader={hasInviteToken}
       contentAlign={hasInviteToken ? "left" : "center"}
     >
-      {errorMessage && <Notification variant="error" title={errorMessage} isFilled />}
-
       {!hasInviteToken ? (
         <div className="EmbeddedWalletCard__logo">
           {organizationLogo ? (

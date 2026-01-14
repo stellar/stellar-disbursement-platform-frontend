@@ -4,13 +4,15 @@ import BigNumber from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { Avatar, Icon, Notification, Text } from "@stellar/design-system";
+import { Avatar, Icon, Text } from "@stellar/design-system";
 
 import { AssetAmount } from "@/components/AssetAmount";
 import { Box } from "@/components/Box";
 import { EmbeddedWalletBalanceCard } from "@/components/EmbeddedWalletBalanceCard";
+import { EmbeddedWalletDismissibleNotice } from "@/components/EmbeddedWalletDismissibleNotice";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
+import { useEmbeddedWalletNotice } from "@/components/EmbeddedWalletNoticesProvider";
 import { EmbeddedWalletProfileDropdown } from "@/components/EmbeddedWalletProfileDropdown";
 import { EmbeddedWalletProfileModal } from "@/components/EmbeddedWalletProfileModal";
 import { EmbeddedWalletTransferModal } from "@/components/EmbeddedWalletTransferModal";
@@ -28,6 +30,7 @@ import { useSep24Verification } from "@/apiQueries/useSep24Verification";
 import { useWalletBalance } from "@/apiQueries/useWalletBalance";
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { localStorageWalletNotices } from "@/helpers/localStorageWalletNotices";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
 
 import { useRedux } from "@/hooks/useRedux";
@@ -37,6 +40,8 @@ import { ApiStellarAccountBalance } from "@/types";
 import { AppDispatch } from "@/store";
 
 import "./EmbeddedWalletHome.scss";
+
+const VERIFIED_NOTICE_ID = "embedded-wallet-verified";
 
 export const EmbeddedWalletHome = () => {
   const { walletAccount, organization } = useRedux("walletAccount", "organization");
@@ -54,6 +59,8 @@ export const EmbeddedWalletHome = () => {
     isVerificationPending,
     isAuthenticated,
     token,
+    profileStatus,
+    pendingAsset,
     supportedAssets,
   } = walletAccount;
   const isWalletReady = Boolean(contractAddress);
@@ -87,6 +94,12 @@ export const EmbeddedWalletHome = () => {
     }
   }, [dispatch, isAuthenticated, token]);
 
+  useEffect(() => {
+    if (isVerificationPending) {
+      localStorageWalletNotices.reset(credentialId);
+    }
+  }, [credentialId, isVerificationPending]);
+
   const sendPaymentMutation = useSendWalletPayment({
     contractAddress,
     credentialId,
@@ -108,9 +121,9 @@ export const EmbeddedWalletHome = () => {
 
     try {
       await sep24VerificationMutation.mutateAsync({
-        assetCode: walletAccount.pendingAsset?.code,
+        assetCode: pendingAsset?.code,
         contractAddress,
-        credentialId: walletAccount.credentialId,
+        credentialId,
       });
     } catch {
       // hook handles error reporting
@@ -119,8 +132,34 @@ export const EmbeddedWalletHome = () => {
     }
   };
 
+  const isVerified = profileStatus === "SUCCESS" && !isVerificationPending;
+
+  const verifiedNotice = useMemo(() => {
+    if (!isVerified) {
+      return null;
+    }
+
+    return (
+      <EmbeddedWalletDismissibleNotice
+        noticeId={VERIFIED_NOTICE_ID}
+        variant="success"
+        title="You're all set!"
+        icon={<Icon.InfoCircle />}
+        isFilled
+        role="status"
+        credentialId={credentialId}
+        noticeKey="verifiedDismissed"
+      >
+        Now you can receive crypto or withdraw to a crypto wallet.
+      </EmbeddedWalletDismissibleNotice>
+    );
+  }, [credentialId, isVerified]);
+
+  useEmbeddedWalletNotice(VERIFIED_NOTICE_ID, verifiedNotice);
+
   const isWithdrawDisabled = !isWalletReady || sendPaymentMutation.isPending;
-  const isSendDisabled = isWithdrawDisabled || !destination.trim() || !amount.trim();
+  const isSendDisabled =
+    !isWalletReady || sendPaymentMutation.isPending || !destination.trim() || !amount.trim();
 
   const handleSendPayment = () => {
     if (isWithdrawDisabled) {
@@ -146,10 +185,6 @@ export const EmbeddedWalletHome = () => {
       // hook handles error reporting
     }
   };
-
-  const sendPaymentErrorNotification = sendPaymentMutation.error ? (
-    <Notification variant="error" title={sendPaymentMutation.error.message} isFilled role="alert" />
-  ) : null;
 
   const renderAssetRows = () => {
     if (isLoadingBalance) {
@@ -215,8 +250,6 @@ export const EmbeddedWalletHome = () => {
         ) : null
       }
     >
-      {sendPaymentErrorNotification ?? <></>}
-
       <EmbeddedWalletBalanceCard
         title="My assets"
         tableHeaders={["Asset", "Amount"]}

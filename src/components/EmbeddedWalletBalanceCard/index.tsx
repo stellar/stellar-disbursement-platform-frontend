@@ -1,5 +1,6 @@
-import { Button, Heading, Icon } from "@stellar/design-system";
 import React from "react";
+
+import { Button, Heading, Icon } from "@stellar/design-system";
 
 import { Box } from "@/components/Box";
 
