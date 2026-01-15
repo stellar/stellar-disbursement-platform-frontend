@@ -42,6 +42,7 @@ export type WalletAccountInitialState = {
   isAuthenticated: boolean;
   isSessionExpired: boolean;
   isTokenRefresh: boolean;
+  isRestoringSession: boolean;
   isVerificationPending: boolean;
   pendingAsset?: ApiAsset;
   walletProfile?: EmbeddedWalletProfileResponse;

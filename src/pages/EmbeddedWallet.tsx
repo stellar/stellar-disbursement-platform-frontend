@@ -19,13 +19,11 @@ import { usePasskeyAuthentication } from "@/apiQueries/usePasskeyAuthentication"
 import { usePasskeyRefresh } from "@/apiQueries/usePasskeyRefresh";
 import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
 
-
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 
 import { useRedux } from "@/hooks/useRedux";
 
 import { AppDispatch } from "@/store";
-
 
 const PASSKEY_ERROR_NOTICE_ID = "embedded-wallet-passkey-error";
 
@@ -196,6 +194,17 @@ export const EmbeddedWallet = () => {
   }, [passkeyError]);
 
   useEmbeddedWalletNotice(PASSKEY_ERROR_NOTICE_ID, passkeyErrorNotice);
+
+  // Hide login UI while restoring or already authenticated to prevent flashing.
+  const shouldHideLoginUI =
+    walletAccount.isRestoringSession ||
+    (walletAccount.isAuthenticated &&
+      Boolean(walletAccount.contractAddress) &&
+      !walletAccount.isSessionExpired);
+
+  if (shouldHideLoginUI) {
+    return null;
+  }
 
   return (
     <EmbeddedWalletLayout

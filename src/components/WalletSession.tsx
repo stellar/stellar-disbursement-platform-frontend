@@ -7,6 +7,8 @@ import {
   restoreWalletSession,
   clearWalletInfoAction,
   walletSessionExpiredAction,
+  startWalletSessionRestore,
+  finishWalletSessionRestore,
 } from "@/store/ducks/walletAccount";
 
 import { WALLET_SESSION_EXPIRED_EVENT } from "@/constants/settings";
@@ -41,6 +43,7 @@ export const WalletSession = () => {
       // Clear wallet info on logout
       dispatch(clearWalletInfoAction());
       localStorageWalletSessionToken.remove();
+      dispatch(finishWalletSessionRestore());
     }
   }, [dispatch, walletAccount.token, walletAccount.contractAddress, walletAccount.isTokenRefresh]);
 
@@ -49,14 +52,22 @@ export const WalletSession = () => {
     if (isSessionExpired) {
       dispatch(clearWalletInfoAction());
       localStorageWalletSessionToken.remove();
+      dispatch(finishWalletSessionRestore());
       return;
     }
+
+    // Signal that we are attempting to rehydrate a wallet session from local storage.
+    dispatch(startWalletSessionRestore());
 
     // Start session from saved token
     const sessionToken = localStorageWalletSessionToken.get();
 
     if (sessionToken && !isSessionExpired) {
+      // Found a persisted token; hydrate the wallet state with it.
       dispatch(restoreWalletSession(sessionToken));
+    } else {
+      // No token means the user is logged out; stop the restore flow so login can render.
+      dispatch(finishWalletSessionRestore());
     }
   }, [dispatch, isSessionExpired]);
 
