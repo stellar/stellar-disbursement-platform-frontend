@@ -12,6 +12,7 @@ type EmbeddedWalletBalanceCardProps = {
   renderTableContent?: () => React.ReactElement | React.ReactElement[] | null;
   actionLabel?: string;
   onAction?: () => void;
+  onActionDisabled?: boolean;
 };
 
 export const EmbeddedWalletBalanceCard = ({
@@ -20,9 +21,10 @@ export const EmbeddedWalletBalanceCard = ({
   renderTableContent,
   actionLabel,
   onAction,
+  onActionDisabled,
 }: EmbeddedWalletBalanceCardProps) => {
   return (
-    <Box gap="md">
+    <Box gap="xxl">
       <Heading as="h3" size="xs" className="EmbeddedWalletBalanceCard__title">
         {title}
       </Heading>
@@ -39,21 +41,23 @@ export const EmbeddedWalletBalanceCard = ({
           ))}
         </Box>
         <div className="EmbeddedWalletBalanceCard__divider" aria-hidden="true" />
-        {renderTableContent ? (
-          <Box gap="md" addlClassName="EmbeddedWalletBalanceCard__rows">
-            {renderTableContent()}
-          </Box>
-        ) : (
-          <></>
-        )}
+        <Box gap="xl">
+          {renderTableContent ? <>{renderTableContent()}</> : <></>}
+          {actionLabel ? (
+            <Button
+              size="lg"
+              variant="primary"
+              icon={<Icon.ChevronDown />}
+              onClick={onAction}
+              disabled={onActionDisabled}
+            >
+              {actionLabel}
+            </Button>
+          ) : (
+            <></>
+          )}
+        </Box>
       </Box>
-      {actionLabel ? (
-        <Button size="lg" variant="primary" icon={<Icon.ChevronDown />} onClick={onAction}>
-          {actionLabel}
-        </Button>
-      ) : (
-        <></>
-      )}
     </Box>
   );
 };
