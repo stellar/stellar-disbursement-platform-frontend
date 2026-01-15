@@ -7,7 +7,7 @@ import { ApiStellarAccountBalance, AppError, EmbeddedWalletSupportedAsset } from
 
 export const useWalletBalance = (
   contractAddress: string | undefined,
-  assets: EmbeddedWalletSupportedAsset[],
+  assets?: EmbeddedWalletSupportedAsset[],
 ) => {
   const query = useQuery<ApiStellarAccountBalance[], AppError>({
     queryKey: ["wallet-balance", contractAddress],
@@ -17,7 +17,7 @@ export const useWalletBalance = (
       }
 
       const rpcServer = createAuthenticatedRpcServer("wallet");
-      const assetDescriptors = assets.map((asset) => ({
+      const assetDescriptors = (assets ?? []).map((asset) => ({
         code: asset.code,
         issuer: asset.issuer || null,
       }));
@@ -28,7 +28,7 @@ export const useWalletBalance = (
         assets: assetDescriptors,
       });
     },
-    enabled: Boolean(contractAddress),
+    enabled: Boolean(contractAddress && assets !== undefined),
     refetchInterval: 10000,
   });
 

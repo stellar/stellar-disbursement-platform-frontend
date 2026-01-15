@@ -62,7 +62,7 @@ export const EmbeddedWalletHome = () => {
     data: balanceData,
     isLoading: isLoadingBalance,
     refetch: refetchBalance,
-  } = useWalletBalance(contractAddress, supportedAssets ?? []);
+  } = useWalletBalance(contractAddress, supportedAssets);
 
   const nonZeroWalletBalances = useMemo<ApiStellarAccountBalance[]>(() => {
     if (!balanceData) {

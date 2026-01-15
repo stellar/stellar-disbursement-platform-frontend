@@ -26,6 +26,7 @@ const initialState: WalletAccountInitialState = {
   isAuthenticated: false,
   isSessionExpired: false,
   isTokenRefresh: false,
+  isRestoringSession: true,
   isVerificationPending: false,
   pendingAsset: undefined,
   supportedAssets: undefined,
@@ -114,6 +115,7 @@ const walletAccountSlice = createSlice({
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.isTokenRefresh = false;
+      state.isRestoringSession = false;
     },
     setWalletTokenAction: (state, { payload }: PayloadAction<string>) => {
       state.token = payload;
@@ -122,6 +124,7 @@ const walletAccountSlice = createSlice({
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.isTokenRefresh = false;
+      state.isRestoringSession = false;
     },
     clearWalletInfoAction: (state) => {
       state.token = "";
@@ -136,6 +139,7 @@ const walletAccountSlice = createSlice({
       state.receiverContact = undefined;
       state.status = undefined;
       state.errorString = undefined;
+      state.isRestoringSession = false;
     },
     restoreWalletSession: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
@@ -144,10 +148,18 @@ const walletAccountSlice = createSlice({
       state.errorString = undefined;
       state.isTokenRefresh = false;
       state.isAuthenticated = true;
+      state.isRestoringSession = false;
     },
     walletSessionExpiredAction: (state) => {
       state.isSessionExpired = true;
       state.status = "ERROR";
+      state.isRestoringSession = false;
+    },
+    startWalletSessionRestore: (state) => {
+      state.isRestoringSession = true;
+    },
+    finishWalletSessionRestore: (state) => {
+      state.isRestoringSession = false;
     },
   },
   extraReducers: (builder) => {
@@ -193,4 +205,6 @@ export const {
   clearWalletInfoAction,
   restoreWalletSession,
   walletSessionExpiredAction,
+  startWalletSessionRestore,
+  finishWalletSessionRestore,
 } = walletAccountSlice.actions;

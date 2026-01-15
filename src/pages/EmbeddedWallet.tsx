@@ -1,20 +1,28 @@
-import { Button, Heading, Notification } from "@stellar/design-system";
 import { useCallback, useEffect, useMemo, useState } from "react";
+
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+
+import { Button, Heading, Notification } from "@stellar/design-system";
+
+import { Box } from "@/components/Box";
+import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
+
+import { getOrgLogoAction } from "@/store/ducks/organization";
+import { setWalletTokenAction } from "@/store/ducks/walletAccount";
+
+import { Routes } from "@/constants/settings";
 
 import { useCreateEmbeddedWallet } from "@/apiQueries/useCreateEmbeddedWallet";
 import { usePasskeyAuthentication } from "@/apiQueries/usePasskeyAuthentication";
 import { usePasskeyRefresh } from "@/apiQueries/usePasskeyRefresh";
 import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
-import { Box } from "@/components/Box";
-import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
-import { Routes } from "@/constants/settings";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
 import { useRedux } from "@/hooks/useRedux";
+
 import { AppDispatch } from "@/store";
-import { getOrgLogoAction } from "@/store/ducks/organization";
-import { setWalletTokenAction } from "@/store/ducks/walletAccount";
 
 export const EmbeddedWallet = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -175,6 +183,17 @@ export const EmbeddedWallet = () => {
         disabled: isLoading,
         isLoading: isAuthenticating,
       };
+
+  // Hide login UI while restoring or already authenticated to prevent flashing.
+  const shouldHideLoginUI =
+    walletAccount.isRestoringSession ||
+    (walletAccount.isAuthenticated &&
+      Boolean(walletAccount.contractAddress) &&
+      !walletAccount.isSessionExpired);
+
+  if (shouldHideLoginUI) {
+    return null;
+  }
 
   return (
     <EmbeddedWalletLayout
