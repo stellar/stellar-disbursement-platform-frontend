@@ -39,13 +39,7 @@ export const EmbeddedWalletBalanceCard = ({
           ))}
         </Box>
         <div className="EmbeddedWalletBalanceCard__divider" aria-hidden="true" />
-        {renderTableContent ? (
-          <Box gap="md" addlClassName="EmbeddedWalletBalanceCard__rows">
-            {renderTableContent()}
-          </Box>
-        ) : (
-          <></>
-        )}
+        {renderTableContent ? <Box gap="xl">{renderTableContent()}</Box> : <></>}
       </Box>
       {actionLabel ? (
         <Button size="lg" variant="primary" icon={<Icon.ChevronDown />} onClick={onAction}>

@@ -208,7 +208,7 @@ export const EmbeddedWalletHome = () => {
           justify="space-between"
           align="center"
         >
-          <Box gap="sm" direction="row" align="center">
+          <Box gap="md" direction="row" align="center">
             {assetMetadata?.logo ? (
               <img
                 className="EmbeddedWalletBalanceCard__assetLogo"

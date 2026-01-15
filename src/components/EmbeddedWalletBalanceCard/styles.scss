@@ -10,6 +10,7 @@
 
   &__tableHeader {
     font-size: pxToRem(12px);
+    font-weight: var(--sds-fw-medium);
     color: var(--sds-clr-gray-09);
   }
 
@@ -28,7 +29,7 @@
 
   &__assetCode {
     font-size: pxToRem(12px);
-    color: var(--sds-clr-gray-09);
+    color: var(--sds-clr-gray-11);
   }
 
   &__empty {
