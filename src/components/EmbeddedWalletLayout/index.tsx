@@ -38,6 +38,47 @@ export const EmbeddedWalletLayout = ({
     };
   }, [organizationName]);
 
+  useEffect(() => {
+    if (!organizationLogo) {
+      return;
+    }
+
+    const iconLinks = Array.from(
+      document.querySelectorAll<HTMLLinkElement>("link[rel='icon'], link[rel='shortcut icon']"),
+    );
+
+    if (!iconLinks.length) {
+      return;
+    }
+
+    const previousIcons = iconLinks.map((link) => ({
+      link,
+      href: link.getAttribute("href"),
+      type: link.getAttribute("type"),
+    }));
+
+    iconLinks.forEach((link) => {
+      link.setAttribute("href", organizationLogo);
+      link.removeAttribute("type");
+    });
+
+    return () => {
+      previousIcons.forEach(({ link, href, type }) => {
+        if (href) {
+          link.setAttribute("href", href);
+        } else {
+          link.removeAttribute("href");
+        }
+
+        if (type) {
+          link.setAttribute("type", type);
+        } else {
+          link.removeAttribute("type");
+        }
+      });
+    };
+  }, [organizationLogo]);
+
   return (
     <div className="EmbeddedWalletLayout">
       {showHeader ? (
