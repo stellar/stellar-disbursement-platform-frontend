@@ -3,19 +3,19 @@
 .EmbeddedWalletBalanceCard {
   &__title {
     font-size: pxToRem(14px);
-    color: var(--sds-clr-gray-09);
-    font-weight: var(--sds-fw-medium);
+    color: var(--sds-clr-gray-11);
+    font-weight: var(--sds-fw-regular);
     margin: 0;
   }
 
   &__tableHeader {
     font-size: pxToRem(12px);
     font-weight: var(--sds-fw-medium);
-    color: var(--sds-clr-gray-09);
+    color: var(--sds-clr-gray-10);
   }
 
   &__divider {
-    height: 1px;
+    height: pxToRem(1px);
     background: var(--sds-clr-gray-06);
   }
 
@@ -27,7 +27,12 @@
     flex-shrink: 0;
   }
 
-  &__assetCode {
+  &__assetText {
+    font-size: pxToRem(14px);
+    font-weight: var(--sds-fw-medium);
+  }
+
+  &__assetSubtext {
     font-size: pxToRem(12px);
     color: var(--sds-clr-gray-11);
   }

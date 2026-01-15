@@ -219,11 +219,13 @@ export const EmbeddedWalletHome = () => {
               <Avatar userName={assetCode} size="lg" />
             )}
             <Box gap="xs">
-              <div>{label}</div>
-              <div className="EmbeddedWalletBalanceCard__assetCode">{assetCode}</div>
+              <div className="EmbeddedWalletBalanceCard__assetText">{label}</div>
+              <div className="EmbeddedWalletBalanceCard__assetSubtext">{assetCode}</div>
             </Box>
           </Box>
-          <AssetAmount amount={balance.balance} assetCode={assetCode} />
+          <div className="EmbeddedWalletBalanceCard__assetText">
+            <AssetAmount amount={balance.balance} assetCode={assetCode} />
+          </div>
         </Box>
       );
     });
@@ -251,11 +253,12 @@ export const EmbeddedWalletHome = () => {
       }
     >
       <EmbeddedWalletBalanceCard
-        title="My assets"
+        title="My asset"
         tableHeaders={["Asset", "Amount"]}
         renderTableContent={renderAssetRows}
         actionLabel="Withdraw"
         onAction={handleSendPayment}
+        onActionDisabled={isWithdrawDisabled}
       />
 
       <EmbeddedWalletTransferModal
