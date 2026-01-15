@@ -253,7 +253,7 @@ export const EmbeddedWalletHome = () => {
       }
     >
       <EmbeddedWalletBalanceCard
-        title="My asset"
+        title="My assets"
         tableHeaders={["Asset", "Amount"]}
         renderTableContent={renderAssetRows}
         actionLabel="Withdraw"
