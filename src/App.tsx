@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter, Outlet, Routes as RouterRoutes, Route } from "react-router-dom";
 
 import { ApiKeyDetails } from "@/components/ApiKeyDetails/ApiKeyDetails";
+import { EmbeddedWalletNoticesProvider } from "@/components/EmbeddedWalletNoticesProvider";
 import { GlobalBanner } from "@/components/GlobalBanner";
 import { InnerPage } from "@/components/InnerPage";
 import { PrivateRoute } from "@/components/PrivateRoute";
@@ -61,11 +62,11 @@ const queryClient = new QueryClient({
 
 const WalletLayout = () => {
   return (
-    <>
+    <EmbeddedWalletNoticesProvider>
       <WalletSession />
       <WalletSessionRefresher />
       <Outlet />
-    </>
+    </EmbeddedWalletNoticesProvider>
   );
 };
 

@@ -48,6 +48,7 @@ export type WalletAccountInitialState = {
   walletProfile?: EmbeddedWalletProfileResponse;
   supportedAssets?: EmbeddedWalletSupportedAsset[];
   receiverContact?: EmbeddedWalletReceiverContact;
+  profileStatus: ActionStatus | undefined;
   status: ActionStatus | undefined;
   errorString?: string;
 };

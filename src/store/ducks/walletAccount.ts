@@ -31,6 +31,7 @@ const initialState: WalletAccountInitialState = {
   pendingAsset: undefined,
   supportedAssets: undefined,
   receiverContact: undefined,
+  profileStatus: undefined,
   status: undefined,
   errorString: undefined,
 };
@@ -112,6 +113,7 @@ const walletAccountSlice = createSlice({
       state.credentialId = payload.sub;
       state.isAuthenticated = true;
       state.isSessionExpired = false;
+      state.profileStatus = undefined;
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.isTokenRefresh = false;
@@ -121,6 +123,7 @@ const walletAccountSlice = createSlice({
       state.token = payload;
       state.isAuthenticated = true;
       state.isSessionExpired = false;
+      state.profileStatus = undefined;
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.isTokenRefresh = false;
@@ -137,6 +140,7 @@ const walletAccountSlice = createSlice({
       state.pendingAsset = undefined;
       state.supportedAssets = undefined;
       state.receiverContact = undefined;
+      state.profileStatus = undefined;
       state.status = undefined;
       state.errorString = undefined;
       state.isRestoringSession = false;
@@ -144,6 +148,7 @@ const walletAccountSlice = createSlice({
     restoreWalletSession: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
       state.isSessionExpired = false;
+      state.profileStatus = undefined;
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.isTokenRefresh = false;
@@ -180,9 +185,11 @@ const walletAccountSlice = createSlice({
       state.errorString = action.payload?.errorString;
     });
     builder.addCase(fetchWalletProfileAction.pending, (state) => {
+      state.profileStatus = "PENDING";
       state.status = "PENDING";
     });
     builder.addCase(fetchWalletProfileAction.fulfilled, (state, action) => {
+      state.profileStatus = "SUCCESS";
       state.status = "SUCCESS";
       state.isVerificationPending = action.payload.verification.is_pending;
       state.pendingAsset = action.payload.verification.pending_asset;
@@ -190,6 +197,7 @@ const walletAccountSlice = createSlice({
       state.receiverContact = action.payload.wallet?.receiver_contact;
     });
     builder.addCase(fetchWalletProfileAction.rejected, (state, action) => {
+      state.profileStatus = "ERROR";
       state.status = "ERROR";
       state.errorString = action.payload?.errorString ?? action.error.message;
     });

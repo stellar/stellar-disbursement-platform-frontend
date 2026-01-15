@@ -13,6 +13,7 @@ export const LOCAL_STORAGE_SESSION_TOKEN = "sdp_session";
 export const LOCAL_STORAGE_WALLET_SESSION_TOKEN = "sdp_wallet_session";
 export const LOCAL_STORAGE_DEVICE_ID = "sdp_deviceID";
 export const LOCAL_STORAGE_TENANT_NAME = "sdp_tenant_name";
+export const LOCAL_STORAGE_WALLET_NOTICE_STATE = "sdp_wallet_notice_state";
 export const UI_STATUS_DISBURSEMENT = "STARTED,PAUSED,COMPLETED";
 export const UI_STATUS_DISBURSEMENT_DRAFT = "DRAFT,READY";
 export const ORG_NAME_INFO_TEXT = "You can find your organization name in the invitation email";
