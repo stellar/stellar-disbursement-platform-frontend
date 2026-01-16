@@ -16,9 +16,15 @@ import {
 } from "@stellar/stellar-sdk";
 
 import {
+  WALLET_PAYMENT_SIMULATION_ERROR_CODE,
+  WALLET_PAYMENT_TRANSACTION_FAILED_CODE,
+} from "@/constants/settings";
+
+import {
   createSponsoredTransaction,
   pollSponsoredTransactionStatus,
 } from "@/api/sponsoredTransactions";
+
 
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { signSorobanAuthorizationEntries } from "@/helpers/signSorobanAuthorization";
@@ -46,8 +52,6 @@ interface UseSendWalletPaymentOptions {
 }
 
 const SIGNATURE_EXPIRATION_LEDGER_BUFFER = 10;
-export const SIMULATION_ERROR_CODE = "SIMULATION_FAILED";
-export const TRANSACTION_FAILED_CODE = "TRANSACTION_FAILED";
 
 const getErrorExtras = (error: unknown) => {
   if (!error || typeof error !== "object" || !("extras" in error)) {
@@ -57,23 +61,23 @@ const getErrorExtras = (error: unknown) => {
 };
 
 export const isSimulationError = (error: unknown) =>
-  getErrorExtras(error)?.code === SIMULATION_ERROR_CODE;
+  getErrorExtras(error)?.code === WALLET_PAYMENT_SIMULATION_ERROR_CODE;
 
 export const isTransactionFailedError = (error: unknown) =>
-  getErrorExtras(error)?.code === TRANSACTION_FAILED_CODE;
+  getErrorExtras(error)?.code === WALLET_PAYMENT_TRANSACTION_FAILED_CODE;
 
 export const getTransactionHashFromError = (error: unknown) =>
   getErrorExtras(error)?.transactionHash as string | undefined;
 
 const createSimulationError = (message: string) => {
   const error = new Error(message) as Error & AppError;
-  error.extras = { code: SIMULATION_ERROR_CODE };
+  error.extras = { code: WALLET_PAYMENT_SIMULATION_ERROR_CODE };
   return error;
 };
 
 const createTransactionFailedError = (transactionHash?: string) => {
   const error = new Error("Transaction failed") as Error & AppError;
-  error.extras = { code: TRANSACTION_FAILED_CODE, transactionHash };
+  error.extras = { code: WALLET_PAYMENT_TRANSACTION_FAILED_CODE, transactionHash };
   return error;
 };
 
@@ -219,12 +223,7 @@ export const useSendWalletPayment = ({
           networkPassphrase,
         });
       } catch (error) {
-        if (
-          error &&
-          typeof error === "object" &&
-          "extras" in error &&
-          (error as AppError).extras?.code === SIMULATION_ERROR_CODE
-        ) {
+        if (isSimulationError(error)) {
           throw error;
         }
         const message = error instanceof Error ? error.message : "Simulation failed";

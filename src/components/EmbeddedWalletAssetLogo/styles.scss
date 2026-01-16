@@ -1,6 +1,10 @@
 @use "../../styles/styles-utils.scss" as *;
 
 .EmbeddedWalletAssetLogo {
+  --EmbeddedWalletAssetLogo-size: #{pxToRem(20px)};
+  --EmbeddedWalletAssetLogo-initials-size: #{pxToRem(10px)};
+  --EmbeddedWalletAssetLogo-initials-offset: 0;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -10,20 +14,25 @@
   background: var(--sds-clr-gray-01);
   flex-shrink: 0;
   box-sizing: border-box;
+  width: var(--EmbeddedWalletAssetLogo-size);
+  height: var(--EmbeddedWalletAssetLogo-size);
 
   &[data-size="sm"] {
-    width: pxToRem(20px);
-    height: pxToRem(20px);
+    --EmbeddedWalletAssetLogo-size: #{pxToRem(20px)};
+    --EmbeddedWalletAssetLogo-initials-size: #{pxToRem(10px)};
+    --EmbeddedWalletAssetLogo-initials-offset: 0;
   }
 
   &[data-size="md"] {
-    width: pxToRem(32px);
-    height: pxToRem(32px);
+    --EmbeddedWalletAssetLogo-size: #{pxToRem(32px)};
+    --EmbeddedWalletAssetLogo-initials-size: #{pxToRem(14px)};
+    --EmbeddedWalletAssetLogo-initials-offset: #{pxToRem(1px)};
   }
 
   &[data-size="lg"] {
-    width: pxToRem(40px);
-    height: pxToRem(40px);
+    --EmbeddedWalletAssetLogo-size: #{pxToRem(40px)};
+    --EmbeddedWalletAssetLogo-initials-size: #{pxToRem(18px)};
+    --EmbeddedWalletAssetLogo-initials-offset: #{pxToRem(1px)};
   }
 
   img {
@@ -41,22 +50,9 @@
   }
 
   .Avatar__initials {
+    font-size: var(--EmbeddedWalletAssetLogo-initials-size);
     font-weight: var(--sds-fw-semi-bold);
     line-height: 1;
-  }
-
-  &[data-size="sm"] .Avatar__initials {
-    font-size: pxToRem(10px);
-    transform: translateY(0);
-  }
-
-  &[data-size="md"] .Avatar__initials {
-    font-size: pxToRem(14px);
-    transform: translateY(1px);
-  }
-
-  &[data-size="lg"] .Avatar__initials {
-    font-size: pxToRem(18px);
-    transform: translateY(1px);
+    transform: translateY(var(--EmbeddedWalletAssetLogo-initials-offset));
   }
 }

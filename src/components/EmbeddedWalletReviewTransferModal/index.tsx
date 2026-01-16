@@ -25,6 +25,26 @@ type Props = {
   isConfirmLoading: boolean;
 };
 
+type TransferDetailProps = {
+  label: string;
+  displayValue: string;
+  copyValue?: string;
+};
+
+const TransferDetail = ({ label, displayValue, copyValue }: TransferDetailProps) => (
+  <div className="EmbeddedWalletReviewTransferModal__detail">
+    <div className="EmbeddedWalletReviewTransferModal__detailLabel">{label}</div>
+    <div className="EmbeddedWalletReviewTransferModal__detailRow">
+      <span className="EmbeddedWalletReviewTransferModal__address">{displayValue}</span>
+      {copyValue ? (
+        <div className="EmbeddedWalletReviewTransferModal__copyAction">
+          <CopyWithIcon textToCopy={copyValue} iconSizeRem="1.1" doneLabel="Copied" />
+        </div>
+      ) : null}
+    </div>
+  </div>
+);
+
 export const EmbeddedWalletReviewTransferModal = ({
   isOpen,
   onClose,
@@ -74,39 +94,16 @@ export const EmbeddedWalletReviewTransferModal = ({
           </div>
 
           <div className="EmbeddedWalletReviewTransferModal__details">
-            <div className="EmbeddedWalletReviewTransferModal__detail">
-              <div className="EmbeddedWalletReviewTransferModal__detailLabel">From (sender)</div>
-              <div className="EmbeddedWalletReviewTransferModal__detailRow">
-                <span className="EmbeddedWalletReviewTransferModal__address">{senderDisplay}</span>
-                {trimmedSender ? (
-                  <div className="EmbeddedWalletReviewTransferModal__copyAction">
-                    <CopyWithIcon textToCopy={trimmedSender} iconSizeRem="1.1" doneLabel="Copied">
-                      <span className="EmbeddedWalletReviewTransferModal__copySpacer" />
-                    </CopyWithIcon>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-
-            <div className="EmbeddedWalletReviewTransferModal__detail">
-              <div className="EmbeddedWalletReviewTransferModal__detailLabel">To (receiver)</div>
-              <div className="EmbeddedWalletReviewTransferModal__detailRow">
-                <span className="EmbeddedWalletReviewTransferModal__address">
-                  {destinationDisplay}
-                </span>
-                {trimmedDestination ? (
-                  <div className="EmbeddedWalletReviewTransferModal__copyAction">
-                    <CopyWithIcon
-                      textToCopy={trimmedDestination}
-                      iconSizeRem="1.1"
-                      doneLabel="Copied"
-                    >
-                      <span className="EmbeddedWalletReviewTransferModal__copySpacer" />
-                    </CopyWithIcon>
-                  </div>
-                ) : null}
-              </div>
-            </div>
+            <TransferDetail
+              label="From (sender)"
+              displayValue={senderDisplay}
+              copyValue={trimmedSender || undefined}
+            />
+            <TransferDetail
+              label="To (receiver)"
+              displayValue={destinationDisplay}
+              copyValue={trimmedDestination || undefined}
+            />
           </div>
 
           <div className="EmbeddedWalletReviewTransferModal__actions">
