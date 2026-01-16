@@ -2,6 +2,11 @@
 
 .EmbeddedWalletTransferModal {
   &__amountField {
+    --ew-amount-font-size-max: 48px;
+    --ew-amount-font-size-min: 32px;
+    --ew-amount-font-size: var(--ew-amount-font-size-max);
+    --ew-amount-transition: font-size var(--sds-anim-transition-default),
+      line-height var(--sds-anim-transition-default);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -16,10 +21,7 @@
   }
 
   &__amountRow {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: pxToRem(2px);
+    display: block;
     max-width: 100%;
     flex: 1 1 auto;
     min-width: 0;
@@ -29,19 +31,19 @@
     border: 0;
     padding: 0;
     background: transparent;
-    font-size: pxToRem(48px);
-    line-height: pxToRem(56px);
+    font-size: var(--ew-amount-font-size);
+    line-height: calc(var(--ew-amount-font-size) * 56 / 48);
     color: var(--sds-clr-lilac-09);
     font-weight: var(--sds-fw-medium);
     min-width: 1ch;
     max-width: 100%;
-    flex: 0 1 auto;
-    display: inline-block;
+    display: inline;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
     max-width: 100%;
     caret-color: var(--sds-clr-lilac-09);
+    transition: var(--ew-amount-transition);
 
     &[data-error="true"] {
       color: var(--sds-clr-red-11);
@@ -57,18 +59,43 @@
     }
   }
 
+  &__amountMeasure,
+  &__assetMeasure {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    visibility: hidden;
+    max-width: none;
+    width: max-content;
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
+    pointer-events: none;
+    transition: none;
+  }
+
+  &__assetMeasure {
+    font-weight: var(--sds-fw-medium);
+    color: var(--sds-clr-gray-08);
+    font-family: inherit;
+  }
+
   &__assetButton {
     border: 0;
     background: transparent;
     display: inline-flex;
     align-items: center;
     gap: pxToRem(6px);
+    margin-left: pxToRem(2px);
     padding: 0;
-    font-size: pxToRem(48px);
-    line-height: pxToRem(56px);
+    font-size: var(--ew-amount-font-size);
+    line-height: calc(var(--ew-amount-font-size) * 56 / 48);
     font-weight: var(--sds-fw-medium);
     color: var(--sds-clr-gray-08);
     cursor: pointer;
+    flex: 0 0 auto;
+    transition: var(--ew-amount-transition);
 
     &:disabled {
       cursor: not-allowed;

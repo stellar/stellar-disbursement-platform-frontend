@@ -1,11 +1,8 @@
-import { amount as amountFormatter } from "@/helpers/formatIntlNumber";
+import { formatAmountDisplay } from "@/helpers/formatAmountDisplay";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 
 export const getTransferAmountDisplay = (amount: string, assetCode: string) => {
-  const numericAmount = Number.parseFloat(amount);
-  const formattedAmount = Number.isFinite(numericAmount)
-    ? amountFormatter.format(numericAmount)
-    : amount;
+  const formattedAmount = formatAmountDisplay(amount);
 
   return formattedAmount && assetCode
     ? `${formattedAmount} ${assetCode}`
