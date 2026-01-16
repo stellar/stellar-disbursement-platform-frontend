@@ -1,0 +1,60 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.EmbeddedWalletTransferStatusModal {
+  width: 100%;
+  --transfer-status-icon-bg: var(--sds-clr-gray-03);
+  --transfer-status-icon-color: var(--sds-clr-gray-12);
+  --transfer-status-text: var(--sds-clr-gray-12);
+
+  &--success {
+    --transfer-status-icon-bg: var(--sds-clr-green-03);
+    --transfer-status-icon-color: var(--sds-clr-green-11);
+    --transfer-status-text: var(--sds-clr-green-11);
+  }
+
+  &--failed {
+    --transfer-status-icon-bg: var(--sds-clr-red-03);
+    --transfer-status-icon-color: var(--sds-clr-red-11);
+    --transfer-status-text: var(--sds-clr-red-11);
+  }
+
+  &__summary {
+    padding: pxToRem(20px);
+    border-radius: pxToRem(16px);
+    background: var(--sds-clr-gray-01);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: pxToRem(12px);
+    text-align: center;
+  }
+
+  &__statusIcon {
+    width: pxToRem(32px);
+    height: pxToRem(32px);
+    border-radius: 50%;
+    background: var(--transfer-status-icon-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: pxToRem(20px);
+      height: pxToRem(20px);
+      stroke: var(--transfer-status-icon-color);
+    }
+  }
+
+  &__message {
+    color: var(--transfer-status-text);
+    font-size: pxToRem(14px);
+    font-weight: var(--sds-fw-medium);
+    text-align: center;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(12px);
+  }
+}
