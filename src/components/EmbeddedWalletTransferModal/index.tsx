@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 
-import { Button, Icon, Input, Text } from "@stellar/design-system";
+import { Button, Icon, Input, Link, Text } from "@stellar/design-system";
 
 import { Box } from "@/components/Box";
 import { EmbeddedWalletAssetLogo } from "@/components/EmbeddedWalletAssetLogo";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
+
+import {
+  useWalletDestinationChecks,
+  type DestinationCheckStatus,
+  type TrustlineCheckStatus,
+} from "@/apiQueries/useWalletDestinationChecks";
 
 import { amount as amountFormatter } from "@/helpers/formatIntlNumber";
 import { isClassicWalletAddress, isValidWalletAddress } from "@/helpers/walletValidate";
@@ -93,9 +100,95 @@ const getCaretIndexForNumericCount = (value: string, numericCount: number) => {
   return value.length;
 };
 
+const TRUSTLINE_HELP_URL =
+  "https://developers.stellar.org/docs/build/guides/basics/verify-trustlines";
+const CREATE_ACCOUNT_HELP_URL =
+  "https://developers.stellar.org/docs/build/guides/transactions/create-account";
+
+const renderTrustlineHelp = (assetCodeLabel: string) => (
+  <>
+    The destination wallet needs a{" "}
+    <Link
+      href={TRUSTLINE_HELP_URL}
+      target="_blank"
+      rel="noreferrer"
+      icon={<Icon.LinkExternal01 />}
+      iconPosition="right"
+    >
+      trustline
+    </Link>{" "}
+    for {assetCodeLabel} to receive this asset.
+  </>
+);
+
+const renderCreateAccountHelp = () => (
+  <>
+    This destination wallet does not exist yet. Learn how to{" "}
+    <Link
+      href={CREATE_ACCOUNT_HELP_URL}
+      target="_blank"
+      rel="noreferrer"
+      icon={<Icon.LinkExternal01 />}
+      iconPosition="right"
+    >
+      create a Stellar account
+    </Link>
+    .
+  </>
+);
+
+const formatBalance = (rawBalance: string) => {
+  const numericBalance = Number.parseFloat(rawBalance);
+  return Number.isFinite(numericBalance) ? amountFormatter.format(numericBalance) : rawBalance;
+};
+
+type DestinationState = {
+  error?: ReactNode;
+  note?: ReactNode;
+};
+
+const getDestinationState = ({
+  destination,
+  isAddressValid,
+  destinationStatus,
+  trustlineStatus,
+  assetCode,
+}: {
+  destination: string;
+  isAddressValid: boolean;
+  destinationStatus: DestinationCheckStatus;
+  trustlineStatus: TrustlineCheckStatus;
+  assetCode?: string;
+}): DestinationState => {
+  let note: ReactNode | undefined;
+  if (destinationStatus === "checking") {
+    note = "Checking account...";
+  } else if (trustlineStatus === "checking") {
+    note = "Checking trustline...";
+  }
+
+  let error: ReactNode | undefined;
+  if (destination) {
+    if (!isAddressValid) {
+      error = "Invalid address";
+    } else if (destinationStatus === "missing") {
+      error = renderCreateAccountHelp();
+    } else if (trustlineStatus === "missing" && assetCode) {
+      error = renderTrustlineHelp(assetCode);
+    } else if (destinationStatus === "error") {
+      error = "Unable to verify account right now";
+    } else if (trustlineStatus === "error") {
+      error = "Unable to verify trustline right now";
+    }
+  }
+
+  return { error, note };
+};
+
 type AssetOption = {
   id: string;
   code: string;
+  issuer: string | null;
   balance: string;
 };
 
@@ -134,23 +227,54 @@ export const EmbeddedWalletTransferModal = ({
   isWalletReady,
   onReview,
 }: Props) => {
-  const displayAmount = amount ? amountFormatter.format(Number(amount)) : "";
+  const displayAmount = formatBalance(amount);
   const canPaste =
     typeof navigator !== "undefined" && typeof navigator.clipboard?.readText === "function";
   const numericAmount = Number.parseFloat(amount);
   const numericAvailableBalance = Number.parseFloat(availableBalance);
-  const formattedAvailableBalance = Number.isFinite(numericAvailableBalance)
-    ? amountFormatter.format(numericAvailableBalance)
-    : availableBalance;
+  const isAmountOverAvailableBalance =
+    Number.isFinite(numericAmount) &&
+    Number.isFinite(numericAvailableBalance) &&
+    numericAmount > numericAvailableBalance;
+  const formattedAvailableBalance = formatBalance(availableBalance);
   const isAddressValid = isValidWalletAddress(destination);
   const isClassicAddress = isClassicWalletAddress(destination);
+  const shouldCheckDestination = Boolean(destination && isClassicAddress);
+  const activeAsset = assetOptions.find((asset) => asset.id === selectedAssetId) ?? assetOptions[0];
+  const activeAssetCode = activeAsset?.code ?? assetCode;
+  const activeAssetIssuer = activeAsset?.issuer ?? null;
+  const { destinationStatus, trustlineStatus } = useWalletDestinationChecks({
+    destination,
+    shouldCheckDestination,
+    assetCode: activeAssetCode,
+    assetIssuer: activeAssetIssuer,
+  });
+  const { error: destinationError, note: destinationNote } = getDestinationState({
+    destination,
+    isAddressValid,
+    destinationStatus,
+    trustlineStatus,
+    assetCode: activeAssetCode,
+  });
   const isAmountValid = Number.isFinite(numericAmount) && numericAmount > 0;
   const isAmountWithinBalance =
     !Number.isFinite(numericAmount) ||
     !Number.isFinite(numericAvailableBalance) ||
-    numericAmount <= numericAvailableBalance;
+    !isAmountOverAvailableBalance;
+  const isDestinationCheckInProgress = destinationStatus === "checking";
+  const isDestinationMissing = destinationStatus === "missing";
+  const isTrustlineCheckInProgress = trustlineStatus === "checking";
+  const isTrustlineMissing = trustlineStatus === "missing";
   const isReviewDisabled =
-    isSubmitDisabled || !isAddressValid || !isAmountValid || !isAmountWithinBalance;
+    isSubmitDisabled ||
+    !isAddressValid ||
+    isDestinationCheckInProgress ||
+    isDestinationMissing ||
+    isTrustlineCheckInProgress ||
+    isTrustlineMissing ||
+    !isAmountValid ||
+    !isAmountWithinBalance;
+  const hasValidationError = Boolean(destinationError) || isAmountOverAvailableBalance;
   const isInputDisabled = !isWalletReady || isSubmitLoading;
   const isAmountEditable = !isInputDisabled;
   const isPasteDisabled = !canPaste || isInputDisabled;
@@ -160,13 +284,7 @@ export const EmbeddedWalletTransferModal = ({
   const [isAssetMenuOpen, setIsAssetMenuOpen] = useState(false);
   const assetButtonRef = useRef<HTMLDivElement | null>(null);
   const assetMenuRef = useRef<HTMLDivElement | null>(null);
-  const activeAsset = assetOptions.find((asset) => asset.id === selectedAssetId) ?? assetOptions[0];
   const isAssetSelectorDisabled = isInputDisabled || assetOptions.length <= 1;
-
-  const formatBalance = (rawBalance: string) => {
-    const numericBalance = Number.parseFloat(rawBalance);
-    return Number.isFinite(numericBalance) ? amountFormatter.format(numericBalance) : rawBalance;
-  };
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
@@ -282,6 +400,7 @@ export const EmbeddedWalletTransferModal = ({
                   <span
                     id="wallet-transfer-amount"
                     className="EmbeddedWalletTransferModal__amountInput"
+                    data-error={isAmountOverAvailableBalance}
                     inputMode="decimal"
                     role="textbox"
                     tabIndex={isAmountEditable ? 0 : -1}
@@ -328,7 +447,7 @@ export const EmbeddedWalletTransferModal = ({
                       aria-label="Select asset"
                     >
                       <span className="EmbeddedWalletTransferModal__assetButtonCode">
-                        {activeAsset?.code ?? assetCode}
+                        {activeAssetCode}
                       </span>
                       <Icon.ChevronDown className="EmbeddedWalletTransferModal__assetButtonChevron" />
                     </button>
@@ -338,7 +457,7 @@ export const EmbeddedWalletTransferModal = ({
                   type="button"
                   className="EmbeddedWalletTransferModal__maxButton"
                   onClick={() => {
-                    const formattedBalance = amountFormatter.format(Number(availableBalance));
+                    const formattedBalance = formatBalance(availableBalance);
                     pendingCaretRef.current = getNumericCaretIndex(
                       formattedBalance,
                       formattedBalance.length,
@@ -393,7 +512,12 @@ export const EmbeddedWalletTransferModal = ({
               ) : null}
             </div>
             <Text size="sm" as="p">
-              {formattedAvailableBalance} {assetCode} available
+              <span
+                className="EmbeddedWalletTransferModal__availableBalance"
+                data-error={isAmountOverAvailableBalance}
+              >
+                {formattedAvailableBalance} {activeAssetCode} available
+              </span>
             </Text>
           </Box>
 
@@ -405,6 +529,8 @@ export const EmbeddedWalletTransferModal = ({
               value={destination}
               onChange={(event) => onDestinationChange(event.currentTarget.value)}
               placeholder="Enter address to send to"
+              error={destinationError}
+              note={destinationNote}
               required
               disabled={isInputDisabled}
               onKeyDown={handleSelectAll}
@@ -420,7 +546,7 @@ export const EmbeddedWalletTransferModal = ({
               }
             />
           </div>
-          {isClassicAddress ? (
+          {isClassicAddress && !hasValidationError ? (
             <div className="EmbeddedWalletTransferModal__warning">
               <span className="EmbeddedWalletTransferModal__warningIcon">
                 <Icon.InfoCircle />
