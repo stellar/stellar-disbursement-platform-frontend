@@ -13,7 +13,7 @@ type AccountCheckResult = {
   status: "exists" | "missing";
 };
 
-type TrustlineCheckResult = { status: "present" } | { status: "missing" } | { status: "error" };
+type TrustlineCheckResult = { status: "present" | "missing" | "error" };
 
 const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) {
