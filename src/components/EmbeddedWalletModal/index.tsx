@@ -71,12 +71,12 @@ export const EmbeddedWalletModal = ({
   const shouldShowFooter = Boolean(primaryActionLabel && onPrimaryAction);
 
   const parent = document.getElementById(MODAL_PARENT_ID);
-  if (!parent || !visible) {
+  if (!parent) {
     return null;
   }
 
   return createPortal(
-    <div className="EmbeddedWalletModal">
+    <div className="EmbeddedWalletModal" data-state={visible ? "open" : "closed"}>
       <div
         className={`EmbeddedWalletModal__container${containerClassName ? ` ${containerClassName}` : ""}`}
         data-align={modalAlign}
