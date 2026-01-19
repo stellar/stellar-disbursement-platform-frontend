@@ -109,11 +109,20 @@ const walletAccountSlice = createSlice({
   initialState,
   reducers: {
     setWalletInfoAction: (state, { payload }: PayloadAction<JwtWallet>) => {
+      const isSameWallet =
+        Boolean(state.contractAddress) &&
+        Boolean(state.credentialId) &&
+        Boolean(payload.contract_address) &&
+        Boolean(payload.sub) &&
+        state.contractAddress === payload.contract_address &&
+        state.credentialId === payload.sub;
       state.contractAddress = payload.contract_address;
       state.credentialId = payload.sub;
       state.isAuthenticated = true;
       state.isSessionExpired = false;
-      state.profileStatus = undefined;
+      if (!isSameWallet) {
+        state.profileStatus = undefined;
+      }
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.isTokenRefresh = false;
@@ -185,7 +194,9 @@ const walletAccountSlice = createSlice({
       state.errorString = action.payload?.errorString;
     });
     builder.addCase(fetchWalletProfileAction.pending, (state) => {
-      state.profileStatus = "PENDING";
+      if (!state.profileStatus) {
+        state.profileStatus = "PENDING";
+      }
       state.status = "PENDING";
     });
     builder.addCase(fetchWalletProfileAction.fulfilled, (state, action) => {
