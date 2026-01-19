@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { UseQueryResult, keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { fetchSacBalances } from "@/helpers/stellarBalances";
@@ -8,8 +8,8 @@ import { ApiStellarAccountBalance, AppError, EmbeddedWalletSupportedAsset } from
 export const useWalletBalance = (
   contractAddress: string | undefined,
   assets?: EmbeddedWalletSupportedAsset[],
-) => {
-  const query = useQuery<ApiStellarAccountBalance[], AppError>({
+): UseQueryResult<ApiStellarAccountBalance[], AppError> =>
+  useQuery<ApiStellarAccountBalance[], AppError>({
     queryKey: ["wallet-balance", contractAddress],
     queryFn: async () => {
       if (!contractAddress) {
@@ -30,7 +30,5 @@ export const useWalletBalance = (
     },
     enabled: Boolean(contractAddress && assets !== undefined),
     refetchInterval: 10000,
+    placeholderData: keepPreviousData,
   });
-
-  return query;
-};
