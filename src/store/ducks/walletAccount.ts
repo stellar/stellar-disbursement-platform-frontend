@@ -110,7 +110,12 @@ const walletAccountSlice = createSlice({
   reducers: {
     setWalletInfoAction: (state, { payload }: PayloadAction<JwtWallet>) => {
       const isSameWallet =
-        state.contractAddress === payload.contract_address && state.credentialId === payload.sub;
+        Boolean(state.contractAddress) &&
+        Boolean(state.credentialId) &&
+        Boolean(payload.contract_address) &&
+        Boolean(payload.sub) &&
+        state.contractAddress === payload.contract_address &&
+        state.credentialId === payload.sub;
       state.contractAddress = payload.contract_address;
       state.credentialId = payload.sub;
       state.isAuthenticated = true;
