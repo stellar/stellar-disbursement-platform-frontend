@@ -126,7 +126,7 @@ const verifyLedgerFootprint = ({
     throw new Error("Simulation response missing read/write footprint");
   }
 
-  const allowedLedgerAddresses = new Set([contractAddress, serverSigningKey]);
+  const allowedLedgerAddresses = new Set([contractAddress, serverSigningKey, webAuthContractId]);
 
   for (const ledgerKey of readWrite) {
     const entryType = ledgerKey.switch().value;
