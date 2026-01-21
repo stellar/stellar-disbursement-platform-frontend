@@ -6,6 +6,7 @@ import { Button, Icon, Input, Link, Text } from "@stellar/design-system";
 import { Box } from "@/components/Box";
 import { EmbeddedWalletAssetLogo } from "@/components/EmbeddedWalletAssetLogo";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
+import { useAmountAutoScale } from "@/components/EmbeddedWalletTransferModal/useAmountAutoScale";
 
 import {
   useWalletDestinationChecks,
@@ -13,7 +14,7 @@ import {
   type TrustlineCheckStatus,
 } from "@/apiQueries/useWalletDestinationChecks";
 
-import { amount as amountFormatter } from "@/helpers/formatIntlNumber";
+import { formatAmountDisplay } from "@/helpers/formatAmountDisplay";
 import { isClassicWalletAddress, isValidWalletAddress } from "@/helpers/walletValidate";
 import "./styles.scss";
 
@@ -137,11 +138,6 @@ const renderCreateAccountHelp = () => (
   </>
 );
 
-const formatBalance = (rawBalance: string) => {
-  const numericBalance = Number.parseFloat(rawBalance);
-  return Number.isFinite(numericBalance) ? amountFormatter.format(numericBalance) : rawBalance;
-};
-
 type DestinationState = {
   error?: ReactNode;
   note?: ReactNode;
@@ -227,7 +223,7 @@ export const EmbeddedWalletTransferModal = ({
   isWalletReady,
   onReview,
 }: Props) => {
-  const displayAmount = formatBalance(amount);
+  const displayAmount = formatAmountDisplay(amount);
   const canPaste =
     typeof navigator !== "undefined" && typeof navigator.clipboard?.readText === "function";
   const numericAmount = Number.parseFloat(amount);
@@ -236,7 +232,7 @@ export const EmbeddedWalletTransferModal = ({
     Number.isFinite(numericAmount) &&
     Number.isFinite(numericAvailableBalance) &&
     numericAmount > numericAvailableBalance;
-  const formattedAvailableBalance = formatBalance(availableBalance);
+  const formattedAvailableBalance = formatAmountDisplay(availableBalance);
   const isAddressValid = isValidWalletAddress(destination);
   const isClassicAddress = isClassicWalletAddress(destination);
   const shouldCheckDestination = Boolean(destination && isClassicAddress);
@@ -282,9 +278,16 @@ export const EmbeddedWalletTransferModal = ({
   const amountInputRef = useRef<HTMLSpanElement | null>(null);
   const pendingCaretRef = useRef<number | null>(null);
   const [isAssetMenuOpen, setIsAssetMenuOpen] = useState(false);
-  const assetButtonRef = useRef<HTMLDivElement | null>(null);
+  const assetButtonRef = useRef<HTMLButtonElement | null>(null);
   const assetMenuRef = useRef<HTMLDivElement | null>(null);
   const isAssetSelectorDisabled = isInputDisabled || assetOptions.length <= 1;
+
+  const { amountRowRef, amountMeasureRef, assetMeasureRef } = useAmountAutoScale({
+    isOpen,
+    displayAmount,
+    assetCode: activeAssetCode,
+    assetButtonRef,
+  });
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
@@ -396,7 +399,7 @@ export const EmbeddedWalletTransferModal = ({
           <Box gap="xs">
             <div className="EmbeddedWalletTransferModal__amountField">
               <div className="EmbeddedWalletTransferModal__amountHeader">
-                <div className="EmbeddedWalletTransferModal__amountRow">
+                <div className="EmbeddedWalletTransferModal__amountRow" ref={amountRowRef}>
                   <span
                     id="wallet-transfer-amount"
                     className="EmbeddedWalletTransferModal__amountInput"
@@ -435,29 +438,28 @@ export const EmbeddedWalletTransferModal = ({
                     }}
                     ref={amountInputRef}
                   />
-                  <div ref={assetButtonRef}>
-                    <button
-                      type="button"
-                      className="EmbeddedWalletTransferModal__assetButton"
-                      onClick={() => setIsAssetMenuOpen((open) => !open)}
-                      disabled={isAssetSelectorDisabled}
-                      data-open={isAssetMenuOpen}
-                      aria-haspopup="listbox"
-                      aria-expanded={isAssetMenuOpen}
-                      aria-label="Select asset"
-                    >
-                      <span className="EmbeddedWalletTransferModal__assetButtonCode">
-                        {activeAssetCode}
-                      </span>
-                      <Icon.ChevronDown className="EmbeddedWalletTransferModal__assetButtonChevron" />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="EmbeddedWalletTransferModal__assetButton"
+                    onClick={() => setIsAssetMenuOpen((open) => !open)}
+                    disabled={isAssetSelectorDisabled}
+                    data-open={isAssetMenuOpen}
+                    aria-haspopup="listbox"
+                    aria-expanded={isAssetMenuOpen}
+                    aria-label="Select asset"
+                    ref={assetButtonRef}
+                  >
+                    <span className="EmbeddedWalletTransferModal__assetButtonCode">
+                      {activeAssetCode}
+                    </span>
+                    <Icon.ChevronDown className="EmbeddedWalletTransferModal__assetButtonChevron" />
+                  </button>
                 </div>
                 <button
                   type="button"
                   className="EmbeddedWalletTransferModal__maxButton"
                   onClick={() => {
-                    const formattedBalance = formatBalance(availableBalance);
+                    const formattedBalance = formatAmountDisplay(availableBalance);
                     pendingCaretRef.current = getNumericCaretIndex(
                       formattedBalance,
                       formattedBalance.length,
@@ -469,6 +471,16 @@ export const EmbeddedWalletTransferModal = ({
                   Max
                 </button>
               </div>
+              <span
+                className="EmbeddedWalletTransferModal__amountInput EmbeddedWalletTransferModal__amountMeasure"
+                ref={amountMeasureRef}
+                aria-hidden="true"
+              />
+              <span
+                className="EmbeddedWalletTransferModal__assetMeasure"
+                ref={assetMeasureRef}
+                aria-hidden="true"
+              />
               {isAssetMenuOpen ? (
                 <div
                   className="EmbeddedWalletTransferModal__assetMenu"
@@ -477,7 +489,7 @@ export const EmbeddedWalletTransferModal = ({
                 >
                   {assetOptions.map((asset) => {
                     const isSelected = asset.id === selectedAssetId;
-                    const formattedBalance = formatBalance(asset.balance);
+                    const formattedBalance = formatAmountDisplay(asset.balance);
 
                     return (
                       <button
