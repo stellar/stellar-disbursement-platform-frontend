@@ -302,6 +302,8 @@ export const EmbeddedWalletTransferModal = ({
 
   const handleClose = () => {
     setIsAssetMenuOpen(false);
+    onAmountChange("");
+    onDestinationChange("");
     onClose();
   };
 
