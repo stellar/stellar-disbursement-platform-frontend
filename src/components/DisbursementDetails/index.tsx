@@ -199,7 +199,7 @@ const deriveFormState = ({
         : "-",
     verification: details.verificationField
       ? VerificationFieldMap[details.verificationField] || details.verificationField
-      : isWalletAddressProvided
+      : isWalletAddressProvided || isEmbeddedWallet
         ? NONE_VERIFICATION_VALUE
         : "-",
   };
