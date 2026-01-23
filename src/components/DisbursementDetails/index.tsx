@@ -1,16 +1,21 @@
-import { Card, Input, Select, Notification } from "@stellar/design-system";
 import { BigNumber } from "bignumber.js";
+
+import { Card, Input, Select, Notification } from "@stellar/design-system";
+
+import { AssetAmount } from "@/components/AssetAmount";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { Title } from "@/components/Title";
 
 import { useAssetsByWallet } from "@/apiQueries/useAssetsByWallet";
 import { useRegistrationContactTypes } from "@/apiQueries/useRegistrationContactTypes";
 import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
 import { useWallets } from "@/apiQueries/useWallets";
-import { AssetAmount } from "@/components/AssetAmount";
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { Title } from "@/components/Title";
+
 import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
 import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
+
 import { useAllBalances } from "@/hooks/useAllBalances";
+
 import {
   AccountBalanceItem,
   ApiAsset,
@@ -26,7 +31,7 @@ import {
 
 import "./styles.scss";
 
-const SDP_EMBEDDED_WALLET_NAME = "sdp embedded wallet";
+const SDP_EMBEDDED_WALLET_NAME = "embedded wallet";
 
 const isSdpEmbeddedWallet = (walletName: string): boolean =>
   walletName.trim().toLowerCase() === SDP_EMBEDDED_WALLET_NAME;
