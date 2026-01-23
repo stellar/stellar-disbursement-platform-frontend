@@ -1,6 +1,7 @@
 import { rpc } from "@stellar/stellar-sdk";
 
 import { API_URL } from "@/constants/envVariables";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { localStorageWalletSessionToken } from "@/helpers/localStorageWalletSessionToken";
@@ -20,9 +21,9 @@ export const createAuthenticatedRpcServer = (
 
   const rpcProxyUrl = `${API_URL}/rpc/${authType}`;
 
-  const isDevelopment = process.env.NODE_ENV === "development";
+  const isHttpUrl = new URL(rpcProxyUrl).protocol === "http:";
   return new rpc.Server(rpcProxyUrl, {
-    allowHttp: isDevelopment,
+    allowHttp: isHttpUrl,
     headers: {
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(organizationName),
