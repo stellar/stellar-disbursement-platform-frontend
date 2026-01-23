@@ -8,7 +8,7 @@ import { ShowForRoles } from "@/components/ShowForRoles";
 import { Title } from "@/components/Title";
 import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
 import { saveFile } from "@/helpers/saveFile";
-import { RegistrationContactType } from "@/types";
+import { NONE_VERIFICATION_VALUE, RegistrationContactType } from "@/types";
 
 import "./styles.scss";
 
@@ -60,7 +60,11 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
     switch (registrationContactType) {
       case "EMAIL":
       case "PHONE_NUMBER":
-        return verificationField ? `${registrationContactType}_${verificationField}` : "";
+        return !verificationField
+          ? ""
+          : verificationField !== NONE_VERIFICATION_VALUE
+            ? `${registrationContactType}_${verificationField}`
+            : `${registrationContactType}`;
       case "EMAIL_AND_WALLET_ADDRESS":
       case "PHONE_NUMBER_AND_WALLET_ADDRESS":
         return `${registrationContactType}`;

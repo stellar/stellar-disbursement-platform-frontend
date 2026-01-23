@@ -1,0 +1,92 @@
+@use "../styles/styles-utils.scss" as *;
+
+.EmbeddedWalletHome__exchangeWarningTitle {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: column;
+  gap: var(--sds-gap-md);
+  text-align: center;
+}
+
+.EmbeddedWalletHome__transferErrorModal {
+  background-color: var(--sds-clr-gray-01);
+}
+
+.EmbeddedWalletHome__transferErrorSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: pxToRem(12px);
+  padding: pxToRem(20px);
+  border-radius: pxToRem(16px);
+  background: var(--sds-clr-gray-01);
+  text-align: center;
+}
+
+.EmbeddedWalletHome__transferErrorIcon {
+  width: pxToRem(32px);
+  height: pxToRem(32px);
+  border-radius: 50%;
+  background: var(--sds-clr-red-03);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.EmbeddedWalletHome__transferErrorIcon svg {
+  width: pxToRem(20px);
+  height: pxToRem(20px);
+  color: var(--sds-clr-red-11);
+  stroke: currentColor;
+}
+
+.EmbeddedWalletHome__transferErrorMessage {
+  font-size: pxToRem(16px);
+  line-height: pxToRem(24px);
+  color: var(--sds-clr-red-11);
+}
+
+.EmbeddedWalletModal__container.EmbeddedWalletHome__exchangeWarningModal {
+  background-color: var(--sds-clr-gray-01);
+  border: 1px solid var(--sds-clr-gray-05);
+  box-shadow: none;
+}
+
+.EmbeddedWalletHome__exchangeWarningModal .EmbeddedWalletModal__heading {
+  font-size: pxToRem(16px);
+  line-height: pxToRem(24px);
+  color: var(--sds-clr-gray-12);
+}
+
+.EmbeddedWalletHome__exchangeWarningModal .EmbeddedWalletModal__body {
+  color: var(--sds-clr-gray-09);
+}
+
+.EmbeddedWalletHome__exchangeWarningIcon {
+  width: pxToRem(32px);
+  height: pxToRem(32px);
+  border-radius: pxToRem(8px);
+  border: 1px solid var(--sds-clr-gray-05);
+  background: var(--sds-clr-gray-02);
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.EmbeddedWalletHome__exchangeWarningIcon svg {
+  width: pxToRem(16px);
+  height: pxToRem(16px);
+  color: var(--sds-clr-lilac-09);
+  stroke: currentColor;
+}
+
+.EmbeddedWalletHome__exchangeWarningBody {
+  text-align: center;
+}
+
+.EmbeddedWalletHome__exchangeWarningBody .Text {
+  font-size: pxToRem(14px);
+  line-height: pxToRem(22px);
+}

@@ -1,7 +1,8 @@
 import { decimal } from "@/helpers/formatIntlNumber";
-import UsdcLogoSrc from "@/assets/logo-usdc.png";
-import EurocLogoSrc from "@/assets/logo-euroc.png";
-import XlmLogoSrc from "@/assets/logo-xlm.png";
+
+import EurocLogoSrc from "@/assets/logo-euroc.svg";
+import UsdcLogoSrc from "@/assets/logo-usdc.svg";
+import XlmLogoSrc from "@/assets/logo-xlm.svg";
 import "./styles.scss";
 
 interface AssetAmountProps {

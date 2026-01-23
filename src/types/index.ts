@@ -35,6 +35,24 @@ export type UserAccountInitialState = {
   restoredPathname?: string;
 };
 
+export type WalletAccountInitialState = {
+  token: string;
+  contractAddress: string;
+  credentialId: string;
+  isAuthenticated: boolean;
+  isSessionExpired: boolean;
+  isTokenRefresh: boolean;
+  isRestoringSession: boolean;
+  isVerificationPending: boolean;
+  pendingAsset?: ApiAsset;
+  walletProfile?: EmbeddedWalletProfileResponse;
+  supportedAssets?: EmbeddedWalletSupportedAsset[];
+  receiverContact?: EmbeddedWalletReceiverContact;
+  profileStatus: ActionStatus | undefined;
+  status: ActionStatus | undefined;
+  errorString?: string;
+};
+
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -104,6 +122,7 @@ export interface Store {
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
   userAccount: UserAccountInitialState;
+  walletAccount: WalletAccountInitialState;
   apiKeys: ApiKeysInitialState;
   apiKeyDetails: ApiKeyDetailsInitialState;
 }
@@ -219,6 +238,8 @@ export const VerificationFieldMap: Record<DisbursementVerificationField | string
   PIN: "PIN",
   NATIONAL_ID_NUMBER: "National ID Number",
 };
+
+export const NONE_VERIFICATION_VALUE = "None";
 
 export type DisbursementDraftAction = "save" | "submit" | "delete";
 
@@ -517,6 +538,31 @@ export type ApiAsset = {
 export type ApiAssetWithTrustline = ApiAsset & {
   has_trustline: boolean;
   balance: number;
+};
+
+export type EmbeddedWalletSupportedAsset = {
+  code: string;
+  issuer: string;
+};
+
+export type EmbeddedWalletReceiverContact = {
+  type: string;
+  value: string;
+};
+
+export type EmbeddedWalletDetails = {
+  supported_assets: EmbeddedWalletSupportedAsset[];
+  receiver_contact: EmbeddedWalletReceiverContact;
+};
+
+export type EmbeddedWalletVerificationDetails = {
+  is_pending: boolean;
+  pending_asset?: ApiAsset;
+};
+
+export type EmbeddedWalletProfileResponse = {
+  verification: EmbeddedWalletVerificationDetails;
+  wallet?: EmbeddedWalletDetails;
 };
 
 export type ApiWallet = {

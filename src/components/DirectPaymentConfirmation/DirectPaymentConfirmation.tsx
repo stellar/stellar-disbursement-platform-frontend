@@ -1,7 +1,6 @@
 import { Notification } from "@stellar/design-system";
 
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
-
 import { ApiReceiver, ApiWallet, CreateDirectPaymentRequest } from "@/types";
 
 import "./styles.scss";

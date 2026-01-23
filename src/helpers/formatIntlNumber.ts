@@ -18,3 +18,8 @@ export const percent = new Intl.NumberFormat(LOCALE, {
 });
 
 export const number = new Intl.NumberFormat(LOCALE);
+
+export const amount = new Intl.NumberFormat(LOCALE, {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 7,
+});

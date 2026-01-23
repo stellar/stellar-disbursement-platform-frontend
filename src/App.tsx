@@ -1,17 +1,21 @@
+import { useEffect } from "react";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useEffect } from "react";
 import { Provider } from "react-redux";
-import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
+import { BrowserRouter, Outlet, Routes as RouterRoutes, Route } from "react-router-dom";
 
 import { ApiKeyDetails } from "@/components/ApiKeyDetails/ApiKeyDetails";
+import { EmbeddedWalletNoticesProvider } from "@/components/EmbeddedWalletNoticesProvider";
 import { GlobalBanner } from "@/components/GlobalBanner";
 import { InnerPage } from "@/components/InnerPage";
 import { PrivateRoute } from "@/components/PrivateRoute";
 import { SessionTokenRefresher } from "@/components/SessionTokenRefresher";
 import { UserSession } from "@/components/UserSession";
-import { Routes } from "@/constants/settings";
-import GitInfo from "@/generated/gitInfo";
+import { WalletPrivateRoute } from "@/components/WalletPrivateRoute";
+import { WalletSession } from "@/components/WalletSession";
+import { WalletSessionRefresher } from "@/components/WalletSessionRefresher";
+
 import { Analytics } from "@/pages/Analytics";
 import { ApiKeys } from "@/pages/ApiKeys";
 import { DisbursementDetails } from "@/pages/DisbursementDetails";
@@ -20,6 +24,8 @@ import { Disbursements } from "@/pages/Disbursements";
 import { DisbursementsDrafts } from "@/pages/DisbursementsDrafts";
 import { DisbursementsNew } from "@/pages/DisbursementsNew";
 import { DistributionAccount } from "@/pages/DistributionAccount";
+import { EmbeddedWallet } from "@/pages/EmbeddedWallet";
+import { EmbeddedWalletHome } from "@/pages/EmbeddedWalletHome";
 import { ForgotPassword } from "@/pages/ForgotPassword";
 import { Help } from "@/pages/Help";
 import { Home } from "@/pages/Home";
@@ -38,8 +44,11 @@ import { Settings } from "@/pages/Settings";
 import { SignIn } from "@/pages/SignIn";
 import { Unauthorized } from "@/pages/Unauthorized";
 import { WalletProviders } from "@/pages/WalletProviders";
-import { store } from "@/store";
 
+import { Routes } from "@/constants/settings";
+
+import GitInfo from "@/generated/gitInfo";
+import { store } from "@/store";
 import "@/styles/styles.scss";
 
 const queryClient = new QueryClient({
@@ -50,6 +59,16 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const WalletLayout = () => {
+  return (
+    <EmbeddedWalletNoticesProvider>
+      <WalletSession />
+      <WalletSessionRefresher />
+      <Outlet />
+    </EmbeddedWalletNoticesProvider>
+  );
+};
 
 export const App = () => {
   useEffect(() => {
@@ -388,6 +407,27 @@ export const App = () => {
               }
             />
             <Route path="/signin-oidc" element={<SigninOidc />} />
+            {/* Embedded Wallet Routes */}
+            <Route element={<WalletLayout />}>
+              <Route
+                path={Routes.WALLET}
+                element={
+                  <InnerPage isCardLayout>
+                    <EmbeddedWallet />
+                  </InnerPage>
+                }
+              />
+              <Route
+                path={Routes.WALLET_HOME}
+                element={
+                  <WalletPrivateRoute>
+                    <InnerPage isCardLayout>
+                      <EmbeddedWalletHome />
+                    </InnerPage>
+                  </WalletPrivateRoute>
+                }
+              />
+            </Route>
           </RouterRoutes>
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpen={false} />

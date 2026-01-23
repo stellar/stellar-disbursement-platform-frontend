@@ -2,6 +2,7 @@
   "name": "stellar-disbursement-platform-frontend",
   "version": "6.0.1",
   "license": "Apache-2.0",
+  "type": "module",
   "engines": {
     "node": ">=22.x"
   },
@@ -12,8 +13,11 @@
   },
   "private": true,
   "dependencies": {
+    "@noble/curves": "1.5.0",
     "@reduxjs/toolkit": "^2.11.2",
+    "@simplewebauthn/browser": "^13.2.2",
     "@stellar/design-system": "^3.2.7",
+    "@stellar/stellar-sdk": "^14.4.0",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.91.1",
     "assert": "^2.1.0",
@@ -43,6 +47,7 @@
   },
   "scripts": {
     "start": "yarn git-info && vite",
+    "start:https": "yarn git-info && VITE_USE_HTTPS=true vite",
     "build": "yarn git-info && vite build",
     "preview": "vite preview",
     "refresh-lock": "yarn-deduplicate yarn.lock && yarn install",

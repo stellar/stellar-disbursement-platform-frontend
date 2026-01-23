@@ -1,4 +1,4 @@
-const WALLET_ADDRESS_LENGTH = 56;
+import { StrKey } from "@stellar/stellar-sdk";
 
 const normalize = (address: string) => address.trim().toUpperCase();
 
@@ -7,8 +7,7 @@ export const isContractAddress = (address: string): boolean => {
     return false;
   }
 
-  const normalized = normalize(address);
-  return normalized.length === WALLET_ADDRESS_LENGTH && normalized.startsWith("C");
+  return StrKey.isValidContract(normalize(address));
 };
 
 export const isClassicWalletAddress = (address: string): boolean => {
@@ -16,8 +15,7 @@ export const isClassicWalletAddress = (address: string): boolean => {
     return false;
   }
 
-  const normalized = normalize(address);
-  return normalized.length === WALLET_ADDRESS_LENGTH && normalized.startsWith("G");
+  return StrKey.isValidEd25519PublicKey(normalize(address));
 };
 
 export const isValidWalletAddress = (address: string): boolean => {
@@ -26,10 +24,5 @@ export const isValidWalletAddress = (address: string): boolean => {
   }
 
   const normalized = normalize(address);
-
-  if (normalized.length !== WALLET_ADDRESS_LENGTH) {
-    return false;
-  }
-
-  return normalized.startsWith("G") || normalized.startsWith("C");
+  return StrKey.isValidEd25519PublicKey(normalized) || StrKey.isValidContract(normalized);
 };
