@@ -417,6 +417,8 @@ export const EmbeddedWalletTransferModal = ({
                       const caretIndex = getCaretIndex(event.currentTarget);
                       pendingCaretRef.current = getNumericCaretIndex(rawValue, caretIndex);
                       const nextValue = sanitizeAmountInput(rawValue);
+                      const insertedLeadingZero =
+                        rawValue.startsWith(".") && nextValue?.startsWith("0.");
                       if (nextValue === null) {
                         pendingCaretRef.current = getNumericCaretIndex(
                           displayAmount,
@@ -429,6 +431,9 @@ export const EmbeddedWalletTransferModal = ({
                       if (nextValue === amount) {
                         pendingCaretRef.current = null;
                         return;
+                      }
+                      if (insertedLeadingZero && pendingCaretRef.current !== null) {
+                        pendingCaretRef.current += 1;
                       }
                       onAmountChange(nextValue);
                     }}
