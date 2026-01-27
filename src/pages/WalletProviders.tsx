@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
-import { Card, Heading, Notification, Modal, Button, Loader } from "@stellar/design-system";
 
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { SectionHeader } from "@/components/SectionHeader";
-import { LoadingContent } from "@/components/LoadingContent";
-import { WalletCard } from "@/components/WalletCard";
+import { useNavigate } from "react-router-dom";
+
+import { Card, Heading, Notification, Modal, Button, Loader, Icon } from "@stellar/design-system";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { SectionHeader } from "@/components/SectionHeader";
+import { WalletCard } from "@/components/WalletCard";
 
-import { useWallets } from "@/apiQueries/useWallets";
+import { Routes } from "@/constants/settings";
+
 import { useUpdateWallet } from "@/apiQueries/useUpdateWallet";
+import { useWallets } from "@/apiQueries/useWallets";
+
 import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+
 import { ApiWallet } from "@/types";
 
 export const WalletProviders = () => {
@@ -17,6 +24,8 @@ export const WalletProviders = () => {
     { id: string; enabled: boolean } | undefined
   >();
   const { isRoleAccepted: canEditWalletProviders } = useIsUserRoleAccepted(["owner"]);
+
+  const navigate = useNavigate();
 
   const {
     data: wallets,
@@ -36,14 +45,20 @@ export const WalletProviders = () => {
   } = useUpdateWallet();
 
   const myWallets = wallets?.filter((e) => e.enabled);
-  const avalaibleWallets = wallets?.filter((e) => !e.enabled);
+  const availableWallets = wallets?.filter((e) => !e.enabled);
+  const isWalletsLoading = isWalletsFetching && !isWalletsPending;
 
   const handleCloseModal = () => {
     setSelectedWallet(undefined);
   };
 
+  const goToNewWallet = () => {
+    navigate(Routes.WALLET_PROVIDERS_NEW);
+  };
+
   useEffect(() => {
     if (isWalletUpdateSuccess || isWalletUpdateError) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       handleCloseModal();
     }
 
@@ -95,7 +110,20 @@ export const WalletProviders = () => {
             <Heading as="h2" size="sm">
               Wallet Providers
             </Heading>
-            {isWalletsFetching && !isWalletsPending ? <Loader /> : null}
+
+            {isWalletsLoading ? <Loader /> : null}
+          </SectionHeader.Content>
+
+          <SectionHeader.Content align="right">
+            <Button
+              size="md"
+              variant="primary"
+              icon={<Icon.Plus />}
+              disabled={isWalletsLoading}
+              onClick={goToNewWallet}
+            >
+              Add new wallet
+            </Button>
           </SectionHeader.Content>
         </SectionHeader.Row>
       </SectionHeader>
@@ -130,14 +158,14 @@ export const WalletProviders = () => {
                     Available Wallet Providers
                   </InfoTooltip>
                 </div>
-                {avalaibleWallets?.length ? (
+                {availableWallets?.length ? (
                   <div className="Note">
                     Make sure you agree with the wallet provider before adding them. They will also
                     need to enable your organization before payments will succeed.
                   </div>
                 ) : null}
 
-                {renderWalletCard(avalaibleWallets, "available")}
+                {renderWalletCard(availableWallets, "available")}
               </div>
             </Card>
           </>
