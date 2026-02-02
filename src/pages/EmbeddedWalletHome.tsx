@@ -507,7 +507,7 @@ export const EmbeddedWalletHome = () => {
             <span className="EmbeddedWalletHome__exchangeWarningIcon">
               <Icon.AlertCircle />
             </span>
-            <span>Exchanges aren't supported yet</span>
+            <span>Exchanges aren't supported by this wallet</span>
           </span>
         }
         content={
