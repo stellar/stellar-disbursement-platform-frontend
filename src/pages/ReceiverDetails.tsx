@@ -2,10 +2,10 @@ import {
   Button,
   Card,
   Heading,
-  Modal,
   Notification,
   Profile,
   Select,
+  Modal,
 } from "@stellar/design-system";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -385,7 +385,11 @@ export const ReceiverDetails = () => {
             <Card>
               <div
                 className="StatCards__card StatCards__card--grid StatCards__card--wideGap"
-                style={{ "--StatCard-grid-columns": 3 } as React.CSSProperties}
+                style={
+                  {
+                    "--StatCard-grid-columns": 3,
+                  } as React.CSSProperties
+                }
               >
                 {/* Column one */}
                 <div className="StatCards__card__column">

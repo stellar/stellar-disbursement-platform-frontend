@@ -37,6 +37,44 @@ The SDP's comprehensive dashboard includes the following pages:
 
 Feedback and contributions are welcome!
 
+## Local HTTPS Development
+
+HTTPS is required for testing passkey authentication with embedded wallets.
+
+The development server supports HTTPS using
+[mkcert](https://github.com/FiloSottile/mkcert) for locally-trusted
+certificates.
+
+### Setup
+
+Install mkcert and generate certificates:
+
+```sh
+# Install mkcert (see https://web.dev/articles/how-to-use-local-https)
+brew install mkcert
+mkcert -install
+
+# Generate certificates in project root (these are gitignored)
+mkdir -p certs
+mkcert -key-file certs/localhost-key.pem -cert-file certs/localhost.pem \
+  "*.stellar.local" localhost 127.0.0.1 ::1
+```
+
+### Running with HTTPS
+
+```sh
+# HTTPS mode (required for passkeys/WebAuthn)
+yarn start:https
+
+# HTTP mode (default)
+yarn start
+```
+
+Access the application at `https://localhost:3000` or
+`https://[tenant].stellar.local:3000` (e.g., `https://redcorp.stellar.local:3000`).
+
+If certificates are missing, the server falls back to HTTP with a warning.
+
 ## Environment Variables
 
 Environment variables can be set either on a global `window._env_` object or as
@@ -58,6 +96,7 @@ window._env_ = {
   HORIZON_URL: "https://horizon-testnet.stellar.org",
   RECAPTCHA_SITE_KEY: "6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn",
   SINGLE_TENANT_MODE: false,
+  RPC_ENABLED: false, // Set to true to enable contract account features
 };
 ```
 

@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
    - Filter spam/dust transactions (<0.001), show last 10 payments, add Stellar Expert link, add info tooltip, and increase asset amount decimal precision from 2 to 3 digits. [#414](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/414)
    - Add support for contract accounts operations in the Wallet History component. [#419](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/419)
 - Hide 'Customize Invite' section for KWA disbursements. [#432](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/432)
+- Add embedded wallet provider [#449](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/449)
 
 ### Security and Dependencies
 
