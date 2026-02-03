@@ -572,7 +572,7 @@ export const EmbeddedWalletTransferModal = ({
               </span>
               <div className="EmbeddedWalletTransferModal__warningText">
                 <div className="EmbeddedWalletTransferModal__warningTitle">
-                  Exchanges aren't supported yet
+                  Exchanges aren't supported by this wallet
                 </div>
                 <div className="EmbeddedWalletTransferModal__warningMessage">
                   You can send funds only to Stellar wallets. Sending to an exchange may result in
