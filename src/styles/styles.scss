@@ -915,6 +915,12 @@ body {
       }
     }
   }
+
+  &__responseItem {
+    &__value {
+      color: var(--sds-clr-gray-12);
+    }
+  }
 }
 
 // SDS overrides

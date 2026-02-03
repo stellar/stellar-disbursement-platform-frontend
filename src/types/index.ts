@@ -1095,3 +1095,24 @@ export type Trustline = {
   balance: string;
   isNative: boolean;
 };
+
+export type ApiAddWalletRequest = {
+  name: string;
+  homepage?: string;
+  sep_10_client_domain: string;
+  deep_link_schema: string;
+  enabled: boolean;
+  assets: { id: string }[];
+};
+
+export type ApiAddWalletResponse = {
+  id: string;
+  name: string;
+  homepage?: string;
+  sep_10_client_domain: string;
+  deep_link_schema: string;
+  enabled: boolean;
+  assets: ApiAsset[];
+  created_at: string;
+  updated_at: string;
+};
