@@ -1,0 +1,133 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.EmbeddedWalletReviewTransferModal {
+  width: 100%;
+
+  &__summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: pxToRem(6px);
+    padding: pxToRem(20px);
+    border-radius: pxToRem(16px);
+    background: var(--sds-clr-gray-01);
+    text-align: center;
+  }
+
+  &__assetIcon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+  }
+
+  &__assetBadge {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: pxToRem(18px);
+    height: pxToRem(18px);
+    border-radius: 50%;
+    border: 1px solid var(--sds-clr-gray-06);
+    background: var(--sds-clr-gray-01);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(25%, 25%);
+
+    svg {
+      width: pxToRem(12px);
+      height: pxToRem(12px);
+      stroke: var(--sds-clr-gray-09);
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  &__summaryLabel {
+    font-size: pxToRem(14px);
+    line-height: pxToRem(20px);
+    color: var(--sds-clr-gray-09);
+  }
+
+  &__summaryAmount {
+    font-size: pxToRem(20px);
+    line-height: pxToRem(28px);
+    font-weight: var(--sds-fw-medium);
+    color: var(--sds-clr-gray-12);
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(16px);
+  }
+
+  &__detail {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(6px);
+  }
+
+  &__detailLabel {
+    font-size: pxToRem(14px);
+    line-height: pxToRem(20px);
+    color: var(--sds-clr-gray-11);
+  }
+
+  &__detailRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: pxToRem(12px);
+  }
+
+  &__address {
+    font-size: pxToRem(16px);
+    line-height: pxToRem(22px);
+    color: var(--sds-clr-gray-12);
+    font-weight: var(--sds-fw-regular);
+  }
+
+  &__copyAction {
+    display: inline-flex;
+    align-items: center;
+
+    .CopyWithIcon {
+      border: 1px solid var(--sds-clr-gray-06);
+      background: var(--sds-clr-gray-01);
+      border-radius: pxToRem(4px);
+      padding: 0;
+      width: pxToRem(32px);
+      height: pxToRem(32px);
+      cursor: pointer;
+      gap: 0;
+      justify-content: center;
+    }
+
+    .CopyWithIcon__icon {
+      width: pxToRem(12px);
+      height: pxToRem(12px);
+      justify-content: center;
+
+      svg {
+        width: 70%;
+        height: 70%;
+        stroke: var(--sds-clr-gray-10);
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(12px);
+  }
+}

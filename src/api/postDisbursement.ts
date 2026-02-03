@@ -1,6 +1,9 @@
-import { handleApiResponse } from "@/api/handleApiResponse";
 import { API_URL } from "@/constants/envVariables";
+
+import { handleApiResponse } from "@/api/handleApiResponse";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
 import { ApiDisbursement, Disbursement } from "@/types";
 
 export const postDisbursement = async (
@@ -25,6 +28,7 @@ export const preparePostDisbursementData = (disbursement: Disbursement) => ({
   wallet_id: disbursement.wallet.id,
   asset_id: disbursement.asset.id,
   registration_contact_type: disbursement.registrationContactType,
-  verification_field: disbursement.verificationField || "",
+  verification_field:
+    disbursement.verificationField === "None" ? "" : disbursement.verificationField || "",
   receiver_registration_message_template: disbursement.receiverRegistrationMessageTemplate,
 });

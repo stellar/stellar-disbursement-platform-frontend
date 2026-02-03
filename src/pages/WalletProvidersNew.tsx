@@ -28,9 +28,9 @@ import { Routes } from "@/constants/settings";
 import { useAllAssets } from "@/apiQueries/useAllAssets";
 import { useWalletsAdd } from "@/apiQueries/useWalletsAdd";
 
-import EurocLogoSrc from "@/assets/logo-euroc.png";
-import UsdcLogoSrc from "@/assets/logo-usdc.png";
-import XlmLogoSrc from "@/assets/logo-xlm.png";
+import EurocLogoSrc from "@/assets/logo-euroc.svg";
+import UsdcLogoSrc from "@/assets/logo-usdc.svg";
+import XlmLogoSrc from "@/assets/logo-xlm.svg";
 
 export const WalletProvidersNew = () => {
   type FormFields = {
