@@ -8,7 +8,7 @@ export const currency = new Intl.NumberFormat(LOCALE, {
 export const decimal = new Intl.NumberFormat(LOCALE, {
   style: "decimal",
   minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
+  maximumFractionDigits: 3,
 });
 
 export const percent = new Intl.NumberFormat(LOCALE, {
@@ -18,3 +18,8 @@ export const percent = new Intl.NumberFormat(LOCALE, {
 });
 
 export const number = new Intl.NumberFormat(LOCALE);
+
+export const amount = new Intl.NumberFormat(LOCALE, {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 7,
+});

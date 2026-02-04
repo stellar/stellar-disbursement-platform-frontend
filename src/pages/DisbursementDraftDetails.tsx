@@ -1,13 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Badge, Heading, Link, Button, Icon, Modal } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
-import { useRedux } from "@/hooks/useRedux";
-import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
-import { useAllBalances } from "@/hooks/useAllBalances";
-import { BigNumber } from "bignumber.js";
 
-import { AppDispatch } from "@/store";
+import { BigNumber } from "bignumber.js";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { Badge, Heading, Link, Button, Icon, Modal } from "@stellar/design-system";
+
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { DisbursementButtons } from "@/components/DisbursementButtons";
+import { DisbursementDetails } from "@/components/DisbursementDetails";
+import { DisbursementInstructions } from "@/components/DisbursementInstructions";
+import { DisbursementInviteMessage } from "@/components/DisbursementInviteMessage";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Toast } from "@/components/Toast";
+
 import {
   getDisbursementDetailsAction,
   setDisbursementDetailsAction,
@@ -23,19 +31,17 @@ import {
   submitDisbursementSavedDraftAction,
 } from "@/store/ducks/disbursementDrafts";
 
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Routes } from "@/constants/settings";
-import { DisbursementButtons } from "@/components/DisbursementButtons";
-import { DisbursementDetails } from "@/components/DisbursementDetails";
-import { DisbursementInstructions } from "@/components/DisbursementInstructions";
-import { DisbursementInviteMessage } from "@/components/DisbursementInviteMessage";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
-import { SectionHeader } from "@/components/SectionHeader";
-import { Toast } from "@/components/Toast";
+
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
 
+import { useAllBalances } from "@/hooks/useAllBalances";
+import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+import { useRedux } from "@/hooks/useRedux";
+
 import { DisbursementDraft, DisbursementStep, hasWallet } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 export const DisbursementDraftDetails = () => {
   const { id: draftId } = useParams();
@@ -69,6 +75,7 @@ export const DisbursementDraftDetails = () => {
   const notificationRef = useRef<HTMLDivElement | null>(null);
   const apiError = disbursementDrafts.errorString;
   const isLoading = disbursementDetails.status === "PENDING";
+  const isKWA = hasWallet(draftDetails?.details.registrationContactType);
 
   useEffect(() => {
     if (!apiError && !isCsvUpdatedSuccess && !isResponseSuccess) return;
@@ -111,6 +118,7 @@ export const DisbursementDraftDetails = () => {
     disbursementDetails.status,
   ]);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setDraftDetails(disbursementDetails);
     dispatch(setDraftIdAction(disbursementDetails.details.id));
@@ -160,6 +168,7 @@ export const DisbursementDraftDetails = () => {
       setFutureBalance(Number(assetBalance) - BigNumber(totalAmount).toNumber());
     }
   }, [draftDetails?.details.stats?.totalAmount, draftDetails?.details.asset.code, allBalances]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const resetState = () => {
     setCurrentStep("edit");
@@ -313,9 +322,7 @@ export const DisbursementDraftDetails = () => {
 
     const successMessageArray: string[] = [
       "Payments will begin automatically",
-      hasWallet(draftDetails?.details.registrationContactType)
-        ? ""
-        : " to receivers who have registered their wallet",
+      isKWA ? "" : " to receivers who have registered their wallet",
       ". Click 'View' to track your disbursement in real-time.",
     ].filter((m) => Boolean(m));
 
@@ -354,11 +361,12 @@ export const DisbursementDraftDetails = () => {
               futureBalance={futureBalance}
               csvFile={csvFile}
             />
-            <DisbursementInviteMessage
-              isEditMessage={false}
-              draftMessage={draftDetails?.details.receiverRegistrationMessageTemplate}
-            />
-
+            {!isKWA && (
+              <DisbursementInviteMessage
+                isEditMessage={false}
+                draftMessage={draftDetails?.details.receiverRegistrationMessageTemplate}
+              />
+            )}
             {renderButtons("confirmation")}
           </form>
         </>
@@ -387,10 +395,12 @@ export const DisbursementDraftDetails = () => {
             details={draftDetails?.details}
             futureBalance={futureBalance}
           />
-          <DisbursementInviteMessage
-            isEditMessage={false}
-            draftMessage={draftDetails?.details.receiverRegistrationMessageTemplate}
-          />
+          {!isKWA && (
+            <DisbursementInviteMessage
+              isEditMessage={false}
+              draftMessage={draftDetails?.details.receiverRegistrationMessageTemplate}
+            />
+          )}
           <DisbursementInstructions
             variant={"preview"}
             csvFile={csvFile}

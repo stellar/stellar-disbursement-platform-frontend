@@ -10,6 +10,7 @@ import { reducer as disbursements } from "@/store/ducks/disbursements";
 import { reducer as organization } from "@/store/ducks/organization";
 import { reducer as profile } from "@/store/ducks/profile";
 import { reducer as userAccount } from "@/store/ducks/userAccount";
+import { reducer as walletAccount } from "@/store/ducks/walletAccount";
 import { reducer as apiKeys } from "@/store/ducks/apiKeys";
 import { reducer as apiKeyDetails } from "@/store/ducks/apiKeyDetails";
 
@@ -26,6 +27,7 @@ const reducers = combineReducers({
   organization,
   profile,
   userAccount,
+  walletAccount,
   apiKeys,
   apiKeyDetails,
 });
