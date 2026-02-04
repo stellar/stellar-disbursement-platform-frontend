@@ -1,35 +1,25 @@
 import { Loader, Notification } from "@stellar/design-system";
 import { Fragment } from "react";
 
-import { InfoTooltip } from "./InfoTooltip";
-
-import { useStellarAccountInfo } from "@/apiQueries/useStellarAccountInfo";
+import { useAccountBalances } from "@/apiQueries/useAccountBalances";
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { isContractAddress } from "@/helpers/walletValidate";
+import { RPC_ENABLED } from "@/constants/envVariables";
 
+import { InfoTooltip } from "./InfoTooltip";
 
 interface ReceiverWalletBalanceProps {
   stellarAddress: string | undefined;
 }
 
 export const ReceiverWalletBalance = ({ stellarAddress }: ReceiverWalletBalanceProps) => {
-  const { isLoading, isFetching, data, error } = useStellarAccountInfo(stellarAddress);
+  const { data: balances, isLoading, isFetching, error } = useAccountBalances(stellarAddress);
 
-  if (stellarAddress && isContractAddress(stellarAddress)) {
-    return (
-      <InfoTooltip
-        infoText="Fetching balances is currently unsupported for contract accounts."
-        placement="bottom"
-      >
-        Unavailable
-      </InfoTooltip>
-    );
-  }
-
-  const balances =
-    data?.balances.filter((b) => b.asset_type == "native" || (b.asset_issuer && b.asset_code)) ||
-    [];
+  const displayBalances =
+    balances?.filter(
+      (b) =>
+        (b.asset_type == "native" || (b.asset_issuer && b.asset_code)) && parseFloat(b.balance) > 0,
+    ) || [];
 
   if (stellarAddress && (isLoading || isFetching)) {
     return <Loader />;
@@ -43,19 +33,30 @@ export const ReceiverWalletBalance = ({ stellarAddress }: ReceiverWalletBalanceP
     );
   }
 
-  if (balances?.length === 0) {
+  if (stellarAddress?.startsWith("C") && !RPC_ENABLED) {
+    return (
+      <InfoTooltip
+        infoText="Fetching balances is disabled. Please check with your technical support team to enable."
+        placement="bottom"
+      >
+        Unavailable
+      </InfoTooltip>
+    );
+  }
+
+  if (displayBalances?.length === 0) {
     return <>{"-"}</>;
   }
 
   return (
     <>
-      {balances?.map((b, index) => (
+      {displayBalances?.map((b, index) => (
         <Fragment key={b.asset_type === "native" ? "native" : `${b.asset_code}-${b.asset_issuer}`}>
           <AssetAmount
             assetCode={b.asset_type === "native" ? "XLM" : (b.asset_code ?? "")}
             amount={b.balance}
           />
-          {index < balances.length - 1 ? ", " : null}
+          {index < displayBalances.length - 1 ? ", " : null}
         </Fragment>
       ))}
     </>

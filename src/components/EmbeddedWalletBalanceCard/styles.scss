@@ -1,0 +1,38 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.EmbeddedWalletBalanceCard {
+  &__title {
+    font-size: pxToRem(14px);
+    color: var(--sds-clr-gray-11);
+    font-weight: var(--sds-fw-regular);
+    margin: 0;
+  }
+
+  &__tableHeader {
+    font-size: pxToRem(12px);
+    font-weight: var(--sds-fw-medium);
+    color: var(--sds-clr-gray-10);
+  }
+
+  &__divider {
+    height: pxToRem(1px);
+    background: var(--sds-clr-gray-06);
+  }
+
+  &__assetText {
+    font-size: pxToRem(14px);
+    font-weight: var(--sds-fw-medium);
+  }
+
+  &__assetSubtext {
+    font-size: pxToRem(12px);
+    color: var(--sds-clr-gray-11);
+  }
+
+  &__empty {
+    font-size: pxToRem(13px);
+    color: var(--sds-clr-gray-09);
+    padding: pxToRem(12px) 0;
+    text-align: center;
+  }
+}

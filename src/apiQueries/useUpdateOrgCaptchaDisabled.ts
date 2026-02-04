@@ -1,7 +1,8 @@
+import { useMutation } from "@tanstack/react-query";
+
 import { API_URL } from "@/constants/envVariables";
 import { fetchApi } from "@/helpers/fetchApi";
 import { AppError } from "@/types";
-import { useMutation } from "@tanstack/react-query";
 
 export const useUpdateOrgCaptchaDisabled = () => {
   const mutation = useMutation({

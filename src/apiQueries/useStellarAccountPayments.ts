@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getStellarTransaction } from "@/api/getStellarTransaction";
 import { HORIZON_URL } from "@/constants/envVariables";
+
+import { getStellarTransaction } from "@/api/getStellarTransaction";
+
 import { fetchStellarApi } from "@/helpers/fetchStellarApi";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
+
 import {
   ApiStellarOperationInvokeHostFunction,
   ApiStellarOperationPayment,
