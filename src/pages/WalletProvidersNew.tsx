@@ -147,10 +147,17 @@ export const WalletProvidersNew = () => {
   };
 
   const isSubmitEnabled = () => {
-    const { name, sep_10_client_domain, deep_link_schema, assetIds } = formFields;
+    const { name, homepage, sep_10_client_domain, deep_link_schema, assetIds } = formFields;
     const hasErrors = Object.keys(formFieldErrors).length > 0;
 
-    return name && sep_10_client_domain && deep_link_schema && assetIds.length > 0 && !hasErrors;
+    return (
+      name &&
+      homepage &&
+      sep_10_client_domain &&
+      deep_link_schema &&
+      assetIds.length > 0 &&
+      !hasErrors
+    );
   };
 
   const isValidUrl = (url: string) => {
@@ -197,7 +204,9 @@ export const WalletProvidersNew = () => {
         errorMsg = !value ? "Name is required" : "";
         break;
       case "homepage":
-        if (value) {
+        if (!value) {
+          errorMsg = "Homepage is required";
+        } else {
           errorMsg = isValidUrl(value) ? "" : "Please enter a valid URL";
         }
         break;
@@ -455,11 +464,7 @@ export const WalletProvidersNew = () => {
           <Card>
             <Box gap="md">
               <ResponseItem label="Wallet provider" value={addWalletData?.name || ""} />
-              <>
-                {addWalletData?.homepage ? (
-                  <ResponseItem label="Homepage" value={addWalletData.homepage} />
-                ) : null}
-              </>
+              <ResponseItem label="Homepage" value={addWalletData.homepage || ""} />
               <ResponseItem
                 label="SEP10 Client Domain"
                 value={addWalletData?.sep_10_client_domain || ""}

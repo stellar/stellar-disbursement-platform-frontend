@@ -322,8 +322,7 @@ export const App = () => {
             <Route
               path={Routes.WALLET_PROVIDERS_NEW}
               element={
-                // TODO: check roles
-                <PrivateRoute>
+                <PrivateRoute acceptedRoles={["owner", "developer"]}>
                   <InnerPage isNarrow>
                     <WalletProvidersNew />
                   </InnerPage>

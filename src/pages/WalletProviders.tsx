@@ -23,7 +23,7 @@ export const WalletProviders = () => {
   const [selectedWallet, setSelectedWallet] = useState<
     { id: string; enabled: boolean } | undefined
   >();
-  const { isRoleAccepted: canEditWalletProviders } = useIsUserRoleAccepted(["owner"]);
+  const { isRoleAccepted: canEditWalletProviders } = useIsUserRoleAccepted(["owner", "developer"]);
 
   const navigate = useNavigate();
 
@@ -114,17 +114,19 @@ export const WalletProviders = () => {
             {isWalletsLoading ? <Loader /> : null}
           </SectionHeader.Content>
 
-          <SectionHeader.Content align="right">
-            <Button
-              size="md"
-              variant="primary"
-              icon={<Icon.Plus />}
-              disabled={isWalletsLoading}
-              onClick={goToNewWallet}
-            >
-              Add new wallet
-            </Button>
-          </SectionHeader.Content>
+          {canEditWalletProviders ? (
+            <SectionHeader.Content align="right">
+              <Button
+                size="md"
+                variant="primary"
+                icon={<Icon.Plus />}
+                disabled={isWalletsLoading}
+                onClick={goToNewWallet}
+              >
+                Add new wallet
+              </Button>
+            </SectionHeader.Content>
+          ) : null}
         </SectionHeader.Row>
       </SectionHeader>
 
