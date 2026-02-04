@@ -1,7 +1,6 @@
 import { Button, Icon, Input, Modal, Notification, Select, Text } from "@stellar/design-system";
 import { useEffect, useState } from "react";
 
-
 import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
 import {
   CustomDateInput,

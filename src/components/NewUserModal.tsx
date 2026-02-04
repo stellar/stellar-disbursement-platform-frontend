@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
 import { Button, Icon, Input, Modal, Select, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "@/components/InfoTooltip";
+import { useEffect, useState } from "react";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
 import { USER_ROLES_ARRAY } from "@/constants/settings";
 import { userRoleText } from "@/helpers/userRoleText";
 import { usePrevious } from "@/hooks/usePrevious";

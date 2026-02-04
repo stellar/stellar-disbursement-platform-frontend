@@ -4,7 +4,7 @@ import "./styles.scss";
 interface CopyWithIconProps {
   textToCopy: string;
   doneLabel?: string;
-  children: React.ReactNode | string;
+  children?: React.ReactNode;
   iconSizeRem: string;
 }
 

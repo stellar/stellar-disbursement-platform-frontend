@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { Card, RadioButton, Textarea } from "@stellar/design-system";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { InfoTooltip } from "@/components/InfoTooltip";
