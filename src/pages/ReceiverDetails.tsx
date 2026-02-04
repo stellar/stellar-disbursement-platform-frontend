@@ -1,3 +1,8 @@
+import { useEffect, useState } from "react";
+
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+
 import {
   Button,
   Card,
@@ -7,13 +12,7 @@ import {
   Select,
   Modal,
 } from "@stellar/design-system";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
-import { useReceiverWalletInviteSmsRetry } from "@/apiQueries/useReceiverWalletInviteSmsRetry";
-import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
-import { useUpdateReceiverWalletStatus } from "@/apiQueries/useUpdateReceiverWalletStatus";
 import { AssetAmount } from "@/components/AssetAmount";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CopyWithIcon } from "@/components/CopyWithIcon";
@@ -25,13 +24,20 @@ import { ReceiverPayments } from "@/components/ReceiverPayments";
 import { ReceiverWalletBalance } from "@/components/ReceiverWalletBalance";
 import { SectionHeader } from "@/components/SectionHeader";
 import { WalletHistory } from "@/components/WalletHistory";
+
 import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
+
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { useReceiverWalletInviteSmsRetry } from "@/apiQueries/useReceiverWalletInviteSmsRetry";
+import { useUpdateReceiverWalletStatus } from "@/apiQueries/useUpdateReceiverWalletStatus";
+
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import { percent } from "@/helpers/formatIntlNumber";
 import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
 import { renderTextWithCount } from "@/helpers/renderTextWithCount";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { isClassicWalletAddress } from "@/helpers/walletValidate";
+
 import { ReceiverDetails as ReceiverDetailsType, ReceiverWallet } from "@/types";
 
 export const ReceiverDetails = () => {

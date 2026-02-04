@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { registerPasskey } from "@/api/passkeyRegistration";
 import type { PasskeyRegistrationFinishResponse } from "@/api/passkeyRegistration";
+
 import type { AppError } from "@/types";
 
 export const usePasskeyRegistration = () => {

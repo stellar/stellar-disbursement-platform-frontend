@@ -1,5 +1,6 @@
-import { Asset, Networks, rpc } from "@stellar/stellar-sdk";
 import BigNumber from "bignumber.js";
+
+import { Asset, Networks, rpc } from "@stellar/stellar-sdk";
 
 import { ApiStellarAccountBalance } from "@/types";
 

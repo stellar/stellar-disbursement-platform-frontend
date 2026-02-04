@@ -2,8 +2,11 @@ import { Button, Heading, Icon } from "@stellar/design-system";
 
 import { CopyWithIcon } from "@/components/CopyWithIcon";
 import { EmbeddedWalletModal } from "@/components/EmbeddedWalletModal";
+
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
+
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
+
 import { EmbeddedWalletReceiverContact } from "@/types";
 
 import "./styles.scss";

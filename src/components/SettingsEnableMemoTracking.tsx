@@ -1,13 +1,19 @@
-import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
 import { useEffect } from "react";
+
 import { useDispatch } from "react-redux";
 
-import { useUpdateOrgMemoTrackingEnabled } from "@/apiQueries/useUpdateOrgMemoTrackingEnabled";
+import { Card, Notification, Toggle, Loader } from "@stellar/design-system";
+
 import { Box } from "@/components/Box";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+
 import { getOrgInfoAction } from "@/store/ducks/organization";
+
+import { useUpdateOrgMemoTrackingEnabled } from "@/apiQueries/useUpdateOrgMemoTrackingEnabled";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch } from "@/store";
 
 export const SettingsEnableMemoTracking = () => {
   const { organization } = useRedux("organization");

@@ -1,4 +1,5 @@
 import { API_URL } from "@/constants/envVariables";
+
 import { fetchWalletApi } from "@/helpers/fetchWalletApi";
 
 const SPONSORED_TRANSACTION_POLL_INTERVAL_MS = 2000;

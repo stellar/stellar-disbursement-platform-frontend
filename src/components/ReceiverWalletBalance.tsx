@@ -1,10 +1,13 @@
-import { Loader, Notification } from "@stellar/design-system";
 import { Fragment } from "react";
 
-import { useAccountBalances } from "@/apiQueries/useAccountBalances";
+import { Loader, Notification } from "@stellar/design-system";
+
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
 import { RPC_ENABLED } from "@/constants/envVariables";
+
+import { useAccountBalances } from "@/apiQueries/useAccountBalances";
 
 import { InfoTooltip } from "./InfoTooltip";
 

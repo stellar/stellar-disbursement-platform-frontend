@@ -1,6 +1,7 @@
 import { Avatar, Button, Icon } from "@stellar/design-system";
 
 import { DropdownMenu } from "@/components/DropdownMenu";
+
 import { EmbeddedWalletReceiverContact } from "@/types";
 
 import "./styles.scss";

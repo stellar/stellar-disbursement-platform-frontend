@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { API_URL } from "@/constants/envVariables";
+
 import { fetchApi } from "@/helpers/fetchApi";
 import { formatPaymentReceiver } from "@/helpers/formatPaymentReceiver";
 import { formatReceiver } from "@/helpers/formatReceiver";
+
 import { ApiReceiver, AppError, PaymentDetailsReceiver, ReceiverDetails } from "@/types";
 
 export const useReceiversReceiverId = <T>({

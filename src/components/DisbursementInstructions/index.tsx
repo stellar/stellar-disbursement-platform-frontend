@@ -6,8 +6,10 @@ import { CsvUploadButton } from "@/components/CsvUploadButton";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { ShowForRoles } from "@/components/ShowForRoles";
 import { Title } from "@/components/Title";
+
 import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
 import { saveFile } from "@/helpers/saveFile";
+
 import { NONE_VERIFICATION_VALUE, RegistrationContactType } from "@/types";
 
 import "./styles.scss";

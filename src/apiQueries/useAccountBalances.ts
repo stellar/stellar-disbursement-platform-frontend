@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { API_URL, HORIZON_URL, RPC_ENABLED } from "@/constants/envVariables";
+
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { fetchApi } from "@/helpers/fetchApi";
 import { fetchStellarApi } from "@/helpers/fetchStellarApi";
 import { fetchSacBalances } from "@/helpers/stellarBalances";
+
 import { ApiStellarAccountBalance, AppError } from "@/types";
 
 interface ApiAsset {

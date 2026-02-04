@@ -4,8 +4,10 @@ import {
   type PublicKeyCredentialRequestOptionsJSON,
 } from "@simplewebauthn/browser";
 
-import { handleApiResponse } from "@/api/handleApiResponse";
 import { API_URL } from "@/constants/envVariables";
+
+import { handleApiResponse } from "@/api/handleApiResponse";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 
 export interface PasskeyAuthenticationStartResponse {

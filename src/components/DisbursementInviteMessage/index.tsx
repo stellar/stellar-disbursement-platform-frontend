@@ -1,11 +1,16 @@
-import { Card, RadioButton, Textarea } from "@stellar/design-system";
 import { useEffect, useState } from "react";
+
 import { useDispatch } from "react-redux";
 
+import { Card, RadioButton, Textarea } from "@stellar/design-system";
+
 import { InfoTooltip } from "@/components/InfoTooltip";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+
 import { getOrgInfoAction } from "@/store/ducks/organization";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch } from "@/store";
 
 import "../ReceiverInviteMessage/styles.scss";
 

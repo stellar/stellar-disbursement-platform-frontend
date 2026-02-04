@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { createEmbeddedWallet, pollWalletStatus } from "@/api/embeddedWallet";
 import type { CreateWalletRequest, WalletResponse } from "@/api/embeddedWallet";
+
 import type { AppError } from "@/types";
 
 export const useCreateEmbeddedWallet = () => {

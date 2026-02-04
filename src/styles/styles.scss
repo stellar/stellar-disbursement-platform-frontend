@@ -455,7 +455,6 @@ body {
     color: var(--sds-clr-gray-10);
     flex-shrink: 0;
   }
-
 }
 
 .ReceiverContactInfo {
@@ -755,6 +754,181 @@ body {
     --Link-color-default: var(--sds-clr-red-11);
     --Link-color-hover: var(--sds-clr-red-12);
     --Link-color-disabled: var(--sds-clr-red-08);
+  }
+}
+
+// Wallet Providers
+.WalletProvidersNew {
+  &__Tab {
+    padding: pxToRem(4px) pxToRem(8px);
+    border-radius: pxToRem(4px);
+    font-size: pxToRem(12px);
+    line-height: pxToRem(18px);
+    font-weight: var(--sds-fw-semi-bold);
+    cursor: pointer;
+    transition:
+      color var(--sds-anim-transition-default),
+      background-color var(--sds-anim-transition-default);
+
+    &[data-selected="false"] {
+      color: var(--sds-clr-gray-11);
+      background-color: var(--sds-clr-gray-01);
+    }
+
+    &[data-selected="true"] {
+      color: var(--sds-clr-lilac-11);
+      background-color: var(--sds-clr-lilac-04);
+      cursor: default;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--sds-clr-lilac-11);
+        background-color: var(--sds-clr-lilac-04);
+      }
+    }
+  }
+
+  &__WalletPresetsContainer {
+    display: grid;
+    gap: pxToRem(8px);
+    grid-template-rows: pxToRem(50px);
+    grid-template-columns: repeat(auto-fit, minmax(pxToRem(170px), 1fr));
+  }
+
+  &__WalletPreset {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: pxToRem(4px);
+    padding: pxToRem(14px);
+    border-radius: pxToRem(8px);
+    border: 1px solid var(--sds-clr-gray-06);
+    background-color: var(--sds-clr-gray-01);
+    cursor: pointer;
+    transition: border-color var(--sds-anim-transition-default);
+    text-align: center;
+
+    &[data-selected="true"] {
+      border-color: var(--sds-clr-lilac-09);
+      cursor: default;
+    }
+
+    &__logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: pxToRem(24px);
+      height: pxToRem(24px);
+      border-radius: 50%;
+      border: 1px solid var(--sds-clr-gray-06);
+      overflow: hidden;
+
+      &::before {
+        display: block;
+        content: attr(data-letter);
+        font-size: pxToRem(12px);
+        font-weight: var(--sds-fw-semi-bold);
+        color: var(--sds-clr-gray-11);
+      }
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        border-color: var(--sds-clr-lilac-09);
+      }
+    }
+  }
+
+  .Label {
+    color: var(--sds-clr-gray-12);
+  }
+
+  // Assets
+  &__assetSelector {
+    position: relative;
+    z-index: 1;
+
+    &__dropdown {
+      position: absolute;
+      top: pxToRem(62px);
+      left: 0;
+      right: 0;
+      background-color: var(--sds-clr-gray-01);
+      border: 1px solid var(--sds-clr-gray-06);
+      border-radius: pxToRem(6px);
+      overflow: hidden;
+    }
+
+    &__item {
+      display: flex;
+      align-items: center;
+      gap: pxToRem(8px);
+      padding: pxToRem(16px);
+      cursor: pointer;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid var(--sds-clr-gray-06);
+      }
+    }
+  }
+
+  &__assetImage {
+    --WalletProvidersNew-assetImage-size: #{pxToRem(14px)};
+
+    display: flex;
+    width: var(--WalletProvidersNew-assetImage-size);
+    height: var(--WalletProvidersNew-assetImage-size);
+    border: 1px solid var(--sds-clr-gray-06);
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--sds-clr-gray-01);
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    // Selected asset image
+    &[data-size="sm"] {
+      --WalletProvidersNew-assetImage-size: #{pxToRem(14px)};
+    }
+
+    // Dropdown asset image
+    &[data-size="md"] {
+      --WalletProvidersNew-assetImage-size: #{pxToRem(20px)};
+    }
+  }
+
+  &__selectedAssets {
+    margin-top: pxToRem(6px);
+
+    &__image {
+      display: inline-flex;
+      width: pxToRem(14px);
+      height: pxToRem(14px);
+      border: 1px solid var(--sds-clr-gray-06);
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--sds-clr-gray-01);
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+
+  &__responseItem {
+    &__value {
+      color: var(--sds-clr-gray-12);
+    }
   }
 }
 
