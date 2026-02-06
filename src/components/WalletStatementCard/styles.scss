@@ -1,0 +1,33 @@
+.WalletStatementCard {
+  &__period {
+    margin-bottom: 1rem;
+
+    .Label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &__periodButtons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__dateRange {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  &__dateInput {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
