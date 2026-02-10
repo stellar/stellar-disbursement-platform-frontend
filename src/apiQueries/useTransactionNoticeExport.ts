@@ -3,9 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import { API_URL } from "@/constants/envVariables";
 import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { fetchApi } from "@/helpers/fetchApi";
+import { getDomainFromUrl } from "@/helpers/getDomainFromUrl";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { saveFile } from "@/helpers/saveFile";
-import { stripProtocolFromBaseUrl } from "@/helpers/stripProtocolFromBaseUrl";
 import { AppError } from "@/types";
 
 export const INTERNAL_NOTES_MAX_LENGTH = 900;
@@ -68,7 +68,7 @@ export const useTransactionNoticeExport = () => {
           searchParams.set("internal_notes", notes);
         }
         if (params.baseUrl) {
-          searchParams.set("base_url", stripProtocolFromBaseUrl(params.baseUrl));
+          searchParams.set("base_url", getDomainFromUrl(params.baseUrl));
         }
         const queryString = searchParams.toString();
         const queryPart = queryString ? `?${queryString}` : "";

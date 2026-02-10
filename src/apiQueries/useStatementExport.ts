@@ -3,9 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import { API_URL } from "@/constants/envVariables";
 import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { fetchApi } from "@/helpers/fetchApi";
+import { getDomainFromUrl } from "@/helpers/getDomainFromUrl";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { saveFile } from "@/helpers/saveFile";
-import { stripProtocolFromBaseUrl } from "@/helpers/stripProtocolFromBaseUrl";
 import { AppError, StatementQueryParams } from "@/types";
 
 function statementFilename(fromDate: string, toDate: string): string {
@@ -63,7 +63,7 @@ export const useStatementExport = () => {
         });
         if (params.assetCode) searchParams.set("asset_code", params.assetCode);
         if (params.baseUrl) {
-          searchParams.set("base_url", stripProtocolFromBaseUrl(params.baseUrl));
+          searchParams.set("base_url", getDomainFromUrl(params.baseUrl));
         }
         const url = `${API_URL}/statements/export?${searchParams.toString()}`;
 

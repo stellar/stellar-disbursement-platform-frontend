@@ -12,7 +12,6 @@ import { InfoTooltip } from "@/components/InfoTooltip";
 import { SearchInput } from "@/components/SearchInput";
 import { Table } from "@/components/Table";
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
-import { stripProtocolFromBaseUrl } from "@/helpers/stripProtocolFromBaseUrl";
 import { useRedux } from "@/hooks/useRedux";
 import type { ApiPayment } from "@/types";
 
@@ -66,13 +65,10 @@ export const TransactionNoticeCard = () => {
       notesTrimmed.length > INTERNAL_NOTES_MAX_LENGTH
         ? notesTrimmed.slice(0, INTERNAL_NOTES_MAX_LENGTH)
         : notesTrimmed || undefined;
-    const baseUrl = organization.data.baseUrl
-      ? stripProtocolFromBaseUrl(organization.data.baseUrl)
-      : undefined;
     exportTransactionNotice({
       paymentId: selectedId,
       internalNotes: internalNotesParam,
-      baseUrl,
+      baseUrl: organization.data.baseUrl ?? undefined,
     });
   };
 
