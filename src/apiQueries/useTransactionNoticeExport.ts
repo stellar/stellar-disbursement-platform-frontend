@@ -8,7 +8,7 @@ import { saveFile } from "@/helpers/saveFile";
 import { stripProtocolFromBaseUrl } from "@/helpers/stripProtocolFromBaseUrl";
 import { AppError } from "@/types";
 
-const INTERNAL_NOTES_MAX_LENGTH = 100;
+export const INTERNAL_NOTES_MAX_LENGTH = 900;
 
 export type TransactionNoticeExportParams = {
   paymentId: string;

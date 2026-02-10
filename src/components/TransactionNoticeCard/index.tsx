@@ -2,7 +2,10 @@ import { Button, Card, Icon, Notification, Textarea } from "@stellar/design-syst
 import { useState } from "react";
 
 import { usePayments } from "@/apiQueries/usePayments";
-import { useTransactionNoticeExport } from "@/apiQueries/useTransactionNoticeExport";
+import {
+  INTERNAL_NOTES_MAX_LENGTH,
+  useTransactionNoticeExport,
+} from "@/apiQueries/useTransactionNoticeExport";
 import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
@@ -14,8 +17,6 @@ import { useRedux } from "@/hooks/useRedux";
 import type { ApiPayment } from "@/types";
 
 import "./styles.scss";
-
-const INTERNAL_NOTES_MAX_LENGTH = 100;
 
 export const TransactionNoticeCard = () => {
   const [searchQuery, setSearchQuery] = useState("");
