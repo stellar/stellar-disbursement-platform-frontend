@@ -44,6 +44,7 @@ import { Settings } from "@/pages/Settings";
 import { SignIn } from "@/pages/SignIn";
 import { Unauthorized } from "@/pages/Unauthorized";
 import { WalletProviders } from "@/pages/WalletProviders";
+import { WalletProvidersNew } from "@/pages/WalletProvidersNew";
 
 import { Routes } from "@/constants/settings";
 
@@ -314,6 +315,16 @@ export const App = () => {
                 <PrivateRoute>
                   <InnerPage isNarrow>
                     <WalletProviders />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path={Routes.WALLET_PROVIDERS_NEW}
+              element={
+                <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                  <InnerPage isNarrow>
+                    <WalletProvidersNew />
                   </InnerPage>
                 </PrivateRoute>
               }

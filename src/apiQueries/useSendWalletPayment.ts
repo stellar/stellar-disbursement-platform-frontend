@@ -25,7 +25,6 @@ import {
   pollSponsoredTransactionStatus,
 } from "@/api/sponsoredTransactions";
 
-
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
 import { signSorobanAuthorizationEntries } from "@/helpers/signSorobanAuthorization";
 

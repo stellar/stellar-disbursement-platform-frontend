@@ -1,8 +1,11 @@
 import { useEffect } from "react";
+
 import { useDispatch } from "react-redux";
 
 import { refreshWalletSessionToken } from "@/helpers/refreshWalletSessionToken";
+
 import { useRedux } from "@/hooks/useRedux";
+
 import { AppDispatch } from "@/store";
 
 const TOKEN_REFRESH_INTERVAL = 2 * 60_000; // 2 minutes

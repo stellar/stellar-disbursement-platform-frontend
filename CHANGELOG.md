@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+- Wallet Providers: add a new wallet page [#458](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/458)
+
 ## [6.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.0.1...6.1.0))
 
 ### Changed
@@ -40,7 +44,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add Wallet History for Stellar Distribution Accounts. [#385](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/385)
 
-### Fixed 
+### Fixed
 - Fix message when adding unknown trustline [#388](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/388)
 
 ### Security and Dependencies
