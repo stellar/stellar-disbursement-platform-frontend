@@ -4,7 +4,7 @@ import { API_URL } from "@/constants/envVariables";
 
 import { fetchApi } from "@/helpers/fetchApi";
 
-import { ApiAddWalletRequest, ApiAddWalletResponse, AppError } from "@/types";
+import { ApiWalletRequest, ApiAddWalletResponse, AppError } from "@/types";
 
 export const useWalletsAdd = ({
   onSuccess,
@@ -12,7 +12,7 @@ export const useWalletsAdd = ({
   onSuccess?: (addedWallet: ApiAddWalletResponse) => void;
 } = {}) => {
   const mutation = useMutation({
-    mutationFn: async (request: ApiAddWalletRequest) => {
+    mutationFn: async (request: ApiWalletRequest) => {
       return fetchApi(`${API_URL}/wallets`, {
         method: "POST",
         body: JSON.stringify(request),
@@ -25,7 +25,7 @@ export const useWalletsAdd = ({
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as ApiAddWalletResponse,
-    mutateAsync: async (request: ApiAddWalletRequest) => {
+    mutateAsync: async (request: ApiWalletRequest) => {
       try {
         await mutation.mutateAsync(request);
       } catch {

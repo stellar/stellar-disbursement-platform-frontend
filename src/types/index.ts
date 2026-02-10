@@ -1143,7 +1143,7 @@ export type Trustline = {
   isNative: boolean;
 };
 
-export type ApiAddWalletRequest = {
+export type ApiWalletRequest = {
   name: string;
   homepage?: string;
   sep_10_client_domain: string;

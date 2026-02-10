@@ -4,11 +4,11 @@ import { API_URL } from "@/constants/envVariables";
 
 import { fetchApi } from "@/helpers/fetchApi";
 
-import { ApiAddWalletRequest, ApiWallet, AppError } from "@/types";
+import { ApiWalletRequest, ApiWallet, AppError } from "@/types";
 
 type WalletsUpdateProps = {
   walletId: string;
-  request: ApiAddWalletRequest;
+  request: ApiWalletRequest;
 };
 
 export const useWalletsUpdate = () => {
