@@ -1,0 +1,48 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.TransactionNoticeCard {
+  &__search {
+    margin-bottom: 1rem;
+
+    .Label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &__searchInput {
+    max-width: 100%;
+  }
+
+  &__loading {
+    margin-bottom: 1rem;
+  }
+
+  &__empty {
+    margin-bottom: 1rem;
+  }
+
+  &__table {
+    margin-bottom: 1rem;
+  }
+
+  &__notes {
+    margin-bottom: 1rem;
+
+    .Label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &__notesHelp {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: pxToRem(12px) !important;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

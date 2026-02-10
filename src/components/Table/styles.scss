@@ -42,7 +42,17 @@ table.Table-v2 {
     transition: background-color var(--sds-anim-transition-default);
 
     &.Table-v2__row--highlighted {
-      background-color: var(--sds-clr-gray-02);
+      background-color: var(--sds-clr-gray-03);
+    }
+
+    &[role="button"] {
+      cursor: pointer;
+
+      @media (hover: hover) {
+        &:hover {
+          background-color: var(--sds-clr-gray-02);
+        }
+      }
     }
   }
 

@@ -63,6 +63,7 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
     >
       {elementLeft || sortDirection ? (
         <span className="Table-v2__header__cell" {...sortButtonProps}>
+          {/* eslint-disable-next-line react-hooks/static-components */}
           {elementLeft ?? null} {children} <SortIconEl />
         </span>
       ) : (
@@ -80,14 +81,41 @@ const Body: React.FC<BodyProps> = ({ children }: BodyProps) => {
   return <tbody>{children}</tbody>;
 };
 
-interface BodyRowProps {
+interface BodyRowProps extends Omit<React.HTMLAttributes<HTMLTableRowElement>, "children"> {
   children: React.ReactElement | React.ReactElement[];
   isHighlighted?: boolean;
 }
 
-const BodyRow: React.FC<BodyRowProps> = ({ children, isHighlighted }: BodyRowProps) => {
+const BodyRow: React.FC<BodyRowProps> = ({
+  children,
+  isHighlighted,
+  onClick,
+  onKeyDown,
+  ...rest
+}: BodyRowProps) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+    if (onClick && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onClick(e as unknown as React.MouseEvent<HTMLTableRowElement>);
+    }
+    onKeyDown?.(e);
+  };
+
   return (
-    <tr {...(isHighlighted ? { className: "Table-v2__row--highlighted" } : {})}>{children}</tr>
+    <tr
+      {...rest}
+      {...(isHighlighted ? { className: "Table-v2__row--highlighted" } : {})}
+      {...(onClick
+        ? {
+            role: "button",
+            tabIndex: 0,
+            onClick,
+            onKeyDown: handleKeyDown,
+          }
+        : {})}
+    >
+      {children}
+    </tr>
   );
 };
 
