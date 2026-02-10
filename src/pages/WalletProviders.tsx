@@ -12,8 +12,8 @@ import { WalletCard } from "@/components/WalletCard";
 
 import { Routes } from "@/constants/settings";
 
-import { useUpdateWallet } from "@/apiQueries/useUpdateWallet";
 import { useWallets } from "@/apiQueries/useWallets";
+import { useWalletsEnable } from "@/apiQueries/useWalletsEnable";
 
 import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
 
@@ -36,13 +36,13 @@ export const WalletProviders = () => {
   } = useWallets({});
 
   const {
-    error: walletUpdateError,
-    isSuccess: isWalletUpdateSuccess,
-    isError: isWalletUpdateError,
-    isPending: isWalletUpdatePending,
-    mutateAsync: updateWallet,
+    error: walletEnableError,
+    isSuccess: isWalletEnableSuccess,
+    isError: isWalletEnableError,
+    isPending: isWalletEnablePending,
+    mutateAsync: enableWallet,
     reset: resetUpdateWallet,
-  } = useUpdateWallet();
+  } = useWalletsEnable();
 
   const myWallets = wallets?.filter((e) => e.enabled);
   const availableWallets = wallets?.filter((e) => !e.enabled);
@@ -57,15 +57,15 @@ export const WalletProviders = () => {
   };
 
   useEffect(() => {
-    if (isWalletUpdateSuccess || isWalletUpdateError) {
+    if (isWalletEnableSuccess || isWalletEnableError) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       handleCloseModal();
     }
 
-    if (isWalletUpdateSuccess) {
+    if (isWalletEnableSuccess) {
       refetchWallets();
     }
-  }, [isWalletUpdateSuccess, isWalletUpdateError, refetchWallets]);
+  }, [isWalletEnableSuccess, isWalletEnableError, refetchWallets]);
 
   const renderWalletCard = (
     walletsArray: ApiWallet[] | undefined,
@@ -85,7 +85,7 @@ export const WalletProviders = () => {
           onChange={() => {
             setSelectedWallet({ id: item.id, enabled: item.enabled });
 
-            if (isWalletUpdateSuccess || isWalletUpdateError) {
+            if (isWalletEnableSuccess || isWalletEnableError) {
               resetUpdateWallet();
             }
           }}
@@ -133,9 +133,9 @@ export const WalletProviders = () => {
       {isWalletsPending ? <LoadingContent /> : null}
 
       <div className="CardStack">
-        {walletsError || walletUpdateError ? (
+        {walletsError || walletEnableError ? (
           <Notification variant="error" title="Error" isFilled={true}>
-            <ErrorWithExtras appError={walletsError || walletUpdateError} />
+            <ErrorWithExtras appError={walletsError || walletEnableError} />
           </Notification>
         ) : null}
 
@@ -145,7 +145,7 @@ export const WalletProviders = () => {
               <div className="CardStack__card">
                 <div className="CardStack__title">
                   <InfoTooltip infoText="The wallet providers allowed by your organization for receiving payments.">
-                    My Wallet Providers
+                    Enabled Wallets
                   </InfoTooltip>
                 </div>
 
@@ -157,13 +157,12 @@ export const WalletProviders = () => {
               <div className="CardStack__card">
                 <div className="CardStack__title">
                   <InfoTooltip infoText="All available wallet providers that can receive disbursements. You must add these to your wallet providers in order to send payments into them.">
-                    Available Wallet Providers
+                    Available Wallets
                   </InfoTooltip>
                 </div>
                 {availableWallets?.length ? (
                   <div className="Note">
-                    Make sure you agree with the wallet provider before adding them. They will also
-                    need to enable your organization before payments will succeed.
+                    By enabling, this will alow any disbursement to this provider.
                   </div>
                 ) : null}
 
@@ -184,7 +183,7 @@ export const WalletProviders = () => {
             event.preventDefault();
 
             if (selectedWallet) {
-              updateWallet({
+              enableWallet({
                 walletId: selectedWallet.id,
                 enabled: !selectedWallet.enabled,
               });
@@ -214,14 +213,14 @@ export const WalletProviders = () => {
             </Modal.Body>
           )}
           <Modal.Footer>
-            <Button size="md" variant="tertiary" type="reset" isLoading={isWalletUpdatePending}>
+            <Button size="md" variant="tertiary" type="reset" isLoading={isWalletEnablePending}>
               Cancel
             </Button>
             <Button
               size="md"
               variant={selectedWallet?.enabled ? "destructive" : "primary"}
               type="submit"
-              isLoading={isWalletUpdatePending}
+              isLoading={isWalletEnablePending}
             >
               Turn {selectedWallet?.enabled ? "off" : "on"}
             </Button>

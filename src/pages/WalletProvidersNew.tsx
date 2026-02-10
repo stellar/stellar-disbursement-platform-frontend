@@ -1,6 +1,6 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Button,
@@ -19,14 +19,15 @@ import {
 import { Box } from "@/components/Box";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { InfoTooltip } from "@/components/InfoTooltip";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Title } from "@/components/Title";
 
 import { Routes } from "@/constants/settings";
 
 import { useAllAssets } from "@/apiQueries/useAllAssets";
+import { useWallets } from "@/apiQueries/useWallets";
 import { useWalletsAdd } from "@/apiQueries/useWalletsAdd";
+import { useWalletsUpdate } from "@/apiQueries/useWalletsUpdate";
 
 import EurocLogoSrc from "@/assets/logo-euroc.svg";
 import UsdcLogoSrc from "@/assets/logo-usdc.svg";
@@ -59,11 +60,14 @@ export const WalletProvidersNew = () => {
     XLM: XlmLogoSrc,
   };
 
+  const { walletId } = useParams();
+
   const [formFields, setFormFields] = useState<FormFields>(initFormState);
   const [formFieldErrors, setFormFieldErrors] = useState<Partial<Record<keyof FormFields, string>>>(
     {},
   );
   const [isAssetsDropdownVisible, setIsAssetsDropdownVisible] = useState(false);
+  const [currentWalletValues, setCurrentWalletValues] = useState<FormFields | null>(null);
 
   const assetsInputRef = useRef<HTMLDivElement>(null);
   const assetsDropdownRef = useRef<HTMLDivElement>(null);
@@ -75,6 +79,19 @@ export const WalletProvidersNew = () => {
     mutateAsync: addWallet,
     reset: addWalletReset,
   } = useWalletsAdd();
+
+  const {
+    data: updateWalletData,
+    isPending: isUpdateWalletPending,
+    error: updateWalletError,
+    mutateAsync: updateWallet,
+    reset: updateWalletReset,
+  } = useWalletsUpdate();
+
+  const { data: wallets, error: walletsError } = useWallets({ walletId });
+
+  const isEditMode = Boolean(walletId);
+  const selectedWallet = isEditMode ? wallets?.find((w) => w.id === walletId) : undefined;
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     const target = event.target as Node;
@@ -98,6 +115,23 @@ export const WalletProvidersNew = () => {
       document.removeEventListener("pointerup", handleClickOutside);
     };
   }, [isAssetsDropdownVisible, handleClickOutside]);
+
+  // When in edit mode, populate form fields with wallet data
+  useEffect(() => {
+    if (selectedWallet) {
+      const newValues = {
+        name: selectedWallet.name,
+        homepage: selectedWallet.homepage || "",
+        sep_10_client_domain: selectedWallet.sep_10_client_domain || "",
+        deep_link_schema: selectedWallet.deep_link_schema || "",
+        enabled: selectedWallet.enabled,
+        assetIds: selectedWallet.assets.map((a) => a.id),
+      };
+
+      setFormFields(newValues);
+      setCurrentWalletValues(newValues);
+    }
+  }, [selectedWallet]);
 
   const navigate = useNavigate();
 
@@ -136,13 +170,36 @@ export const WalletProvidersNew = () => {
     addWallet(submitParams);
   };
 
+  const handleUpdateWallet = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!walletId || areInputsTheSame() || !isSubmitEnabled()) {
+      return;
+    }
+
+    const { name, homepage, sep_10_client_domain, deep_link_schema, enabled } = formFields;
+
+    const submitParams = {
+      name,
+      homepage,
+      sep_10_client_domain,
+      deep_link_schema,
+      enabled,
+      assets: formFields.assetIds.map((a) => ({ id: a })),
+    };
+
+    updateWallet({ walletId: walletId, request: submitParams });
+  };
+
   const handleCancel = () => {
     addWalletReset();
+    updateWalletReset();
     navigate(Routes.WALLET_PROVIDERS);
   };
 
   const handleDone = () => {
     addWalletReset();
+    updateWalletReset();
     navigate(Routes.WALLET_PROVIDERS);
   };
 
@@ -249,6 +306,28 @@ export const WalletProvidersNew = () => {
     );
   };
 
+  const getTitle = () => {
+    if (isEditMode) {
+      return selectedWallet?.name || "Update wallet";
+    }
+
+    return "Add a new wallet";
+  };
+
+  const areInputsTheSame = () => {
+    return (
+      formFields.name === currentWalletValues?.name &&
+      formFields.homepage === currentWalletValues?.homepage &&
+      formFields.sep_10_client_domain === currentWalletValues?.sep_10_client_domain &&
+      formFields.deep_link_schema === currentWalletValues?.deep_link_schema &&
+      formFields.enabled === currentWalletValues?.enabled &&
+      formFields.assetIds.length === currentWalletValues?.assetIds.length &&
+      formFields.assetIds.every((id) => currentWalletValues?.assetIds.includes(id))
+    );
+  };
+
+  const modalData = isEditMode ? updateWalletData : addWalletData;
+
   return (
     <>
       <Breadcrumbs
@@ -258,7 +337,7 @@ export const WalletProvidersNew = () => {
             route: Routes.WALLET_PROVIDERS,
           },
           {
-            label: "Add a new wallet",
+            label: isEditMode ? "Update wallet" : "Add a new wallet",
           },
         ]}
       />
@@ -275,18 +354,24 @@ export const WalletProvidersNew = () => {
             ></Button>
 
             <Heading as="h2" size="sm">
-              Add a new wallet
+              {getTitle()}
             </Heading>
           </SectionHeader.Content>
         </SectionHeader.Row>
       </SectionHeader>
 
-      <form onSubmit={handleAddNewWallet} onReset={handleCancel}>
+      <form onSubmit={isEditMode ? handleUpdateWallet : handleAddNewWallet} onReset={handleCancel}>
         <Box gap="lg" addlClassName="WalletProvidersNew">
           <>
-            {addWalletError ? (
+            {addWalletError || updateWalletError ? (
               <Notification variant="error" title="Error" isFilled={true}>
-                <ErrorWithExtras appError={addWalletError} />
+                <ErrorWithExtras appError={addWalletError || updateWalletError} />
+              </Notification>
+            ) : null}
+
+            {walletsError ? (
+              <Notification variant="error" title="Error" isFilled={true}>
+                <ErrorWithExtras appError={walletsError} />
               </Notification>
             ) : null}
           </>
@@ -294,9 +379,7 @@ export const WalletProvidersNew = () => {
           <Card>
             <Box gap="xl">
               <Box gap="lg">
-                <InfoTooltip infoText="TODO: add description">
-                  <Title size="md">Wallet details</Title>
-                </InfoTooltip>
+                <Title size="md">Wallet details</Title>
 
                 <Box gap="lg">
                   <Input
@@ -440,46 +523,65 @@ export const WalletProvidersNew = () => {
           </Card>
 
           <Box gap="lg" direction="row" justify="end">
-            <Button size="md" variant="tertiary" type="reset" disabled={isAddWalletPending}>
-              Cancel
-            </Button>
             <Button
               size="md"
-              variant="primary"
-              disabled={!isSubmitEnabled()}
-              type="submit"
-              isLoading={isAddWalletPending}
+              variant="tertiary"
+              type="reset"
+              disabled={isAddWalletPending || isUpdateWalletPending}
             >
-              Add a new wallet
+              Cancel
             </Button>
+
+            {isEditMode ? (
+              <Button
+                size="md"
+                variant="primary"
+                disabled={areInputsTheSame() || !isSubmitEnabled()}
+                type="submit"
+                isLoading={isUpdateWalletPending}
+              >
+                Update
+              </Button>
+            ) : (
+              <Button
+                size="md"
+                variant="primary"
+                disabled={!isSubmitEnabled()}
+                type="submit"
+                isLoading={isAddWalletPending}
+              >
+                Add a new wallet
+              </Button>
+            )}
           </Box>
         </Box>
       </form>
 
       {/* Success modal */}
-      <Modal visible={Boolean(addWalletData)} onClose={handleDone}>
-        <Modal.Heading>Wallet has been successfully added!</Modal.Heading>
+      <Modal visible={Boolean(modalData)} onClose={handleDone}>
+        <Modal.Heading>
+          {isEditMode
+            ? "Wallet has been successfully updated!"
+            : "Wallet has been successfully added!"}
+        </Modal.Heading>
         <Modal.Body>
-          <p>Your wallet has been successfully added to your account.</p>
+          {!isEditMode ? <p>Your wallet has been successfully added to your account.</p> : null}
           <Card>
             <Box gap="md">
-              <ResponseItem label="Wallet provider" value={addWalletData?.name || ""} />
-              <ResponseItem label="Homepage" value={addWalletData.homepage || ""} />
+              <ResponseItem label="Wallet provider" value={modalData?.name || ""} />
+              <ResponseItem label="Homepage" value={modalData?.homepage || ""} />
               <ResponseItem
                 label="SEP10 Client Domain"
-                value={addWalletData?.sep_10_client_domain || ""}
+                value={modalData?.sep_10_client_domain || ""}
               />
-              <ResponseItem
-                label="Deep Link Schema"
-                value={addWalletData?.deep_link_schema || ""}
-              />
+              <ResponseItem label="Deep Link Schema" value={modalData?.deep_link_schema || ""} />
               <ResponseItem
                 label="Supported Assets"
-                value={addWalletData?.assets?.map((a) => a.code).join(", ") || ""}
+                value={modalData?.assets?.map((a) => a.code).join(", ") || ""}
               />
               <ResponseItem
                 label="Enable Wallet by default"
-                value={addWalletData?.enabled ? "Yes" : "No"}
+                value={modalData?.enabled ? "Yes" : "No"}
               />
             </Box>
           </Card>

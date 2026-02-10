@@ -9,11 +9,12 @@ import { ApiWallet, AppError } from "@/types";
 type UseWalletsProps = {
   userManaged?: boolean;
   supportedAssets?: string[];
+  walletId?: string | null;
 };
 
-export const useWallets = ({ userManaged, supportedAssets }: UseWalletsProps) => {
+export const useWallets = ({ userManaged, supportedAssets, walletId }: UseWalletsProps) => {
   const query = useQuery<ApiWallet[], AppError>({
-    queryKey: ["wallets", { userManaged, supportedAssets }],
+    queryKey: ["wallets", { userManaged, supportedAssets, walletId }],
     queryFn: async () => {
       const url = new URL(`${API_URL}/wallets`);
 
@@ -27,6 +28,8 @@ export const useWallets = ({ userManaged, supportedAssets }: UseWalletsProps) =>
 
       return await fetchApi(url.toString());
     },
+    // Only fetch if walletId is not provided or is a non-empty string
+    enabled: walletId === undefined ? true : !!walletId,
   });
 
   return query;

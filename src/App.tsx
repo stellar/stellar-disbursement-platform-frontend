@@ -320,7 +320,7 @@ export const App = () => {
               }
             />
             <Route
-              path={Routes.WALLET_PROVIDERS_NEW}
+              path={`${Routes.WALLET_PROVIDERS_NEW}/:walletId?`}
               element={
                 <PrivateRoute acceptedRoles={["owner", "developer"]}>
                   <InnerPage isNarrow>

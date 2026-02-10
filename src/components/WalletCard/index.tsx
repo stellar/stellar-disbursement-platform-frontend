@@ -1,6 +1,14 @@
 import React from "react";
-import { Card, Icon, Toggle } from "@stellar/design-system";
+
+import { useNavigate } from "react-router-dom";
+
+import { Button, Card, Icon, Toggle } from "@stellar/design-system";
+
+import { Box } from "@/components/Box";
 import { Title } from "@/components/Title";
+
+import { Routes } from "@/constants/settings";
+
 import "./styles.scss";
 
 interface WalletCardProps {
@@ -24,6 +32,9 @@ export const WalletCard: React.FC<WalletCardProps> = ({
   userManaged,
   onChange,
 }: WalletCardProps) => {
+  const navigate = useNavigate();
+  const walletNameLetter = walletName?.charAt(0).toUpperCase() || "W";
+
   return (
     <Card noPadding>
       <div className="WalletCard">
@@ -31,7 +42,10 @@ export const WalletCard: React.FC<WalletCardProps> = ({
           <div className="WalletCard__item">
             <div>
               <div className="WalletCard__item">
+                <div className="WalletCard__icon">{walletNameLetter}</div>
+
                 <Title size="md">{walletName}</Title>
+
                 <a
                   className="WalletCard__ExternalLink"
                   href={homepageUrl}
@@ -48,22 +62,29 @@ export const WalletCard: React.FC<WalletCardProps> = ({
               checked={enabled}
               onChange={onChange}
               disabled={!editable}
-              fieldSize="sm"
+              fieldSize="md"
             />
           </div>
         </div>
 
         <div className="WalletCard__walletData">
+          <Box gap="md" direction="row" align="center" justify="space-between">
+            <div className="WalletCard--flexCols">
+              <label className="WalletCard__item__label">Supported:</label>
+              <div className="WalletCard__item__value">{assets?.join(", ")}</div>
+            </div>
+
+            <Button
+              size="sm"
+              variant="tertiary"
+              icon={<Icon.Edit01 />}
+              onClick={() => {
+                navigate(`${Routes.WALLET_PROVIDERS_NEW}/${walletId}`);
+              }}
+            ></Button>
+          </Box>
           <div className="WalletCard--flexCols">
-            <label className="WalletCard__item__label">
-              <Icon.Coins03 /> Supported assets
-            </label>
-            <div className="WalletCard__item__value">{assets?.join(", ")}</div>
-          </div>
-          <div className="WalletCard--flexCols">
-            <label className="WalletCard__item__label">
-              <Icon.Coins03 /> User Managed?
-            </label>
+            <label className="WalletCard__item__label">User Managed:</label>
             <div className="WalletCard__item__value">{userManaged ? "Yes" : "No"}</div>
           </div>
         </div>
