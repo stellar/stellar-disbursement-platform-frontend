@@ -1,4 +1,4 @@
-import { Button, Card, Icon, Notification, Textarea } from "@stellar/design-system";
+import { Button, Card, Icon, Notification, RadioButton, Textarea } from "@stellar/design-system";
 import { useState } from "react";
 
 import { usePayments } from "@/apiQueries/usePayments";
@@ -11,7 +11,7 @@ import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { SearchInput } from "@/components/SearchInput";
 import { Table } from "@/components/Table";
-import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { formatDate, formatTime } from "@/helpers/formatIntlDateTime";
 import { useRedux } from "@/hooks/useRedux";
 import type { ApiPayment } from "@/types";
 
@@ -118,6 +118,9 @@ export const TransactionNoticeCard = () => {
                   <Card noPadding>
                     <Table isLoading={false} isScrollable={true}>
                       <Table.Header>
+                        <Table.HeaderCell width="2rem">
+                          <span aria-hidden="true">&nbsp;</span>
+                        </Table.HeaderCell>
                         <Table.HeaderCell>Transaction ID</Table.HeaderCell>
                         <Table.HeaderCell>Payment ID</Table.HeaderCell>
                         <Table.HeaderCell>Date</Table.HeaderCell>
@@ -125,19 +128,42 @@ export const TransactionNoticeCard = () => {
                       </Table.Header>
                       <Table.Body>
                         {(payments || []).map((p: ApiPayment) => (
-                          <Table.BodyRow
-                            key={p.id}
-                            isHighlighted={selectedId === p.id}
-                            onClick={() => setSelectedPaymentId(p.id)}
-                          >
-                            <Table.BodyCell width="5rem" title={p.id}>
-                              {p.id}
+                          <Table.BodyRow key={p.id}>
+                            <Table.BodyCell width="1rem">
+                              <RadioButton
+                                id={`transaction-notice-radio-${p.id}`}
+                                name="transaction-notice-payment"
+                                label=""
+                                fieldSize="sm"
+                                value={p.id}
+                                checked={selectedId === p.id}
+                                onChange={() => setSelectedPaymentId(p.id)}
+                              />
                             </Table.BodyCell>
-                            <Table.BodyCell width="5em">
-                              {p.external_payment_id ?? "—"}
+                            <Table.BodyCell
+                              width="5rem"
+                              title={p.id}
+                              className="TransactionNoticeCard__cellWrap2"
+                            >
+                              <span className="TransactionNoticeCard__cellWrap2Inner">{p.id}</span>
                             </Table.BodyCell>
-                            <Table.BodyCell width="10rem">
-                              {formatDateTime(p.created_at)}
+                            <Table.BodyCell
+                              width="4em"
+                              className="TransactionNoticeCard__cellWrap2"
+                            >
+                              <span className="TransactionNoticeCard__cellWrap2Inner">
+                                {p.external_payment_id ?? "—"}
+                              </span>
+                            </Table.BodyCell>
+                            <Table.BodyCell
+                              width="6.2rem"
+                              className="TransactionNoticeCard__cellWrap2"
+                            >
+                              <span className="TransactionNoticeCard__cellWrap2Inner TransactionNoticeCard__dateCell">
+                                {formatDate(p.created_at)}
+                                <br />
+                                {formatTime(p.created_at)}
+                              </span>
                             </Table.BodyCell>
                             <Table.BodyCell>{p.disbursement?.name ?? "—"}</Table.BodyCell>
                           </Table.BodyRow>

@@ -8,7 +8,7 @@ import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { saveFile } from "@/helpers/saveFile";
 import { AppError } from "@/types";
 
-export const INTERNAL_NOTES_MAX_LENGTH = 900;
+export const INTERNAL_NOTES_MAX_LENGTH = 500;
 
 export type TransactionNoticeExportParams = {
   paymentId: string;
