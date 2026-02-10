@@ -162,7 +162,7 @@ export const WalletProviders = () => {
                 </div>
                 {availableWallets?.length ? (
                   <div className="Note">
-                    By enabling, this will alow any disbursement to this provider.
+                    By enabling, this will allow any disbursement to this provider.
                   </div>
                 ) : null}
 

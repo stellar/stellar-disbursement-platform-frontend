@@ -81,6 +81,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
               onClick={() => {
                 navigate(`${Routes.WALLET_PROVIDERS_NEW}/${walletId}`);
               }}
+              aria-label="Edit wallet"
             ></Button>
           </Box>
           <div className="WalletCard--flexCols">

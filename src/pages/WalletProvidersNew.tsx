@@ -363,6 +363,12 @@ export const WalletProvidersNew = () => {
       <form onSubmit={isEditMode ? handleUpdateWallet : handleAddNewWallet} onReset={handleCancel}>
         <Box gap="lg" addlClassName="WalletProvidersNew">
           <>
+            {walletId && !selectedWallet ? (
+              <Notification variant="error" title="Error" isFilled={true}>
+                Wallet provider with ID {walletId} was not found.
+              </Notification>
+            ) : null}
+
             {addWalletError || updateWalletError ? (
               <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras appError={addWalletError || updateWalletError} />
