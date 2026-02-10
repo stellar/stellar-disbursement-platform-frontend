@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 - Wallet Providers: add a new wallet page [#458](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/458)
+- Wallet Providers: update wallet [#468](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/468)
 
 ## [6.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.0.1...6.1.0))
 
