@@ -85,11 +85,11 @@ export const TransactionNoticeCard = () => {
         </div>
 
         <div className="TransactionNoticeCard__search">
-          <span className="Label Label--sm">Search by Payment ID</span>
+          <span className="Label Label--sm">Search by SDP Transaction ID or Payment ID</span>
           <div className="TransactionNoticeCard__searchInput">
             <SearchInput
               id="transaction-notice-search"
-              placeholder="e.g., PAY-ABC-12345"
+              placeholder="e.g., SDP-2026-001-TX or PAY-ABC-12345"
               onSubmit={handleSearchSubmit}
               onClear={handleSearchClear}
               isLoading={isFetching}
@@ -108,8 +108,9 @@ export const TransactionNoticeCard = () => {
             {showEmptyState && (
               <div className="TransactionNoticeCard__empty">
                 <EmptyStateMessage
-                  icon={<Icon.SearchSm />}
-                  message="No transactions found. Try searching using a full or partial Payment ID."
+                  icon={<Icon.AlertCircle className="Icon" />}
+                  title="No transactions found"
+                  description="Try searching using a full or partial SDP Transaction ID or Payment ID."
                 />
               </div>
             )}

@@ -4,12 +4,30 @@ import "./styles.scss";
 
 interface EmptyStateMessageProps {
   icon?: React.ReactNode;
-  message: string;
+  message?: string;
+  title?: string;
+  description?: string;
 }
 
-export const EmptyStateMessage = ({ icon = <Icon.Key01 />, message }: EmptyStateMessageProps) => (
-  <div className="EmptyStateMessage">
-    {icon}
-    {message}
-  </div>
-);
+export const EmptyStateMessage = ({
+  icon = <Icon.Key01 />,
+  message = "",
+  title,
+  description,
+}: EmptyStateMessageProps) => {
+  const useStacked = Boolean(title);
+
+  return (
+    <div className={`EmptyStateMessage ${useStacked ? "EmptyStateMessage--stacked" : ""}`}>
+      {icon}
+      {useStacked ? (
+        <>
+          {title && <span className="EmptyStateMessage__title">{title}</span>}
+          {description && <span className="EmptyStateMessage__description">{description}</span>}
+        </>
+      ) : (
+        message
+      )}
+    </div>
+  );
+};

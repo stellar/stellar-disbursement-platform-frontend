@@ -20,6 +20,15 @@
 
   &__empty {
     margin-bottom: 1rem;
+    padding: 1.5rem 1.5rem 2rem;
+    background: var(--sds-clr-gray-01);
+    border-radius: 0.5rem;
+    border: 1px solid var(--sds-clr-gray-06);
+
+    .Icon {
+      width: 2rem;
+      height: 2rem;
+    }
   }
 
   &__table {
