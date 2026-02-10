@@ -74,15 +74,19 @@ export const WalletCard: React.FC<WalletCardProps> = ({
               <div className="WalletCard__item__value">{assets?.join(", ")}</div>
             </div>
 
-            <Button
-              size="sm"
-              variant="tertiary"
-              icon={<Icon.Edit01 />}
-              onClick={() => {
-                navigate(`${Routes.WALLET_PROVIDERS_NEW}/${walletId}`);
-              }}
-              aria-label="Edit wallet"
-            ></Button>
+            <>
+              {editable ? (
+                <Button
+                  size="sm"
+                  variant="tertiary"
+                  icon={<Icon.Edit01 />}
+                  onClick={() => {
+                    navigate(`${Routes.WALLET_PROVIDERS_NEW}/${walletId}`);
+                  }}
+                  aria-label="Edit wallet"
+                ></Button>
+              ) : null}
+            </>
           </Box>
           <div className="WalletCard--flexCols">
             <label className="WalletCard__item__label">User Managed:</label>

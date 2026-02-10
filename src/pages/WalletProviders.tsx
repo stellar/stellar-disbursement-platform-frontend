@@ -41,7 +41,7 @@ export const WalletProviders = () => {
     isError: isWalletEnableError,
     isPending: isWalletEnablePending,
     mutateAsync: enableWallet,
-    reset: resetUpdateWallet,
+    reset: enabledWalletReset,
   } = useWalletsEnable();
 
   const myWallets = wallets?.filter((e) => e.enabled);
@@ -86,7 +86,7 @@ export const WalletProviders = () => {
             setSelectedWallet({ id: item.id, enabled: item.enabled });
 
             if (isWalletEnableSuccess || isWalletEnableError) {
-              resetUpdateWallet();
+              enabledWalletReset();
             }
           }}
         />

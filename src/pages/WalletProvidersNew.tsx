@@ -88,7 +88,11 @@ export const WalletProvidersNew = () => {
     reset: updateWalletReset,
   } = useWalletsUpdate();
 
-  const { data: wallets, error: walletsError } = useWallets({ walletId });
+  const {
+    data: wallets,
+    isSuccess: isWalletsSuccess,
+    error: walletsError,
+  } = useWallets({ walletId });
 
   const isEditMode = Boolean(walletId);
   const selectedWallet = isEditMode ? wallets?.find((w) => w.id === walletId) : undefined;
@@ -363,7 +367,7 @@ export const WalletProvidersNew = () => {
       <form onSubmit={isEditMode ? handleUpdateWallet : handleAddNewWallet} onReset={handleCancel}>
         <Box gap="lg" addlClassName="WalletProvidersNew">
           <>
-            {walletId && !selectedWallet ? (
+            {walletId && isWalletsSuccess && !selectedWallet ? (
               <Notification variant="error" title="Error" isFilled={true}>
                 Wallet provider with ID {walletId} was not found.
               </Notification>
