@@ -96,6 +96,7 @@ export const WalletProvidersNew = () => {
 
   const isEditMode = Boolean(walletId);
   const selectedWallet = isEditMode ? wallets?.find((w) => w.id === walletId) : undefined;
+  const isWalletEmbeddedOrUserManaged = selectedWallet?.user_managed || selectedWallet?.embedded;
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     const target = event.target as Node;
@@ -211,14 +212,14 @@ export const WalletProvidersNew = () => {
     const { name, homepage, sep_10_client_domain, deep_link_schema, assetIds } = formFields;
     const hasErrors = Object.keys(formFieldErrors).length > 0;
 
-    return (
-      name &&
-      homepage &&
-      sep_10_client_domain &&
-      deep_link_schema &&
-      assetIds.length > 0 &&
-      !hasErrors
-    );
+    return isWalletEmbeddedOrUserManaged
+      ? name && assetIds.length > 0 && !hasErrors
+      : name &&
+          homepage &&
+          sep_10_client_domain &&
+          deep_link_schema &&
+          assetIds.length > 0 &&
+          !hasErrors;
   };
 
   const isValidUrl = (url: string) => {
@@ -260,20 +261,23 @@ export const WalletProvidersNew = () => {
   const validateField = (fieldId: FormField, value: string) => {
     let errorMsg = "";
 
+    // homepage, sep_10_client_domain and deep_link_schema are required only for
+    // non-embedded and non-user-managed wallets
+
     switch (fieldId) {
       case "name":
         errorMsg = !value ? "Name is required" : "";
         break;
       case "homepage":
         if (!value) {
-          errorMsg = "Homepage is required";
+          errorMsg = isWalletEmbeddedOrUserManaged ? "" : "Homepage is required";
         } else {
           errorMsg = isValidUrl(value) ? "" : "Please enter a valid URL";
         }
         break;
       case "sep_10_client_domain":
         if (!value) {
-          errorMsg = "SEP10 client domain is required";
+          errorMsg = isWalletEmbeddedOrUserManaged ? "" : "SEP10 client domain is required";
         } else {
           errorMsg = isValidDomain(value)
             ? ""
@@ -282,7 +286,7 @@ export const WalletProvidersNew = () => {
         break;
       case "deep_link_schema":
         if (!value) {
-          errorMsg = "Deep link schema is required";
+          errorMsg = isWalletEmbeddedOrUserManaged ? "" : "Deep link schema is required";
         } else {
           errorMsg = isValidDeepLink(value) ? "" : "Please enter a valid deep link schema";
         }

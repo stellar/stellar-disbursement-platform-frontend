@@ -575,6 +575,7 @@ export type ApiWallet = {
   created_at: string;
   updated_at: string;
   user_managed?: boolean;
+  embedded?: boolean;
   sep_10_client_domain?: string;
 };
 
