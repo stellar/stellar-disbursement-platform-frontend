@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import Recaptcha from "react-google-recaptcha";
 
-import { RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "@/constants/envVariables";
-
-import { getCaptchaConfig, CaptchaConfig } from "@/api/getCaptchaConfig";
+import { getAppConfig, AppConfig } from "@/api/getAppConfig";
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { loadRecaptchaV3Script, executeRecaptchaV3 } from "@/helpers/recaptchaV3";
@@ -12,7 +10,7 @@ import { loadRecaptchaV3Script, executeRecaptchaV3 } from "@/helpers/recaptchaV3
 export const useCaptcha = (recaptchaRef: React.RefObject<Recaptcha | null>) => {
   const lastFetchedOrgName = useRef<string | null>(null);
 
-  const [captchaConfig, setCaptchaConfig] = useState<CaptchaConfig | null>(null);
+  const [captchaConfig, setCaptchaConfig] = useState<AppConfig | null>(null);
   const [captchaConfigLoading, setCaptchaConfigLoading] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
@@ -31,7 +29,7 @@ export const useCaptcha = (recaptchaRef: React.RefObject<Recaptcha | null>) => {
     setCaptchaConfigLoading(true);
 
     try {
-      const config = await getCaptchaConfig(orgName);
+      const config = await getAppConfig();
       lastFetchedOrgName.current = orgName;
       setCaptchaConfig(config);
     } catch {
@@ -43,18 +41,19 @@ export const useCaptcha = (recaptchaRef: React.RefObject<Recaptcha | null>) => {
   }, []);
 
   useEffect(() => {
-    const orgName = SINGLE_TENANT_MODE ? "" : getSdpTenantName();
-    fetchCaptchaConfig(orgName);
+    fetchCaptchaConfig(getSdpTenantName());
   }, [fetchCaptchaConfig]);
+
+  const siteKey = captchaConfig?.captcha_site_key ?? "";
 
   // Load v3 script when needed
   useEffect(() => {
-    if (isV3) {
-      loadRecaptchaV3Script(RECAPTCHA_SITE_KEY).catch((err) => {
+    if (isV3 && siteKey) {
+      loadRecaptchaV3Script(siteKey).catch((err) => {
         console.error("Failed to load reCAPTCHA v3:", err);
       });
     }
-  }, [isV3]);
+  }, [isV3, siteKey]);
 
   const onRecaptchaV2Change = (token: string | null) => {
     if (token) {
@@ -71,7 +70,7 @@ export const useCaptcha = (recaptchaRef: React.RefObject<Recaptcha | null>) => {
   };
 
   const onOrgNameBlur = (orgName: string) => {
-    if (!SINGLE_TENANT_MODE && orgName) {
+    if (orgName) {
       fetchCaptchaConfig(orgName);
     }
   };
@@ -83,7 +82,7 @@ export const useCaptcha = (recaptchaRef: React.RefObject<Recaptcha | null>) => {
     }
 
     if (isV3) {
-      return executeRecaptchaV3(RECAPTCHA_SITE_KEY, action);
+      return executeRecaptchaV3(siteKey, action);
     }
 
     return recaptchaToken;
@@ -105,7 +104,7 @@ export const useCaptcha = (recaptchaRef: React.RefObject<Recaptcha | null>) => {
     isPending,
     captchaConfigLoading,
     recaptchaToken,
-    siteKey: RECAPTCHA_SITE_KEY,
+    siteKey,
     onRecaptchaV2Change,
     onOrgNameChange,
     onOrgNameBlur,
