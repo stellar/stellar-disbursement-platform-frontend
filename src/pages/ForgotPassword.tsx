@@ -1,14 +1,21 @@
 import { useEffect, useRef, useState } from "react";
+
 import Recaptcha from "react-google-recaptcha";
-import { Heading, Input, Button, Notification, Link } from "@stellar/design-system";
 import { useNavigate } from "react-router-dom";
 
-import { useForgotPasswordLink } from "@/apiQueries/useForgotPasswordLink";
-import { ORG_NAME_INFO_TEXT } from "@/constants/settings";
-import { RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "@/constants/envVariables";
+import { Heading, Input, Button, Notification, Link } from "@stellar/design-system";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
+
+import { SINGLE_TENANT_MODE } from "@/constants/envVariables";
+import { ORG_NAME_INFO_TEXT } from "@/constants/settings";
+
+import { useForgotPasswordLink } from "@/apiQueries/useForgotPasswordLink";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
+import { useCaptcha } from "@/hooks/useCaptcha";
 
 export const ForgotPassword = () => {
   const {
@@ -22,34 +29,44 @@ export const ForgotPassword = () => {
 
   const navigate = useNavigate();
   const recaptchaRef = useRef<Recaptcha>(null);
+  const captcha = useCaptcha(recaptchaRef);
 
   const [organizationName, setOrganizationName] = useState(getSdpTenantName());
   const [email, setEmail] = useState("");
-  const [recaptchaToken, setRecaptchaToken] = useState("");
 
-  const handleForgotPassword = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleForgotPassword = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    let recaptchaToken = "";
+    try {
+      recaptchaToken = await captcha.getToken("forgot_password");
+    } catch (err) {
+      console.error("reCAPTCHA failed:", err);
+      return;
+    }
+
     sendLink({ organizationName, email, recaptchaToken });
   };
 
-  const onRecaptchaSubmit = (token: string | null) => {
-    if (token) {
-      setRecaptchaToken(token);
+  useEffect(() => {
+    if (isSuccess || isError) {
+      captcha.resetCaptcha();
+      if (isSuccess) {
+        setEmail("");
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError, isSuccess]);
+
+  const handleOrgNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setOrganizationName(newValue);
+    captcha.onOrgNameChange(newValue);
   };
 
-  useEffect(() => {
-    if (isSuccess) {
-      setEmail("");
-      setRecaptchaToken("");
-      recaptchaRef.current?.reset();
-    }
-
-    if (isError) {
-      setRecaptchaToken("");
-      recaptchaRef.current?.reset();
-    }
-  }, [isError, isSuccess]);
+  const handleOrgNameBlur = () => {
+    captcha.onOrgNameBlur(organizationName);
+  };
 
   const goToSignIn = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
@@ -82,7 +99,8 @@ export const ForgotPassword = () => {
               id="fp-organization-name"
               name="fp-organization-name"
               label={<InfoTooltip infoText={ORG_NAME_INFO_TEXT}>Organization name</InfoTooltip>}
-              onChange={(e) => setOrganizationName(e.target.value)}
+              onChange={handleOrgNameChange}
+              onBlur={handleOrgNameBlur}
               value={organizationName}
               type="text"
             />
@@ -96,20 +114,21 @@ export const ForgotPassword = () => {
             value={email}
             type="email"
           />
-          <Recaptcha
-            ref={recaptchaRef}
-            size="normal"
-            sitekey={RECAPTCHA_SITE_KEY}
-            onChange={onRecaptchaSubmit}
-          />
+          {captcha.isV2 && (
+            <Recaptcha
+              ref={recaptchaRef}
+              size="normal"
+              sitekey={captcha.siteKey}
+              onChange={captcha.onRecaptchaV2Change}
+            />
+          )}
 
           <Button
             variant="primary"
             size="md"
             type="submit"
-            disabled={!organizationName || !email || !recaptchaToken}
+            disabled={!organizationName || !email || captcha.isPending}
             isLoading={isPending}
-            data-callback="onRecaptchaSubmit"
           >
             Submit
           </Button>
