@@ -20,7 +20,6 @@ import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { useCaptcha } from "@/hooks/useCaptcha";
 import { useRedux } from "@/hooks/useRedux";
 
-
 import { AppDispatch, resetStoreAction } from "@/store";
 
 export const MFAuth = () => {
@@ -183,12 +182,7 @@ export const MFAuth = () => {
                 variant="primary"
                 size="md"
                 type="submit"
-                disabled={
-                  !organizationName ||
-                  !mfaCode ||
-                  captcha.captchaConfigLoading ||
-                  (captcha.isV2 && !captcha.recaptchaToken)
-                }
+                disabled={!organizationName || !mfaCode || captcha.isPending}
                 isLoading={userAccount.status === "PENDING"}
               >
                 Submit

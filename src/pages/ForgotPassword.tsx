@@ -127,12 +127,7 @@ export const ForgotPassword = () => {
             variant="primary"
             size="md"
             type="submit"
-            disabled={
-              !organizationName ||
-              !email ||
-              captcha.captchaConfigLoading ||
-              (captcha.isV2 && !captcha.recaptchaToken)
-            }
+            disabled={!organizationName || !email || captcha.isPending}
             isLoading={isPending}
           >
             Submit

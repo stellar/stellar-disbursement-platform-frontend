@@ -96,10 +96,13 @@ export const useCaptcha = (recaptchaRef: React.RefObject<Recaptcha | null>) => {
     setRecaptchaToken("");
   };
 
+  const isPending = captchaConfigLoading || (isV2 && !recaptchaToken);
+
   return {
     isV2,
     isV3,
     isCaptchaDisabled,
+    isPending,
     captchaConfigLoading,
     recaptchaToken,
     siteKey: RECAPTCHA_SITE_KEY,
