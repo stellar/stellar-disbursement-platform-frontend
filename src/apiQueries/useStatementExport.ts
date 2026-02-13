@@ -65,7 +65,7 @@ export const useStatementExport = () => {
         if (params.baseUrl) {
           searchParams.set("base_url", getDomainFromUrl(params.baseUrl));
         }
-        const url = `${API_URL}/statements/export?${searchParams.toString()}`;
+        const url = `${API_URL}/reports/statement?${searchParams.toString()}`;
 
         const fetchResult = fetchApi(
           url,

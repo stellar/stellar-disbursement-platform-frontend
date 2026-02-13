@@ -72,7 +72,7 @@ export const useTransactionNoticeExport = () => {
         }
         const queryString = searchParams.toString();
         const queryPart = queryString ? `?${queryString}` : "";
-        const url = `${API_URL}/payments/${params.paymentId}/export${queryPart}`;
+        const url = `${API_URL}/reports/payment/${params.paymentId}${queryPart}`;
 
         const fetchResult = fetchApi(
           url,
