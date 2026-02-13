@@ -18,6 +18,7 @@ declare global {
       SINGLE_TENANT_MODE: boolean;
 
       USE_SSO?: boolean;
+      ENABLE_REPORTS_FEATURE?: boolean;
       OIDC_AUTHORITY?: string;
       OIDC_CLIENT_ID?: string;
       OIDC_REDIRECT_URI?: string;
@@ -52,6 +53,9 @@ const generateEnvConfig = async () => {
       process?.env?.REACT_APP_SINGLE_TENANT_MODE || window._env_.SINGLE_TENANT_MODE,
     ),
     USE_SSO: Boolean(process?.env?.REACT_APP_USE_SSO || window?._env_?.USE_SSO),
+    ENABLE_REPORTS_FEATURE: Boolean(
+      process?.env?.REACT_APP_ENABLE_REPORTS_FEATURE || window?._env_?.ENABLE_REPORTS_FEATURE,
+    ),
     OIDC_AUTHORITY: process?.env?.REACT_APP_OIDC_AUTHORITY || window?._env_?.OIDC_AUTHORITY,
     OIDC_CLIENT_ID: process?.env?.REACT_APP_OIDC_CLIENT_ID || window?._env_?.OIDC_CLIENT_ID,
     OIDC_REDIRECT_URI:
@@ -71,6 +75,7 @@ export const {
   RECAPTCHA_SITE_KEY,
   SINGLE_TENANT_MODE,
   USE_SSO,
+  ENABLE_REPORTS_FEATURE,
   OIDC_AUTHORITY,
   OIDC_CLIENT_ID,
   OIDC_REDIRECT_URI,

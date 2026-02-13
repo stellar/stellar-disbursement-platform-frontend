@@ -77,6 +77,10 @@ Set the value to true to avoid fetching the file if the Window ENV is not used.
 > [!NOTE]
 > Set `REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN=true` to skip prefilling the hostname from the domain.
 
+<!-- prettier-ignore -->
+> [!NOTE]
+> Set `REACT_APP_ENABLE_REPORTS_FEATURE=true` to enable the Reports feature (menu item and `/reports` route) in the UI.
+
 For example:
 
 ```
@@ -86,6 +90,7 @@ REACT_APP_API_URL=http://localhost:8000
 REACT_APP_STELLAR_EXPERT_URL=https://stellar.expert/explorer/testnet
 REACT_APP_HORIZON_URL=https://horizon-testnet.stellar.org
 REACT_APP_RECAPTCHA_SITE_KEY=6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn
+REACT_APP_ENABLE_REPORTS_FEATURE=false
 ```
 
 ## Favicon

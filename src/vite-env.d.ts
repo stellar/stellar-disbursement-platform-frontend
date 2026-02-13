@@ -15,6 +15,7 @@ interface ImportMetaEnv {
   readonly REACT_APP_OIDC_REDIRECT_URI: string;
   readonly REACT_APP_OIDC_SCOPE: string;
   readonly REACT_APP_OIDC_USERNAME_MAPPING: string;
+  readonly REACT_APP_ENABLE_REPORTS_FEATURE: string;
 }
 
 interface ImportMeta {

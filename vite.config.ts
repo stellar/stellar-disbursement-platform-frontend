@@ -67,7 +67,11 @@ export default defineConfig(({ mode }) => {
         (acc, key) => {
           if (key.startsWith("REACT_APP_")) {
             // Handle boolean values
-            if (key.includes("SINGLE_TENANT_MODE") || key.includes("USE_SSO")) {
+            if (
+              key.includes("SINGLE_TENANT_MODE") ||
+              key.includes("USE_SSO") ||
+              key.includes("ENABLE_REPORTS_FEATURE")
+            ) {
               acc[`process.env.${key}`] = JSON.stringify(env[key]?.toLowerCase() === "true");
             } else {
               acc[`process.env.${key}`] = JSON.stringify(env[key] || "");
