@@ -607,7 +607,10 @@ export const WalletProvidersNew = () => {
               variant="error"
               type="button"
               icon={<Icon.Trash01 />}
-              onClick={() => setIsDeleteModalVisible(true)}
+              onClick={() => {
+                deleteWalletReset();
+                setIsDeleteModalVisible(true);
+              }}
               disabled={!isEditMode}
             >
               Delete wallet
@@ -669,7 +672,7 @@ export const WalletProvidersNew = () => {
 
       {/* Confirm delete modal */}
       <Modal visible={isDeleteModalVisible} onClose={() => setIsDeleteModalVisible(false)}>
-        <Modal.Heading>Are you sure you want to delete wallet?</Modal.Heading>
+        <Modal.Heading>Are you sure you want to delete this wallet?</Modal.Heading>
         <Modal.Body>
           <p>Once the wallet is deleted, you'll need to add it again</p>
           {renderModalWalletInfo("delete")}
