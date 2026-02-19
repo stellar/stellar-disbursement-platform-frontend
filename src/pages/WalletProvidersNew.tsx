@@ -27,6 +27,7 @@ import { Routes } from "@/constants/settings";
 import { useAllAssets } from "@/apiQueries/useAllAssets";
 import { useWallets } from "@/apiQueries/useWallets";
 import { useWalletsAdd } from "@/apiQueries/useWalletsAdd";
+import { useWalletsDelete } from "@/apiQueries/useWalletsDelete";
 import { useWalletsUpdate } from "@/apiQueries/useWalletsUpdate";
 
 import EurocLogoSrc from "@/assets/logo-euroc.svg";
@@ -69,6 +70,8 @@ export const WalletProvidersNew = () => {
   const [isAssetsDropdownVisible, setIsAssetsDropdownVisible] = useState(false);
   const [currentWalletValues, setCurrentWalletValues] = useState<FormFields | null>(null);
 
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
   const assetsInputRef = useRef<HTMLDivElement>(null);
   const assetsDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -93,6 +96,15 @@ export const WalletProvidersNew = () => {
     isSuccess: isWalletsSuccess,
     error: walletsError,
   } = useWallets({ walletId });
+
+  const {
+    isSuccess: isDeleteWalletSuccess,
+    isError: isDeleteWalletError,
+    isPending: isDeleteWalletPending,
+    error: deleteWalletError,
+    mutateAsync: deleteWallet,
+    reset: deleteWalletReset,
+  } = useWalletsDelete();
 
   const isEditMode = Boolean(walletId);
   const selectedWallet = isEditMode ? wallets?.find((w) => w.id === walletId) : undefined;
@@ -137,6 +149,21 @@ export const WalletProvidersNew = () => {
       setCurrentWalletValues(newValues);
     }
   }, [selectedWallet]);
+
+  // Delete success or error
+  useEffect(() => {
+    // Success: close the modal and navigate back to wallet providers page
+    if (isDeleteWalletSuccess) {
+      handleDone();
+    }
+
+    // Failure: close the modal and show the error message on the same page
+    if (isDeleteWalletError) {
+      setIsDeleteModalVisible(false);
+    }
+    // Excluding handleDone
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDeleteWalletSuccess, isDeleteWalletError]);
 
   const navigate = useNavigate();
 
@@ -199,13 +226,21 @@ export const WalletProvidersNew = () => {
   const handleCancel = () => {
     addWalletReset();
     updateWalletReset();
+    deleteWalletReset();
     navigate(Routes.WALLET_PROVIDERS);
   };
 
   const handleDone = () => {
     addWalletReset();
     updateWalletReset();
+    deleteWalletReset();
     navigate(Routes.WALLET_PROVIDERS);
+  };
+
+  const handleDelete = () => {
+    if (walletId) {
+      deleteWallet({ walletId });
+    }
   };
 
   const isSubmitEnabled = () => {
@@ -336,6 +371,30 @@ export const WalletProvidersNew = () => {
 
   const modalData = isEditMode ? updateWalletData : addWalletData;
 
+  const renderModalWalletInfo = (mode: "view" | "delete") => {
+    const data = mode === "delete" ? currentWalletValues : modalData;
+    const assets =
+      mode === "delete"
+        ? (allAssets?.filter((a) => currentWalletValues?.assetIds.includes(a.id)) ?? [])
+        : modalData?.assets;
+
+    return (
+      <Card>
+        <Box gap="md">
+          <ResponseItem label="Wallet provider" value={data?.name || ""} />
+          <ResponseItem label="Homepage" value={data?.homepage || ""} />
+          <ResponseItem label="SEP10 Client Domain" value={data?.sep_10_client_domain || ""} />
+          <ResponseItem label="Deep Link Schema" value={data?.deep_link_schema || ""} />
+          <ResponseItem
+            label="Supported Assets"
+            value={assets?.map((a) => a.code).join(", ") || ""}
+          />
+          <ResponseItem label="Enable Wallet by default" value={data?.enabled ? "Yes" : "No"} />
+        </Box>
+      </Card>
+    );
+  };
+
   return (
     <>
       <Breadcrumbs
@@ -386,6 +445,12 @@ export const WalletProvidersNew = () => {
             {walletsError ? (
               <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras appError={walletsError} />
+              </Notification>
+            ) : null}
+
+            {deleteWalletError ? (
+              <Notification variant="error" title="Error" isFilled={true}>
+                <ErrorWithExtras appError={deleteWalletError} />
               </Notification>
             ) : null}
           </>
@@ -536,37 +601,53 @@ export const WalletProvidersNew = () => {
             </Box>
           </Card>
 
-          <Box gap="lg" direction="row" justify="end">
+          <Box gap="lg" direction="row" align="center" justify="space-between" wrap="wrap">
             <Button
               size="md"
-              variant="tertiary"
-              type="reset"
-              disabled={isAddWalletPending || isUpdateWalletPending}
+              variant="error"
+              type="button"
+              icon={<Icon.Trash01 />}
+              onClick={() => {
+                deleteWalletReset();
+                setIsDeleteModalVisible(true);
+              }}
+              disabled={!isEditMode}
             >
-              Cancel
+              Delete wallet
             </Button>
 
-            {isEditMode ? (
+            <Box gap="lg" direction="row" justify="end" wrap="wrap">
               <Button
                 size="md"
-                variant="primary"
-                disabled={areInputsTheSame() || !isSubmitEnabled()}
-                type="submit"
-                isLoading={isUpdateWalletPending}
+                variant="tertiary"
+                type="reset"
+                disabled={isAddWalletPending || isUpdateWalletPending}
               >
-                Update
+                Cancel
               </Button>
-            ) : (
-              <Button
-                size="md"
-                variant="primary"
-                disabled={!isSubmitEnabled()}
-                type="submit"
-                isLoading={isAddWalletPending}
-              >
-                Add a new wallet
-              </Button>
-            )}
+
+              {isEditMode ? (
+                <Button
+                  size="md"
+                  variant="primary"
+                  disabled={areInputsTheSame() || !isSubmitEnabled()}
+                  type="submit"
+                  isLoading={isUpdateWalletPending}
+                >
+                  Update
+                </Button>
+              ) : (
+                <Button
+                  size="md"
+                  variant="primary"
+                  disabled={!isSubmitEnabled()}
+                  type="submit"
+                  isLoading={isAddWalletPending}
+                >
+                  Add a new wallet
+                </Button>
+              )}
+            </Box>
           </Box>
         </Box>
       </form>
@@ -580,29 +661,38 @@ export const WalletProvidersNew = () => {
         </Modal.Heading>
         <Modal.Body>
           {!isEditMode ? <p>Your wallet has been successfully added to your account.</p> : null}
-          <Card>
-            <Box gap="md">
-              <ResponseItem label="Wallet provider" value={modalData?.name || ""} />
-              <ResponseItem label="Homepage" value={modalData?.homepage || ""} />
-              <ResponseItem
-                label="SEP10 Client Domain"
-                value={modalData?.sep_10_client_domain || ""}
-              />
-              <ResponseItem label="Deep Link Schema" value={modalData?.deep_link_schema || ""} />
-              <ResponseItem
-                label="Supported Assets"
-                value={modalData?.assets?.map((a) => a.code).join(", ") || ""}
-              />
-              <ResponseItem
-                label="Enable Wallet by default"
-                value={modalData?.enabled ? "Yes" : "No"}
-              />
-            </Box>
-          </Card>
+          {renderModalWalletInfo("view")}
         </Modal.Body>
         <Modal.Footer>
           <Button size="md" variant="primary" onClick={handleDone}>
             Done
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Confirm delete modal */}
+      <Modal visible={isDeleteModalVisible} onClose={() => setIsDeleteModalVisible(false)}>
+        <Modal.Heading>Are you sure you want to delete this wallet?</Modal.Heading>
+        <Modal.Body>
+          <p>Once the wallet is deleted, you'll need to add it again</p>
+          {renderModalWalletInfo("delete")}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            size="md"
+            variant="tertiary"
+            onClick={() => setIsDeleteModalVisible(false)}
+            disabled={isDeleteWalletPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="md"
+            variant="error"
+            onClick={handleDelete}
+            isLoading={isDeleteWalletPending}
+          >
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>
