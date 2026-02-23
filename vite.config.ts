@@ -1,9 +1,10 @@
-import { defineConfig, loadEnv } from "vite";
+import { resolve } from "node:path";
+
 import react from "@vitejs/plugin-react-swc";
-import { resolve } from "path";
+import { defineConfig, loadEnv } from "vite";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import svgr from "vite-plugin-svgr";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
