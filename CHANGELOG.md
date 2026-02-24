@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [Unreleased]
 
 - Wallet Providers
   - add a new wallet page [#458](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/458)
