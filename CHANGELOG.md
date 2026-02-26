@@ -2,7 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+
+## [6.2.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.2.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.1.0...6.2.0))
+
+### Added
+
+- Wallet Providers management:
+  - Add a new wallet page. [#458](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/458)
+  - Update wallet. [#468](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/468)
+  - Delete wallet. [#474](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/474)
+- Implement reCAPTCHA for admin dashboard. [#470](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/470)
+- Automate release changelog generation and release notes. [#477](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/477)
+
+### Security and Dependencies
+
+- Bump the minor-and-patch group across 1 directory with 20 updates. [#464](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/464)
+- Bump axios from 1.13.2 to 1.13.5. [#471](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/471)
+- Bump docker/build-push-action from 6.18.0 to 6.19.2 in the all-actions group. [#473](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/473)
+- Bump qs from 6.14.1 to 6.15.0. [#476](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/476)
 
 ## [6.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.0.1...6.1.0))
 
@@ -40,7 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add Wallet History for Stellar Distribution Accounts. [#385](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/385)
 
-### Fixed 
+### Fixed
 - Fix message when adding unknown trustline [#388](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/388)
 
 ### Security and Dependencies

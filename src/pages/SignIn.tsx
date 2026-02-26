@@ -1,32 +1,41 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
 import Recaptcha from "react-google-recaptcha";
-import { Heading, Input, Button, Notification, Link } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-import { AppDispatch, resetStoreAction } from "@/store";
+import { Heading, Input, Button, Notification, Link } from "@stellar/design-system";
+
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+
 import { signInAction } from "@/store/ducks/userAccount";
-import { USE_SSO, RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "@/constants/envVariables";
+
+import { USE_SSO, SINGLE_TENANT_MODE } from "@/constants/envVariables";
 import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "@/constants/settings";
-import { useRedux } from "@/hooks/useRedux";
-import { signInRedirect } from "@/helpers/singleSingOn";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageTenantName } from "@/helpers/localStorageTenantName";
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { signInRedirect } from "@/helpers/singleSingOn";
+
+import { useCaptcha } from "@/hooks/useCaptcha";
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch, resetStoreAction } from "@/store";
 
 export const SignIn = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
+  const recaptchaRef = useRef<Recaptcha>(null);
+  const captcha = useCaptcha(recaptchaRef);
+
   const [organizationName, setOrganizationName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [recaptchaToken, setRecaptchaToken] = useState("");
   const [deviceId, setDeviceId] = useState("");
   const [showPasswordResetSuccess, setShowPasswordResetSuccess] = useState(
     Boolean(location.state?.didResetPassword),
@@ -35,6 +44,7 @@ export const SignIn = () => {
   const isSessionExpired = userAccount.isSessionExpired;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOrganizationName(getSdpTenantName());
   }, []);
 
@@ -43,6 +53,7 @@ export const SignIn = () => {
     if (!storedDeviceId) {
       const newDeviceId = uuidv4();
       localStorage.setItem(LOCAL_STORAGE_DEVICE_ID, newDeviceId);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDeviceId(newDeviceId);
     } else {
       setDeviceId(storedDeviceId);
@@ -51,6 +62,7 @@ export const SignIn = () => {
 
   useEffect(() => {
     if (userAccount.isAuthenticated && userAccount.needsMFA) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowPasswordResetSuccess(false);
       navigate(
         {
@@ -73,6 +85,7 @@ export const SignIn = () => {
 
   useEffect(() => {
     if (userAccount.isAuthenticated && !userAccount.needsMFA) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowPasswordResetSuccess(false);
       navigate({
         pathname: userAccount.restoredPathname ?? Routes.HOME,
@@ -88,9 +101,17 @@ export const SignIn = () => {
     showPasswordResetSuccess,
   ]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(resetStoreAction());
+
+    let recaptchaToken = "";
+    try {
+      recaptchaToken = await captcha.getToken("login");
+    } catch (err) {
+      console.error("reCAPTCHA failed:", err);
+      return;
+    }
 
     const headers = {
       "Device-ID": deviceId,
@@ -99,13 +120,17 @@ export const SignIn = () => {
 
     dispatch(signInAction({ email, password, recaptchaToken, headers }));
     localStorageTenantName.set(organizationName);
-    recaptchaRef.current?.reset();
+    captcha.resetCaptcha();
   };
 
-  const onRecaptchaSubmit = (token: string | null) => {
-    if (token) {
-      setRecaptchaToken(token);
-    }
+  const handleOrgNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setOrganizationName(newValue);
+    captcha.onOrgNameChange(newValue);
+  };
+
+  const handleOrgNameBlur = () => {
+    captcha.onOrgNameBlur(organizationName);
   };
 
   const goToForgotPassword = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -150,7 +175,8 @@ export const SignIn = () => {
                   id="si-organization-name"
                   name="si-organization-name"
                   label={<InfoTooltip infoText={ORG_NAME_INFO_TEXT}>Organization name</InfoTooltip>}
-                  onChange={(e) => setOrganizationName(e.target.value)}
+                  onChange={handleOrgNameChange}
+                  onBlur={handleOrgNameBlur}
                   value={organizationName}
                   type="text"
                 />
@@ -171,12 +197,14 @@ export const SignIn = () => {
                 isPassword
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Recaptcha
-                ref={recaptchaRef}
-                size="normal"
-                sitekey={RECAPTCHA_SITE_KEY}
-                onChange={onRecaptchaSubmit}
-              />
+              {captcha.isV2 && (
+                <Recaptcha
+                  ref={recaptchaRef}
+                  size="normal"
+                  sitekey={captcha.siteKey}
+                  onChange={captcha.onRecaptchaV2Change}
+                />
+              )}
             </>
           )}
           {USE_SSO ? (
@@ -188,9 +216,8 @@ export const SignIn = () => {
               variant="primary"
               size="md"
               type="submit"
-              disabled={!organizationName || !email || !password || !recaptchaToken}
+              disabled={!organizationName || !email || !password || captcha.isPending}
               isLoading={userAccount.status === "PENDING"}
-              data-callback="onRecaptchaSubmit"
             >
               Sign in
             </Button>

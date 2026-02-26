@@ -2,6 +2,7 @@ import { Buffer } from "buffer";
 
 import { p256 } from "@noble/curves/p256";
 import { startAuthentication } from "@simplewebauthn/browser";
+
 import { Address, hash, xdr } from "@stellar/stellar-sdk";
 
 type SignSorobanAuthorizationParams = {

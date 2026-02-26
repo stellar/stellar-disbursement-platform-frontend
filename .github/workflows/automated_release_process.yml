@@ -48,9 +48,81 @@ jobs:
       - name: Create release/${{ inputs.version }} branch
         run: |
           git checkout -b release/${{ inputs.version }} origin/${{ github.ref_name }}
+
+      - name: Install Node.js for tooling
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot@0.0.410
+
+      - name: Bump version in package.json
+        run: |
           sed -i 's/"version": ".*"/"version": "${{ inputs.version }}"/' package.json
           git add package.json
-          git commit -m "chore: bump version to ${{ inputs.version }}"
+
+      - name: Generate CHANGELOG entry
+        env:
+          GH_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          VERSION="${{ inputs.version }}"
+          REPO="${{ github.repository }}"
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          BASE="${LAST_TAG:-$(git rev-list --max-parents=0 HEAD)}"
+
+          git log "$BASE"..HEAD --pretty=format:"%h %s" --no-merges > /tmp/commits.txt
+          awk '
+            /^## \[Unreleased\]/ { in_section=1; next }
+            /^## \[/ { if (in_section) exit }
+            in_section { print }
+          ' CHANGELOG.md > /tmp/unreleased-body.md
+
+          : > /tmp/new-entries.md
+          if [ -s /tmp/commits.txt ] && [ -n "${GH_TOKEN:-}" ]; then
+            copilot -sp "$(cat <<PROMPT
+          You are a CHANGELOG generator for ${REPO}.
+
+          Below are git commits since the last release (${BASE}):
+          $(cat /tmp/commits.txt)
+
+          The current Unreleased section of CHANGELOG.md is:
+          $(cat /tmp/unreleased-body.md)
+
+          Your job:
+          1. Identify commits NOT already covered in the Unreleased section above.
+          2. For each missing commit, categorize it: Added, Changed, Fixed, or Security and Dependencies.
+          3. Format: - Description [#PR](https://github.com/${REPO}/pull/PR)
+          4. Extract PR numbers from subjects (e.g. (#1049) -> 1049).
+          5. Skip merge commits and chore-only commits that don't add functionality.
+          6. Output ONLY the new entries grouped by category (### Added, ### Changed, etc). No header, no explanation, no code blocks.
+          7. If all commits are already covered, output nothing.
+          PROMPT
+          )" > /tmp/new-entries.md 2>/dev/null || true
+          else
+            echo "Skipping Copilot changelog gap fill (no commits or missing COPILOT_GITHUB_TOKEN)"
+          fi
+
+          python3 scripts/release/update_changelog.py \
+            --changelog CHANGELOG.md \
+            --version "$VERSION" \
+            --repo "$REPO" \
+            --base "$BASE" \
+            --new-entries-file /tmp/new-entries.md
+
+          if ! git diff --quiet CHANGELOG.md 2>/dev/null; then
+            git add CHANGELOG.md
+          fi
+
+      - name: Commit automated changes
+        run: |
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: automated release preparation for ${{ inputs.version }}"
+          else
+            echo "No changes to commit"
+          fi
           git push origin release/${{ inputs.version }}
 
       - name: Create main PR
@@ -86,13 +158,27 @@ jobs:
             --reviewer "${{ env.REVIEWER }}")
           echo "dev_pr_url=${DEV_PR_URL}" >> $GITHUB_OUTPUT
 
+      - name: Extract release notes from CHANGELOG
+        run: |
+          VERSION="${{ inputs.version }}"
+          python3 -c "
+          import re, sys
+          text = open('CHANGELOG.md').read()
+          m = re.search(r'(## \[' + re.escape('$VERSION') + r'\].*?)(?=\n## \[|\Z)', text, re.DOTALL)
+          sys.stdout.write(m.group(1) if m else '')
+          " > /tmp/release-notes.md
+
+          if [ ! -s /tmp/release-notes.md ]; then
+            echo "Initial draft for release \`$VERSION\`" > /tmp/release-notes.md
+          fi
+
       - name: Create Draft Release
         id: create_release
         run: |
-          RELEASE_URL=$(gh release create ${{ inputs.version }} \
+          RELEASE_URL=$(gh release create "${{ inputs.version }}" \
             --title "${{ inputs.version }}" \
             --draft \
-            --notes "Initial draft for release \`${{ inputs.version }}\`")
+            --notes-file /tmp/release-notes.md)
           echo "release_url=${RELEASE_URL}" >> $GITHUB_OUTPUT
 
       - name: Create Issue

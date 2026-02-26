@@ -575,6 +575,8 @@ export type ApiWallet = {
   created_at: string;
   updated_at: string;
   user_managed?: boolean;
+  embedded?: boolean;
+  sep_10_client_domain?: string;
 };
 
 export const isUserManagedWalletEnabled = (wallets: ApiWallet[] | undefined): boolean => {
@@ -1140,4 +1142,25 @@ export type Trustline = {
   issuer: string;
   balance: string;
   isNative: boolean;
+};
+
+export type ApiWalletRequest = {
+  name: string;
+  homepage?: string;
+  sep_10_client_domain: string;
+  deep_link_schema: string;
+  enabled: boolean;
+  assets: { id: string }[];
+};
+
+export type ApiAddWalletResponse = {
+  id: string;
+  name: string;
+  homepage?: string;
+  sep_10_client_domain: string;
+  deep_link_schema: string;
+  enabled: boolean;
+  assets: ApiAsset[];
+  created_at: string;
+  updated_at: string;
 };
