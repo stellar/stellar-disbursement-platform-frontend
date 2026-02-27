@@ -1,6 +1,6 @@
 {
   "name": "stellar-disbursement-platform-frontend",
-  "version": "6.2.0",
+  "version": "0.0.0-rc.6",
   "license": "Apache-2.0",
   "type": "module",
   "engines": {

@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.0.0-rc.6](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/0.0.0-rc.6) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.2.0...0.0.0-rc.6))
+
+Let me check the Unreleased section of the CHANGELOG:
+
+The Unreleased section is empty. The only commit since the last release (6.2.0) is:
+- `13111c1 Merge pull request #478 from stellar/dependabot/npm_and_yarn/rollup-4.59.0`
+
+This is a merge commit for a dependency update (rollup). According to the instructions, I should skip merge commits and chore-only commits that don't add functionality. This commit falls into that category.
+
+Therefore, there are no new entries to add to the CHANGELOG.
+
 ## [6.2.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.2.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.1.0...6.2.0))
 
 ### Added
