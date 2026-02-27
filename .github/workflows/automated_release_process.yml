@@ -70,7 +70,7 @@ jobs:
           prompt: |
             Update CHANGELOG.md for release ${{ inputs.version }} of ${{ github.repository }}.
 
-            Run `cat /tmp/commits.txt` for the git commits since the last release (${{ steps.release-meta.outputs.base }}).
+            Read /tmp/commits.txt for the git commits since the last release (${{ steps.release-meta.outputs.base }}).
             Read CHANGELOG.md.
 
             Follow the Keep a Changelog v1.1.0 specification (https://keepachangelog.com/en/1.1.0/).
@@ -102,7 +102,7 @@ jobs:
             Use the Edit tool to modify CHANGELOG.md. Do not create or modify any other files.
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          claude_args: --max-turns 10 --allowedTools Read,Edit,Bash
+          claude_args: --max-turns 10 --allowedTools Read,Edit
 
       - name: Stage CHANGELOG
         run: |
