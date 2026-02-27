@@ -4,7 +4,6 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
-  id-token: write
 
 on:
   workflow_dispatch:
