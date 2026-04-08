@@ -15,68 +15,46 @@ function statementFilename(fromDate: string, toDate: string): string {
   return `statement_${from}-${to}.pdf`;
 }
 
-async function handleStatementExportResponse(
-  response: Response,
-  params: StatementQueryParams,
-  resolve: () => void,
-  reject: (reason: unknown) => void,
-): Promise<void> {
-  try {
-    if (response.status === 401) {
-      document.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
-      resolve();
-      return;
-    }
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw normalizeApiError(err);
-    }
-    const blob = await response.blob();
-    const fallback = statementFilename(params.fromDate, params.toDate);
-    const filename = getFilenameFromContentDisposition(
-      response.headers.get("Content-Disposition"),
-      fallback,
-    );
-    saveFile({
-      file: new File([blob], filename, { type: "application/pdf" }),
-      suggestedFileName: filename,
-    });
-    resolve();
-  } catch (e) {
-    reject(e);
-  }
-}
-
 export const useStatementExport = () => {
   const mutation = useMutation<void, AppError, StatementQueryParams>({
-    mutationFn: (params: StatementQueryParams): Promise<void> =>
-      new Promise<void>((resolve, reject) => {
-        const searchParams = new URLSearchParams({
-          from_date: params.fromDate,
-          to_date: params.toDate,
-        });
-        if (params.assetCode) searchParams.set("asset_code", params.assetCode);
-        if (params.baseUrl) {
-          searchParams.set("base_url", getDomainFromUrl(params.baseUrl));
-        }
-        const url = `${API_URL}/reports/statement?${searchParams.toString()}`;
+    mutationFn: async (params: StatementQueryParams): Promise<void> => {
+      const searchParams = new URLSearchParams({
+        from_date: params.fromDate,
+        to_date: params.toDate,
+      });
+      if (params.assetCode) searchParams.set("asset_code", params.assetCode);
+      if (params.baseUrl) {
+        searchParams.set("base_url", getDomainFromUrl(params.baseUrl));
+      }
+      const url = `${API_URL}/reports/statement?${searchParams.toString()}`;
 
-        const fetchResult = fetchApi(
-          url,
-          {},
-          {
-            customCallback: (response: Response) => {
-              void handleStatementExportResponse(response, params, resolve, reject);
-            },
+      await fetchApi(
+        url,
+        {},
+        {
+          customCallback: async (response: Response) => {
+            if (response.status === 401) {
+              document.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
+              return;
+            }
+            if (!response.ok) {
+              const err = await response.json().catch(() => ({}));
+              throw normalizeApiError(err);
+            }
+            const blob = await response.blob();
+            const fallback = statementFilename(params.fromDate, params.toDate);
+            const filename = getFilenameFromContentDisposition(
+              response.headers.get("Content-Disposition"),
+              fallback,
+            );
+            saveFile({
+              file: new File([blob], filename, { type: "application/pdf" }),
+              suggestedFileName: filename,
+            });
           },
-        );
-
-        if (fetchResult instanceof Promise) {
-          fetchResult.catch((error: unknown) => {
-            reject(error);
-          });
-        }
-      }),
+        },
+      );
+    },
   });
 
   return mutation;
