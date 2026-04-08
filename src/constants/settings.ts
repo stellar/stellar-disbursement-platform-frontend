@@ -32,6 +32,7 @@ export enum Routes {
   DISTRIBUTION_ACCOUNT = "/distribution-account",
   WALLET_PROVIDERS = "/wallet-providers",
   ANALYTICS = "/analytics",
+  REPORTS = "/reports",
   PROFILE = "/profile",
   SETTINGS = "/settings",
   API_KEYS = "/api-keys",
