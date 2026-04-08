@@ -44,16 +44,6 @@ table.Table-v2 {
     &.Table-v2__row--highlighted {
       background-color: var(--sds-clr-gray-03);
     }
-
-    &[role="button"] {
-      cursor: pointer;
-
-      @media (hover: hover) {
-        &:hover {
-          background-color: var(--sds-clr-gray-02);
-        }
-      }
-    }
   }
 
   th,
