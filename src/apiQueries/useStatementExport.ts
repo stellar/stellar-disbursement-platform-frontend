@@ -4,6 +4,7 @@ import { API_URL } from "@/constants/envVariables";
 import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { fetchApi } from "@/helpers/fetchApi";
 import { getDomainFromUrl } from "@/helpers/getDomainFromUrl";
+import { getFilenameFromContentDisposition } from "@/helpers/getFilenameFromContentDisposition";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { saveFile } from "@/helpers/saveFile";
 import { AppError, StatementQueryParams } from "@/types";
@@ -12,13 +13,6 @@ function statementFilename(fromDate: string, toDate: string): string {
   const from = fromDate.replaceAll("-", "");
   const to = toDate.replaceAll("-", "");
   return `statement_${from}-${to}.pdf`;
-}
-
-function getFilenameFromContentDisposition(header: string | null, fallback: string): string {
-  if (!header) return fallback;
-  const re = /filename=(?:"([^"]+)"|([^;\s]+))/;
-  const match = re.exec(header);
-  return match ? (match[1] ?? match[2]).trim() : fallback;
 }
 
 async function handleStatementExportResponse(
