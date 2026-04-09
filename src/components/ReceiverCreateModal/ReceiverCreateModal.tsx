@@ -1,19 +1,23 @@
-import { Button, Icon, Input, Modal, Notification, Select, Text } from "@stellar/design-system";
 import { useEffect, useState } from "react";
 
+import { Button, Icon, Input, Modal, Notification, Select, Text } from "@stellar/design-system";
 
-import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
 import {
   CustomDateInput,
   CustomYearMonthInput,
 } from "@/components/CustomDateInputs/CustomDateInputs";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { ReceiverConfirmation } from "@/components/ReceiverConfirmation/ReceiverConfirmation";
+
+import { useVerificationTypes } from "@/apiQueries/useVerificationTypes";
+
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
 import { validateVerificationField } from "@/helpers/validateVerificationFields";
 import { isContractAddress, isValidWalletAddress } from "@/helpers/walletValidate";
+
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePrevious } from "@/hooks/usePrevious";
+
 import { AppError, CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
 import "./styles.scss";
@@ -85,6 +89,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
 
   useEffect(() => {
     if (previousVisible && !visible) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(INITIAL_FORM_DATA);
       setFormErrors({});
       setShowConfirmation(false);
@@ -94,6 +99,7 @@ export const ReceiverCreateModal: React.FC<ReceiverCreateModalProps> = ({
 
   useEffect(() => {
     if (!debouncedWalletAddress.trim()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormErrors((prev) => ({ ...prev, walletAddress: "" }));
       return;
     }

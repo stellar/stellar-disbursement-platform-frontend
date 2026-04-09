@@ -20,26 +20,22 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: pxToRem(8px) 0;
-    gap: pxToRem(5px);
+    padding: pxToRem(10px) 0;
+    gap: pxToRem(8px);
 
     &__label {
       font-size: pxToRem(14px);
+      line-height: pxToRem(20px);
       font-weight: var(--sds-fw-medium);
       color: var(--sds-clr-gray-09);
       display: flex;
       align-items: center;
       gap: pxToRem(5px);
-
-      svg {
-        height: pxToRem(20px);
-        width: pxToRem(20px);
-      }
     }
 
     &__value {
       font-size: pxToRem(14px);
-      font-weight: var(--sds-fw-medium);
+      font-weight: var(--sds-fw-regular);
       color: var(--sds-clr-gray-12);
       display: flex;
       justify-content: end;
@@ -47,15 +43,34 @@
     }
   }
 
+  &__icon {
+    width: pxToRem(24px);
+    height: pxToRem(24px);
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--sds-clr-gray-01);
+    border: 1px solid var(--sds-clr-gray-06);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: pxToRem(12px);
+    font-weight: var(--sds-fw-bold);
+    color: var(--sds-clr-gray-11);
+  }
+
   &__walletData {
     border-top: 1px solid var(--sds-clr-gray-04);
-    padding-top: pxToRem(4px);
+    padding-top: pxToRem(16px);
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(8px);
   }
 
   &--flexCols {
     display: flex;
-    justify-content: space-between;
-    padding: pxToRem(12px) 0 0;
+    gap: pxToRem(4px);
   }
 }
 

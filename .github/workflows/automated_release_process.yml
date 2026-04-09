@@ -48,9 +48,74 @@ jobs:
       - name: Create release/${{ inputs.version }} branch
         run: |
           git checkout -b release/${{ inputs.version }} origin/${{ github.ref_name }}
+
+      - name: Bump version in package.json
+        run: |
           sed -i 's/"version": ".*"/"version": "${{ inputs.version }}"/' package.json
           git add package.json
-          git commit -m "chore: bump version to ${{ inputs.version }}"
+
+      - name: Collect release metadata
+        id: release-meta
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          BASE="${LAST_TAG:-$(git rev-list --max-parents=0 HEAD)}"
+          echo "base=$BASE" >> $GITHUB_OUTPUT
+          git log "$BASE"..HEAD --pretty=format:"%h %s%n%b---" > /tmp/commits.txt
+
+      - name: Update CHANGELOG
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Update CHANGELOG.md for release ${{ inputs.version }} of ${{ github.repository }}.
+
+            Read /tmp/commits.txt for the git commits since the last release (${{ steps.release-meta.outputs.base }}).
+            Read CHANGELOG.md.
+
+            Follow the Keep a Changelog v1.1.0 specification (https://keepachangelog.com/en/1.1.0/).
+
+            STEP 1 — Add new entries to the Unreleased section:
+            1. Find the `## [Unreleased]` section in CHANGELOG.md.
+            2. Examine each commit in /tmp/commits.txt. ONLY consider commits that contain a PR number (e.g. (#123)). Skip all commits without a PR reference.
+            3. Skip "chore: automated release preparation" commits.
+            4. For each uncovered commit, create a changelog entry:
+               - Dependency bumps (chore(deps)) → ### Security and Dependencies
+               - CI/CD and automation changes → ### Added or ### Changed
+               - Bug fixes → ### Fixed
+               - New features → ### Added
+               - Format: `- Description. [#PR](https://github.com/${{ github.repository }}/pull/NUMBER)`
+               - Extract PR numbers from commit subjects, e.g. (#123) → 123.
+            5. CRITICAL: If a category section (e.g. ### Added) already exists under [Unreleased], append new entries to that existing section. Do NOT create duplicate ### headers.
+
+            STEP 2 — Promote to versioned release:
+            1. Collect the full merged content from under [Unreleased] (existing entries + any new ones from Step 1).
+            2. Clear the body under `## [Unreleased]` so it becomes empty.
+            3. Insert a new version section immediately after `## [Unreleased]` with a blank line between them:
+
+               ## [${{ inputs.version }}](https://github.com/${{ github.repository }}/releases/tag/${{ inputs.version }}) ([diff](https://github.com/${{ github.repository }}/compare/${{ steps.release-meta.outputs.base }}...${{ inputs.version }}))
+
+            4. Place all the collected entries under this new version header.
+
+            If the [Unreleased] section is empty AND there are no uncovered commits, use `- Release ${{ inputs.version }}` as the body.
+
+            Use the Edit tool to modify CHANGELOG.md. Do not create or modify any other files.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_args: --max-turns 10 --allowedTools Read,Edit
+
+      - name: Stage CHANGELOG
+        run: |
+          if ! git diff --quiet CHANGELOG.md 2>/dev/null; then
+            git add CHANGELOG.md
+          fi
+
+      - name: Commit automated changes
+        run: |
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: automated release preparation for ${{ inputs.version }}"
+          else
+            echo "No changes to commit"
+          fi
           git push origin release/${{ inputs.version }}
 
       - name: Create main PR
@@ -86,13 +151,27 @@ jobs:
             --reviewer "${{ env.REVIEWER }}")
           echo "dev_pr_url=${DEV_PR_URL}" >> $GITHUB_OUTPUT
 
+      - name: Extract release notes from CHANGELOG
+        run: |
+          VERSION="${{ inputs.version }}"
+          python3 -c "
+          import re, sys
+          text = open('CHANGELOG.md').read()
+          m = re.search(r'(## \[' + re.escape('$VERSION') + r'\].*?)(?=\n## \[|\Z)', text, re.DOTALL)
+          sys.stdout.write(m.group(1) if m else '')
+          " > /tmp/release-notes.md
+
+          if [ ! -s /tmp/release-notes.md ]; then
+            echo "Initial draft for release \`$VERSION\`" > /tmp/release-notes.md
+          fi
+
       - name: Create Draft Release
         id: create_release
         run: |
-          RELEASE_URL=$(gh release create ${{ inputs.version }} \
+          RELEASE_URL=$(gh release create "${{ inputs.version }}" \
             --title "${{ inputs.version }}" \
             --draft \
-            --notes "Initial draft for release \`${{ inputs.version }}\`")
+            --notes-file /tmp/release-notes.md)
           echo "release_url=${RELEASE_URL}" >> $GITHUB_OUTPUT
 
       - name: Create Issue

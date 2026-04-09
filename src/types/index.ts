@@ -35,6 +35,24 @@ export type UserAccountInitialState = {
   restoredPathname?: string;
 };
 
+export type WalletAccountInitialState = {
+  token: string;
+  contractAddress: string;
+  credentialId: string;
+  isAuthenticated: boolean;
+  isSessionExpired: boolean;
+  isTokenRefresh: boolean;
+  isRestoringSession: boolean;
+  isVerificationPending: boolean;
+  pendingAsset?: ApiAsset;
+  walletProfile?: EmbeddedWalletProfileResponse;
+  supportedAssets?: EmbeddedWalletSupportedAsset[];
+  receiverContact?: EmbeddedWalletReceiverContact;
+  profileStatus: ActionStatus | undefined;
+  status: ActionStatus | undefined;
+  errorString?: string;
+};
+
 export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
@@ -104,6 +122,7 @@ export interface Store {
   organization: OrganizationInitialState;
   profile: ProfileInitialState;
   userAccount: UserAccountInitialState;
+  walletAccount: WalletAccountInitialState;
   apiKeys: ApiKeysInitialState;
   apiKeyDetails: ApiKeyDetailsInitialState;
 }
@@ -228,6 +247,8 @@ export const VerificationFieldMap: Record<DisbursementVerificationField | string
   PIN: "PIN",
   NATIONAL_ID_NUMBER: "National ID Number",
 };
+
+export const NONE_VERIFICATION_VALUE = "None";
 
 export type DisbursementDraftAction = "save" | "submit" | "delete";
 
@@ -528,6 +549,31 @@ export type ApiAssetWithTrustline = ApiAsset & {
   balance: number;
 };
 
+export type EmbeddedWalletSupportedAsset = {
+  code: string;
+  issuer: string;
+};
+
+export type EmbeddedWalletReceiverContact = {
+  type: string;
+  value: string;
+};
+
+export type EmbeddedWalletDetails = {
+  supported_assets: EmbeddedWalletSupportedAsset[];
+  receiver_contact: EmbeddedWalletReceiverContact;
+};
+
+export type EmbeddedWalletVerificationDetails = {
+  is_pending: boolean;
+  pending_asset?: ApiAsset;
+};
+
+export type EmbeddedWalletProfileResponse = {
+  verification: EmbeddedWalletVerificationDetails;
+  wallet?: EmbeddedWalletDetails;
+};
+
 export type ApiWallet = {
   id: string;
   name: string;
@@ -538,6 +584,8 @@ export type ApiWallet = {
   created_at: string;
   updated_at: string;
   user_managed?: boolean;
+  embedded?: boolean;
+  sep_10_client_domain?: string;
 };
 
 export const isUserManagedWalletEnabled = (wallets: ApiWallet[] | undefined): boolean => {
@@ -870,12 +918,14 @@ export type ApiNewUser = {
 export type ApiStellarOperationRecord =
   | ApiStellarOperationPayment
   | ApiStellarOperationPathPaymentStrictReceive
-  | ApiStellarOperationPathPaymentStrictSend;
+  | ApiStellarOperationPathPaymentStrictSend
+  | ApiStellarOperationInvokeHostFunction;
 
 export type ApiStellarPaymentType =
   | "payment"
   | "path_payment_strict_send"
-  | "path_payment_strict_receive";
+  | "path_payment_strict_receive"
+  | "invoke_host_function";
 
 export interface ApiStellarOperationBase {
   id: number;
@@ -916,6 +966,18 @@ export interface ApiStellarOperationPathPaymentStrictReceive extends ApiStellarO
 
 export interface ApiStellarOperationPathPaymentStrictSend extends ApiStellarOperationPathPayment {
   destination_min: string;
+}
+
+export interface ApiStellarOperationInvokeHostFunction extends ApiStellarOperationBase {
+  asset_balance_changes?: {
+    asset_type: string;
+    asset_code?: string;
+    asset_issuer?: string;
+    type: string;
+    from: string;
+    to: string;
+    amount: string;
+  }[];
 }
 
 export type ApiStellarTransaction = {
@@ -1089,4 +1151,25 @@ export type Trustline = {
   issuer: string;
   balance: string;
   isNative: boolean;
+};
+
+export type ApiWalletRequest = {
+  name: string;
+  homepage?: string;
+  sep_10_client_domain: string;
+  deep_link_schema: string;
+  enabled: boolean;
+  assets: { id: string }[];
+};
+
+export type ApiAddWalletResponse = {
+  id: string;
+  name: string;
+  homepage?: string;
+  sep_10_client_domain: string;
+  deep_link_schema: string;
+  enabled: boolean;
+  assets: ApiAsset[];
+  created_at: string;
+  updated_at: string;
 };

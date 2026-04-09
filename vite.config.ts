@@ -1,4 +1,5 @@
-import { resolve } from "node:path";
+import { readFileSync, existsSync } from "fs";
+import { resolve } from "path";
 
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig, loadEnv } from "vite";
@@ -9,6 +10,18 @@ import svgr from "vite-plugin-svgr";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "REACT_APP_");
+
+  // Optional HTTPS support using mkcert certificates
+  const useHttps = process.env.VITE_USE_HTTPS === "true";
+  const certPath = resolve(__dirname, "certs/localhost.pem");
+  const keyPath = resolve(__dirname, "certs/localhost-key.pem");
+  const httpsConfig =
+    useHttps && existsSync(certPath) && existsSync(keyPath)
+      ? {
+        key: readFileSync(keyPath),
+        cert: readFileSync(certPath),
+      }
+      : undefined;
 
   return {
     plugins: [
@@ -39,7 +52,6 @@ export default defineConfig(({ mode }) => {
             plugins: [
               {
                 name: "removeViewBox",
-                active: false,
               },
             ],
           },
@@ -83,6 +95,7 @@ export default defineConfig(({ mode }) => {
       host: true,
       allowedHosts: true,
       port: 3000,
+      https: httpsConfig,
       hmr: {
         overlay: true,
         clientPort: undefined, // Use same port as dev server

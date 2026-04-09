@@ -1,28 +1,37 @@
 import { useEffect, useRef, useState } from "react";
+
 import Recaptcha from "react-google-recaptcha";
-import { Heading, Input, Button, Notification, Link, Checkbox } from "@stellar/design-system";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-import { AppDispatch, resetStoreAction } from "@/store";
-import { USE_SSO, RECAPTCHA_SITE_KEY, SINGLE_TENANT_MODE } from "@/constants/envVariables";
-import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "@/constants/settings";
-import { useRedux } from "@/hooks/useRedux";
-import { mfaAction, signInAction } from "@/store/ducks/userAccount";
-import { getSdpTenantName } from "@/helpers/getSdpTenantName";
-import { InfoTooltip } from "@/components/InfoTooltip";
+import { Heading, Input, Button, Notification, Link, Checkbox } from "@stellar/design-system";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+
+import { mfaAction, signInAction } from "@/store/ducks/userAccount";
+
+import { USE_SSO, SINGLE_TENANT_MODE } from "@/constants/envVariables";
+import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "@/constants/settings";
+
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
+import { useCaptcha } from "@/hooks/useCaptcha";
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch, resetStoreAction } from "@/store";
 
 export const MFAuth = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const recaptchaRef = useRef<Recaptcha>(null);
 
   const { userAccount } = useRedux("userAccount");
+  const recaptchaRef = useRef<Recaptcha>(null);
+  const captcha = useCaptcha(recaptchaRef);
+
   const [organizationName, setOrganizationName] = useState(getSdpTenantName());
-  const [recaptchaToken, setRecaptchaToken] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [deviceId, setDeviceId] = useState("");
@@ -34,6 +43,7 @@ export const MFAuth = () => {
     if (!storedDeviceId) {
       const newDeviceId = uuidv4();
       localStorage.setItem(LOCAL_STORAGE_DEVICE_ID, newDeviceId);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDeviceId(newDeviceId);
     } else {
       setDeviceId(storedDeviceId);
@@ -49,15 +59,17 @@ export const MFAuth = () => {
     }
   }, [location.search, navigate, userAccount.isAuthenticated, userAccount.restoredPathname]);
 
-  const onRecaptchaSubmit = (token: string | null) => {
-    if (token) {
-      setRecaptchaToken(token);
-    }
-  };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(resetStoreAction());
+
+    let recaptchaToken = "";
+    try {
+      recaptchaToken = await captcha.getToken("mfa");
+    } catch (err) {
+      console.error("reCAPTCHA failed:", err);
+      return;
+    }
 
     const headers = {
       "Device-ID": deviceId,
@@ -65,13 +77,20 @@ export const MFAuth = () => {
     };
 
     dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
-
-    recaptchaRef.current?.reset();
+    captcha.resetCaptcha();
   };
 
   const resendVerificationCode = async (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
     dispatch(resetStoreAction());
+
+    let recaptchaToken = "";
+    try {
+      recaptchaToken = await captcha.getToken("login");
+    } catch (err) {
+      console.error("reCAPTCHA failed:", err);
+      return;
+    }
 
     const headers = {
       "Device-ID": deviceId,
@@ -81,7 +100,17 @@ export const MFAuth = () => {
     if (email && password) {
       dispatch(signInAction({ email, password, recaptchaToken, headers }));
     }
-    recaptchaRef.current?.reset();
+    captcha.resetCaptcha();
+  };
+
+  const handleOrgNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setOrganizationName(newValue);
+    captcha.onOrgNameChange(newValue);
+  };
+
+  const handleOrgNameBlur = () => {
+    captcha.onOrgNameBlur(organizationName);
   };
 
   return (
@@ -102,7 +131,7 @@ export const MFAuth = () => {
           </Heading>
 
           <div className="Note">
-            Enter the 6 digit code that was sent to your email. Didn’t get anything?{" "}
+            Enter the 6 digit code that was sent to your email. Didn't get anything?{" "}
             <Link role="button" size="sm" variant="primary" onClick={resendVerificationCode}>
               Resend code
             </Link>
@@ -116,7 +145,8 @@ export const MFAuth = () => {
                   id="2fa-organization-name"
                   name="2fa-organization-name"
                   label={<InfoTooltip infoText={ORG_NAME_INFO_TEXT}>Organization name</InfoTooltip>}
-                  onChange={(e) => setOrganizationName(e.target.value)}
+                  onChange={handleOrgNameChange}
+                  onBlur={handleOrgNameBlur}
                   value={organizationName}
                   type="text"
                 />
@@ -139,20 +169,21 @@ export const MFAuth = () => {
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
 
-              <Recaptcha
-                ref={recaptchaRef}
-                size="normal"
-                sitekey={RECAPTCHA_SITE_KEY}
-                onChange={onRecaptchaSubmit}
-              />
+              {captcha.isV2 && (
+                <Recaptcha
+                  ref={recaptchaRef}
+                  size="normal"
+                  sitekey={captcha.siteKey}
+                  onChange={captcha.onRecaptchaV2Change}
+                />
+              )}
 
               <Button
                 variant="primary"
                 size="md"
                 type="submit"
-                disabled={!organizationName || !mfaCode || !recaptchaToken}
+                disabled={!organizationName || !mfaCode || captcha.isPending}
                 isLoading={userAccount.status === "PENDING"}
-                data-callback="onRecaptchaSubmit"
               >
                 Submit
               </Button>

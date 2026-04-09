@@ -38,3 +38,6 @@ process.env
 
 # generated Git info
 /src/generated/gitInfo.ts
+
+# SSL certificates (mkcert)
+/certs/

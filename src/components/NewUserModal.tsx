@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
+
 import { Button, Icon, Input, Modal, Select, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "@/components/InfoTooltip";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+
 import { USER_ROLES_ARRAY } from "@/constants/settings";
+
 import { userRoleText } from "@/helpers/userRoleText";
+
 import { usePrevious } from "@/hooks/usePrevious";
+
 import { NewUser, UserRole } from "@/types";
 
 interface NewUserModalProps {
@@ -41,15 +47,16 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
   const [formItems, setFormItems] = useState<FormItems>(initForm);
   const [formError, setFormError] = useState<string[]>([]);
 
-  const iPprevVisible = usePrevious(visible);
+  const isPrevVisible = usePrevious(visible);
 
   useEffect(() => {
     // Clear the form when modal closes
-    if (iPprevVisible && !visible) {
+    if (isPrevVisible && !visible) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormItems({});
       setFormError([]);
     }
-  }, [visible, iPprevVisible]);
+  }, [visible, isPrevVisible]);
 
   const handleClose = () => {
     onClose();

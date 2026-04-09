@@ -2,7 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+
+## [6.2.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.2.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.1.0...6.2.0))
+
+### Added
+
+- Wallet Providers management:
+  - Add a new wallet page. [#458](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/458)
+  - Update wallet. [#468](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/468)
+  - Delete wallet. [#474](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/474)
+- Implement reCAPTCHA for admin dashboard. [#470](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/470)
+- Automate release changelog generation and release notes. [#477](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/477)
+
+### Security and Dependencies
+
+- Bump the minor-and-patch group across 1 directory with 20 updates. [#464](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/464)
+- Bump axios from 1.13.2 to 1.13.5. [#471](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/471)
+- Bump docker/build-push-action from 6.18.0 to 6.19.2 in the all-actions group. [#473](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/473)
+- Bump qs from 6.14.1 to 6.15.0. [#476](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/476)
+
+## [6.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.0.1...6.1.0))
+
+### Changed
+
+- Improve Wallet History Component functionality:
+   - Filter spam/dust transactions (<0.001), show last 10 payments, add Stellar Expert link, add info tooltip, and increase asset amount decimal precision from 2 to 3 digits. [#414](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/414)
+   - Add support for contract accounts operations in the Wallet History component. [#419](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/419)
+- Hide 'Customize Invite' section for KWA disbursements. [#432](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/432)
+- Add embedded wallet provider [#449](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/449)
+
+### Security and Dependencies
+
+- Upgrade React to 19.2.3 and @stellar/design-system to 3.2.7 to address CVE-2025-55184 denial of service and source code exposure vulnerability in React Server Components [#407](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/407)
+- Bump lodash from 4.17.21 to 4.17.23 [#451](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/451)
+- Bump qs from 6.13.0 to 6.14.1 [#427](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/427)
+- Bump the minor-and-patch group across 1 directory with 9 updates [#412](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/412)
+- Bump @types/node from 24.10.2 to 25.0.2 in the major group [#410](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/410)
+- Bump docker/login-action from 3.6.0 to 3.7.0 in the all-actions group [#459](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/459)
 
 ## [6.0.1](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.0.1) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.0.0...6.0.1))
 
@@ -21,7 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add Wallet History for Stellar Distribution Accounts. [#385](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/385)
 
-### Fixed 
+### Fixed
 - Fix message when adding unknown trustline [#388](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/388)
 
 ### Security and Dependencies
