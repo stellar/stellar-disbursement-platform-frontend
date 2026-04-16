@@ -2,27 +2,34 @@ import { Icon } from "@stellar/design-system";
 
 import "./styles.scss";
 
-interface EmptyStateMessageProps {
+type MessageVariant = {
   icon?: React.ReactNode;
-  message?: string;
-  title?: string;
+  message: string;
+  title?: never;
+  description?: never;
+};
+
+type StackedVariant = {
+  icon?: React.ReactNode;
+  title: string;
   description?: string;
-}
+  message?: never;
+};
+
+type EmptyStateMessageProps = MessageVariant | StackedVariant;
 
 export const EmptyStateMessage = ({
   icon = <Icon.Key01 />,
-  message = "",
+  message,
   title,
   description,
 }: EmptyStateMessageProps) => {
-  const useStacked = Boolean(title);
-
   return (
-    <div className={`EmptyStateMessage ${useStacked ? "EmptyStateMessage--stacked" : ""}`}>
+    <div className={`EmptyStateMessage ${title ? "EmptyStateMessage--stacked" : ""}`}>
       {icon}
-      {useStacked ? (
+      {title ? (
         <>
-          {title && <span className="EmptyStateMessage__title">{title}</span>}
+          <span className="EmptyStateMessage__title">{title}</span>
           {description && <span className="EmptyStateMessage__description">{description}</span>}
         </>
       ) : (
