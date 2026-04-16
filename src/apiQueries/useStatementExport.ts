@@ -2,18 +2,20 @@ import { useMutation } from "@tanstack/react-query";
 
 import { API_URL } from "@/constants/envVariables";
 import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
+
 import { fetchApi } from "@/helpers/fetchApi";
 import { getDomainFromUrl } from "@/helpers/getDomainFromUrl";
 import { getFilenameFromContentDisposition } from "@/helpers/getFilenameFromContentDisposition";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { saveFile } from "@/helpers/saveFile";
+
 import { AppError, StatementQueryParams } from "@/types";
 
-function statementFilename(fromDate: string, toDate: string): string {
+const statementFilename = (fromDate: string, toDate: string): string => {
   const from = fromDate.replaceAll("-", "");
   const to = toDate.replaceAll("-", "");
   return `statement_${from}-${to}.pdf`;
-}
+};
 
 export const useStatementExport = () => {
   const mutation = useMutation<void, AppError, StatementQueryParams>({
