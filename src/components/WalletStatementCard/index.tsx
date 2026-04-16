@@ -1,16 +1,23 @@
-import { Button, Card, Icon, Input, Notification } from "@stellar/design-system";
 import { useState } from "react";
 
-import { useStatementExport } from "@/apiQueries/useStatementExport";
+import { format } from "date-fns";
+
+import { Button, Card, Icon, Input, Notification } from "@stellar/design-system";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
+
+import { useStatementExport } from "@/apiQueries/useStatementExport";
+
 import {
   getThisMonthDates,
   getLastMonthDates,
   getQTDDates,
   getYTDDates,
 } from "@/helpers/getStatementPeriodDates";
+
 import { useRedux } from "@/hooks/useRedux";
+
 import type { StatementPeriod } from "@/types";
 
 type StatementPeriodKey = Exclude<StatementPeriod, "custom">;
@@ -35,8 +42,10 @@ export const WalletStatementCard = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [activePeriod, setActivePeriod] = useState<StatementPeriodKey | null>(null);
+
   const { organization } = useRedux("organization");
 
+  const today = format(new Date(), "yyyy-MM-dd");
   const isValidRange = fromDate && toDate && fromDate <= toDate;
 
   const { mutateAsync: downloadStatement, isPending, error } = useStatementExport();
@@ -100,6 +109,7 @@ export const WalletStatementCard = () => {
               label="From date"
               fieldSize="sm"
               type="date"
+              max={today}
               value={fromDate}
               onChange={handleFromDateChange}
             />
@@ -110,6 +120,7 @@ export const WalletStatementCard = () => {
               label="To date"
               fieldSize="sm"
               type="date"
+              max={today}
               value={toDate}
               onChange={handleToDateChange}
             />
