@@ -1,24 +1,26 @@
+@use "../../styles/styles-utils.scss" as *;
+
 .EmptyStateMessage {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: pxToRem(8px);
   color: var(--sds-clr-gray-09);
 
   &--stacked {
     flex-direction: column;
-    gap: 8px;
+    gap: pxToRem(8px);
     text-align: center;
 
     .EmptyStateMessage__title {
-      font-weight: 600;
+      font-weight: var(--sds-fw-semi-bold);
       color: var(--sds-clr-gray-09);
     }
 
     .EmptyStateMessage__description {
-      font-weight: 400;
+      font-weight: var(--sds-fw-regular);
       color: var(--sds-clr-gray-09);
-      font-size: 0.875rem;
+      font-size: pxToRem(14px);
     }
   }
 }
