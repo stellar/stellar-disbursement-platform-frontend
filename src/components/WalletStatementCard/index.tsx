@@ -140,7 +140,7 @@ export const WalletStatementCard = () => {
             icon={<Icon.Download01 />}
             iconPosition="left"
             onClick={handleDownload}
-            disabled={!isValidRange || isPending}
+            disabled={!isValidRange}
             isLoading={isPending}
           >
             Download Statement
