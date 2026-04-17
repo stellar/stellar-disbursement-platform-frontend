@@ -7,6 +7,7 @@ import { SettingsDisableMfa } from "@/components/SettingsDisableMfa";
 import { SettingsEnableMemoTracking } from "@/components/SettingsEnableMemoTracking";
 import { SettingsEnablePaymentCancellation } from "@/components/SettingsEnablePaymentCancellation";
 import { SettingsEnableReceiverInvitationRetry } from "@/components/SettingsEnableReceiverInvitationRetry";
+import { SettingsEnableReporting } from "@/components/SettingsEnableReporting";
 import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLinking";
 import { SettingsTeamMembers } from "@/components/SettingsTeamMembers";
 
@@ -35,6 +36,9 @@ export const Settings = () => {
 
         {/* Enable memo tracking */}
         <SettingsEnableMemoTracking />
+
+        {/* Enable Reports */}
+        <SettingsEnableReporting />
 
         {/* Enable automatic ready payments cancellation */}
         <SettingsEnablePaymentCancellation />

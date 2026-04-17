@@ -1,15 +1,22 @@
-import { Icon } from "@stellar/design-system";
 import React from "react";
+
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 
+import { Icon } from "@stellar/design-system";
+
 import { PageHeader } from "@/components/PageHeader";
-import { USE_SSO, isReportsFeatureEnabledForOrganization } from "@/constants/envVariables";
+
+import { USE_SSO } from "@/constants/envVariables";
 import { Routes } from "@/constants/settings";
+
 import { getAppVersion } from "@/helpers/getAppVersion";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { singleUserStore } from "@/helpers/singleSingOn";
+
+import { useAppConfig } from "@/hooks/useAppConfig";
 import { useRedux } from "@/hooks/useRedux";
+
 import { AppDispatch, resetStoreAction } from "@/store";
 
 import "./styles.scss";
@@ -24,7 +31,7 @@ interface InnerPageProps {
 export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) => {
   const { userAccount, organization, profile } = useRedux("userAccount", "organization", "profile");
   const dispatch: AppDispatch = useDispatch();
-  const reportsEnabled = isReportsFeatureEnabledForOrganization(organization.data?.name ?? "");
+  const { isReportingEnabled } = useAppConfig();
 
   const handleSignOut = () => {
     if (USE_SSO) {
@@ -85,7 +92,7 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       route: Routes.ANALYTICS,
       icon: <Icon.LineChartUp01 />,
     },
-    ...(reportsEnabled
+    ...(isReportingEnabled
       ? [
           {
             id: "nav-reports",

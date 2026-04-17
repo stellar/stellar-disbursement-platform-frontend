@@ -95,6 +95,7 @@ export type OrganizationInitialState = {
     paymentCancellationPeriodDays: number;
     mfa_disabled?: boolean;
     captcha_disabled?: boolean;
+    reporting_enabled?: boolean;
     distributionAccount?: {
       circleWalletId?: string;
       status: string;
@@ -878,6 +879,7 @@ export type ApiOrgInfo = {
   payment_cancellation_period_days: string;
   mfa_disabled?: boolean;
   captcha_disabled?: boolean;
+  reporting_enabled?: boolean;
   distribution_account?: {
     address?: string;
     circle_wallet_id?: string;

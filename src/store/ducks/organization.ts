@@ -3,10 +3,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getOrgInfo } from "@/api/getOrgInfo";
 import { getOrgLogo } from "@/api/getOrgLogo";
 import { patchOrgInfo } from "@/api/patchOrgInfo";
+
 import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { refreshSessionToken } from "@/helpers/refreshSessionToken";
-import { RootState } from "@/store";
+
 import {
   ApiError,
   ApiOrgInfo,
@@ -14,6 +15,8 @@ import {
   OrganizationInitialState,
   RejectMessage,
 } from "@/types";
+
+import { RootState } from "@/store";
 
 export const getOrgInfoAction = createAsyncThunk<
   ApiOrgInfo,
@@ -129,6 +132,7 @@ const initialState: OrganizationInitialState = {
     baseUrl: "",
     mfa_disabled: undefined,
     captcha_disabled: undefined,
+    reporting_enabled: undefined,
   },
   updateMessage: undefined,
   status: undefined,
@@ -173,6 +177,7 @@ const organizationSlice = createSlice({
         paymentCancellationPeriodDays: Number(action.payload.payment_cancellation_period_days || 0),
         mfa_disabled: action.payload.mfa_disabled,
         captcha_disabled: action.payload.captcha_disabled,
+        reporting_enabled: action.payload.reporting_enabled,
         distributionAccount: {
           circleWalletId: action.payload.distribution_account?.circle_wallet_id || "",
           status: action.payload.distribution_account?.status || "",

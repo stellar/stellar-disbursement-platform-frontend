@@ -1,6 +1,7 @@
+import { useEffect } from "react";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useEffect } from "react";
 import { Provider } from "react-redux";
 import { BrowserRouter, Outlet, Routes as RouterRoutes, Route } from "react-router-dom";
 
@@ -14,10 +15,7 @@ import { UserSession } from "@/components/UserSession";
 import { WalletPrivateRoute } from "@/components/WalletPrivateRoute";
 import { WalletSession } from "@/components/WalletSession";
 import { WalletSessionRefresher } from "@/components/WalletSessionRefresher";
-import { isReportsFeatureEnabledForOrganization } from "@/constants/envVariables";
-import { Routes } from "@/constants/settings";
-import GitInfo from "@/generated/gitInfo";
-import { useRedux } from "@/hooks/useRedux";
+
 import { Analytics } from "@/pages/Analytics";
 import { ApiKeys } from "@/pages/ApiKeys";
 import { DisbursementDetails } from "@/pages/DisbursementDetails";
@@ -48,15 +46,20 @@ import { SignIn } from "@/pages/SignIn";
 import { Unauthorized } from "@/pages/Unauthorized";
 import { WalletProviders } from "@/pages/WalletProviders";
 import { WalletProvidersNew } from "@/pages/WalletProvidersNew";
+
+import { Routes } from "@/constants/settings";
+
+import { useAppConfig } from "@/hooks/useAppConfig";
+
+import GitInfo from "@/generated/gitInfo";
 import { store } from "@/store";
 
 import "@/styles/styles.scss";
 
-/** Renders Reports when the current org is in the allowlist; otherwise 404 (per plan). */
+/** Renders Reports when reporting is enabled for the tenant; otherwise 404. */
 const ReportsPageGate = () => {
-  const { organization } = useRedux("organization");
-  const enabled = isReportsFeatureEnabledForOrganization(organization.data?.name ?? "");
-  if (!enabled) return <NotFound />;
+  const { isReportingEnabled } = useAppConfig();
+  if (!isReportingEnabled) return <NotFound />;
   return (
     <PrivateRoute>
       <InnerPage isNarrow>
