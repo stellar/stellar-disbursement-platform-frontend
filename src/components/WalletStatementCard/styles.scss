@@ -1,24 +1,26 @@
+@use "../../styles/styles-utils.scss" as *;
+
 .WalletStatementCard {
   &__period {
-    margin-bottom: 1rem;
+    margin-bottom: pxToRem(16px);
 
     .Label {
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: pxToRem(8px);
     }
   }
 
   &__periodButtons {
     display: flex;
-    gap: 0.5rem;
+    gap: pxToRem(8px);
     flex-wrap: wrap;
   }
 
   &__dateRange {
     display: flex;
-    gap: 1rem;
+    gap: pxToRem(16px);
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: pxToRem(16px);
   }
 
   &__dateInput {
