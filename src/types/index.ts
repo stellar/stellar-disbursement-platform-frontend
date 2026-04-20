@@ -95,6 +95,7 @@ export type OrganizationInitialState = {
     paymentCancellationPeriodDays: number;
     mfa_disabled?: boolean;
     captcha_disabled?: boolean;
+    reporting_enabled?: boolean;
     distributionAccount?: {
       circleWalletId?: string;
       status: string;
@@ -174,6 +175,15 @@ export type SortByDisbursements = "name" | "created_at";
 export type SortByReceivers = "created_at";
 
 export type SortByPayments = "created_at";
+
+export type StatementPeriod = "this_month" | "last_month" | "qtd" | "ytd" | "custom";
+
+export type StatementQueryParams = {
+  fromDate: string;
+  toDate: string;
+  assetCode?: string;
+  baseUrl?: string;
+};
 
 export type AccountBalanceItem = {
   balance: string;
@@ -869,6 +879,7 @@ export type ApiOrgInfo = {
   payment_cancellation_period_days: string;
   mfa_disabled?: boolean;
   captcha_disabled?: boolean;
+  reporting_enabled?: boolean;
   distribution_account?: {
     address?: string;
     circle_wallet_id?: string;

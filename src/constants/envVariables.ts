@@ -17,7 +17,6 @@ declare global {
       RPC_ENABLED: boolean;
       RECAPTCHA_SITE_KEY: string;
       SINGLE_TENANT_MODE: boolean;
-
       USE_SSO?: boolean;
       OIDC_AUTHORITY?: string;
       OIDC_CLIENT_ID?: string;

@@ -38,6 +38,7 @@ import { ReceiverDetails } from "@/pages/ReceiverDetails";
 import { ReceiverDetailsEdit } from "@/pages/ReceiverDetailsEdit";
 import { Receivers } from "@/pages/Receivers";
 import { SigninOidc } from "@/pages/Redirect";
+import { Reports } from "@/pages/Reports";
 import { ResetPassword } from "@/pages/ResetPassword";
 import { SetNewPassword } from "@/pages/SetNewPassword";
 import { Settings } from "@/pages/Settings";
@@ -48,9 +49,25 @@ import { WalletProvidersNew } from "@/pages/WalletProvidersNew";
 
 import { Routes } from "@/constants/settings";
 
+import { useAppConfig } from "@/hooks/useAppConfig";
+
 import GitInfo from "@/generated/gitInfo";
 import { store } from "@/store";
+
 import "@/styles/styles.scss";
+
+/** Renders Reports when reporting is enabled for the tenant; otherwise 404. */
+const ReportsPageGate = () => {
+  const { isReportingEnabled } = useAppConfig();
+  if (!isReportingEnabled) return <NotFound />;
+  return (
+    <PrivateRoute>
+      <InnerPage isNarrow>
+        <Reports />
+      </InnerPage>
+    </PrivateRoute>
+  );
+};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -340,6 +357,8 @@ export const App = () => {
                 </PrivateRoute>
               }
             />
+            {/* Reports */}
+            <Route path={Routes.REPORTS} element={<ReportsPageGate />} />
             {/* Api Keys */}
             <Route
               path={Routes.API_KEYS}

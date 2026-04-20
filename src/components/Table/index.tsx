@@ -37,13 +37,12 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
     throw Error("onSort method is required for sorting");
   }
 
-  const SortIconEl = () =>
-    sortDirection ? (
-      <span className="Table-v2__header__cell__sortIcon">
-        <Icon.ChevronUp />
-        <Icon.ChevronDown />
-      </span>
-    ) : null;
+  const sortIcon = sortDirection ? (
+    <span className="Table-v2__header__cell__sortIcon">
+      <Icon.ChevronUp />
+      <Icon.ChevronDown />
+    </span>
+  ) : null;
 
   const sortButtonProps = sortDirection
     ? {
@@ -63,7 +62,7 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
     >
       {elementLeft || sortDirection ? (
         <span className="Table-v2__header__cell" {...sortButtonProps}>
-          {elementLeft ?? null} {children} <SortIconEl />
+          {elementLeft ?? null} {children} {sortIcon}
         </span>
       ) : (
         children
