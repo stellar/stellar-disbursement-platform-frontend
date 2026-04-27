@@ -28,9 +28,9 @@ export const useUpdateOrgReceiverInvitationsDisabled = () => {
     ...mutation,
     error: mutation.error as AppError,
     data: mutation.data as { message: string },
-    mutateAsync: async (isEnabled: boolean) => {
+    mutateAsync: async (isDisabled: boolean) => {
       try {
-        await mutation.mutateAsync(isEnabled);
+        await mutation.mutateAsync(isDisabled);
       } catch {
         // do nothing
       }

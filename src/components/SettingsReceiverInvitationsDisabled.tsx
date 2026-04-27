@@ -52,8 +52,8 @@ export const SettingsReceiverInvitationsDisabled = () => {
           </div>
           <div className="Note">
             Toggle this option to stop the platform from sending invitation messages (SMS or email)
-            to receivers. When disabled, you are responsible for delivering registration links to
-            receivers through your own channels.
+            to receivers. When this option is enabled, you are responsible for delivering
+            registration links to receivers through your own channels.
           </div>
         </div>
       </div>
