@@ -8,6 +8,7 @@ import { SettingsEnableMemoTracking } from "@/components/SettingsEnableMemoTrack
 import { SettingsEnablePaymentCancellation } from "@/components/SettingsEnablePaymentCancellation";
 import { SettingsEnableReceiverInvitationRetry } from "@/components/SettingsEnableReceiverInvitationRetry";
 import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLinking";
+import { SettingsReceiverInvitationsDisabled } from "@/components/SettingsReceiverInvitationsDisabled";
 import { SettingsTeamMembers } from "@/components/SettingsTeamMembers";
 
 export const Settings = () => {
@@ -38,6 +39,9 @@ export const Settings = () => {
 
         {/* Enable automatic ready payments cancellation */}
         <SettingsEnablePaymentCancellation />
+
+        {/* Disable receiver invitations */}
+        <SettingsReceiverInvitationsDisabled />
 
         {/* Enable Receiver Invitation retry */}
         <SettingsEnableReceiverInvitationRetry />
