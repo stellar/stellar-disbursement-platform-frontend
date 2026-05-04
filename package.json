@@ -22,7 +22,7 @@
     "@tanstack/react-query-devtools": "^5.94.5",
     "assert": "^2.1.0",
     "bignumber.js": "^9.3.1",
-    "brace-expansion": "4.0.1",
+    "brace-expansion": "5.0.5",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
     "date-fns": "^4.1.0",
