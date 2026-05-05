@@ -6,13 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [6.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.2.0...6.5.0))
+
 ### Added
 
 - Add Settings toggle to disable automatic receiver invitations. [#518](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/518)
 
 ### Changed
 
-- Authenticate the automated release workflow to Claude via Workload Identity Federation instead of a long-lived `CLAUDE_CODE_OAUTH_TOKEN` secret. [#526](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/526)
+- Authenticate release workflow via Anthropic Workload Identity Federation (WIF) to replace long-lived secrets with short-lived federated tokens. [#527](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/527)
+- Switch to Claude Code Agent for release automation. [#482](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/482)
+
+### Security and Dependencies
+
+- Bump brace-expansion from 4.0.1 to 5.0.5. [#508](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/508)
+- Bump vite from 7.3.1 to 7.3.2. [#512](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/512)
+- Bump lodash from 4.17.23 to 4.18.1. [#513](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/513)
+- Bump the all-actions group across 1 directory with 2 updates (docker/login-action from 4.0.0 to 4.1.0, docker/build-push-action from 7.0.0 to 7.1.0). [#514](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/514)
+- Bump postcss from 8.5.6 to 8.5.14. [#521](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/521)
+- Bump axios from 1.13.5 to 1.16.0. [#519](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/519)
+- Bump uuid from 13.0.0 to 14.0.0. [#520](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/520)
+- Bump flatted from 3.3.3 to 3.4.2. [#505](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/505)
+- Bump the minor-and-patch group across 1 directory with 14 updates. [#506](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/506)
+- Bump the all-actions group with 2 updates (docker/login-action, docker/build-push-action). [#500](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/500)
+- Bump rollup from 4.53.5 to 4.59.0. [#478](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/478)
 
 ## [6.2.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.2.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.1.0...6.2.0))
 
