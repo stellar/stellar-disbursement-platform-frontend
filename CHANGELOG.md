@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Add Settings toggle to disable automatic receiver invitations. [#518](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/518)
 
+### Changed
+
+- Authenticate the automated release workflow to Claude via Workload Identity Federation instead of a long-lived `CLAUDE_CODE_OAUTH_TOKEN` secret. [#526](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/526)
+
 ## [6.2.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.2.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.1.0...6.2.0))
 
 ### Added
