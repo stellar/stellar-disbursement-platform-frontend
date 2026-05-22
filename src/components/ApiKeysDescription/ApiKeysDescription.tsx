@@ -16,7 +16,7 @@ export const ApiKeysDescription = () => {
       </div>
       <div className="ApiKeysDescription__content">
         <Card borderRadiusSize="md" noPadding>
-          <Table>
+          <Table isScrollable={true}>
             <Table.Header>
               <Table.HeaderCell>Name</Table.HeaderCell>
               <Table.HeaderCell>Description</Table.HeaderCell>

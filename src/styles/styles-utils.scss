@@ -1,5 +1,11 @@
 @use "sass:math";
 
+// Breakpoints (aligned with @stellar/design-system)
+$sds-bp-sm: 480px;
+$sds-bp-md: 600px;
+$sds-bp-lg: 800px;
+$sds-bp-xl: 900px;
+
 // Convert px to rem
 $base-font-size: 16px;
 

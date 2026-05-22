@@ -29,6 +29,13 @@
 
   &[data-scrollable="true"] {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+
+    table.Table-v2 {
+      width: max-content;
+      min-width: 100%;
+    }
   }
 }
 

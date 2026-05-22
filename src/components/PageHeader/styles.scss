@@ -3,10 +3,14 @@
 .PageHeader {
   display: flex;
   position: relative;
-  z-index: calc(var(--z-index-tooltip) + 1);
+  z-index: calc(var(--sds-z-index-tooltip, 20) + 1);
+  min-width: 0;
 
   &__content {
     flex: 1;
+    min-width: 0;
+    position: relative;
+    z-index: 1;
   }
 
   &__inset {
@@ -17,6 +21,12 @@
     align-items: center;
     gap: pxToRem(12px);
     padding: 0 pxToRem(32px);
+    flex-wrap: wrap;
+    box-sizing: border-box;
+
+    @media (max-width: $sds-bp-md) {
+      padding: 0 pxToRem(16px);
+    }
   }
 
   &__logo {
@@ -25,6 +35,15 @@
     height: 100%;
     min-width: pxToRem(calc(242px - (28px * 2)));
     flex-shrink: 0;
+    position: relative;
+    z-index: 0;
+
+    @media (max-width: $sds-bp-md) {
+      min-width: 0;
+      flex: 1 1 auto;
+      flex-shrink: 1;
+      max-width: min(#{pxToRem(186px)}, 50vw);
+    }
 
     svg {
       display: block;
@@ -40,6 +59,7 @@
     align-items: center;
     flex: 1;
     gap: pxToRem(12px);
+    min-width: 0;
   }
 
   &--left {
@@ -52,15 +72,49 @@
 
   &--internal {
     border-bottom: 1px solid var(--sds-clr-gray-05);
+
+    > .PageHeader__inset {
+      position: relative;
+      z-index: 0;
+    }
+
+    .PageHeader__content .PageHeader__inset {
+      height: auto;
+      min-height: pxToRem(40px);
+      align-items: center;
+      row-gap: pxToRem(4px);
+    }
+
+    .PageHeader--left {
+      flex: 1 1 auto;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .PageHeader--right {
+      flex: 0 0 auto;
+      position: relative;
+      z-index: 0;
+    }
+
+    .PageHeader--left .DateTime {
+      position: relative;
+      top: pxToRem(3px);
+      min-width: 0;
+      max-width: 100%;
+      flex-shrink: 1;
+    }
   }
 }
 
-// Company brand
 .CompanyBrand {
   display: flex;
   align-items: center;
   gap: pxToRem(12px);
   height: pxToRem(32px);
+  min-width: 0;
+  max-width: 100%;
 
   &__logo {
     height: pxToRem(32px);
@@ -87,10 +141,13 @@
     font-weight: var(--sds-fw-medium);
     color: var(--sds-clr-gray-11);
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
-// Datetime
 .DateTime {
   display: flex;
   align-items: center;
@@ -99,6 +156,17 @@
   line-height: pxToRem(22px);
   font-weight: var(--sds-fw-medium);
   color: var(--sds-clr-gray-11);
+  flex-shrink: 0;
+
+  @media (max-width: $sds-bp-md) {
+    flex-wrap: wrap;
+    row-gap: pxToRem(2px);
+  }
+
+  @media (max-width: $sds-bp-sm) {
+    font-size: pxToRem(12px);
+    line-height: pxToRem(18px);
+  }
 
   &__icon {
     display: block;

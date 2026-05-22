@@ -4,6 +4,11 @@ body {
   font-family: var(--sds-ff-base);
   font-size: pxToRem(14px);
   overflow-y: hidden;
+
+  @media (max-width: $sds-bp-xl) {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 // Container
@@ -25,11 +30,14 @@ body {
 
 // Layout for Sign in, Forgot password, and alike
 .CardLayout {
-  width: pxToRem(408px);
+  width: 100%;
+  max-width: pxToRem(408px);
   margin: 0 auto auto;
   display: flex;
   flex-direction: column;
   gap: pxToRem(12px);
+  box-sizing: border-box;
+  padding: 0 pxToRem(16px);
 
   .Heading {
     color: var(--sds-clr-gray-12);
@@ -66,6 +74,11 @@ body {
     display: flex;
     flex-direction: column;
     gap: pxToRem(24px);
+
+    @media (max-width: $sds-bp-md) {
+      padding: pxToRem(24px);
+      gap: pxToRem(16px);
+    }
 
     .Link {
       align-self: center;
@@ -131,10 +144,22 @@ body {
 .FiltersWithSearch {
   &__search {
     width: pxToRem(336px);
+    max-width: 100%;
+    min-width: 0;
+
+    @media (max-width: $sds-bp-md) {
+      width: 100%;
+    }
   }
 
   &__pageLimit {
     width: pxToRem(160px);
+    max-width: 100%;
+    min-width: 0;
+
+    @media (max-width: $sds-bp-md) {
+      width: 100%;
+    }
 
     .Select select {
       height: pxToRem(30px);
@@ -156,14 +181,26 @@ body {
 
   &--home {
     grid-template-columns: 1fr 1fr 1fr;
+
+    @media (max-width: $sds-bp-lg) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &--disbursementDetails {
     grid-template-columns: 2fr 3fr;
+
+    @media (max-width: $sds-bp-lg) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &--paymentDetails {
     grid-template-columns: 1fr 1fr 1fr;
+
+    @media (max-width: $sds-bp-lg) {
+      grid-template-columns: 1fr;
+    }
   }
 
   &__card {
@@ -939,8 +976,10 @@ body {
 }
 
 #root {
-  --sds-window-width-min: 1200px;
+  --sds-window-width-min: 0;
   --sds-window-height-min: auto;
+  min-width: 0;
+  width: 100%;
 
   --sds-gap-xs: #{pxToRem(4px)};
   --sds-gap-sm: #{pxToRem(8px)};
@@ -1019,5 +1058,6 @@ body {
   .Modal__content .ModalBody {
     padding-left: pxToRem(4px);
     margin-right: pxToRem(-4px);
+    -webkit-overflow-scrolling: touch;
   }
 }

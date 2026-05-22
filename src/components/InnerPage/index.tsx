@@ -1,18 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
 import { useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+
 import { Icon } from "@stellar/design-system";
 
 import { PageHeader } from "@/components/PageHeader";
+
 import { USE_SSO } from "@/constants/envVariables";
 import { Routes } from "@/constants/settings";
-import { AppDispatch, resetStoreAction } from "@/store";
-import { useRedux } from "@/hooks/useRedux";
-import { singleUserStore } from "@/helpers/singleSingOn";
+
 import { getAppVersion } from "@/helpers/getAppVersion";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { singleUserStore } from "@/helpers/singleSingOn";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch, resetStoreAction } from "@/store";
 
 import "./styles.scss";
+
+const MOBILE_NAV_MEDIA = "(max-width: 900px)";
 
 interface InnerPageProps {
   children: React.ReactElement;
@@ -21,27 +29,38 @@ interface InnerPageProps {
   isCardLayout?: boolean;
 }
 
+type NavItemConfig = {
+  id: string;
+  label: string;
+  route: string;
+  icon: React.ReactNode;
+};
+
 export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) => {
   const { userAccount, organization, profile } = useRedux("userAccount", "organization", "profile");
   const dispatch: AppDispatch = useDispatch();
+  const location = useLocation();
+  const [isMobileNav, setIsMobileNav] = useState(false);
+  const [mobileNavOpenPath, setMobileNavOpenPath] = useState<string | null>(null);
+  const mobileNavOpen = mobileNavOpenPath === location.pathname;
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_NAV_MEDIA);
+    const onChange = () => setIsMobileNav(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   const handleSignOut = () => {
     if (USE_SSO) {
-      // reset user store (from session storage)
       singleUserStore().then();
     }
     dispatch(resetStoreAction());
     localStorageSessionToken.remove();
   };
 
-  type NavItem = {
-    id: string;
-    label: string;
-    route: string;
-    icon: React.ReactNode;
-  };
-
-  const ITEMS_TOP: NavItem[] = [
+  const ITEMS_TOP: NavItemConfig[] = [
     {
       id: "nav-home",
       label: "Home",
@@ -86,7 +105,7 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
     },
   ];
 
-  const ITEMS_BOTTOM: NavItem[] = [
+  const ITEMS_BOTTOM: NavItemConfig[] = [
     {
       id: "nav-api-keys",
       label: "API Keys",
@@ -113,8 +132,14 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       .join(" ");
   };
 
-  const NavItem = ({ item }: { item: NavItem }) => (
-    <NavLink key={item.id} to={item.route} className={navLinkStyle}>
+  const closeMobileNav = () => {
+    if (isMobileNav) {
+      setMobileNavOpenPath(null);
+    }
+  };
+
+  const SidebarNavLink = ({ item }: { item: NavItemConfig }) => (
+    <NavLink key={item.id} to={item.route} className={navLinkStyle} onClick={closeMobileNav}>
       <span className="Sidebar__navItem__icon">{item.icon}</span>
       {item.label}
     </NavLink>
@@ -131,6 +156,12 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
 
     return profile.data.email;
   };
+
+  const allNavItems = [...ITEMS_TOP, ...ITEMS_BOTTOM];
+  const activeNavLabel =
+    allNavItems.find((item) => location.pathname === item.route)?.label ?? "Menu";
+
+  const sidebarNavState = mobileNavOpen ? "open" : "closed";
 
   if (isCardLayout) {
     return (
@@ -154,20 +185,50 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
         companyName={organization.data.name}
       />
       <div className="InnerPage">
-        <div className="InnerPage__sidebar">
-          <div className="InnerPage__sidebar--top">
-            {ITEMS_TOP.map((i) => (
-              <NavItem key={i.id} item={i} />
-            ))}
-          </div>
-          <div className="InnerPage__sidebar--bottom">
-            {ITEMS_BOTTOM.map((i) => (
-              <NavItem key={i.id} item={i} />
-            ))}
+        <nav
+          className="InnerPage__sidebar"
+          aria-label="Main navigation"
+          data-mobile-nav={sidebarNavState}
+        >
+          <button
+            type="button"
+            className="InnerPage__sidebarToggle"
+            aria-expanded={mobileNavOpen}
+            aria-controls="inner-page-sidebar-nav"
+            onClick={() => setMobileNavOpenPath(mobileNavOpen ? null : location.pathname)}
+          >
+            <span className="InnerPage__sidebarToggle__menuIcon" aria-hidden>
+              <Icon.Menu02 />
+            </span>
+            <span className="InnerPage__sidebarToggle__label">{activeNavLabel}</span>
+            <span
+              className={[
+                "InnerPage__sidebarToggle__chevron",
+                mobileNavOpen ? "InnerPage__sidebarToggle__chevron--open" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              aria-hidden
+            >
+              <Icon.ChevronDown />
+            </span>
+          </button>
 
-            <div className="Sidebar__item">v{getAppVersion()}</div>
+          <div id="inner-page-sidebar-nav" className="InnerPage__sidebarPanels">
+            <div className="InnerPage__sidebar--top">
+              {ITEMS_TOP.map((i) => (
+                <SidebarNavLink key={i.id} item={i} />
+              ))}
+            </div>
+            <div className="InnerPage__sidebar--bottom">
+              {ITEMS_BOTTOM.map((i) => (
+                <SidebarNavLink key={i.id} item={i} />
+              ))}
+
+              <div className="Sidebar__item">v{getAppVersion()}</div>
+            </div>
           </div>
-        </div>
+        </nav>
         <div className="InnerPage__container">
           <div className={`InnerPage__content ${isNarrow ? "InnerPage__content--narrow" : ""}`}>
             {children}
