@@ -158,8 +158,20 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
   };
 
   const allNavItems = [...ITEMS_TOP, ...ITEMS_BOTTOM];
-  const activeNavLabel =
-    allNavItems.find((item) => location.pathname === item.route)?.label ?? "Menu";
+  const activeNavItem = [...allNavItems]
+    .sort((a, b) => b.route.length - a.route.length)
+    .find((item) => {
+      if (location.pathname === item.route) {
+        return true;
+      }
+
+      if (item.route === "/") {
+        return false;
+      }
+
+      return location.pathname.startsWith(`${item.route}/`);
+    });
+  const activeNavLabel = activeNavItem?.label ?? "Menu";
 
   const sidebarNavState = mobileNavOpen ? "open" : "closed";
 
