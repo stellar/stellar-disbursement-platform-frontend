@@ -12,6 +12,7 @@ import {
   TransactionBuilder,
   nativeToScVal,
   rpc,
+  scValToBigInt,
   xdr,
 } from "@stellar/stellar-sdk";
 
@@ -168,6 +169,87 @@ const simulateTransferOperation = async ({
   return simulationResult;
 };
 
+const validateTransferAuthEntries = (
+  authEntries: xdr.SorobanAuthorizationEntry[],
+  contractAddress: string,
+  assetContractId: string,
+  destination: string,
+  amountInStroops: bigint,
+) => {
+  const userEntries = authEntries.filter((entry) => {
+    if (entry.credentials().switch() !== xdr.SorobanCredentialsType.sorobanCredentialsAddress()) {
+      return false;
+    }
+
+    const addressCredentials = entry.credentials().address();
+    const address = addressCredentials.address();
+
+    if (address.switch() !== xdr.ScAddressType.scAddressTypeContract()) {
+      return false;
+    }
+
+    return Address.fromScAddress(address).toString() === contractAddress;
+  });
+
+  if (userEntries.length !== 1) {
+    throw createSimulationError(
+      `Expected exactly 1 auth entry for user wallet, got ${userEntries.length}`,
+    );
+  }
+
+  const invocation = userEntries[0].rootInvocation();
+  if (invocation.subInvocations().length) {
+    throw createSimulationError(
+      "Auth entry invocation authorizes sub-invocation(s) to another contract",
+    );
+  }
+
+  const contractFunction = invocation.function().contractFn();
+  const actualAssetContractId = Address.fromScAddress(
+    contractFunction.contractAddress(),
+  ).toString();
+  if (actualAssetContractId !== assetContractId) {
+    throw createSimulationError(
+      `Auth entry targets invalid assetContractId. Expected: ${assetContractId} but got: ${actualAssetContractId}`,
+    );
+  }
+
+  const actualFunctionName = contractFunction.functionName().toString();
+  if (actualFunctionName !== "transfer") {
+    throw createSimulationError(
+      `Auth entry calls invalid function name. Expected: transfer but got: ${actualFunctionName}`,
+    );
+  }
+
+  const args = contractFunction.args();
+  if (args.length !== 3) {
+    throw createSimulationError(
+      `Auth entry has wrong number of arguments. Expected: 3 but got: ${args.length}`,
+    );
+  }
+
+  const actualFrom = Address.fromScVal(args[0]).toString();
+  if (actualFrom !== contractAddress) {
+    throw createSimulationError(
+      `Auth entry "from" address mismatch. Expected: ${contractAddress} but got: ${actualFrom}`,
+    );
+  }
+
+  const actualTo = Address.fromScVal(args[1]).toString();
+  if (actualTo !== destination) {
+    throw createSimulationError(
+      `Auth entry "to" address mismatch. Expected: ${destination} but got: ${actualTo}`,
+    );
+  }
+
+  const actualAmount = scValToBigInt(args[2]);
+  if (actualAmount !== amountInStroops) {
+    throw createSimulationError(
+      `Auth entry amount mismatch. Expected: ${amountInStroops} but got: ${actualAmount}`,
+    );
+  }
+};
+
 export const useSendWalletPayment = ({
   contractAddress,
   credentialId,
@@ -216,23 +298,32 @@ export const useSendWalletPayment = ({
       });
 
       let simulationResult;
+      let authEntries: xdr.SorobanAuthorizationEntry[] = [];
       try {
         simulationResult = await simulateTransferOperation({
           operation: transferOperation,
           networkPassphrase,
         });
+
+        authEntries = simulationResult.result?.auth ?? [];
+
+        if (!authEntries.length) {
+          throw createSimulationError("Simulation did not return any authorization entries");
+        }
+
+        validateTransferAuthEntries(
+          authEntries,
+          contractAddress,
+          assetContractId,
+          destination,
+          amountInStroops,
+        );
       } catch (error) {
         if (isSimulationError(error)) {
           throw error;
         }
         const message = error instanceof Error ? error.message : "Simulation failed";
         throw createSimulationError(message);
-      }
-
-      const authEntries = simulationResult.result?.auth ?? [];
-
-      if (!authEntries.length) {
-        throw createSimulationError("Simulation did not return any authorization entries");
       }
 
       const signedAuthEntries = await signSorobanAuthorizationEntries({
