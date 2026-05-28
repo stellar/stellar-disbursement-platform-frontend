@@ -177,17 +177,16 @@ const validateTransferAuthEntries = (
   destination: string,
   amountInStroops: bigint,
 ) => {
-  const userEntries = authEntries.filter((entry) => {
-    return isAddressCredentialForContract(entry, contractAddress);
-  });
-
-  if (userEntries.length !== 1) {
-    throw createSimulationError(
-      `Expected exactly 1 auth entry for user wallet, got ${userEntries.length}`,
-    );
+  if (authEntries.length !== 1) {
+    throw createSimulationError(`Expected exactly 1 auth entry, got ${authEntries.length}`);
   }
 
-  const invocation = userEntries[0].rootInvocation();
+  const entry = authEntries[0];
+  if (!isAddressCredentialForContract(entry, contractAddress)) {
+    throw createSimulationError("Auth entry is not for expected user wallet contract");
+  }
+
+  const invocation = entry.rootInvocation();
   if (invocation.subInvocations().length) {
     throw createSimulationError(
       "Auth entry invocation authorizes sub-invocation(s) to another contract",
@@ -296,10 +295,6 @@ export const useSendWalletPayment = ({
         });
 
         authEntries = simulationResult.result?.auth ?? [];
-
-        if (!authEntries.length) {
-          throw createSimulationError("Simulation did not return any authorization entries");
-        }
 
         validateTransferAuthEntries(
           authEntries,
