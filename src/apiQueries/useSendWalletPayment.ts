@@ -27,6 +27,7 @@ import {
 } from "@/api/sponsoredTransactions";
 
 import { createAuthenticatedRpcServer } from "@/helpers/createAuthenticatedRpcServer";
+import { isAddressCredentialForContract } from "@/helpers/isAddressCredentialForContract";
 import { signSorobanAuthorizationEntries } from "@/helpers/signSorobanAuthorization";
 
 import type { AppError } from "@/types";
@@ -177,18 +178,7 @@ const validateTransferAuthEntries = (
   amountInStroops: bigint,
 ) => {
   const userEntries = authEntries.filter((entry) => {
-    if (entry.credentials().switch() !== xdr.SorobanCredentialsType.sorobanCredentialsAddress()) {
-      return false;
-    }
-
-    const addressCredentials = entry.credentials().address();
-    const address = addressCredentials.address();
-
-    if (address.switch() !== xdr.ScAddressType.scAddressTypeContract()) {
-      return false;
-    }
-
-    return Address.fromScAddress(address).toString() === contractAddress;
+    return isAddressCredentialForContract(entry, contractAddress);
   });
 
   if (userEntries.length !== 1) {
