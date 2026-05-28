@@ -193,6 +193,13 @@ const validateTransferAuthEntries = (
     );
   }
 
+  if (
+    invocation.function().switch() !==
+    xdr.SorobanAuthorizedFunctionType.sorobanAuthorizedFunctionTypeContractFn()
+  ) {
+    throw createSimulationError("Auth entry does not authorize a contract function invocation");
+  }
+
   const contractFunction = invocation.function().contractFn();
   const actualAssetContractId = Address.fromScAddress(
     contractFunction.contractAddress(),
