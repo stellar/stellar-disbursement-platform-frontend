@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- Use `claude-code-action`'s native Workload Identity Federation inputs in the automated release workflow. [#541](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/541)
+
 ## [6.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.2.0...6.5.0))
 
 ### Added
