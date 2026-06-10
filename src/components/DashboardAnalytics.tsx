@@ -1,17 +1,26 @@
 import { Card, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "@/components/InfoTooltip";
+
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
+import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useStatistics } from "@/apiQueries/useStatistics";
+
 import { percent } from "@/helpers/formatIntlNumber";
+import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
 import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+
 import { useRedux } from "@/hooks/useRedux";
 
 export const DashboardAnalytics = () => {
   const { userAccount } = useRedux("userAccount");
 
   const { data: stats, error, isLoading, isFetching } = useStatistics(userAccount.isAuthenticated);
+  const { data: walletBalance } = useDistributionWalletBalance(
+    userAccount.isAuthenticated,
+    localStorageSelectedWallet.get(),
+  );
 
   const calculateRate = () => {
     if (!stats) return 0;
@@ -94,8 +103,8 @@ export const DashboardAnalytics = () => {
             <div className="StatCards__card--flexCols">
               <div>
                 <div className="StatCards__card__title">
-                  <InfoTooltip infoText="The total amount of funds successfully sent to receivers by your organization over time">
-                    Total disbursed
+                  <InfoTooltip infoText="The live on-chain balance of the selected distribution wallet (all wallets when none is selected)">
+                    Total balance
                   </InfoTooltip>
                 </div>
               </div>
@@ -110,13 +119,19 @@ export const DashboardAnalytics = () => {
             </div>
 
             <div className="StatCards__card__assets">
-              {stats?.assets.map((a) => (
-                <div className="StatCards__card--flexCols" key={a.assetCode}>
+              {Object.entries(walletBalance?.balances ?? {}).map(([assetKey, amount]) => (
+                <div className="StatCards__card--flexCols" key={assetKey}>
                   <div>
-                    <AssetAmount amount={a.success || "0"} assetCode={a.assetCode} />
+                    <AssetAmount amount={amount || "0"} assetCode={assetKey.split(":")[0]} />
                   </div>
                   <div>
-                    <AssetAmount amount={a.average} assetCode={a.assetCode} />
+                    <AssetAmount
+                      amount={
+                        stats?.assets.find((a) => a.assetCode === assetKey.split(":")[0])
+                          ?.average || "0"
+                      }
+                      assetCode={assetKey.split(":")[0]}
+                    />
                   </div>
                 </div>
               ))}

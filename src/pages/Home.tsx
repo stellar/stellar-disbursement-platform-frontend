@@ -7,6 +7,7 @@ import { Button, Heading } from "@stellar/design-system";
 
 import { DashboardAnalytics } from "@/components/DashboardAnalytics";
 import { DisbursementsTable } from "@/components/DisbursementsTable";
+import { DistributionWalletPicker } from "@/components/DistributionWalletPicker";
 import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ShowForRoles } from "@/components/ShowForRoles";
@@ -78,6 +79,7 @@ export const Home = () => {
       </SectionHeader>
 
       <div className="HomeStatistics">
+        <DistributionWalletPicker />
         <DashboardAnalytics />
       </div>
 
