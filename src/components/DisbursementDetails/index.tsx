@@ -36,6 +36,11 @@ const SDP_EMBEDDED_WALLET_NAME = "embedded wallet";
 const isSdpEmbeddedWallet = (walletName: string): boolean =>
   walletName.trim().toLowerCase() === SDP_EMBEDDED_WALLET_NAME;
 
+const DATE_VERIFICATION_FORMATS: Record<string, { format: string; example: string }> = {
+  DATE_OF_BIRTH: { format: "YYYY-MM-DD", example: "1994-09-30" },
+  YEAR_MONTH: { format: "YYYY-MM", example: "1994-09" },
+};
+
 interface DisbursementDetailsProps {
   variant: DisbursementStep;
   details?: Disbursement;
@@ -502,6 +507,24 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
           </option>
         ))}
       </Select>
+
+      {(() => {
+        const dateFormat = DATE_VERIFICATION_FORMATS[derived.selectValues.verificationField];
+        return dateFormat ? (
+          <div className="DisbursementDetailsFields__notice">
+            <Notification variant="primary" title="Expected date of birth format">
+              <p>
+                Ensure dates are in <strong>{dateFormat.format}</strong>
+                {` format (e.g. ${dateFormat.example}).`}
+              </p>
+              <p>
+                Spreadsheet apps like Excel may automatically reformat dates when you open the CSV
+                file.
+              </p>
+            </Notification>
+          </div>
+        ) : null;
+      })()}
 
       <Input
         id={FieldId.NAME}

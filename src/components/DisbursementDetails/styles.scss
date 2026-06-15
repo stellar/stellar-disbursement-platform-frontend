@@ -23,4 +23,8 @@
   &__negative {
     color: var(--sds-clr-red-11);
   }
+
+  &__notice {
+    flex-basis: 100%;
+  }
 }
