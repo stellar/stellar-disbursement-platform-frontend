@@ -511,15 +511,15 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       {(() => {
         const dateFormat = DATE_VERIFICATION_FORMATS[derived.selectValues.verificationField];
         return dateFormat ? (
-          <div className="DisbursementDetailsFields__notice">
-            <Notification variant="primary" title="Expected date of birth format">
+          <div className="DisbursementDetailsFields__dateFormatNotice">
+            <Notification variant="primary" title="Expected 'Date of Birth' format">
               <p>
                 Ensure dates are in <strong>{dateFormat.format}</strong>
                 {` format (e.g. ${dateFormat.example}).`}
               </p>
               <p>
-                Spreadsheet apps like Excel may automatically reformat dates when you open the CSV
-                file.
+                Spreadsheet apps like Excel may reformat dates when editing the CSV file. Check the
+                verification column before uploading.
               </p>
             </Notification>
           </div>

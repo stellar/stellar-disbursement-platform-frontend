@@ -24,7 +24,13 @@
     color: var(--sds-clr-red-11);
   }
 
-  &__notice {
+  &__dateFormatNotice {
     flex-basis: 100%;
+
+    .Notification__message p {
+      font-size: pxToRem(14px);
+      line-height: pxToRem(20px);
+      color: var(--sds-clr-gray-09);
+    }
   }
 }
