@@ -509,10 +509,12 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       </Select>
 
       {(() => {
-        const dateFormat = DATE_VERIFICATION_FORMATS[derived.selectValues.verificationField];
+        const { verificationField } = derived.selectValues;
+        const dateFormat = DATE_VERIFICATION_FORMATS[verificationField];
+        const fieldLabel = VerificationFieldMap[verificationField] || verificationField;
         return dateFormat ? (
           <div className="DisbursementDetailsFields__dateFormatNotice">
-            <Notification variant="primary" title="Expected 'Date of Birth' format">
+            <Notification variant="primary" title={`Expected '${fieldLabel}' format`}>
               <p>
                 Ensure dates are in <strong>{dateFormat.format}</strong>
                 {` format (e.g. ${dateFormat.example}).`}
