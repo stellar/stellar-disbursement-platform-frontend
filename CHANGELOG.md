@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [6.6.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.5.0...6.6.0))
+
+### Added
+
+- Add date format requirement notice in UI for csv uploads. [#542](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/542)
+
+### Changed
+
+- Use `claude-code-action`'s native Workload Identity Federation inputs in the automated release workflow. [#541](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/541)
+
+### Security and Dependencies
+
+- Validate the Soroban authorization entry invocation in `useSendWalletPayment` before passkey signing to harden the embedded wallet against malicious simulation responses. [#539](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/539)
+- Bump @babel/core from 7.28.5 to 7.29.7. [#546](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/546)
+- Bump vite from 7.3.2 to 7.3.5. [#545](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/545)
+- Bump form-data from 4.0.5 to 4.0.6. [#544](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/544)
+- Bump js-yaml from 4.1.1 to 4.2.0. [#543](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/543)
+- Bump the all-actions group across 1 directory with 2 updates (docker/login-action from 4.1.0 to 4.2.0, docker/build-push-action from 7.1.0 to 7.2.0). [#538](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/538)
+- Bump qs from 6.15.0 to 6.15.2. [#537](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/537)
+- Bump brace-expansion from 5.0.5 to 5.0.6. [#535](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/535)
+- Bump the all-docker group across 1 directory with 2 updates (ubuntu from 24.04 to 26.04, nginx from 1.29 to 1.31). [#534](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/534)
+
 ## [6.5.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.5.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.2.0...6.5.0))
 
 ### Added
