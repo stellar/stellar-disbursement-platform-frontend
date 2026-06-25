@@ -13,13 +13,27 @@ import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
 
 import { useRedux } from "@/hooks/useRedux";
 
-export const DashboardAnalytics = () => {
+type DashboardAnalyticsProps = {
+  // The picker's selection ("" = All wallets). Drives the query keys so the cards
+  // refetch immediately on change. Optional: callers without a picker (e.g. Analytics)
+  // fall back to the persisted selection.
+  selectedWalletId?: string;
+};
+
+export const DashboardAnalytics = ({ selectedWalletId }: DashboardAnalyticsProps) => {
   const { userAccount } = useRedux("userAccount");
 
-  const { data: stats, error, isLoading, isFetching } = useStatistics(userAccount.isAuthenticated);
+  const effectiveWalletId = selectedWalletId ?? localStorageSelectedWallet.get() ?? "";
+
+  const {
+    data: stats,
+    error,
+    isLoading,
+    isFetching,
+  } = useStatistics(userAccount.isAuthenticated, effectiveWalletId);
   const { data: walletBalance } = useDistributionWalletBalance(
     userAccount.isAuthenticated,
-    localStorageSelectedWallet.get(),
+    effectiveWalletId || null,
   );
 
   const calculateRate = () => {
@@ -140,14 +154,22 @@ export const DashboardAnalytics = () => {
 
           <div className="StatCards__card__column">
             <div className="StatCards__card__item StatCards__card__item--inline">
-              <label className="StatCards__card__item__label">Individuals</label>
+              <label className="StatCards__card__item__label">
+                <InfoTooltip infoText="Unique individuals you've created payments for (your recipients).">
+                  Recipients
+                </InfoTooltip>
+              </label>
               <div className="StatCards__card__item__value">
                 {renderNumberOrDash(stats?.individualsTotalCount)}
               </div>
             </div>
 
             <div className="StatCards__card__item StatCards__card__item--inline">
-              <label className="StatCards__card__item__label">Wallets</label>
+              <label className="StatCards__card__item__label">
+                <InfoTooltip infoText="Wallets your recipients receive funds into — not your distribution (sending) wallets.">
+                  Recipient wallets
+                </InfoTooltip>
+              </label>
               <div className="StatCards__card__item__value">
                 {renderNumberOrDash(stats?.walletsTotalCount)}
               </div>

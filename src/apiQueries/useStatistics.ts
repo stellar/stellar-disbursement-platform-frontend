@@ -1,12 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { API_URL } from "@/constants/envVariables";
+
 import { fetchApi } from "@/helpers/fetchApi";
 import { formatStatistics } from "@/helpers/formatStatistics";
+
 import { ApiStatistics, AppError } from "@/types";
 
-export const useStatistics = (isAuthenticated: boolean) => {
+export const useStatistics = (isAuthenticated: boolean, selectedWalletId?: string | null) => {
   const query = useQuery<ApiStatistics, AppError>({
-    queryKey: ["statistics"],
+    // Key on the selected wallet so switching the picker refetches immediately
+    // (fetchApi sends the matching X-Wallet-Id) instead of serving stale cache.
+    queryKey: ["statistics", selectedWalletId ?? "all"],
     queryFn: async () => {
       return await fetchApi(`${API_URL}/statistics`);
     },
