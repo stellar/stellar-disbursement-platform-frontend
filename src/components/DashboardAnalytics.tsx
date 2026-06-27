@@ -125,6 +125,14 @@ export const DashboardAnalytics = ({ selectedWalletId }: DashboardAnalyticsProps
 
               <div>
                 <div className="StatCards__card__title">
+                  <InfoTooltip infoText="Lifetime total successfully disbursed (historical). Total balance above is the live day-to-day number.">
+                    Total disbursed
+                  </InfoTooltip>
+                </div>
+              </div>
+
+              <div>
+                <div className="StatCards__card__title">
                   <InfoTooltip infoText="The average individual payment amount for your organization over time.">
                     Average amount
                   </InfoTooltip>
@@ -137,6 +145,15 @@ export const DashboardAnalytics = ({ selectedWalletId }: DashboardAnalyticsProps
                 <div className="StatCards__card--flexCols" key={assetKey}>
                   <div>
                     <AssetAmount amount={amount || "0"} assetCode={assetKey.split(":")[0]} />
+                  </div>
+                  <div>
+                    <AssetAmount
+                      amount={
+                        stats?.assets.find((a) => a.assetCode === assetKey.split(":")[0])
+                          ?.success || "0"
+                      }
+                      assetCode={assetKey.split(":")[0]}
+                    />
                   </div>
                   <div>
                     <AssetAmount
