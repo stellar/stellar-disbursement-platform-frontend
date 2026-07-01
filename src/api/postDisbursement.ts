@@ -3,6 +3,7 @@ import { API_URL } from "@/constants/envVariables";
 import { handleApiResponse } from "@/api/handleApiResponse";
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { walletIdHeader } from "@/helpers/walletIdHeader";
 
 import { ApiDisbursement, Disbursement } from "@/types";
 
@@ -16,6 +17,8 @@ export const postDisbursement = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(),
+      // Multi-wallet: route this disbursement to the selected source account.
+      ...walletIdHeader(),
     },
     body: JSON.stringify(preparePostDisbursementData(disbursement)),
   });
