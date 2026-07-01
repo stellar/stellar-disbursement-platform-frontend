@@ -52,7 +52,7 @@ export const fetchApi = async (
       ...config.headers,
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(options?.organizationName),
-      // Multi-wallet: scope requests to the selected distribution wallet (W3/W4).
+      // Multi-wallet: scope requests to the selected distribution wallet.
       ...(selectedWalletId ? { "X-Wallet-Id": selectedWalletId } : {}),
       ...(!options?.omitContentType
         ? {
