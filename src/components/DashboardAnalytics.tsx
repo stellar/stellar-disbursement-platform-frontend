@@ -18,9 +18,15 @@ type DashboardAnalyticsProps = {
   // refetch immediately on change. Optional: callers without a picker (e.g. Analytics)
   // fall back to the persisted selection.
   selectedWalletId?: string;
+  // Show the lifetime "Average amount" column. On by default (Analytics page); the Home
+  // dashboard hides it to keep the headline on live balance + total disbursed.
+  showAverageAmount?: boolean;
 };
 
-export const DashboardAnalytics = ({ selectedWalletId }: DashboardAnalyticsProps) => {
+export const DashboardAnalytics = ({
+  selectedWalletId,
+  showAverageAmount = true,
+}: DashboardAnalyticsProps) => {
   const { userAccount } = useRedux("userAccount");
 
   const effectiveWalletId = selectedWalletId ?? localStorageSelectedWallet.get() ?? "";
@@ -131,13 +137,15 @@ export const DashboardAnalytics = ({ selectedWalletId }: DashboardAnalyticsProps
                 </div>
               </div>
 
-              <div>
-                <div className="StatCards__card__title">
-                  <InfoTooltip infoText="The average individual payment amount for your organization over time.">
-                    Average amount
-                  </InfoTooltip>
+              {showAverageAmount ? (
+                <div>
+                  <div className="StatCards__card__title">
+                    <InfoTooltip infoText="The average individual payment amount for your organization over time.">
+                      Average amount
+                    </InfoTooltip>
+                  </div>
                 </div>
-              </div>
+              ) : null}
             </div>
 
             <div className="StatCards__card__assets">
@@ -155,15 +163,17 @@ export const DashboardAnalytics = ({ selectedWalletId }: DashboardAnalyticsProps
                       assetCode={assetKey.split(":")[0]}
                     />
                   </div>
-                  <div>
-                    <AssetAmount
-                      amount={
-                        stats?.assets.find((a) => a.assetCode === assetKey.split(":")[0])
-                          ?.average || "0"
-                      }
-                      assetCode={assetKey.split(":")[0]}
-                    />
-                  </div>
+                  {showAverageAmount ? (
+                    <div>
+                      <AssetAmount
+                        amount={
+                          stats?.assets.find((a) => a.assetCode === assetKey.split(":")[0])
+                            ?.average || "0"
+                        }
+                        assetCode={assetKey.split(":")[0]}
+                      />
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>

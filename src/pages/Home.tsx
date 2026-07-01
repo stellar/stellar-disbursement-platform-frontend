@@ -102,7 +102,7 @@ export const Home = () => {
 
       <div className="HomeStatistics">
         <DistributionWalletPicker value={selectedWalletId} onSelect={handleSelectWallet} />
-        <DashboardAnalytics selectedWalletId={selectedWalletId} />
+        <DashboardAnalytics selectedWalletId={selectedWalletId} showAverageAmount={false} />
         <WalletBalancesOverview />
       </div>
 
