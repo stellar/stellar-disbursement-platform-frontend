@@ -1,27 +1,180 @@
 .ActiveWalletBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-
   margin-bottom: 1.5rem;
-  padding: 0.625rem 1rem;
 
-  background-color: var(--sds-clr-lilac-02);
-  border: 1px solid var(--sds-clr-lilac-06);
-  border-left: 3px solid var(--sds-clr-lilac-09);
-  border-radius: 0.5rem;
-
-  &__context {
-    display: flex;
+  &__trigger {
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    min-width: 0;
+    gap: 0.75rem;
+    min-width: 280px;
+    max-width: 380px;
+    padding: 0.5rem 0.875rem;
+
+    background-color: var(--sds-clr-lilac-02);
+    border: 1px solid var(--sds-clr-lilac-06);
+    border-left: 3px solid var(--sds-clr-lilac-09);
+    border-radius: 0.5rem;
+
+    cursor: pointer;
+    text-align: left;
+    transition: background-color var(--sds-anim-transition-default);
+
+    &:hover {
+      background-color: var(--sds-clr-lilac-03);
+    }
   }
 
   &__icon {
     display: inline-flex;
+    color: var(--sds-clr-lilac-09);
+
+    svg {
+      width: 1.125rem;
+      height: 1.125rem;
+      display: block;
+    }
+  }
+
+  &__labelStack {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--sds-clr-gray-11);
+  }
+
+  &__value {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--sds-clr-lilac-11);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--all {
+      color: var(--sds-clr-gray-12);
+    }
+  }
+
+  &__dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  &__chevron {
+    display: inline-flex;
+    color: var(--sds-clr-gray-10);
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+      display: block;
+    }
+  }
+}
+
+.WalletSwitcher {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  min-width: 300px;
+  max-width: 360px;
+  max-height: 400px;
+  overflow-y: auto;
+
+  background-color: var(--sds-clr-gray-01);
+  border-radius: 0.375rem;
+
+  &__search {
+    padding: 4px 4px 8px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.5rem 0.625rem;
+    border: none;
+    border-radius: 0.375rem;
+    background-color: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color var(--sds-anim-transition-default);
+
+    &:hover {
+      background-color: var(--sds-clr-gray-03);
+    }
+
+    &--active {
+      background-color: var(--sds-clr-lilac-03);
+    }
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--sds-clr-gray-12);
+  }
+
+  &__dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  &__badge {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background-color: var(--sds-clr-gray-04);
+    color: var(--sds-clr-gray-11);
+  }
+
+  &__balance {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--sds-clr-gray-11);
+
+    &--muted {
+      color: var(--sds-clr-gray-09);
+    }
+  }
+
+  &__check {
+    display: inline-flex;
+    flex-shrink: 0;
     color: var(--sds-clr-lilac-09);
 
     svg {
@@ -31,28 +184,16 @@
     }
   }
 
-  &__label {
-    font-size: 0.875rem;
-    color: var(--sds-clr-gray-11);
-    white-space: nowrap;
+  &__divider {
+    height: 1px;
+    background-color: var(--sds-clr-gray-06);
+    margin: 4px 0;
   }
 
-  &__value {
-    font-size: 0.9375rem;
-    font-weight: 700;
-    color: var(--sds-clr-lilac-11);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &--all {
-      color: var(--sds-clr-gray-11);
-      font-weight: 600;
-    }
-  }
-
-  &__select {
-    min-width: 200px;
-    flex-shrink: 0;
+  &__empty {
+    padding: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--sds-clr-gray-10);
+    text-align: center;
   }
 }
