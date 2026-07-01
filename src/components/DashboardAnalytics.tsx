@@ -8,28 +8,23 @@ import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWallet
 import { useStatistics } from "@/apiQueries/useStatistics";
 
 import { percent } from "@/helpers/formatIntlNumber";
-import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
 import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
 
 import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
 type DashboardAnalyticsProps = {
-  // The picker's selection ("" = All wallets). Drives the query keys so the cards
-  // refetch immediately on change. Optional: callers without a picker (e.g. Analytics)
-  // fall back to the persisted selection.
-  selectedWalletId?: string;
   // Show the lifetime "Average amount" column. On by default (Analytics page); the Home
   // dashboard hides it to keep the headline on live balance + total disbursed.
   showAverageAmount?: boolean;
 };
 
-export const DashboardAnalytics = ({
-  selectedWalletId,
-  showAverageAmount = true,
-}: DashboardAnalyticsProps) => {
+export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyticsProps) => {
   const { userAccount } = useRedux("userAccount");
+  // The active account comes from the global ActiveWalletBar (shared context).
+  const { selectedWalletId } = useSelectedWallet();
 
-  const effectiveWalletId = selectedWalletId ?? localStorageSelectedWallet.get() ?? "";
+  const effectiveWalletId = selectedWalletId;
 
   const {
     data: stats,

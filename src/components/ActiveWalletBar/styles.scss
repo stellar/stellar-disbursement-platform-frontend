@@ -1,0 +1,58 @@
+.ActiveWalletBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  margin-bottom: 1.5rem;
+  padding: 0.625rem 1rem;
+
+  background-color: var(--sds-clr-lilac-02);
+  border: 1px solid var(--sds-clr-lilac-06);
+  border-left: 3px solid var(--sds-clr-lilac-09);
+  border-radius: 0.5rem;
+
+  &__context {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  &__icon {
+    display: inline-flex;
+    color: var(--sds-clr-lilac-09);
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+      display: block;
+    }
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    color: var(--sds-clr-gray-11);
+    white-space: nowrap;
+  }
+
+  &__value {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--sds-clr-lilac-11);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--all {
+      color: var(--sds-clr-gray-11);
+      font-weight: 600;
+    }
+  }
+
+  &__select {
+    min-width: 200px;
+    flex-shrink: 0;
+  }
+}

@@ -1,28 +1,37 @@
 import { useEffect, useState } from "react";
-import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { FilterMenu } from "@/components/FilterMenu";
+import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+
 import { DisbursementsTable } from "@/components/DisbursementsTable";
+import { FilterMenu } from "@/components/FilterMenu";
 import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 import { Pagination } from "@/components/Pagination";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ShowForRoles } from "@/components/ShowForRoles";
 
-import { PAGE_LIMIT_OPTIONS, Routes, UI_STATUS_DISBURSEMENT } from "@/constants/settings";
-import { number } from "@/helpers/formatIntlNumber";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+import { exportDataAction } from "@/store/ducks/dataExport";
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
+import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
 import {
   getDisbursementsAction,
   getDisbursementsWithParamsAction,
 } from "@/store/ducks/disbursements";
-import { exportDataAction } from "@/store/ducks/dataExport";
-import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
-import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+
+import { PAGE_LIMIT_OPTIONS, Routes, UI_STATUS_DISBURSEMENT } from "@/constants/settings";
+
+import { number } from "@/helpers/formatIntlNumber";
+
+import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import { CommonFilters, SortByDisbursements, SortDirection } from "@/types";
+
+import { AppDispatch } from "@/store";
+
 
 export const Disbursements = () => {
   const { disbursements } = useRedux("disbursements");
@@ -50,11 +59,14 @@ export const Disbursements = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Active distribution account (global ActiveWalletBar). Re-list when it changes.
+  const { selectedWalletId } = useSelectedWallet();
+
   useEffect(() => {
     dispatch(getDisbursementsAction());
     dispatch(resetDisbursementDetailsAction());
     dispatch(setDraftIdAction(undefined));
-  }, [dispatch]);
+  }, [dispatch, selectedWalletId]);
 
   const apiError =
     disbursements.status === "ERROR" && disbursements.errorString

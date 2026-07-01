@@ -1,16 +1,23 @@
 import React from "react";
+
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+
 import { Icon } from "@stellar/design-system";
 
+import { ActiveWalletBar } from "@/components/ActiveWalletBar";
 import { PageHeader } from "@/components/PageHeader";
+
 import { USE_SSO } from "@/constants/envVariables";
 import { Routes } from "@/constants/settings";
-import { AppDispatch, resetStoreAction } from "@/store";
-import { useRedux } from "@/hooks/useRedux";
-import { singleUserStore } from "@/helpers/singleSingOn";
+
 import { getAppVersion } from "@/helpers/getAppVersion";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { singleUserStore } from "@/helpers/singleSingOn";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch, resetStoreAction } from "@/store";
 
 import "./styles.scss";
 
@@ -170,6 +177,7 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
         </div>
         <div className="InnerPage__container">
           <div className={`InnerPage__content ${isNarrow ? "InnerPage__content--narrow" : ""}`}>
+            <ActiveWalletBar />
             {children}
           </div>
         </div>
