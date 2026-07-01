@@ -83,7 +83,7 @@ A disbursement pays a list of recipients from **one account**.
    - **Contact type**, e.g. **Phone Number**
    - **Verification**, e.g. **Date of Birth**
 4. **Upload your recipient file** (CSV). See the format in the Appendix; a working sample is [ngo-one-disbursement-sample.csv](ngo-one-disbursement-sample.csv).
-5. **Review** the parsed recipients and totals.
+5. **Review** the parsed recipients and totals. Keep the total within the selected account's balance — the platform won't let you over-draw an account, so **Confirm stays disabled if the total exceeds the balance**.
 6. **Confirm** to create the disbursement.
 
 ![New disbursement](screenshots/05-new-disbursement.png)
@@ -147,8 +147,8 @@ Columns: `phone,id,amount,verification`
 Example:
 ```
 phone,id,amount,verification
-+14155238886,NGO-001,50,1990-04-12
-+12024561414,NGO-002,75,1985-11-30
++14155238886,NGO-001,5,1990-04-12
++12024561414,NGO-002,5,1985-11-30
 ```
 
 If you use **Email** as the contact type instead of phone, use an `email` column instead of `phone`.
@@ -156,6 +156,7 @@ If you use **Email** as the contact type instead of phone, use an `email` column
 ## Appendix C — Troubleshooting
 
 - **"New disbursement" is blocked / asks for an account** — you have "All accounts" selected. Pick a specific account first.
+- **"Confirm disbursement" is greyed out** — the total to send exceeds the selected account's balance. Use smaller amounts or pick an account with more funds.
 - **CSV rejected** — check the phone numbers are valid international format, the date of birth is `YYYY-MM-DD`, and every row has an `id` and `amount`.
 - **I don't see the account switcher** — you only have access to one account, so there's nothing to switch. If you expected more, ask your organization's owner to grant access.
 - **I can't see an account a colleague mentioned** — access is per account; an owner needs to grant you access via **Manage access**.

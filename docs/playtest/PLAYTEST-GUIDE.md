@@ -29,7 +29,7 @@ The platform now supports **multiple distribution (sending) accounts per organiz
 | venezuela.head@ngoone.playtest | (in the playtest invite) | Financial Controller | Venezuela only |
 | shared.treasurer@ngoone.playtest | (in the playtest invite) | Financial Controller | Haiti + Venezuela |
 
-> The three accounts are funded with ~5 test XLM each (0 USDC/EURC). Disbursements can be **created and reviewed** end-to-end; actually **sending** funds needs the account funded with the disbursement asset (USDC) and recipients to onboard — out of scope for this round unless we fund it.
+> The three accounts hold test **XLM and USDC** (roughly tens of USDC each), so you can create **and start** a USDC disbursement. Payments settle to each recipient once they onboard their receiving wallet (the standard SEP-24 flow); until then they sit as **READY**. Keep a disbursement's total within the account's balance (see Flow F).
 
 ---
 
@@ -74,7 +74,7 @@ The platform now supports **multiple distribution (sending) accounts per organiz
 3. Choose: **Wallet = Demo Wallet**, **Asset = USDC**, **Contact type = Phone Number**, **Verification = Date of Birth**.
 4. Upload the sample file: [ngo-one-disbursement-sample.csv](ngo-one-disbursement-sample.csv).
 5. Review and save.
-6. **Expected:** the disbursement is created against the account you selected, with 5 recipients parsed. If you have "All accounts" selected, creation is **correctly blocked** with a message that a specific account is required — that's expected, not a bug.
+6. **Expected:** the disbursement is created against the account you selected, with 5 recipients parsed. Keep the CSV's total amount within the selected account's balance, or **"Confirm disbursement" stays disabled** (the platform blocks over-drawing an account — this is correct behavior). If you have "All accounts" selected, creation is **correctly blocked** with a message that a specific account is required — that's expected, not a bug.
 7. **Watch for:** a disbursement created against the wrong account; CSV upload errors; the create failing even with an account selected.
 
 ### Flow G — Analytics
@@ -92,7 +92,7 @@ For anything off, note: **which login**, **which account was selected**, **which
 5. Polish / wording / layout.
 
 ## 5. Known limitations this round
-- Accounts hold test XLM only (no USDC), so disbursements can be created/reviewed but funds won't actually move.
+- Accounts hold test XLM + USDC, so disbursements can be created and started. Actual settlement to a recipient needs that recipient to onboard their wallet (SEP-24); demo recipients are generally not onboarded, so payments sit at READY (no funds move) unless you complete registration.
 - Single-account users don't see the switcher (intended — no ambiguity).
 - The demo instance is on testnet; nothing here touches real money.
 
