@@ -9,6 +9,8 @@ import { AppError } from "@/types";
 export type DistributionWallet = {
   id: string;
   name: string;
+  description?: string;
+  distribution_account_address?: string | null;
   status: "ACTIVE" | "ARCHIVED";
   is_default: boolean;
 };
