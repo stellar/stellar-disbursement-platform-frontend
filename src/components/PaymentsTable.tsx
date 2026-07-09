@@ -1,12 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import { Link, Profile, Notification, Card } from "@stellar/design-system";
-import { Routes } from "@/constants/settings";
+
+import { Link, Profile, Notification, Card, Icon } from "@stellar/design-system";
 
 import { AssetAmount } from "@/components/AssetAmount";
+import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { PaymentStatus } from "@/components/PaymentStatus";
 import { Table } from "@/components/Table";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
+import { Routes } from "@/constants/settings";
+
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
+
 import { ApiPayment } from "@/types";
 
 interface PaymentsTableProps {
@@ -61,7 +66,12 @@ export const PaymentsTable = ({
       return <div className="Note">There are no payments matching your selected filters</div>;
     }
 
-    return <div className="Note">There are no payments</div>;
+    return (
+      <EmptyStateMessage
+        icon={<Icon.CoinsStacked01 />}
+        message="No payments yet. Individual payments appear here once a disbursement starts sending."
+      />
+    );
   }
 
   return (

@@ -1,13 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import { Card, Link, Notification } from "@stellar/design-system";
-import { Routes } from "@/constants/settings";
-import { formatDateTime } from "@/helpers/formatIntlDateTime";
-import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
-import { useSort } from "@/hooks/useSort";
+
+import { Card, Icon, Link, Notification } from "@stellar/design-system";
+
 import { AssetAmount } from "@/components/AssetAmount";
 import { DisbursementStatus } from "@/components/DisbursementStatus";
+import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { Table } from "@/components/Table";
+
+import { Routes } from "@/constants/settings";
+
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+
+import { useSort } from "@/hooks/useSort";
+
 import {
   ActionStatus,
   Disbursement,
@@ -86,7 +93,12 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
       return <div className="Note">There are no disbursements matching selected filters</div>;
     }
 
-    return <div className="Note">There are no disbursements</div>;
+    return (
+      <EmptyStateMessage
+        icon={<Icon.Send01 />}
+        message="No disbursements yet. Create one to send a batch of payments from this account."
+      />
+    );
   }
 
   const defaultSortDirection = hasSort ? "default" : undefined;
