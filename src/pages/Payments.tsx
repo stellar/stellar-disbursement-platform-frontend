@@ -1,25 +1,36 @@
 import { useState } from "react";
-import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
+
 import { useQueryClient } from "@tanstack/react-query";
+import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/store";
-import { exportDataAction } from "@/store/ducks/dataExport";
+import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/design-system";
 
+import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { FilterMenu } from "@/components/FilterMenu";
 import { Pagination } from "@/components/Pagination";
 import { PaymentsTable } from "@/components/PaymentsTable";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ShowForRoles } from "@/components/ShowForRoles";
-import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { usePayments } from "@/apiQueries/usePayments";
-import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
+import { exportDataAction } from "@/store/ducks/dataExport";
+
 import { PAGE_LIMIT_OPTIONS } from "@/constants/settings";
+
+import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+import { usePayments } from "@/apiQueries/usePayments";
+
+import { accountColor } from "@/helpers/accountColor";
 import { number } from "@/helpers/formatIntlNumber";
+
+import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import { CommonFilters, CreateDirectPaymentRequest } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 export const Payments = () => {
   const [isSearchInProgress] = useState(false);
@@ -38,6 +49,16 @@ export const Payments = () => {
   const [searchQuery, setSearchQuery] = useState<{ q: string } | undefined>();
 
   const queryClient = useQueryClient();
+
+  // A direct payment leaves a specific distribution account. Under "All accounts" the backend
+  // has no source account to charge and rejects with a raw 400, so we require a concrete
+  // selection first (mirrors the disbursement wizard's account gate).
+  const { userAccount } = useRedux("userAccount");
+  const { selectedWalletId } = useSelectedWallet();
+  const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const isMultiWallet = (distributionWallets?.length ?? 0) >= 2;
+  const selectedWallet = distributionWallets?.find((w) => w.id === selectedWalletId);
+  const mustChooseAccount = isMultiWallet && !selectedWalletId;
 
   const {
     data: payments,
@@ -144,13 +165,24 @@ export const Payments = () => {
                 variant="primary"
                 size="md"
                 onClick={handleCreateDirectPayment}
-                disabled={isLoading || isFetching}
+                disabled={isLoading || isFetching || mustChooseAccount}
               >
                 New Direct Payment
               </Button>
             </ShowForRoles>
           </SectionHeader.Content>
         </SectionHeader.Row>
+
+        {mustChooseAccount ? (
+          <SectionHeader.Row>
+            <SectionHeader.Content>
+              <Notification variant="primary" title="Choose an account to send from">
+                A direct payment leaves one distribution account. Pick the account from the switcher
+                at the top of the page, then create the payment.
+              </Notification>
+            </SectionHeader.Content>
+          </SectionHeader.Row>
+        ) : null}
 
         <SectionHeader.Row>
           <SectionHeader.Content>
@@ -272,6 +304,10 @@ export const Payments = () => {
         onResetQuery={resetCreatePaymentQuery}
         isLoading={isCreatingPayment}
         errorMessage={createPaymentError?.message}
+        sendingFromName={isMultiWallet && selectedWallet ? selectedWallet.name : undefined}
+        sendingFromColor={
+          isMultiWallet && selectedWallet ? accountColor(selectedWallet.id) : undefined
+        }
       />
     </>
   );

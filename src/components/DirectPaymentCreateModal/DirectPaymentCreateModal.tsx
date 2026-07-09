@@ -32,7 +32,34 @@ interface DirectPaymentCreateModalProps {
   onResetQuery: () => void;
   isLoading: boolean;
   errorMessage?: string;
+  // The distribution (sending) account this payment will leave — shown so the operator always
+  // knows which account funds it. Only set for multi-account tenants.
+  sendingFromName?: string;
+  sendingFromColor?: string;
 }
+
+// A compact "Sending from [dot] Account" banner so the source account is visible at the point
+// of committing a direct payment (single-account tenants don't need it).
+const SendingFromBanner = ({ name, color }: { name?: string; color?: string }) => {
+  if (!name) {
+    return null;
+  }
+  return (
+    <div className="DirectPaymentCreateModal__sendingFrom">
+      <span className="DirectPaymentCreateModal__sendingFrom__label">Sending from</span>
+      <span className="DirectPaymentCreateModal__sendingFrom__value">
+        {color ? (
+          <span
+            className="DirectPaymentCreateModal__sendingFrom__dot"
+            style={{ backgroundColor: color }}
+            aria-hidden="true"
+          />
+        ) : null}
+        {name}
+      </span>
+    </div>
+  );
+};
 
 const INITIAL_FORM_DATA = {
   assetId: "",
@@ -50,6 +77,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   onResetQuery,
   isLoading,
   errorMessage,
+  sendingFromName,
+  sendingFromColor,
 }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -422,6 +451,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       {showConfirmation ? (
         <>
           <Modal.Body>
+            <SendingFromBanner name={sendingFromName} color={sendingFromColor} />
             {errorMessage && (
               <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras
@@ -461,6 +491,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       ) : (
         <form onSubmit={handleSubmit} onReset={handleClose}>
           <Modal.Body>
+            <SendingFromBanner name={sendingFromName} color={sendingFromColor} />
             <div className="DirectPaymentCreateModal__description">
               Send a single payment directly to a receiver via email, phone number, or wallet
               address.
