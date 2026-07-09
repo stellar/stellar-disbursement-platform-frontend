@@ -1,5 +1,8 @@
 .ActiveWalletBar {
   margin-bottom: 1.5rem;
+  // Anchor the Floater menu to the trigger, not the full content column — without this the
+  // menu opens centered on the page, hundreds of px away from the control that opened it.
+  width: fit-content;
 
   &__trigger {
     display: inline-flex;
@@ -20,6 +23,36 @@
 
     &:hover {
       background-color: var(--sds-clr-lilac-03);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sds-clr-lilac-09);
+      outline-offset: 2px;
+    }
+
+    // Static variant (single-account users): same context, no affordance to open a menu.
+    &--static {
+      cursor: default;
+
+      &:hover {
+        background-color: var(--sds-clr-lilac-02);
+      }
+    }
+
+    &--placeholder {
+      cursor: default;
+      opacity: 0.7;
+      min-height: 51px;
+    }
+
+    &--error {
+      border-color: var(--sds-clr-red-06);
+      border-left-color: var(--sds-clr-red-09);
+      background-color: var(--sds-clr-red-02);
+
+      &:hover {
+        background-color: var(--sds-clr-red-03);
+      }
     }
   }
 
@@ -120,6 +153,11 @@
       background-color: var(--sds-clr-gray-03);
     }
 
+    &:focus-visible {
+      outline: 2px solid var(--sds-clr-lilac-09);
+      outline-offset: -2px;
+    }
+
     &--active {
       background-color: var(--sds-clr-lilac-03);
     }
@@ -153,11 +191,12 @@
     font-size: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    font-weight: 600;
+    font-weight: 700;
     padding: 1px 6px;
     border-radius: 999px;
-    background-color: var(--sds-clr-gray-04);
-    color: var(--sds-clr-gray-11);
+    // gray-06/gray-12 clears WCAG AA in both themes (gray-04/gray-11 fell below in light).
+    background-color: var(--sds-clr-gray-06);
+    color: var(--sds-clr-gray-12);
   }
 
   &__balance {

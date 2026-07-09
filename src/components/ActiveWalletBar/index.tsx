@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Floater, Icon } from "@stellar/design-system";
 
@@ -7,31 +7,12 @@ import { AssetAmount } from "@/components/AssetAmount";
 import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
+import { accountColor } from "@/helpers/accountColor";
+
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
 import "./styles.scss";
-
-// Deterministic per-account color chip. Borrowed from AWS's account-color idea (red=prod,
-// etc.): each account gets a stable color so users recognize "which account" at a glance,
-// consistently in the trigger and every menu row.
-const ACCOUNT_COLORS = [
-  "#7B61FF",
-  "#0EA5E9",
-  "#10B981",
-  "#F59E0B",
-  "#EF4444",
-  "#EC4899",
-  "#8B5CF6",
-  "#14B8A6",
-];
-const accountColor = (key: string) => {
-  let hash = 0;
-  for (let i = 0; i < key.length; i += 1) {
-    hash = (hash * 31 + key.charCodeAt(i)) & 0xffffffff;
-  }
-  return ACCOUNT_COLORS[Math.abs(hash) % ACCOUNT_COLORS.length];
-};
 
 // Compact live balance for a menu row (Mercury/Brex: the switcher shows which account has
 // funds to disburse from). Mounted only while the menu is open, so balances aren't fetched
@@ -43,7 +24,7 @@ const RowBalance = ({
   walletId: string | null;
   isAuthenticated: boolean;
 }) => {
-  const { data, isLoading } = useDistributionWalletBalance(isAuthenticated, walletId);
+  const { data, isLoading, isError } = useDistributionWalletBalance(isAuthenticated, walletId);
   const balances = Object.entries(data?.balances ?? {});
   const nonZero = balances.filter(([, amount]) => Number(amount) > 0);
   const toShow = (nonZero.length ? nonZero : balances).slice(0, 3);
@@ -51,8 +32,17 @@ const RowBalance = ({
   if (isLoading) {
     return <span className="WalletSwitcher__balance WalletSwitcher__balance--muted">…</span>;
   }
+  if (isError) {
+    return (
+      <span className="WalletSwitcher__balance WalletSwitcher__balance--muted">
+        balance unavailable
+      </span>
+    );
+  }
   if (!toShow.length) {
-    return <span className="WalletSwitcher__balance WalletSwitcher__balance--muted">—</span>;
+    return (
+      <span className="WalletSwitcher__balance WalletSwitcher__balance--muted">no funds yet</span>
+    );
   }
   return (
     <span className="WalletSwitcher__balance">
@@ -65,16 +55,34 @@ const RowBalance = ({
 
 // The active distribution account, prominent on every page, with a rich switcher menu so a
 // user managing several accounts always knows which one they're acting on (and which has
-// funds). Hidden for single-account tenants. Patterned on account switchers in
-// Stripe / Mercury / Vercel / Linear: current context as the trigger, a menu of rows with a
-// color mark, live balance, and an active checkmark.
+// funds). Single-account users get a static (non-interactive) bar so the account name is
+// still always on screen. Patterned on account switchers in Stripe / Mercury / Vercel /
+// Linear: current context as the trigger, a menu of rows with a color mark, live balance,
+// and an active checkmark.
 export const ActiveWalletBar = () => {
   const { userAccount } = useRedux("userAccount");
   const { selectedWalletId, setSelectedWalletId } = useSelectedWallet();
-  const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const {
+    data: wallets,
+    isLoading,
+    isError,
+    refetch,
+  } = useDistributionWallets(userAccount.isAuthenticated);
 
-  // Tracks the menu open state (reported by Floater) so per-row balances are fetched lazily.
+  // We drive the menu open/close ourselves (Floater controlled mode via `isVisible`) so we
+  // can close on selection, close on Escape, and support keyboard navigation — none of which
+  // the uncontrolled Floater does. `isOpen` also gates lazy per-row balance fetches.
   const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const closeMenu = useCallback((restoreFocus = false) => {
+    setIsOpen(false);
+    if (restoreFocus) {
+      triggerRef.current?.focus();
+    }
+  }, []);
 
   // If the persisted selection isn't among this user's accounts (different login, archived),
   // fall back to "All accounts".
@@ -85,8 +93,136 @@ export const ActiveWalletBar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallets, selectedWalletId]);
 
-  if (!userAccount.isAuthenticated || !wallets || wallets.length < 2) {
+  // Controlled Floater no longer auto-closes on outside click, so we do it: any pointer down
+  // outside the bar (including on a button that opens a modal) dismisses the menu.
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+    const onPointerDown = (event: PointerEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [isOpen]);
+
+  // Move focus into the menu when it opens so keyboard users land on the active option.
+  useEffect(() => {
+    if (!isOpen || !menuRef.current) {
+      return;
+    }
+    const options = menuRef.current.querySelectorAll<HTMLElement>('[role="option"]');
+    const active =
+      menuRef.current.querySelector<HTMLElement>('[aria-selected="true"]') ?? options[0];
+    active?.focus();
+  }, [isOpen]);
+
+  // Arrow-key roving + Escape/Tab dismissal on the listbox.
+  const onMenuKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeMenu(true);
+      return;
+    }
+    if (event.key === "Tab") {
+      closeMenu();
+      return;
+    }
+    if (!menuRef.current) {
+      return;
+    }
+    const options = Array.from(menuRef.current.querySelectorAll<HTMLElement>('[role="option"]'));
+    const currentIndex = options.indexOf(document.activeElement as HTMLElement);
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      options[(currentIndex + 1) % options.length]?.focus();
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      options[(currentIndex - 1 + options.length) % options.length]?.focus();
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      options[0]?.focus();
+    } else if (event.key === "End") {
+      event.preventDefault();
+      options[options.length - 1]?.focus();
+    }
+  };
+
+  const selectWallet = (walletId: string) => {
+    setSelectedWalletId(walletId);
+    closeMenu(true);
+  };
+
+  if (!userAccount.isAuthenticated) {
     return null;
+  }
+
+  // Reserve the bar's height while the account list loads so the page doesn't jump.
+  if (isLoading) {
+    return (
+      <div className="ActiveWalletBar" aria-hidden="true">
+        <div className="ActiveWalletBar__trigger ActiveWalletBar__trigger--placeholder">
+          <span className="ActiveWalletBar__labelStack">
+            <span className="ActiveWalletBar__label">Distribution account</span>
+            <span className="ActiveWalletBar__value ActiveWalletBar__value--all">Loading…</span>
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // A failed account fetch must be visible — X-Wallet-Id keeps scoping requests even when
+  // this bar can't render, so silence would hide which account the user is acting on.
+  if (isError) {
+    return (
+      <div className="ActiveWalletBar" role="region" aria-label="Active distribution account">
+        <button
+          type="button"
+          className="ActiveWalletBar__trigger ActiveWalletBar__trigger--error"
+          onClick={() => refetch()}
+        >
+          <span className="ActiveWalletBar__labelStack">
+            <span className="ActiveWalletBar__label">Distribution account</span>
+            <span className="ActiveWalletBar__value ActiveWalletBar__value--all">
+              Couldn't load accounts — click to retry
+            </span>
+          </span>
+        </button>
+      </div>
+    );
+  }
+
+  if (!wallets || wallets.length === 0) {
+    return null;
+  }
+
+  // Single-account users (e.g. a country officer granted one account) still need to know
+  // which account they're on — show the bar without a menu.
+  if (wallets.length === 1) {
+    const only = wallets[0];
+    return (
+      <div className="ActiveWalletBar" role="region" aria-label="Active distribution account">
+        <div className="ActiveWalletBar__trigger ActiveWalletBar__trigger--static">
+          <span className="ActiveWalletBar__icon" aria-hidden="true">
+            <Icon.Dataflow01 />
+          </span>
+          <span className="ActiveWalletBar__labelStack">
+            <span className="ActiveWalletBar__label">Distribution account</span>
+            <span className="ActiveWalletBar__value">
+              <span
+                className="ActiveWalletBar__dot"
+                style={{ backgroundColor: accountColor(only.id) }}
+                aria-hidden="true"
+              />
+              {only.name}
+              {only.is_default ? " (default)" : ""}
+            </span>
+          </span>
+        </div>
+      </div>
+    );
   }
 
   const selectedWallet = wallets.find((w) => w.id === selectedWalletId);
@@ -97,10 +233,12 @@ export const ActiveWalletBar = () => {
 
   const trigger = (
     <button
+      ref={triggerRef}
       type="button"
       className="ActiveWalletBar__trigger"
       aria-haspopup="listbox"
       aria-expanded={isOpen}
+      onClick={() => setIsOpen((open) => !open)}
     >
       <span className="ActiveWalletBar__icon" aria-hidden="true">
         <Icon.Dataflow01 />
@@ -127,21 +265,32 @@ export const ActiveWalletBar = () => {
   );
 
   return (
-    <div className="ActiveWalletBar" role="region" aria-label="Active distribution account">
+    <div
+      className="ActiveWalletBar"
+      role="region"
+      aria-label="Active distribution account"
+      ref={containerRef}
+    >
       <Floater
         triggerEl={trigger}
         placement="bottom"
         isContrast={false}
         offset={6}
-        callback={setIsOpen}
+        isVisible={isOpen}
       >
-        <div className="WalletSwitcher" role="listbox" aria-label="Switch distribution account">
+        <div
+          className="WalletSwitcher"
+          role="listbox"
+          aria-label="Switch distribution account"
+          ref={menuRef}
+          onKeyDown={onMenuKeyDown}
+        >
           <button
             type="button"
             role="option"
             aria-selected={isAllAccounts}
             className={`WalletSwitcher__item ${isAllAccounts ? "WalletSwitcher__item--active" : ""}`}
-            onClick={() => setSelectedWalletId("")}
+            onClick={() => selectWallet("")}
           >
             <span className="WalletSwitcher__main">
               <span className="WalletSwitcher__name">All accounts</span>
@@ -167,7 +316,7 @@ export const ActiveWalletBar = () => {
                 role="option"
                 aria-selected={isActive}
                 className={`WalletSwitcher__item ${isActive ? "WalletSwitcher__item--active" : ""}`}
-                onClick={() => setSelectedWalletId(wallet.id)}
+                onClick={() => selectWallet(wallet.id)}
               >
                 <span className="WalletSwitcher__main">
                   <span className="WalletSwitcher__name">
