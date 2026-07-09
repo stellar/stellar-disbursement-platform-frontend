@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { Badge, Card, Heading } from "@stellar/design-system";
+import { Badge, Button, Card, Heading, Notification } from "@stellar/design-system";
 
 import { AccountBalances } from "@/components/AccountBalances";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -28,22 +28,34 @@ import {
 
 import { Routes } from "@/constants/settings";
 
+import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+
+import { accountColor } from "@/helpers/accountColor";
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
+
 
 import { useAllBalances } from "@/hooks/useAllBalances";
 import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
-import { Disbursement, DisbursementStep, hasWallet } from "@/types";
+import { AccountBalanceItem, Disbursement, DisbursementStep, hasWallet } from "@/types";
 
 import { AppDispatch } from "@/store";
 
 export const DisbursementsNew = () => {
-  const { disbursementDrafts, organization } = useRedux("disbursementDrafts", "organization");
+  const { disbursementDrafts, organization, userAccount } = useRedux(
+    "disbursementDrafts",
+    "organization",
+    "userAccount",
+  );
 
   const [draftDetails, setDraftDetails] = useState<Disbursement>();
   const [customMessage, setCustomMessage] = useState("");
   const [isDetailsValid, setIsDetailsValid] = useState(false);
   const [csvFile, setCsvFile] = useState<File | undefined>();
+  const [csvTotal, setCsvTotal] = useState<string | null>(null);
+  const [csvParseError, setCsvParseError] = useState<string | undefined>();
   const [futureBalance, setFutureBalance] = useState(0);
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("edit");
@@ -52,8 +64,21 @@ export const DisbursementsNew = () => {
   const [isResponseSuccess, setIsResponseSuccess] = useState<boolean>(false);
   const notificationRef = useRef<HTMLDivElement | null>(null);
 
+  // Multi-account routing: a disbursement is funded by exactly one distribution account,
+  // so on multi-account tenants the wizard requires a concrete selection up front (the
+  // backend rejects creates without one) and every balance shown/validated is that
+  // account's — not the tenant default's.
+  const { selectedWalletId, setSelectedWalletId } = useSelectedWallet();
+  const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const isMultiWallet = (distributionWallets?.length ?? 0) >= 2;
+  const selectedWallet = distributionWallets?.find((w) => w.id === selectedWalletId);
+  const { data: selectedWalletBalance } = useDistributionWalletBalance(
+    userAccount.isAuthenticated && isMultiWallet && Boolean(selectedWalletId),
+    selectedWalletId || null,
+  );
+
   const isDraftEnabled = isDetailsValid;
-  const isReviewEnabled = isDraftEnabled && Boolean(csvFile);
+  const isReviewEnabled = isDraftEnabled && Boolean(csvFile) && !csvParseError;
   const isKWA = hasWallet(draftDetails?.registrationContactType);
 
   const dispatch: AppDispatch = useDispatch();
@@ -71,7 +96,7 @@ export const DisbursementsNew = () => {
     notificationRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [isSavedDraftMessageVisible, apiError, isResponseSuccess]);
 
-  /* eslint-disable react-hooks/set-state-in-effect */
+   
   useEffect(() => {
     handleScrollToTop();
     if (disbursementDrafts.newDraftId && disbursementDrafts.status === "SUCCESS") {
@@ -90,15 +115,55 @@ export const DisbursementsNew = () => {
       }
     }
   }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+   
 
   const { allBalances } = useAllBalances();
+
+  // The balances the wizard shows AND validates against. On a multi-account tenant these are
+  // the SELECTED account's live balances; the tenant-default fallback is only correct for
+  // single-account tenants.
+  const getEffectiveBalances = (): AccountBalanceItem[] | undefined => {
+    if (isMultiWallet && selectedWalletId) {
+      if (!selectedWalletBalance) return undefined;
+      return Object.entries(selectedWalletBalance.balances).map(([assetKey, amount]) => ({
+        balance: amount || "0",
+        assetCode: assetKey.split(":")[0],
+        assetIssuer: assetKey.split(":")[1] ?? "native",
+      }));
+    }
+    return allBalances;
+  };
+  const effectiveBalances = getEffectiveBalances();
+
+  // Recompute the projected post-disbursement balance whenever the CSV total, the chosen
+  // asset, or the account's live balance changes (previously it was only computed at upload
+  // time, so switching the asset afterwards validated against a stale number).
+  useEffect(() => {
+    if (!csvTotal) {
+      setFutureBalance(0);
+      return;
+    }
+    const assetBalance =
+      getEffectiveBalances()?.find((a) => a.assetCode === draftDetails?.asset?.code)?.balance ??
+      "0";
+    setFutureBalance(Number(assetBalance) - Number(csvTotal));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    csvTotal,
+    draftDetails?.asset?.code,
+    selectedWalletBalance,
+    allBalances,
+    isMultiWallet,
+    selectedWalletId,
+  ]);
 
   const resetState = () => {
     setCurrentStep("edit");
     setDraftDetails(undefined);
     setIsDetailsValid(false);
     setCsvFile(undefined);
+    setCsvTotal(null);
+    setCsvParseError(undefined);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
   };
@@ -160,35 +225,83 @@ export const DisbursementsNew = () => {
     if (apiError) {
       dispatch(clearDisbursementDraftsErrorAction());
     }
+    setCsvParseError(undefined);
     calculateDisbursementTotalAmountFromFile(file);
     setCsvFile(file);
   };
 
   const calculateDisbursementTotalAmountFromFile = (csvFile?: File) => {
-    csvTotalAmount({ csvFile }).then((totalAmount) => {
-      if (!totalAmount) return;
+    csvTotalAmount({ csvFile })
+      .then((totalAmount) => {
+        if (!totalAmount) {
+          setCsvTotal(null);
+          return;
+        }
 
-      setDraftDetails({
-        ...draftDetails,
-        stats: {
-          ...draftDetails?.stats,
-          totalAmount: totalAmount?.toString() ?? "0",
-        },
-      } as Disbursement);
-
-      // update future balance
-      const assetBalance =
-        allBalances?.find((a) => a.assetCode === draftDetails?.asset.code)?.balance ?? "0";
-
-      if (totalAmount) {
-        setFutureBalance(Number(assetBalance) - totalAmount.toNumber());
-      }
-    });
+        setCsvTotal(totalAmount.toString());
+        setDraftDetails({
+          ...draftDetails,
+          stats: {
+            ...draftDetails?.stats,
+            totalAmount: totalAmount?.toString() ?? "0",
+          },
+        } as Disbursement);
+      })
+      // A file that fails to parse must be a visible error, not a silently-enabled Review.
+      .catch((e: Error) => {
+        setCsvTotal(null);
+        setCsvParseError(e.message);
+      });
   };
 
   const handleViewDetails = () => {
     navigate(`${Routes.DISBURSEMENTS}/${disbursementDrafts.newDraftId}`);
     resetState();
+  };
+
+  // Why "Confirm disbursement" is disabled, stated on-screen — a native title tooltip is
+  // invisible on touch/keyboard, and a silently dead button is where testers got stuck.
+  const getSubmitDisabledReason = (): string | undefined => {
+    if (organization.data.isApprovalRequired) {
+      return "Your organization requires disbursements to be approved by another user. Save as a draft and make sure another user reviews and submits.";
+    }
+    if (csvParseError) {
+      return `The uploaded file could not be read: ${csvParseError}`;
+    }
+    if (draftDetails && csvFile && BigNumber(futureBalance).lt(0)) {
+      const assetCode = draftDetails?.asset?.code ?? "";
+      const accountName = isMultiWallet && selectedWallet ? ` of ${selectedWallet.name}` : "";
+      return `This disbursement's total exceeds the available ${assetCode} balance${accountName}. Lower the amounts in the file or fund the account, then re-upload.`;
+    }
+    return undefined;
+  };
+  const submitDisabledReason = getSubmitDisabledReason();
+
+  // Persistent "which account funds this?" context — shown on every step of the wizard.
+  const renderSendingFrom = () => {
+    if (!isMultiWallet || !selectedWallet) return null;
+    return (
+      <div className="Note" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        Sending from
+        <span
+          aria-hidden="true"
+          style={{
+            display: "inline-block",
+            width: "0.5rem",
+            height: "0.5rem",
+            borderRadius: "999px",
+            backgroundColor: accountColor(selectedWallet.id),
+          }}
+        />
+        <strong>{selectedWallet.name}</strong>
+        {selectedWallet.distribution_account_address ? (
+          <span>
+            ({selectedWallet.distribution_account_address.slice(0, 4)}…
+            {selectedWallet.distribution_account_address.slice(-4)})
+          </span>
+        ) : null}
+      </div>
+    );
   };
 
   const renderButtons = (variant: DisbursementStep) => {
@@ -223,10 +336,54 @@ export const DisbursementsNew = () => {
   };
 
   const renderCurrentStep = () => {
+    // Multi-account tenants must pick the funding account before anything else — the create
+    // is rejected without one, so don't let the user fill a whole form that can't submit.
+    if (isMultiWallet && !selectedWalletId) {
+      return (
+        <div className="DisbursementForm">
+          <Card>
+            <Title size="md">Choose the account to send from</Title>
+            <div className="Note" style={{ margin: "0.5rem 0 1rem" }}>
+              Every disbursement is funded by a single distribution account. Pick one to continue —
+              you can also use the account switcher at the top of the page.
+            </div>
+            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+              {distributionWallets?.map((wallet) => (
+                <Button
+                  key={wallet.id}
+                  size="md"
+                  variant="tertiary"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedWalletId(wallet.id);
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      display: "inline-block",
+                      width: "0.5rem",
+                      height: "0.5rem",
+                      borderRadius: "999px",
+                      marginRight: "0.5rem",
+                      backgroundColor: accountColor(wallet.id),
+                    }}
+                  />
+                  {wallet.name}
+                  {wallet.is_default ? " (default)" : ""}
+                </Button>
+              ))}
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
     // Preview
     if (currentStep === "preview") {
       return (
         <form onSubmit={handleSubmitDisbursement} className="DisbursementForm">
+          {renderSendingFrom()}
           <DisbursementDetails
             variant="preview"
             details={draftDetails}
@@ -242,6 +399,12 @@ export const DisbursementsNew = () => {
             registrationContactType={draftDetails?.registrationContactType}
             verificationField={draftDetails?.verificationField}
           />
+
+          {submitDisabledReason ? (
+            <Notification variant="warning" title="Can't confirm yet" isFilled>
+              {submitDisabledReason}
+            </Notification>
+          ) : null}
 
           {renderButtons("preview")}
         </form>
@@ -281,6 +444,7 @@ export const DisbursementsNew = () => {
           ) : null}
 
           <form className="DisbursementForm">
+            {renderSendingFrom()}
             <DisbursementDetails
               variant="confirmation"
               details={draftDetails}
@@ -302,11 +466,21 @@ export const DisbursementsNew = () => {
       <>
         <form onSubmit={handleReview} className="DisbursementForm">
           <Card>
-            <InfoTooltip infoText="The total amount of funds you have available for disbursements">
-              <Title size="md">Current balance</Title>
+            <InfoTooltip
+              infoText={
+                isMultiWallet && selectedWallet
+                  ? `The live balance of ${selectedWallet.name} — the account this disbursement will be paid from`
+                  : "The total amount of funds you have available for disbursements"
+              }
+            >
+              <Title size="md">
+                {isMultiWallet && selectedWallet
+                  ? `Available balance — ${selectedWallet.name}`
+                  : "Current balance"}
+              </Title>
             </InfoTooltip>
             <div className="DisbursementForm__balances">
-              <AccountBalances accountBalances={allBalances} />
+              <AccountBalances accountBalances={effectiveBalances} />
             </div>
           </Card>
 
@@ -347,6 +521,12 @@ export const DisbursementsNew = () => {
             registrationContactType={draftDetails?.registrationContactType}
             verificationField={draftDetails?.verificationField}
           />
+
+          {csvParseError ? (
+            <Notification variant="error" title="This file can't be used" isFilled>
+              {csvParseError} — fix the file and upload it again.
+            </Notification>
+          ) : null}
 
           {renderButtons("edit")}
         </form>
