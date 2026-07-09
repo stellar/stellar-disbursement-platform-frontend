@@ -30,7 +30,6 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
     data: stats,
     error,
     isLoading,
-    isFetching,
   } = useStatistics(userAccount.isAuthenticated, effectiveWalletId);
   const { data: walletBalance } = useDistributionWalletBalance(
     userAccount.isAuthenticated,
@@ -54,7 +53,10 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
     );
   }
 
-  if (isLoading || isFetching) {
+  // Only block on the first load. On an account switch we keep the previous cards visible
+  // (react-query serves cached data while refetching) so the dashboard doesn't blank out —
+  // this is what made switching "feel slow" before.
+  if (isLoading) {
     return (
       <div className="StatCards StatCards--home">
         <div className="Note">Loading…</div>
@@ -118,7 +120,7 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
             <div className="StatCards__card--flexCols">
               <div>
                 <div className="StatCards__card__title">
-                  <InfoTooltip infoText="The live on-chain balance of the selected distribution wallet (all wallets when none is selected)">
+                  <InfoTooltip infoText="The live on-chain balance of the distribution account(s) you can access — the active account when one is selected, otherwise all of them combined.">
                     Total balance
                   </InfoTooltip>
                 </div>

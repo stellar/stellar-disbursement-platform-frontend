@@ -12,6 +12,9 @@ import { usePrevious } from "@/hooks/usePrevious";
 interface AddDistributionWalletModalProps {
   visible: boolean;
   onClose: () => void;
+  // Fired after the account is created, so the parent can confirm the (invisible-otherwise)
+  // provisioning succeeded — this is the demo's "wow" moment.
+  onCreated?: (name: string) => void;
 }
 
 // Owner-only "Add account" flow: names a new distribution (sending) account. The backend
@@ -19,6 +22,7 @@ interface AddDistributionWalletModalProps {
 export const AddDistributionWalletModal: React.FC<AddDistributionWalletModalProps> = ({
   visible,
   onClose,
+  onCreated,
 }: AddDistributionWalletModalProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -31,7 +35,7 @@ export const AddDistributionWalletModal: React.FC<AddDistributionWalletModalProp
     if (isPrevVisible && !visible) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setName("");
-       
+
       setDescription("");
       reset();
     }
@@ -42,9 +46,15 @@ export const AddDistributionWalletModal: React.FC<AddDistributionWalletModalProp
     if (!name.trim()) {
       return;
     }
+    const createdName = name.trim();
     mutate(
-      { name: name.trim(), description: description.trim() || undefined },
-      { onSuccess: () => onClose() },
+      { name: createdName, description: description.trim() || undefined },
+      {
+        onSuccess: () => {
+          onCreated?.(createdName);
+          onClose();
+        },
+      },
     );
   };
 
@@ -88,7 +98,7 @@ export const AddDistributionWalletModal: React.FC<AddDistributionWalletModalProp
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button size="md" variant="tertiary" type="reset" isLoading={isPending}>
+          <Button size="md" variant="tertiary" type="reset" disabled={isPending}>
             Cancel
           </Button>
           <Button

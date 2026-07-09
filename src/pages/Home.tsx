@@ -72,7 +72,7 @@ export const Home = () => {
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              Dashboard
+              Home
             </Heading>
           </SectionHeader.Content>
           <SectionHeader.Content align="right">

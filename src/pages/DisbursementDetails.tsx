@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
+
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+
 import {
   Button,
   Card,
@@ -10,39 +13,42 @@ import {
   Link,
   Modal,
 } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/store";
+import { AssetAmount } from "@/components/AssetAmount";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { Pagination } from "@/components/Pagination";
+import { PaymentStatus } from "@/components/PaymentStatus";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Table } from "@/components/Table";
+
 import {
   getDisbursementDetailsAction,
   getDisbursementReceiversAction,
   pauseOrStartDisbursementAction,
   setDisbursementDetailsAction,
 } from "@/store/ducks/disbursementDetails";
-import { useRedux } from "@/hooks/useRedux";
-import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
 import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SectionHeader } from "@/components/SectionHeader";
-import { CopyWithIcon } from "@/components/CopyWithIcon";
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
-import { AssetAmount } from "@/components/AssetAmount";
-import { Pagination } from "@/components/Pagination";
-import { Table } from "@/components/Table";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { PaymentStatus } from "@/components/PaymentStatus";
-
-import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
 import { number } from "@/helpers/formatIntlNumber";
 import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
-import { saveFile } from "@/helpers/saveFile";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
 } from "@/helpers/receiverContactInfo";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+import { saveFile } from "@/helpers/saveFile";
+
+import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+import { useRedux } from "@/hooks/useRedux";
+
 import { VerificationFieldMap } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();
@@ -208,9 +214,7 @@ export const DisbursementDetails = () => {
           >
             <div className="StatCards__card__column">
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Receivers invitation was sent to
-                </label>
+                <label className="StatCards__card__item__label">Receivers invited</label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(disbursementDetails.details.stats?.paymentsTotalCount)}
                 </div>

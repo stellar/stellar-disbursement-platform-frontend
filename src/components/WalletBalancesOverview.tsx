@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, Card } from "@stellar/design-system";
+import { Button, Card, Notification } from "@stellar/design-system";
 
 import { AddDistributionWalletModal } from "@/components/AddDistributionWalletModal";
 import { AssetAmount } from "@/components/AssetAmount";
@@ -13,6 +13,7 @@ import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
 import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
 import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
 // One row = one distribution wallet + its live on-chain balances. Each row owns its own
 // balance query (keyed per wallet), so the overview shows every wallet at a glance without
@@ -42,7 +43,7 @@ const WalletBalanceRow = ({
         alignItems: "center",
         gap: "1rem",
         padding: "0.5rem 0",
-        borderBottom: "1px solid var(--color-gray-30)",
+        borderBottom: "1px solid var(--sds-clr-gray-06)",
       }}
     >
       <div style={{ fontWeight: 500 }}>
@@ -82,9 +83,11 @@ export const WalletBalancesOverview = () => {
   const { userAccount } = useRedux("userAccount");
   const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated);
   const { isRoleAccepted: isOwner } = useIsUserRoleAccepted(["owner"]);
+  const { setSelectedWalletId } = useSelectedWallet();
 
   const [showAdd, setShowAdd] = useState(false);
   const [manageWallet, setManageWallet] = useState<{ id: string; name: string } | null>(null);
+  const [createdName, setCreatedName] = useState<string | null>(null);
 
   if (!wallets || wallets.length === 0) {
     return null;
@@ -96,8 +99,32 @@ export const WalletBalancesOverview = () => {
     return null;
   }
 
+  const newlyCreated = wallets.find((w) => w.name === createdName);
+
   return (
     <>
+      {createdName ? (
+        <Notification
+          variant="success"
+          title={`Account "${createdName}" created and funded`}
+          isFilled
+        >
+          It's ready to send from.{" "}
+          {newlyCreated ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                setSelectedWalletId(newlyCreated.id);
+                setCreatedName(null);
+              }}
+            >
+              Switch to it
+            </Button>
+          ) : null}
+        </Notification>
+      ) : null}
+
       <Card>
         <div
           style={{
@@ -133,7 +160,11 @@ export const WalletBalancesOverview = () => {
       </Card>
 
       <ShowForRoles acceptedRoles={["owner"]}>
-        <AddDistributionWalletModal visible={showAdd} onClose={() => setShowAdd(false)} />
+        <AddDistributionWalletModal
+          visible={showAdd}
+          onClose={() => setShowAdd(false)}
+          onCreated={(name) => setCreatedName(name)}
+        />
         <ManageWalletAccessModal
           visible={Boolean(manageWallet)}
           walletId={manageWallet?.id ?? null}
