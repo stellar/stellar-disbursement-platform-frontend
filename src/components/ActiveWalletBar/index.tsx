@@ -61,7 +61,7 @@ const RowBalance = ({
 // and an active checkmark.
 export const ActiveWalletBar = () => {
   const { userAccount } = useRedux("userAccount");
-  const { selectedWalletId, setSelectedWalletId } = useSelectedWallet();
+  const { selectedWalletId, setSelectedWalletId, hasChosenWallet } = useSelectedWallet();
   const {
     data: wallets,
     isLoading,
@@ -84,14 +84,30 @@ export const ActiveWalletBar = () => {
     }
   }, []);
 
-  // If the persisted selection isn't among this user's accounts (different login, archived),
-  // fall back to "All accounts".
+  // Reconcile the selection against the accounts this user can actually see. On a fresh login
+  // we land on a concrete account (the default distribution account, else the first accessible
+  // one) so every request carries an X-Wallet-Id and create/disbursement flows work without a
+  // "pick an account" dead-end. This matters even for a single-account member of a multi-wallet
+  // tenant, where the backend still requires the header. An explicit "All accounts" choice
+  // (hasChosenWallet) is respected and left alone.
   useEffect(() => {
-    if (selectedWalletId && wallets && !wallets.some((w) => w.id === selectedWalletId)) {
-      setSelectedWalletId("");
+    if (!wallets || wallets.length === 0) {
+      return;
+    }
+    const defaultWalletId = (wallets.find((w) => w.is_default) ?? wallets[0]).id;
+
+    // A stored selection that no longer exists (different login, archived) → reset to a valid one.
+    if (selectedWalletId && !wallets.some((w) => w.id === selectedWalletId)) {
+      setSelectedWalletId(defaultWalletId);
+      return;
+    }
+
+    // Never chosen yet (fresh login) → default to a concrete account.
+    if (!hasChosenWallet && !selectedWalletId) {
+      setSelectedWalletId(defaultWalletId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wallets, selectedWalletId]);
+  }, [wallets, selectedWalletId, hasChosenWallet]);
 
   // Controlled Floater no longer auto-closes on outside click, so we do it: any pointer down
   // outside the bar (including on a button that opens a modal) dismisses the menu.

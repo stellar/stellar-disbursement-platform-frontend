@@ -51,14 +51,15 @@ export const Payments = () => {
   const queryClient = useQueryClient();
 
   // A direct payment leaves a specific distribution account. Under "All accounts" the backend
-  // has no source account to charge and rejects with a raw 400, so we require a concrete
-  // selection first (mirrors the disbursement wizard's account gate).
+  // has no source account to charge and rejects with a raw 400. Rather than dead-ending on a
+  // disabled button, if the user opens the flow under "All accounts" we drop them into their
+  // default account first (they can still switch source via the account bar).
   const { userAccount } = useRedux("userAccount");
-  const { selectedWalletId } = useSelectedWallet();
+  const { selectedWalletId, setSelectedWalletId } = useSelectedWallet();
   const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
   const isMultiWallet = (distributionWallets?.length ?? 0) >= 2;
   const selectedWallet = distributionWallets?.find((w) => w.id === selectedWalletId);
-  const mustChooseAccount = isMultiWallet && !selectedWalletId;
+  const defaultWallet = distributionWallets?.find((w) => w.is_default) ?? distributionWallets?.[0];
 
   const {
     data: payments,
@@ -134,6 +135,11 @@ export const Payments = () => {
   };
 
   const handleCreateDirectPayment = () => {
+    // A direct payment must leave a concrete account. If we're on "All accounts", pick the
+    // default account so the modal opens ready to send instead of erroring on submit.
+    if (isMultiWallet && !selectedWalletId && defaultWallet) {
+      setSelectedWalletId(defaultWallet.id);
+    }
     setIsDirectPaymentModalVisible(true);
   };
 
@@ -165,24 +171,13 @@ export const Payments = () => {
                 variant="primary"
                 size="md"
                 onClick={handleCreateDirectPayment}
-                disabled={isLoading || isFetching || mustChooseAccount}
+                disabled={isLoading || isFetching}
               >
                 New Direct Payment
               </Button>
             </ShowForRoles>
           </SectionHeader.Content>
         </SectionHeader.Row>
-
-        {mustChooseAccount ? (
-          <SectionHeader.Row>
-            <SectionHeader.Content>
-              <Notification variant="primary" title="Choose an account to send from">
-                A direct payment leaves one distribution account. Pick the account from the switcher
-                at the top of the page, then create the payment.
-              </Notification>
-            </SectionHeader.Content>
-          </SectionHeader.Row>
-        ) : null}
 
         <SectionHeader.Row>
           <SectionHeader.Content>

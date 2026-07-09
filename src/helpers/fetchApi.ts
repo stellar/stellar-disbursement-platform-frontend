@@ -5,7 +5,7 @@ import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { refreshToken } from "@/api/refreshToken";
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
-import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
+import { getScopedWalletId } from "@/helpers/localStorageSelectedWallet";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { parseJwt } from "@/helpers/parseJwt";
@@ -46,13 +46,13 @@ export const fetchApi = async (
       localStorageSessionToken.set(token);
     }
 
-    const selectedWalletId = localStorageSelectedWallet.get();
+    const selectedWalletId = getScopedWalletId();
 
     config.headers = {
       ...config.headers,
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(options?.organizationName),
-      // Multi-wallet: scope requests to the selected distribution wallet.
+      // Multi-wallet: scope requests to the selected distribution wallet ("all"/none omits it).
       ...(selectedWalletId ? { "X-Wallet-Id": selectedWalletId } : {}),
       ...(!options?.omitContentType
         ? {

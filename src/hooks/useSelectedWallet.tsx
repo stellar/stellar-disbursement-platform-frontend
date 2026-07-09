@@ -2,12 +2,16 @@ import { createContext, useContext, useState, ReactNode } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
 
-import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
+import { ALL_ACCOUNTS, localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
 
 type SelectedWalletContextValue = {
   // "" means "All accounts" (Owners: tenant-wide aggregate).
   selectedWalletId: string;
   setSelectedWalletId: (walletId: string) => void;
+  // False until the user (or the default-account bootstrap) has committed a selection. Lets the
+  // ActiveWalletBar default a fresh login to the default account without clobbering an explicit
+  // "All accounts" choice on reload.
+  hasChosenWallet: boolean;
 };
 
 const SelectedWalletContext = createContext<SelectedWalletContextValue | undefined>(undefined);
@@ -18,23 +22,26 @@ const SelectedWalletContext = createContext<SelectedWalletContextValue | undefin
 // request. Changing it invalidates react-query caches so every wallet-scoped view refetches.
 export const SelectedWalletProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
-  const [selectedWalletId, setSelected] = useState<string>(
-    () => localStorageSelectedWallet.get() ?? "",
+  const initialRaw = localStorageSelectedWallet.get(); // null | "all" | "<id>"
+  const [selectedWalletId, setSelected] = useState<string>(() =>
+    initialRaw && initialRaw !== ALL_ACCOUNTS ? initialRaw : "",
   );
+  // null means the user has never chosen — the bar will default them to their default account.
+  const [hasChosenWallet, setHasChosenWallet] = useState<boolean>(() => initialRaw !== null);
 
   const setSelectedWalletId = (walletId: string) => {
     setSelected(walletId);
-    if (walletId) {
-      localStorageSelectedWallet.set(walletId);
-    } else {
-      localStorageSelectedWallet.remove();
-    }
+    setHasChosenWallet(true);
+    // Persists "" as the "all" sentinel so the explicit choice survives a reload.
+    localStorageSelectedWallet.set(walletId);
     // Refetch every wallet-scoped query with the new X-Wallet-Id header.
     queryClient.invalidateQueries();
   };
 
   return (
-    <SelectedWalletContext.Provider value={{ selectedWalletId, setSelectedWalletId }}>
+    <SelectedWalletContext.Provider
+      value={{ selectedWalletId, setSelectedWalletId, hasChosenWallet }}
+    >
       {children}
     </SelectedWalletContext.Provider>
   );
