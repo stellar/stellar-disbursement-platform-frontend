@@ -1,15 +1,26 @@
-import { Heading, Text } from "@stellar/design-system";
+import { useNavigate } from "react-router-dom";
+
+import { Button, Heading, Text } from "@stellar/design-system";
+
+import { Routes } from "@/constants/settings";
 
 export const Unauthorized = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Heading as="h2" size="sm">
-        Unauthorized
+        You don't have access to this page
       </Heading>
       <Text size="sm" as="p">
-        You are not authorized to view this feature. Please contact your administrator with
-        questions.
+        Your role doesn't include this feature. If you think you should have access, ask an owner on
+        your team to grant it.
       </Text>
+      <div style={{ marginTop: "1rem" }}>
+        <Button size="md" variant="primary" onClick={() => navigate(Routes.HOME)}>
+          Back to Home
+        </Button>
+      </div>
     </>
   );
 };

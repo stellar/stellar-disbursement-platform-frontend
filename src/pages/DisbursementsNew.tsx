@@ -34,7 +34,6 @@ import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 import { accountColor } from "@/helpers/accountColor";
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
 
-
 import { useAllBalances } from "@/hooks/useAllBalances";
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
@@ -96,7 +95,6 @@ export const DisbursementsNew = () => {
     notificationRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [isSavedDraftMessageVisible, apiError, isResponseSuccess]);
 
-   
   useEffect(() => {
     handleScrollToTop();
     if (disbursementDrafts.newDraftId && disbursementDrafts.status === "SUCCESS") {
@@ -115,7 +113,6 @@ export const DisbursementsNew = () => {
       }
     }
   }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
-   
 
   const { allBalances } = useAllBalances();
 
@@ -321,6 +318,7 @@ export const DisbursementsNew = () => {
         isSubmitDisabled={
           organization.data.isApprovalRequired ||
           !(draftDetails && csvFile) ||
+          Boolean(csvParseError) ||
           BigNumber(futureBalance).lt(0)
         }
         isReviewDisabled={!isReviewEnabled}

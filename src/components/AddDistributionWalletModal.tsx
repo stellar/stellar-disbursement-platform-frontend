@@ -85,6 +85,7 @@ export const AddDistributionWalletModal: React.FC<AddDistributionWalletModalProp
             placeholder="e.g. Haiti"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            autoFocus
           />
           <Input
             fieldSize="sm"

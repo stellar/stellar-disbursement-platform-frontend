@@ -1,4 +1,4 @@
-import { Card, Notification } from "@stellar/design-system";
+import { Card, Loader, Notification } from "@stellar/design-system";
 
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
@@ -59,7 +59,7 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
   if (isLoading) {
     return (
       <div className="StatCards StatCards--home">
-        <div className="Note">Loading…</div>
+        <Loader size="2rem" />
       </div>
     );
   }

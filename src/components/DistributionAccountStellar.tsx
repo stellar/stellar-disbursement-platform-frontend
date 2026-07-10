@@ -108,7 +108,9 @@ export const DistributionAccountStellar = ({
     }
 
     if (balances?.length === 0) {
-      return <div className="Note">There are no distribution accounts</div>;
+      return (
+        <div className="Note">No funds yet — send assets to the address above to get started.</div>
+      );
     }
 
     return (

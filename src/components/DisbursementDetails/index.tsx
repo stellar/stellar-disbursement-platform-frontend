@@ -399,7 +399,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       </div>
 
       <div>
-        <label className="Label Label--sm">Verification Type</label>
+        <label className="Label Label--sm">Verification type</label>
         <div className="DisbursementDetailsFields__value">{derived.labels.verification}</div>
       </div>
 

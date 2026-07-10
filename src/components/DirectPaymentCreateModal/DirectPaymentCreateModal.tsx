@@ -347,7 +347,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (isReceiverSearchLoading) {
       return (
         <div className="DirectPaymentCreateModal__searchResults">
-          <div className="DirectPaymentCreateModal__searchResult">Searching...</div>
+          <div className="DirectPaymentCreateModal__searchResult">Searching…</div>
         </div>
       );
     }
@@ -446,7 +446,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   return (
     <Modal visible={visible} onClose={handleClose}>
       <Modal.Heading>
-        {showConfirmation ? "Confirm Direct Payment" : "Create A Direct Payment"}
+        {showConfirmation ? "Confirm direct payment" : "Create a direct payment"}
       </Modal.Heading>
       {showConfirmation ? (
         <>
@@ -519,7 +519,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                 }
                 required
               >
-                <option value="">Select asset</option>
+                <option value="">Select…</option>
                 {allAssets?.map((asset) => (
                   <option key={asset.id} value={asset.id}>
                     {asset.code}{" "}
@@ -559,7 +559,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                     fieldSize="sm"
                     id="receiverSearch"
                     label="Receiver"
-                    placeholder="Search by email, phone, or enter wallet address (GXXX...)"
+                    placeholder="Search by email, phone, or enter wallet address (GXXX…)"
                     infoText="Search results appear after entering at least 3 characters"
                     tooltipPlacement="top-start"
                     value={formData.receiverSearch}
@@ -594,7 +594,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                     note={getWalletFieldNote()}
                     required
                   >
-                    <option value="">Select wallet</option>
+                    <option value="">Select…</option>
                     {renderWalletOptions()}
                   </Select>
                 </div>

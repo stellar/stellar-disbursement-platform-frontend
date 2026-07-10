@@ -6,7 +6,6 @@ import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 import { USER_ROLES_ARRAY } from "@/constants/settings";
 
-
 import { useGrantWalletMembership } from "@/apiQueries/useGrantWalletMembership";
 import { useRevokeWalletMembership } from "@/apiQueries/useRevokeWalletMembership";
 import { useUsers } from "@/apiQueries/useUsers";
@@ -36,6 +35,8 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
 }: ManageWalletAccessModalProps) => {
   const [userId, setUserId] = useState("");
   const [role, setRole] = useState<UserRole | "">("");
+  // Which membership is mid-revoke, so only its button shows a spinner (not every row's).
+  const [revokingId, setRevokingId] = useState<string | null>(null);
 
   const { data: memberships, isLoading: membershipsLoading } = useWalletMemberships(
     visible ? walletId : null,
@@ -46,10 +47,9 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
 
   useEffect(() => {
     if (!visible) {
-       
       setUserId("");
-       
       setRole("");
+      setRevokingId(null);
       grant.reset();
       revoke.reset();
     }
@@ -119,7 +119,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                   alignItems: "center",
                   gap: "1rem",
                   padding: "0.5rem 0",
-                  borderBottom: "1px solid var(--color-gray-30)",
+                  borderBottom: "1px solid var(--sds-clr-gray-06)",
                 }}
               >
                 <div>
@@ -129,8 +129,18 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => walletId && revoke.mutate({ walletId, membershipId: m.id })}
-                  isLoading={revoke.isPending}
+                  onClick={() => {
+                    if (!walletId) {
+                      return;
+                    }
+                    setRevokingId(m.id);
+                    revoke.mutate(
+                      { walletId, membershipId: m.id },
+                      { onSettled: () => setRevokingId(null) },
+                    );
+                  }}
+                  isLoading={revoke.isPending && revokingId === m.id}
+                  disabled={revoke.isPending}
                 >
                   Revoke
                 </Button>

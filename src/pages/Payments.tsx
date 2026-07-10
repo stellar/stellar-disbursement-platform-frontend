@@ -173,7 +173,7 @@ export const Payments = () => {
                 onClick={handleCreateDirectPayment}
                 disabled={isLoading || isFetching}
               >
-                New Direct Payment
+                New direct payment
               </Button>
             </ShowForRoles>
           </SectionHeader.Content>

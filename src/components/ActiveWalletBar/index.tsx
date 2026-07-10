@@ -198,11 +198,12 @@ export const ActiveWalletBar = () => {
           type="button"
           className="ActiveWalletBar__trigger ActiveWalletBar__trigger--error"
           onClick={() => refetch()}
+          aria-label="Retry loading distribution accounts"
         >
           <span className="ActiveWalletBar__labelStack">
             <span className="ActiveWalletBar__label">Distribution account</span>
             <span className="ActiveWalletBar__value ActiveWalletBar__value--all">
-              Couldn't load accounts — click to retry
+              Couldn’t load accounts. Click to retry.
             </span>
           </span>
         </button>
