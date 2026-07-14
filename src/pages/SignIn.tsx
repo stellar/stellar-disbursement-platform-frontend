@@ -165,7 +165,7 @@ export const SignIn = () => {
 
         <form onSubmit={handleSubmit}>
           <Heading size="sm" as="h1">
-            Sign in to Stellar Disbursement Platform
+            Sign in to Sapcone Stellar Disbursement Platform
           </Heading>
           {!USE_SSO && (
             <>

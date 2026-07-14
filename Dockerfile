@@ -15,7 +15,15 @@ RUN apt-get update && apt-get install --no-install-recommends -y gpg curl git ma
 
 
 COPY . /app/
-RUN yarn git-info
+# Handle git-info for submodule (git rev-parse won't work without .git)
+# Create a fallback gitInfo.ts if git is not available
+RUN if git rev-parse --short HEAD 2>/dev/null; then \
+        rm -rf src/generated/ && mkdir -p src/generated/ && \
+        echo "export default { commitHash: '$(git rev-parse --short HEAD)', version: '$(git describe --tags --always)' };" > src/generated/gitInfo.ts; \
+    else \
+        rm -rf src/generated/ && mkdir -p src/generated/ && \
+        echo "export default { commitHash: 'local', version: 'local-dev' };" > src/generated/gitInfo.ts; \
+    fi
 RUN yarn install
 RUN yarn build
 
@@ -23,3 +31,18 @@ FROM nginx:1.31
 
 COPY --from=build /app/build/ /usr/share/nginx/html/
 COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+# Expose environment variables for runtime configuration
+ENV API_URL="http://localhost:8000"
+ENV STELLAR_EXPERT_URL="https://stellar.expert/explorer/testnet"
+ENV HORIZON_URL="https://horizon-testnet.stellar.org"
+ENV RPC_ENABLED="true"
+ENV RECAPTCHA_SITE_KEY=""
+ENV SINGLE_TENANT_MODE="true"
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
