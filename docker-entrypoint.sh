@@ -9,6 +9,9 @@ RPC_ENABLED="${RPC_ENABLED:-true}"
 RECAPTCHA_SITE_KEY="${RECAPTCHA_SITE_KEY:-}"
 SINGLE_TENANT_MODE="${SINGLE_TENANT_MODE:-true}"
 
+# Create settings directory
+mkdir -p /usr/share/nginx/html/settings
+
 # Generate env-config.js
 cat > /usr/share/nginx/html/settings/env-config.js <<EOF
 window._env_ = {

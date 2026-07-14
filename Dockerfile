@@ -32,6 +32,9 @@ FROM nginx:1.31
 COPY --from=build /app/build/ /usr/share/nginx/html/
 COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
 
+# Create settings directory for runtime config
+RUN mkdir -p /usr/share/nginx/html/settings
+
 # Copy entrypoint script
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
