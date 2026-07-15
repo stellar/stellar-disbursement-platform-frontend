@@ -35,4 +35,6 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
       confirmedAt: v.confirmed_at,
       verificationChannel: v.verification_channel,
     })) || [],
+  qrCardReference: receiver.qr_card_reference,
+  proxyDeliveryStatus: receiver.proxy_delivery_status,
 });

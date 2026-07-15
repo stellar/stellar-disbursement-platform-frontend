@@ -1,16 +1,22 @@
 import React from "react";
+
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+
 import { Icon } from "@stellar/design-system";
 
 import { PageHeader } from "@/components/PageHeader";
+
 import { USE_SSO } from "@/constants/envVariables";
 import { Routes } from "@/constants/settings";
-import { AppDispatch, resetStoreAction } from "@/store";
-import { useRedux } from "@/hooks/useRedux";
-import { singleUserStore } from "@/helpers/singleSingOn";
+
 import { getAppVersion } from "@/helpers/getAppVersion";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { singleUserStore } from "@/helpers/singleSingOn";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch, resetStoreAction } from "@/store";
 
 import "./styles.scss";
 
@@ -71,6 +77,18 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       label: "Wallet Providers",
       route: Routes.WALLET_PROVIDERS,
       icon: <Icon.Wallet01 />,
+    },
+    {
+      id: "nav-proxies",
+      label: "Proxies",
+      route: Routes.PROXIES,
+      icon: <Icon.Users01 />,
+    },
+    {
+      id: "nav-proxy-deliveries",
+      label: "Proxy Deliveries",
+      route: Routes.PROXY_DELIVERIES,
+      icon: <Icon.Truck01 />,
     },
     {
       id: "nav-distribution-account",

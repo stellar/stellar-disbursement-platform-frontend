@@ -15,5 +15,7 @@ export const formatReceivers = (receivers: ApiReceiver[]): Receiver[] => {
       assetIssuer: a.asset_issuer,
       amount: a.received_amount,
     })),
+    qrCardReference: r.qr_card_reference,
+    proxyDeliveryStatus: r.proxy_delivery_status,
   }));
 };

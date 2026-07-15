@@ -38,6 +38,8 @@ export enum Routes {
   DISTRIBUTION_ACCOUNT = "/distribution-account",
   WALLET_PROVIDERS = "/wallet-providers",
   WALLET_PROVIDERS_NEW = "/wallet-providers/new",
+  PROXIES = "/proxies",
+  PROXY_DELIVERIES = "/proxy-deliveries",
   WALLET = "/wallet",
   WALLET_HOME = "/wallet/home",
   ANALYTICS = "/analytics",

@@ -215,6 +215,16 @@ export const ReceiverDetails = () => {
               <label className="StatCards__card__item__label">Org ID</label>
               <div className="StatCards__card__item__value">{receiverDetails.orgId || "-"}</div>
             </div>
+
+            <div className="StatCards__card__item StatCards__card__item--fullWidth">
+              <label className="StatCards__card__item__label">QR Card Ref</label>
+              <div className="StatCards__card__item__value">{receiverDetails.qrCardReference || "-"}</div>
+            </div>
+
+            <div className="StatCards__card__item StatCards__card__item--fullWidth">
+              <label className="StatCards__card__item__label">Proxy Delivery Status</label>
+              <div className="StatCards__card__item__value">{receiverDetails.proxyDeliveryStatus || "-"}</div>
+            </div>
           </div>
         </Card>
         <Card>
@@ -280,9 +290,8 @@ export const ReceiverDetails = () => {
   };
 
   const renderWalletOptionText = (wallet: ReceiverWallet) => {
-    return `${wallet.provider} (${
-      wallet.stellarAddress ? shortenAccountKey(wallet.stellarAddress) : "Unregistered"
-    })`;
+    return `${wallet.provider} (${wallet.stellarAddress ? shortenAccountKey(wallet.stellarAddress) : "Unregistered"
+      })`;
   };
 
   const renderWallets = () => {
@@ -485,7 +494,7 @@ export const ReceiverDetails = () => {
             </Card>
 
             {selectedWallet.stellarAddress &&
-            isClassicWalletAddress(selectedWallet.stellarAddress) ? (
+              isClassicWalletAddress(selectedWallet.stellarAddress) ? (
               <div className="DetailsSection DetailsSection">
                 <SectionHeader>
                   <SectionHeader.Row>

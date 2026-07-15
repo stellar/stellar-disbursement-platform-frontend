@@ -391,6 +391,8 @@ export type Receiver = {
   successfulPaymentsCounts: number;
   createdAt: string;
   amountsReceived?: AmountReceived[];
+  qrCardReference?: string;
+  proxyDeliveryStatus?: string;
 };
 
 export type ReceiverWallet = {
@@ -449,6 +451,8 @@ export type ReceiverDetails = {
   };
   wallets: ReceiverWallet[];
   verifications: ReceiverVerification[];
+  qrCardReference?: string;
+  proxyDeliveryStatus?: string;
 };
 
 export type ReceiverEditFields = {
@@ -459,6 +463,42 @@ export type ReceiverEditFields = {
   dateOfBirth: string;
   pin: string;
   nationalId: string;
+};
+
+// =============================================================================
+// Proxies
+// =============================================================================
+export type Proxy = {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+  nationalId: string;
+  relationship: string;
+  assignedCount?: number;
+  createdAt: string;
+};
+
+export type ProxyDelivery = {
+  id: string;
+  proxyId: string;
+  proxyName: string;
+  receiverId: string;
+  receiverName: string;
+  paymentId: string;
+  deliveryStatus: string;
+  cardReference?: string;
+  scanTime: string;
+  createdAt: string;
+};
+
+export type ApiProxies = {
+  data: Proxy[];
+  pagination: Pagination;
+};
+
+export type ApiProxyDeliveries = {
+  data: ProxyDelivery[];
+  pagination: Pagination;
 };
 
 // =============================================================================
@@ -828,6 +868,8 @@ export type ApiReceiver = {
   external_id: string;
   total_payments: string | number;
   successful_payments: string | number;
+  qr_card_reference?: string;
+  proxy_delivery_status?: string;
   failed_payments: string | number;
   canceled_payments: string | number;
   remaining_payments: string | number;

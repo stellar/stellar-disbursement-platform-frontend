@@ -34,6 +34,8 @@ import { NotFound } from "@/pages/NotFound";
 import { PaymentDetails } from "@/pages/PaymentDetails";
 import { Payments } from "@/pages/Payments";
 import { Profile } from "@/pages/Profile";
+import { Proxies } from "@/pages/Proxies";
+import { ProxyDeliveries } from "@/pages/ProxyDeliveries";
 import { ReceiverDetails } from "@/pages/ReceiverDetails";
 import { ReceiverDetailsEdit } from "@/pages/ReceiverDetailsEdit";
 import { Receivers } from "@/pages/Receivers";
@@ -325,6 +327,44 @@ export const App = () => {
                 <PrivateRoute acceptedRoles={["owner", "developer"]}>
                   <InnerPage isNarrow>
                     <WalletProvidersNew />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            {/* Proxies */}
+            <Route
+              path={Routes.PROXIES}
+              element={
+                <PrivateRoute
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "business",
+                    "initiator",
+                    "approver",
+                  ]}
+                >
+                  <InnerPage>
+                    <Proxies />
+                  </InnerPage>
+                </PrivateRoute>
+              }
+            />
+            {/* Proxy Deliveries */}
+            <Route
+              path={Routes.PROXY_DELIVERIES}
+              element={
+                <PrivateRoute
+                  acceptedRoles={[
+                    "owner",
+                    "financial_controller",
+                    "business",
+                    "initiator",
+                    "approver",
+                  ]}
+                >
+                  <InnerPage>
+                    <ProxyDeliveries />
                   </InnerPage>
                 </PrivateRoute>
               }

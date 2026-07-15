@@ -1,13 +1,17 @@
 import { Card, Link, Notification } from "@stellar/design-system";
+
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { MultipleAmounts } from "@/components/MultipleAmounts";
+import { Table } from "@/components/Table";
+
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
 } from "@/helpers/receiverContactInfo";
+
 import { useSort } from "@/hooks/useSort";
-import { MultipleAmounts } from "@/components/MultipleAmounts";
-import { Table } from "@/components/Table";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
 import { Receiver, SortByReceivers, SortDirection } from "@/types";
 
 interface ReceiversTableProps {
@@ -77,6 +81,8 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
             <Checkbox id="receivers-select-all" fieldSize="xs" />
           </Table.HeaderCell> */}
             <Table.HeaderCell>Contact info</Table.HeaderCell>
+            <Table.HeaderCell width="10rem">QR Card Ref</Table.HeaderCell>
+            <Table.HeaderCell width="9rem">Proxy Status</Table.HeaderCell>
             <Table.HeaderCell width="12rem">Wallet provider(s)</Table.HeaderCell>
             <Table.HeaderCell textAlign="right">Wallets registered</Table.HeaderCell>
             <Table.HeaderCell textAlign="right">Total payments</Table.HeaderCell>
@@ -106,6 +112,8 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
                     {renderReceiverContactInfoItems(d.phoneNumber, d.email)}
                   </Link>
                 </Table.BodyCell>
+                <Table.BodyCell width="10rem">{d.qrCardReference || "-"}</Table.BodyCell>
+                <Table.BodyCell width="9rem">{d.proxyDeliveryStatus || "-"}</Table.BodyCell>
                 <Table.BodyCell width="12rem" title={d.walletProvider.join(", ")}>
                   {d.walletProvider.join(", ")}
                 </Table.BodyCell>
