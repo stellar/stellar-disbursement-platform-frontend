@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button, Card, Notification } from "@stellar/design-system";
 
 import { AddDistributionWalletModal } from "@/components/AddDistributionWalletModal";
+import { ArchiveDistributionWalletModal } from "@/components/ArchiveDistributionWalletModal";
 import { AssetAmount } from "@/components/AssetAmount";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { ManageWalletAccessModal } from "@/components/ManageWalletAccessModal";
@@ -22,14 +23,18 @@ const WalletBalanceRow = ({
   walletId,
   name,
   isDefault,
+  canArchive,
   isAuthenticated,
   onManageAccess,
+  onArchive,
 }: {
   walletId: string;
   name: string;
   isDefault: boolean;
+  canArchive: boolean;
   isAuthenticated: boolean;
   onManageAccess: (walletId: string, name: string) => void;
+  onArchive: (walletId: string, name: string) => void;
 }) => {
   const { data, isLoading } = useDistributionWalletBalance(isAuthenticated, walletId);
   const balances = Object.entries(data?.balances ?? {});
@@ -70,6 +75,12 @@ const WalletBalanceRow = ({
           <Button size="sm" variant="tertiary" onClick={() => onManageAccess(walletId, name)}>
             Manage access
           </Button>
+          {/* The default account can't be archived (promote another first), so no button. */}
+          {canArchive && !isDefault ? (
+            <Button size="sm" variant="tertiary" onClick={() => onArchive(walletId, name)}>
+              Archive
+            </Button>
+          ) : null}
         </ShowForRoles>
       </div>
     </div>
@@ -87,7 +98,9 @@ export const WalletBalancesOverview = () => {
 
   const [showAdd, setShowAdd] = useState(false);
   const [manageWallet, setManageWallet] = useState<{ id: string; name: string } | null>(null);
+  const [archiveWallet, setArchiveWallet] = useState<{ id: string; name: string } | null>(null);
   const [createdName, setCreatedName] = useState<string | null>(null);
+  const [archivedName, setArchivedName] = useState<string | null>(null);
 
   if (!wallets || wallets.length === 0) {
     return null;
@@ -103,6 +116,12 @@ export const WalletBalancesOverview = () => {
 
   return (
     <>
+      {archivedName ? (
+        <Notification variant="success" title={`Account "${archivedName}" archived`} isFilled>
+          It no longer accepts new disbursements; its history and balances remain visible.
+        </Notification>
+      ) : null}
+
       {createdName ? (
         <Notification
           variant="success"
@@ -152,8 +171,10 @@ export const WalletBalancesOverview = () => {
               walletId={wallet.id}
               name={wallet.name}
               isDefault={wallet.is_default}
+              canArchive={wallets.length >= 2}
               isAuthenticated={userAccount.isAuthenticated}
               onManageAccess={(id, name) => setManageWallet({ id, name })}
+              onArchive={(id, name) => setArchiveWallet({ id, name })}
             />
           ))}
         </div>
@@ -170,6 +191,13 @@ export const WalletBalancesOverview = () => {
           walletId={manageWallet?.id ?? null}
           walletName={manageWallet?.name ?? ""}
           onClose={() => setManageWallet(null)}
+        />
+        <ArchiveDistributionWalletModal
+          visible={Boolean(archiveWallet)}
+          walletId={archiveWallet?.id ?? null}
+          walletName={archiveWallet?.name ?? ""}
+          onClose={() => setArchiveWallet(null)}
+          onArchived={(name) => setArchivedName(name)}
         />
       </ShowForRoles>
     </>
