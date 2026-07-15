@@ -10,7 +10,7 @@ import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { parseJwt } from "@/helpers/parseJwt";
 
-import { AnyObject, ApiError } from "@/types";
+import { AnyObject, ApiError, AppError } from "@/types";
 
 type FetchApiOptions = {
   withoutAuth?: boolean;
@@ -30,9 +30,10 @@ export const fetchApi = async (
   if (!options?.withoutAuth) {
     let token = localStorageSessionToken.get();
 
-    // No need to continue if there is no token
+    // No token: fail loudly. Resolving undefined here left react-query with "data is
+    // undefined" and pages rendering blank instead of the session-expired flow (FB-03).
     if (!token) {
-      return;
+      throw sessionExpired();
     }
 
     const jwt = parseJwt(token);
@@ -40,7 +41,8 @@ export const fetchApi = async (
     const minRemaining = differenceInMinutes(fromUnixTime(jwt.exp), Date.now());
 
     if (minRemaining <= 0) {
-      sessionExpired();
+      // Don't proceed with an expired token — the request would only 401 anyway.
+      throw sessionExpired();
     } else if (minRemaining < 5) {
       token = await refreshToken(token);
       localStorageSessionToken.set(token);
@@ -70,7 +72,9 @@ export const fetchApi = async (
   }
 
   if (request.status === 401) {
-    sessionExpired();
+    // The server rejected the session; surface that as the error rather than whatever
+    // (possibly empty) body came with the 401.
+    throw sessionExpired();
   }
 
   // Parse defensively: proxy error pages (502/504 on cold starts) are HTML, not JSON, and a
@@ -107,7 +111,13 @@ export const fetchApi = async (
   return response;
 };
 
-function sessionExpired() {
+// Dispatches the app-wide session-expired event (UserSession signs the user out) and returns
+// an AppError for the caller to throw, so in-flight queries settle as errors instead of
+// resolving undefined and rendering blank pages.
+function sessionExpired(): AppError {
   document.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
-  return;
+  return {
+    message: "Your session has expired. Please sign in again.",
+    extras: undefined,
+  };
 }
