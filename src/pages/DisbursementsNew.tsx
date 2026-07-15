@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge, Button, Card, Heading, Notification } from "@stellar/design-system";
 
 import { AccountBalances } from "@/components/AccountBalances";
+import { AssetAmount } from "@/components/AssetAmount";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DisbursementButtons } from "@/components/DisbursementButtons";
 import { DisbursementDetails } from "@/components/DisbursementDetails";
@@ -16,6 +17,7 @@ import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { SectionHeader } from "@/components/SectionHeader";
+import { SourceAccount } from "@/components/SourceAccount";
 import { Title } from "@/components/Title";
 import { Toast } from "@/components/Toast";
 
@@ -54,6 +56,7 @@ export const DisbursementsNew = () => {
   const [isDetailsValid, setIsDetailsValid] = useState(false);
   const [csvFile, setCsvFile] = useState<File | undefined>();
   const [csvTotal, setCsvTotal] = useState<string | null>(null);
+  const [csvRowCount, setCsvRowCount] = useState<number | null>(null);
   const [csvParseError, setCsvParseError] = useState<string | undefined>();
   const [futureBalance, setFutureBalance] = useState(0);
 
@@ -160,6 +163,7 @@ export const DisbursementsNew = () => {
     setIsDetailsValid(false);
     setCsvFile(undefined);
     setCsvTotal(null);
+    setCsvRowCount(null);
     setCsvParseError(undefined);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
@@ -229,24 +233,27 @@ export const DisbursementsNew = () => {
 
   const calculateDisbursementTotalAmountFromFile = (csvFile?: File) => {
     csvTotalAmount({ csvFile })
-      .then((totalAmount) => {
-        if (!totalAmount) {
+      .then((summary) => {
+        if (!summary) {
           setCsvTotal(null);
+          setCsvRowCount(null);
           return;
         }
 
-        setCsvTotal(totalAmount.toString());
+        setCsvTotal(summary.totalAmount.toString());
+        setCsvRowCount(summary.rowCount);
         setDraftDetails({
           ...draftDetails,
           stats: {
             ...draftDetails?.stats,
-            totalAmount: totalAmount?.toString() ?? "0",
+            totalAmount: summary.totalAmount.toString(),
           },
         } as Disbursement);
       })
       // A file that fails to parse must be a visible error, not a silently-enabled Review.
       .catch((e: Error) => {
         setCsvTotal(null);
+        setCsvRowCount(null);
         setCsvParseError(e.message);
       });
   };
@@ -417,45 +424,84 @@ export const DisbursementsNew = () => {
 
     // Confirmation
     if (currentStep === "confirmation") {
-      return (
-        <>
-          {isResponseSuccess ? (
-            <NotificationWithButtons
-              ref={notificationRef}
-              variant="success"
-              title="New disbursement was successfully created"
-              buttons={[
-                {
-                  label: "View",
-                  onClick: handleViewDetails,
-                },
-                {
-                  label: "Dismiss",
-                  onClick: () => {
-                    setIsResponseSuccess(false);
-                  },
-                },
-              ]}
-            >
+      // A created disbursement gets a RECEIPT, not a success banner floating over the (now
+      // stale) form — dismissing that banner used to leave the filled form looking editable.
+      if (isResponseSuccess) {
+        return (
+          <div ref={notificationRef}>
+            <Notification variant="success" title="Disbursement created" isFilled>
               {successMessageArray.join("")}
-            </NotificationWithButtons>
-          ) : null}
+            </Notification>
 
-          <form className="DisbursementForm">
-            {renderSendingFrom()}
-            <DisbursementDetails
-              variant="confirmation"
-              details={draftDetails}
-              futureBalance={futureBalance}
-              csvFile={csvFile}
-            />
-            {!isKWA && (
-              <DisbursementInviteMessage isEditMessage={false} draftMessage={customMessage} />
-            )}
+            <Card>
+              <Title size="md">Receipt</Title>
+              <div style={{ marginTop: "0.75rem" }}>
+                {[
+                  { label: "Disbursement name", value: draftDetails?.name ?? "-" },
+                  {
+                    label: "Total amount",
+                    value: (
+                      <AssetAmount
+                        amount={csvTotal ?? draftDetails?.stats?.totalAmount ?? "0"}
+                        assetCode={draftDetails?.asset?.code}
+                        fallback="-"
+                      />
+                    ),
+                  },
+                  {
+                    label: "Payments",
+                    value: csvRowCount != null ? String(csvRowCount) : "-",
+                  },
+                  {
+                    label: "Sending from",
+                    value: <SourceAccount sourceWalletId={selectedWalletId || undefined} />,
+                  },
+                ].map((row) => (
+                  <div
+                    key={row.label}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: "1rem",
+                      padding: "0.5rem 0",
+                      borderBottom: "1px solid var(--sds-clr-gray-06)",
+                    }}
+                  >
+                    <span className="Note">{row.label}</span>
+                    <span style={{ fontWeight: 500 }}>{row.value}</span>
+                  </div>
+                ))}
+              </div>
 
-            {renderButtons("confirmation")}
-          </form>
-        </>
+              <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem" }}>
+                <Button size="md" variant="primary" onClick={handleViewDetails}>
+                  View disbursement
+                </Button>
+                <Button size="md" variant="secondary" onClick={handleStartNewDisbursement}>
+                  Create another
+                </Button>
+              </div>
+            </Card>
+          </div>
+        );
+      }
+
+      return (
+        <form className="DisbursementForm">
+          {renderSendingFrom()}
+          <DisbursementDetails
+            variant="confirmation"
+            details={draftDetails}
+            futureBalance={futureBalance}
+            csvFile={csvFile}
+          />
+          {!isKWA && (
+            <DisbursementInviteMessage isEditMessage={false} draftMessage={customMessage} />
+          )}
+
+          {renderButtons("confirmation")}
+        </form>
       );
     }
 
