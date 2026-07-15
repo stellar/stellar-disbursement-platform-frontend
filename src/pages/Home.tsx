@@ -66,7 +66,7 @@ export const Home = () => {
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              Dashboard
+              Sapcone Admin Dashboard
             </Heading>
           </SectionHeader.Content>
           <SectionHeader.Content align="right">
