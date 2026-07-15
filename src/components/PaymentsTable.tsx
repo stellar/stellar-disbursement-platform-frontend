@@ -6,6 +6,7 @@ import { AssetAmount } from "@/components/AssetAmount";
 import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { PaymentStatus } from "@/components/PaymentStatus";
+import { SourceAccount, useShowSourceAccountColumn } from "@/components/SourceAccount";
 import { Table } from "@/components/Table";
 
 import { Routes } from "@/constants/settings";
@@ -28,6 +29,7 @@ export const PaymentsTable = ({
   isLoading,
 }: PaymentsTableProps) => {
   const navigate = useNavigate();
+  const showSourceAccount = useShowSourceAccountColumn();
 
   const handlePaymentClicked = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -86,6 +88,7 @@ export const PaymentsTable = ({
             <Table.HeaderCell>Payment ID</Table.HeaderCell>
             <Table.HeaderCell>Wallet address</Table.HeaderCell>
             <Table.HeaderCell>Disbursement name</Table.HeaderCell>
+            {showSourceAccount ? <Table.HeaderCell width="7rem">Account</Table.HeaderCell> : null}
             <Table.HeaderCell width="9.375rem">Completed at</Table.HeaderCell>
             <Table.HeaderCell textAlign="right" width="8.125rem">
               Amount
@@ -142,6 +145,11 @@ export const PaymentsTable = ({
                     );
                   })()}
                 </Table.BodyCell>
+                {showSourceAccount ? (
+                  <Table.BodyCell width="7rem">
+                    <SourceAccount sourceWalletId={p.source_wallet_id} />
+                  </Table.BodyCell>
+                ) : null}
                 <Table.BodyCell>
                   <span className="Table-v2__cell--secondary">
                     {p.status === "SUCCESS" ? formatDateTime(p.updated_at) : "-"}

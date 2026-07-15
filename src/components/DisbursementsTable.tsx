@@ -6,6 +6,7 @@ import { AssetAmount } from "@/components/AssetAmount";
 import { DisbursementStatus } from "@/components/DisbursementStatus";
 import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { SourceAccount, useShowSourceAccountColumn } from "@/components/SourceAccount";
 import { Table } from "@/components/Table";
 
 import { Routes } from "@/constants/settings";
@@ -42,6 +43,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
 }: DisbursementsTableProps) => {
   const hasSort = Boolean(onSort);
   const { sortBy, sortDir, handleSort } = useSort(onSort);
+  const showSourceAccount = useShowSourceAccountColumn();
 
   const navigate = useNavigate();
 
@@ -118,6 +120,7 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
             >
               Disbursement name
             </Table.HeaderCell>
+            {showSourceAccount ? <Table.HeaderCell width="7rem">Account</Table.HeaderCell> : null}
             <Table.HeaderCell width="5.7rem">Total payments</Table.HeaderCell>
             <Table.HeaderCell textAlign="right">Successful</Table.HeaderCell>
             <Table.HeaderCell textAlign="right">Failed</Table.HeaderCell>
@@ -148,6 +151,11 @@ export const DisbursementsTable: React.FC<DisbursementsTableProps> = ({
                 <Table.BodyCell title={d.name} wrap={true}>
                   <Link onClick={(event) => handleDisbursementClicked(event, d)}>{d.name}</Link>
                 </Table.BodyCell>
+                {showSourceAccount ? (
+                  <Table.BodyCell width="7rem">
+                    <SourceAccount sourceWalletId={d.sourceWalletId} />
+                  </Table.BodyCell>
+                ) : null}
                 <Table.BodyCell textAlign="right">
                   {renderNumberOrDash(d.stats?.paymentsTotalCount)}
                 </Table.BodyCell>

@@ -275,6 +275,9 @@ export type Disbursement = {
     id: string;
     name: string;
   };
+  // Distribution (sending) account this disbursement is funded from. Optional because rows
+  // created before the multi-wallet migration may not carry it (they used the default account).
+  sourceWalletId?: string;
   verificationField?: string;
   status: DisbursementStatusType;
   fileName?: string;
@@ -366,6 +369,8 @@ export type PaymentDetails = {
   statusHistory: PaymentDetailsStatusHistoryItem[];
   externalPaymentId?: string;
   circleTransferRequestId?: string;
+  // Distribution wallet the funds leave from; empty/absent on pre-migration rows.
+  sourceWalletId?: string;
 };
 
 // =============================================================================
@@ -652,6 +657,8 @@ export type ApiDisbursement = {
   total_amount: string;
   average_amount: string;
   file_name?: string;
+  // Distribution wallet the funds leave from; empty/absent on pre-migration rows.
+  source_wallet_id?: string;
 };
 
 export type ApiPaymentStatusHistory = {
@@ -707,6 +714,8 @@ export type ApiPayment = {
   updated_at: string;
   external_payment_id?: string;
   circle_transfer_request_id?: string;
+  // Distribution wallet the funds leave from; empty/absent on pre-migration rows.
+  source_wallet_id?: string;
 };
 
 export type ApiPayments = {

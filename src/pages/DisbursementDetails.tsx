@@ -21,6 +21,7 @@ import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { Pagination } from "@/components/Pagination";
 import { PaymentStatus } from "@/components/PaymentStatus";
 import { SectionHeader } from "@/components/SectionHeader";
+import { SourceAccountDetailItem } from "@/components/SourceAccount";
 import { Table } from "@/components/Table";
 
 import {
@@ -191,6 +192,8 @@ export const DisbursementDetails = () => {
                   : "None"}
               </div>
             </div>
+
+            <SourceAccountDetailItem sourceWalletId={disbursementDetails.details.sourceWalletId} />
 
             <div className="StatCards__card__item">
               <label className="StatCards__card__item__label">Created by</label>
