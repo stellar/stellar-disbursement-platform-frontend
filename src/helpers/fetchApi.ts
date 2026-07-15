@@ -10,7 +10,7 @@ import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { parseJwt } from "@/helpers/parseJwt";
 
-import { AnyObject } from "@/types";
+import { AnyObject, ApiError } from "@/types";
 
 type FetchApiOptions = {
   withoutAuth?: boolean;
@@ -73,10 +73,35 @@ export const fetchApi = async (
     sessionExpired();
   }
 
-  const response = await request.json();
+  // Parse defensively: proxy error pages (502/504 on cold starts) are HTML, not JSON, and a
+  // raw "Unexpected token" SyntaxError must never reach the operator. `any` preserves the
+  // pre-existing request.json() contract (callers annotate their own response types).
+  let response: any = null;
+  const bodyText = await request.text();
+  if (bodyText) {
+    try {
+      response = JSON.parse(bodyText);
+    } catch {
+      response = null;
+    }
+  }
 
   if (response?.error) {
-    throw normalizeApiError(response);
+    throw normalizeApiError(response as ApiError);
+  }
+
+  // A non-2xx response without a parseable {error} body (e.g. a gateway 502 page, or JSON in
+  // an unexpected shape) must fail — previously it fell through and was treated as success.
+  if (!request.ok) {
+    if (response) {
+      throw normalizeApiError(
+        response as ApiError,
+        `The request failed (HTTP ${request.status}). Please try again.`,
+      );
+    }
+    throw normalizeApiError({
+      error: `The server returned an unexpected response (HTTP ${request.status}). Please try again.`,
+    } as ApiError);
   }
 
   return response;
