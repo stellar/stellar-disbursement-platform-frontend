@@ -2,8 +2,6 @@ console.log("[DisbursementStudio] src/App.tsx execution started");
 
 import React, { useState, useEffect } from "react";
 
-import Papa from "papaparse";
-
 // TypeScript definitions matching SAPCONE DisburseFlow schema
 interface Recipient {
   phone: string; // receivers.phone (external ID) - Contact channel for SMS
@@ -32,83 +30,31 @@ interface DisbursementHistoryItem {
   status: "Completed";
 }
 
-// Pre-defined SAPCONE sample batch from Section 7.1 of PDF
-const SAPCONE_SAMPLE_BATCH: Recipient[] = [
-  {
-    phone: "16042424000",
-    id: "4ba1",
-    amount: "520",
-    verification: "01/12/1987",
-    paymentID: "PAY_01",
-    status: "Pending",
-    errors: {},
-  },
-  {
-    phone: "16034568000",
-    id: "3ce2",
-    amount: "600",
-    verification: "04/06/1967",
-    paymentID: "PAY_02",
-    status: "Pending",
-    errors: {},
-  },
-  {
-    phone: "16045638000",
-    id: "4dq1",
-    amount: "800",
-    verification: "09/08/1997",
-    paymentID: "PAY_03",
-    status: "Pending",
-    errors: {},
-  },
-  {
-    phone: "16022348000",
-    id: "7re8",
-    amount: "700",
-    verification: "09/08/1990",
-    paymentID: "PAY_04",
-    status: "Pending",
-    errors: {},
-  },
-];
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
-const MOCK_HISTORY: DisbursementHistoryItem[] = [
-  {
-    id: "DISB-SAPCONE-001",
-    timestamp: "2026-07-13 11:24:05",
-    fileName: "marsabit_emergency_payouts.csv",
-    totalReceivers: 4,
-    totalAmount: "2620.00",
-    asset: "XLM",
-    txHash: "4b9e4a3b8d6f...a8c2d9e0f1a2",
-    status: "Completed",
-  },
-];
+const getAuthToken = () => localStorage.getItem("token") || "";
 
-const DIST_PUBLIC_KEY = "GCKNDFSWRE63L7YMXUPXVD3LNZN2Y2J2ZJQ4ZMXH6KNL5XW4P6X5X5J3";
-
-// Try-catch safe localStorage helpers placed outside components to avoid ReferenceError hoisting issues
-const getSafeLocalStorageBalance = (): number => {
-  try {
-    const saved = localStorage.getItem("studio_distribution_balance");
-    return saved ? parseFloat(saved) : 150000.0;
-  } catch {
-    return 150000.0;
+async function fetchApi(path: string, options: RequestInit = {}) {
+  const token = getAuthToken();
+  const headers = new Headers(options.headers);
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
   }
-};
-
-const getSafeLocalStorageHistory = (): DisbursementHistoryItem[] => {
-  try {
-    const saved = localStorage.getItem("studio_disbursement_history");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch {
-    // Ignore parse failure
+  if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
   }
-  return MOCK_HISTORY;
-};
+
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers,
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    throw new Error(errorBody.message || `API error: ${response.statusText}`);
+  }
+  return response.json();
+}
 
 // Error Boundary to prevent blank screens in browser
 class ErrorBoundary extends React.Component<
@@ -161,46 +107,71 @@ class ErrorBoundary extends React.Component<
 
 const AppContent = () => {
   console.log("[DisbursementStudio] AppContent rendering...");
-  useEffect(() => {
-    console.log("[DisbursementStudio] AppContent component mounted successfully!");
-  }, []);
 
   // State Management
   const [phase, setPhase] = useState<1 | 2 | 3>(1);
+  const [disbursementId, setDisbursementId] = useState<string | null>(null);
+  const [distPublicKey, setDistPublicKey] = useState<string>("");
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState("");
   const [assetType, setAssetType] = useState<"USDC" | "XLM">("USDC");
 
-  const [distBalance, setDistBalance] = useState<number>(getSafeLocalStorageBalance);
-  const [xlmBalance, setXlmBalance] = useState<number>(2620.0); // Section 7.3.1 (2,620 XLM starting)
+  const [distBalance, setDistBalance] = useState<number>(0);
+  const [xlmBalance, setXlmBalance] = useState<number>(0);
 
   const [disbursementProgress, setDisbursementProgress] = useState<number>(0);
   const [progressLogs, setProgressLogs] = useState<string[]>([]);
   const [txHash, setTxHash] = useState("");
-  const [disbursementHistory, setDisbursementHistory] = useState<DisbursementHistoryItem[]>(
-    getSafeLocalStorageHistory,
-  );
+  const [disbursementHistory, setDisbursementHistory] = useState<DisbursementHistoryItem[]>([]);
 
-  // Persist storage updates safely
+  // Custom Toast Notification State
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  // Loading skeleton state
+  const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(true);
+
+  // Auto-dismiss helper for notifications
+  const showNotification = (type: "success" | "error", message: string) => {
+    setNotification({ type, message });
+  };
+
   useEffect(() => {
-    try {
-      localStorage.setItem("studio_distribution_balance", distBalance.toString());
-    } catch (e) {
-      console.error(e);
-    }
-  }, [distBalance]);
+    if (!notification) return;
+    const timer = setTimeout(() => setNotification(null), 4000);
+    return () => clearTimeout(timer);
+  }, [notification]);
 
+  // Load initial data from Go Backend
   useEffect(() => {
-    try {
-      localStorage.setItem("studio_disbursement_history", JSON.stringify(disbursementHistory));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [disbursementHistory]);
+    async function loadInitialData() {
+      setIsLoadingHistory(true);
+      try {
+        const accountData = await fetchApi("/distribution-account");
+        setDistPublicKey(accountData.publicKey);
+        setDistBalance(accountData.usdcBalance);
+        setXlmBalance(accountData.xlmBalance);
+      } catch (err) {
+        console.warn("Failed to fetch distribution account data from backend.", err);
+      }
 
-  // Validation function matching Section 7.2 of PDF mapping
+      try {
+        const historyData = await fetchApi("/disbursements");
+        setDisbursementHistory(historyData);
+      } catch (err) {
+        console.warn("Failed to fetch history from backend.", err);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    }
+    loadInitialData();
+  }, []);
+
+  // Validation function matching CSV rules
   const validateRecipientRow = (
     row: Partial<Recipient>,
     allRows: Partial<Recipient>[],
@@ -261,66 +232,99 @@ const AppContent = () => {
     return errors;
   };
 
-  // Pre-load SAPCONE Sample Payout Batch
-  const handleLoadSampleBatch = () => {
-    const validated = SAPCONE_SAMPLE_BATCH.map((rec) => {
-      const errors = validateRecipientRow(rec, SAPCONE_SAMPLE_BATCH);
-      return { ...rec, errors };
-    });
-    setRecipients(validated);
-    setUploadedFileName("sapcone_simulation_sample.csv");
+  // Sync draft to Go Backend API
+  const syncDraftWithBackend = async (updatedRows: Recipient[]) => {
+    if (!disbursementId) return;
+    try {
+      await fetchApi(`/disbursements/${disbursementId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          payments: updatedRows.map((r) => ({
+            phone: r.phone,
+            id: r.id,
+            amount: r.amount,
+            verification: r.verification,
+            paymentID: r.paymentID,
+          })),
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to sync draft with backend", err);
+    }
   };
 
-  // CSV Parsing handler supporting the added paymentID column
-  const handleCsvUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Pre-load SAPCONE Sample Payout Batch from Go Backend
+  const handleLoadSampleBatch = async () => {
+    try {
+      const result = await fetchApi("/disbursements/sample");
+      setDisbursementId(result.id);
+
+      const validated = result.payments.map((rec: any) => {
+        const row = {
+          phone: rec.phone,
+          id: rec.id,
+          amount: rec.amount,
+          verification: rec.verification,
+          paymentID: rec.paymentID,
+          status: rec.status || "Pending",
+          errors: {},
+        } as Recipient;
+        row.errors = validateRecipientRow(row, result.payments);
+        return row;
+      });
+      setRecipients(validated);
+      setUploadedFileName("sapcone_sample_batch.csv");
+      showNotification("success", "Sample batch loaded successfully from Go backend.");
+    } catch (err: any) {
+      showNotification("error", err.message || "Failed to load sample batch from backend.");
+    }
+  };
+
+  // CSV Parsing handler uploading straight to Go Backend
+  const handleCsvUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
     setUploadedFileName(file.name);
 
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        const rawRows = results.data as any[];
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("name", file.name);
+      formData.append("asset_code", assetType);
 
-        const parsed: Recipient[] = rawRows.map((row) => {
-          const phone = (row.phone || row.phone_number || "").toString().trim();
-          const id = (row.id || row.external_id || "").toString().trim();
-          const amount = (row.amount || row.value || "").toString().trim();
-          const verification = (row.verification || row.dob || row.date_of_birth || "")
-            .toString()
-            .trim();
-          const paymentID = (row.paymentID || row.payment_id || "").toString().trim();
+      const result = await fetchApi("/disbursements", {
+        method: "POST",
+        body: formData,
+      });
 
-          return {
-            phone,
-            id,
-            amount,
-            verification,
-            paymentID,
-            status: "Pending",
-            errors: {},
-          };
-        });
+      setDisbursementId(result.id);
 
-        const validated = parsed.map((rec) => {
-          const errors = validateRecipientRow(rec, parsed);
-          return { ...rec, errors };
-        });
+      const validated = result.payments.map((rec: any) => {
+        const row = {
+          phone: rec.phone,
+          id: rec.id,
+          amount: rec.amount,
+          verification: rec.verification,
+          paymentID: rec.paymentID,
+          status: rec.status || "Pending",
+          errors: {},
+        } as Recipient;
+        row.errors = validateRecipientRow(row, result.payments);
+        return row;
+      });
 
-        setRecipients(validated);
-        setIsUploading(false);
-      },
-      error: () => {
-        alert("Failed to parse CSV file.");
-        setIsUploading(false);
-      },
-    });
+      setRecipients(validated);
+      showNotification("success", "CSV uploaded and validated successfully by Go backend.");
+    } catch (err: any) {
+      showNotification("error", err.message || "Failed to upload and validate CSV.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  // Cell change updates and revalidates live
+  // Cell change updates and revalidates live, then syncs to Go Backend
   const handleCellChange = (
     index: number,
     field: keyof Omit<Recipient, "errors" | "status">,
@@ -335,6 +339,7 @@ const AppContent = () => {
     });
 
     setRecipients(revalidated);
+    syncDraftWithBackend(revalidated);
   };
 
   // Row operations
@@ -351,7 +356,9 @@ const AppContent = () => {
         verification: "Verification DOB required",
       },
     };
-    setRecipients([...recipients, newRow]);
+    const updated = [...recipients, newRow];
+    setRecipients(updated);
+    syncDraftWithBackend(updated);
   };
 
   const handleDeleteRow = (index: number) => {
@@ -361,6 +368,7 @@ const AppContent = () => {
       return { ...rec, errors };
     });
     setRecipients(revalidated);
+    syncDraftWithBackend(revalidated);
   };
 
   const downloadTemplate = () => {
@@ -380,16 +388,35 @@ const AppContent = () => {
   const totalPayout = recipients.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
 
   // Approval/Verification
-  const toggleVerify = (index: number) => {
+  const toggleVerify = async (index: number) => {
     const updated = [...recipients];
     const current = updated[index].status;
-    updated[index].status =
-      current === "Verified" ? "Rejected" : current === "Rejected" ? "Pending" : "Verified";
-    setRecipients(updated);
+    const targetStatus = current === "Verified" ? "Rejected" : "Verified";
+
+    try {
+      await fetchApi(`/receivers/${updated[index].id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: targetStatus }),
+      });
+      updated[index].status = targetStatus;
+      setRecipients(updated);
+      showNotification("success", `Recipient status updated to ${targetStatus}.`);
+    } catch (err: any) {
+      showNotification("error", err.message || "Failed to update beneficiary status.");
+    }
   };
 
-  const handleVerifyAll = () => {
-    setRecipients(recipients.map((r) => ({ ...r, status: "Verified" })));
+  const handleVerifyAll = async () => {
+    if (!disbursementId) return;
+    try {
+      await fetchApi(`/disbursements/${disbursementId}/approve`, {
+        method: "POST",
+      });
+      setRecipients(recipients.map((r) => ({ ...r, status: "Verified" })));
+      showNotification("success", "Disbursement batch approved successfully!");
+    } catch (err: any) {
+      showNotification("error", err.message || "Failed to approve disbursement batch.");
+    }
   };
 
   const verifiedRecipients = recipients.filter((r) => r.status === "Verified");
@@ -398,109 +425,66 @@ const AppContent = () => {
     0,
   );
 
-  // Execute Payout Simulation tracking exact Section 7.3 PDF Steps
-  const executeDisbursement = () => {
-    if (verifiedRecipients.length === 0) {
-      alert("Please approve at least one beneficiary.");
-      return;
-    }
+  // Execute Go Backend Payout and poll log outputs & status
+  const executeDisbursement = async () => {
+    if (!disbursementId) return;
 
     setDisbursementProgress(1);
     setProgressLogs([]);
 
-    // Add logs step-by-step
-    const addLog = (msg: string, delay: number) => {
-      setTimeout(() => {
-        setProgressLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
-      }, delay);
-    };
+    try {
+      await fetchApi(`/disbursements/${disbursementId}/execute`, {
+        method: "POST",
+      });
+      showNotification("success", "Disbursement execution initiated on Stellar.");
 
-    // Step 1: Upload & validation checks
-    addLog(
-      `[sdp-api] INFO: Upload & Validation: Commencing check on ${verifiedRecipients.length} approved beneficiaries.`,
-      200,
-    );
-    addLog(
-      `[sdp-api] SUCCESS: All validated accounts checked. Active distribution balance confirmed: $${distBalance} USDC / ${xlmBalance} XLM.`,
-      800,
-    );
+      // Poll for log outputs and state updates
+      const pollInterval = setInterval(async () => {
+        try {
+          // Fetch execution logs
+          const logsData = await fetchApi(`/disbursements/${disbursementId}/logs`);
+          setProgressLogs(logsData.logs || []);
 
-    // Step 2: SMS invitation (dry-run)
-    setTimeout(() => setDisbursementProgress(2), 1500);
-    addLog(
-      `[sdp-api] INFO: SMS invitation dry-run active. Messaging service logging invitations to console...`,
-      1700,
-    );
-    verifiedRecipients.forEach((rec, idx) => {
-      addLog(
-        `[sdp-api] LOG: SMS sent to +${rec.phone} -> "You have been sent ${rec.amount} ${assetType}. Access Demo Wallet to claim: http://testanchor.stellar.org/sep24/deposit?ref=${rec.paymentID}"`,
-        2000 + idx * 300,
-      );
-    });
+          // Fetch status
+          const statusData = await fetchApi(`/disbursements/${disbursementId}`);
+          if (statusData.status === "completed") {
+            clearInterval(pollInterval);
+            setDisbursementProgress(6);
+            setTxHash(statusData.tx_hash);
+            showNotification(
+              "success",
+              "Disbursement execution completed successfully on Stellar!",
+            );
 
-    // Step 3: SEP-24 registration (dry-run)
-    setTimeout(() => setDisbursementProgress(3), 3500);
-    addLog(`[sdp-api] INFO: Beneficiary authentication handshake initiated via SEP-10...`, 3800);
-    verifiedRecipients.forEach((rec, idx) => {
-      const mockOtp = Math.floor(100000 + Math.random() * 900000);
-      addLog(
-        `[sdp-api] LOG: Generated OTP ${mockOtp} for phone +${rec.phone}. KYC verification DOB matched: ${rec.verification}.`,
-        4100 + idx * 400,
-      );
-    });
+            // Reload balances and history
+            const accountData = await fetchApi("/distribution-account");
+            setDistBalance(accountData.usdcBalance);
+            setXlmBalance(accountData.xlmBalance);
 
-    // Step 4: Verification & settlement via TSS
-    setTimeout(() => setDisbursementProgress(4), 5500);
-    addLog(
-      `[TSS] INFO: TSS database queue polling triggered. Processing payment records for batch.`,
-      5800,
-    );
-    verifiedRecipients.forEach((rec, idx) => {
-      addLog(
-        `[TSS] INFO: Preparing payment transaction for reference ${rec.paymentID} (${rec.amount} ${assetType})`,
-        6100 + idx * 300,
-      );
-    });
-
-    // Step 5: Confirmed settlement on-chain
-    setTimeout(() => setDisbursementProgress(5), 7500);
-    addLog(`[Horizon] INFO: Submitting signed transaction envelope to Horizon network...`, 7800);
-
-    setTimeout(() => {
-      const finalHash = Array.from({ length: 32 }, () =>
-        Math.floor(Math.random() * 16).toString(16),
-      ).join("");
-      addLog(`[Horizon] SUCCESS: Ledger closed successfully! Transaction Hash: ${finalHash}`, 8600);
-      addLog(`[sdp-api] SUCCESS: All payments transitioned from 'Ready' to 'Success'.`, 9000);
-
-      setTimeout(() => {
-        // Complete execution state updates
-        if (assetType === "USDC") {
-          setDistBalance((prev) => Math.max(prev - approvedPayoutAmount, 0));
-        } else {
-          setXlmBalance((prev) => Math.max(prev - approvedPayoutAmount, 0));
+            const historyData = await fetchApi("/disbursements");
+            setDisbursementHistory(historyData);
+          } else if (statusData.status === "failed") {
+            clearInterval(pollInterval);
+            setDisbursementProgress(0);
+            showNotification("error", "Disbursement execution failed on backend.");
+          } else {
+            if (statusData.step) {
+              setDisbursementProgress(statusData.step);
+            }
+          }
+        } catch (err) {
+          console.error("Error polling execution status", err);
         }
-
-        const newHistItem: DisbursementHistoryItem = {
-          id: `DISB-${new Date().toISOString().slice(0, 10)}-${Math.floor(10 + Math.random() * 90)}`,
-          timestamp: new Date().toISOString().replace("T", " ").slice(0, 19),
-          fileName: uploadedFileName || "Manual_Entry",
-          totalReceivers: verifiedRecipients.length,
-          totalAmount: approvedPayoutAmount.toFixed(2),
-          asset: assetType,
-          txHash: finalHash.slice(0, 12) + "..." + finalHash.slice(-12),
-          status: "Completed",
-        };
-
-        setTxHash(finalHash);
-        setDisbursementHistory((prev) => [newHistItem, ...prev]);
-        setDisbursementProgress(6);
-      }, 9300);
-    }, 8000);
+      }, 2000);
+    } catch (err: any) {
+      showNotification("error", err.message || "Failed to execute disbursement.");
+      setDisbursementProgress(0);
+    }
   };
 
   const handleResetWizard = () => {
     setPhase(1);
+    setDisbursementId(null);
     setRecipients([]);
     setUploadedFileName("");
     setDisbursementProgress(0);
@@ -511,13 +495,13 @@ const AppContent = () => {
   const handleClearLocalStorage = () => {
     try {
       localStorage.clear();
-      setDistBalance(150000.0);
-      setXlmBalance(2620.0);
-      setDisbursementHistory(MOCK_HISTORY);
-      alert("Local storage cleared successfully!");
+      setDistBalance(0);
+      setXlmBalance(0);
+      setDisbursementHistory([]);
+      showNotification("success", "Local storage cleared successfully!");
       handleResetWizard();
     } catch {
-      alert("Error clearing local storage.");
+      showNotification("error", "Error clearing local storage.");
     }
   };
 
@@ -542,11 +526,15 @@ const AppContent = () => {
             <div
               className="font-mono text-xs text-blue-600 cursor-pointer font-semibold hover:underline mt-0.5"
               onClick={() => {
-                navigator.clipboard.writeText(DIST_PUBLIC_KEY);
-                alert("Copied Stellar address!");
+                if (distPublicKey) {
+                  navigator.clipboard.writeText(distPublicKey);
+                  alert("Copied Stellar address!");
+                }
               }}
             >
-              {DIST_PUBLIC_KEY.slice(0, 8)}...{DIST_PUBLIC_KEY.slice(-8)}
+              {distPublicKey
+                ? `${distPublicKey.slice(0, 8)}...${distPublicKey.slice(-8)}`
+                : "Fetching address..."}
             </div>
           </div>
           <div className="text-right text-xs">
@@ -664,13 +652,28 @@ const AppContent = () => {
                   onChange={handleCsvUpload}
                   style={{ display: "none" }}
                 />
-                <div className="text-2xl text-slate-400 font-bold border border-slate-300 rounded px-3 py-1 bg-white">
-                  CSV
+                <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-xs">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.8}
+                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
                 </div>
                 <div className="text-sm font-semibold text-slate-700">
                   {isUploading
                     ? "Uploading files..."
-                    : "Click to select and upload a beneficiary CSV"}
+                    : uploadedFileName
+                      ? `Active file: ${uploadedFileName}`
+                      : "Click to select and upload a beneficiary CSV"}
                 </div>
                 <div className="text-xs text-slate-400">
                   Required Schema: phone, id, amount, verification, paymentID
@@ -1219,54 +1222,90 @@ const AppContent = () => {
           <div className="mt-12">
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-lg font-bold text-slate-900">Simulation History Log</h3>
-              <button
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-3 rounded-md text-xs transition-all"
-                onClick={handleClearLocalStorage}
-              >
-                Clear Saved Data
-              </button>
+              {recipients.length > 0 && (
+                <button
+                  className="bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-3 rounded-md text-xs transition-all"
+                  onClick={handleClearLocalStorage}
+                >
+                  Clear Saved Data
+                </button>
+              )}
             </div>
             <div className="space-y-3">
-              {disbursementHistory.map((item) => (
-                <div
-                  className="flex justify-between items-center bg-white border border-slate-200 p-5 rounded-xl shadow-xs hover:shadow-md transition-all duration-200"
-                  key={item.id}
-                >
-                  <div>
-                    <div className="font-semibold text-slate-900 text-sm">{item.fileName}</div>
-                    <div className="text-xs text-slate-500 mt-1 flex gap-3 items-center">
-                      <span>ID: {item.id}</span>
-                      <span>•</span>
-                      <span>{item.timestamp}</span>
-                      <span>•</span>
-                      <span className="text-emerald-600 font-semibold">
-                        {item.totalReceivers} Payouts ({item.asset})
-                      </span>
+              {isLoadingHistory ? (
+                // Pulse Skeleton Loader
+                [1, 2, 3].map((n) => (
+                  <div
+                    key={n}
+                    className="flex justify-between items-center bg-white border border-slate-200 p-5 rounded-xl shadow-xs animate-pulse"
+                  >
+                    <div className="w-1/2 space-y-2">
+                      <div className="h-4 bg-slate-200 rounded-sm w-3/4"></div>
+                      <div className="h-3 bg-slate-200 rounded-sm w-1/2"></div>
                     </div>
+                    <div className="h-4 bg-slate-200 rounded-sm w-20"></div>
                   </div>
-                  <div className="flex items-center gap-6">
-                    <div className="font-extrabold text-sm text-emerald-600">
-                      $
-                      {parseFloat(item.totalAmount).toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                      })}{" "}
-                      {item.asset}
-                    </div>
-                    <a
-                      href={`https://stellar.expert/explorer/testnet/tx/${item.txHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono text-xs text-blue-600 font-semibold hover:underline"
-                    >
-                      View Tx
-                    </a>
-                  </div>
+                ))
+              ) : disbursementHistory.length === 0 ? (
+                <div className="text-center py-10 bg-white border border-slate-200 rounded-2xl text-slate-400 text-sm font-medium animate-fade-in">
+                  No execution history logged.
                 </div>
-              ))}
+              ) : (
+                disbursementHistory.map((item) => (
+                  <div
+                    className="flex justify-between items-center bg-white border border-slate-200 p-5 rounded-xl shadow-xs hover:shadow-md transition-all duration-200"
+                    key={item.id}
+                  >
+                    <div>
+                      <div className="font-semibold text-slate-900 text-sm">{item.fileName}</div>
+                      <div className="text-xs text-slate-500 mt-1 flex gap-3 items-center">
+                        <span>ID: {item.id}</span>
+                        <span>•</span>
+                        <span>{item.timestamp}</span>
+                        <span>•</span>
+                        <span className="text-emerald-600 font-semibold">
+                          {item.totalReceivers} Payouts ({item.asset})
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="font-extrabold text-sm text-emerald-600">
+                        $
+                        {parseFloat(item.totalAmount).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                        })}{" "}
+                        {item.asset}
+                      </div>
+                      <a
+                        href={`https://stellar.expert/explorer/testnet/tx/${item.txHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-xs text-blue-600 font-semibold hover:underline"
+                      >
+                        View Tx
+                      </a>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
       </main>
+
+      {/* Toast Notification */}
+      {notification && (
+        <div
+          className={`fixed bottom-5 right-5 z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-xl bg-white border border-slate-200 border-l-4 ${notification.type === "success" ? "border-l-emerald-600 text-slate-800" : "border-l-red-600 text-slate-800"} transition-all duration-300 transform translate-y-0 shadow-slate-200/50 animate-fade-in-up`}
+        >
+          <div
+            className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${notification.type === "success" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}
+          >
+            {notification.type === "success" ? "✓" : "!"}
+          </div>
+          <div className="text-sm font-semibold">{notification.message}</div>
+        </div>
+      )}
     </div>
   );
 };
