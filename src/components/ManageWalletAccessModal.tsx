@@ -37,6 +37,9 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
   const [role, setRole] = useState<UserRole | "">("");
   // Which membership is mid-revoke, so only its button shows a spinner (not every row's).
   const [revokingId, setRevokingId] = useState<string | null>(null);
+  // Revoking is a money-permission change, so it is two-step: the first click arms one row
+  // (swapping its action to Cancel / Confirm revoke), the second actually revokes.
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
   const { data: memberships, isLoading: membershipsLoading } = useWalletMemberships(
     visible ? walletId : null,
@@ -50,6 +53,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
       setUserId("");
       setRole("");
       setRevokingId(null);
+      setConfirmingId(null);
       grant.reset();
       revoke.reset();
     }
@@ -126,24 +130,51 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                   <div style={{ fontWeight: 500 }}>{usersById[m.user_id] ?? m.user_id}</div>
                   <div className="Note">{userRoleText(m.role)}</div>
                 </div>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => {
-                    if (!walletId) {
-                      return;
-                    }
-                    setRevokingId(m.id);
-                    revoke.mutate(
-                      { walletId, membershipId: m.id },
-                      { onSettled: () => setRevokingId(null) },
-                    );
-                  }}
-                  isLoading={revoke.isPending && revokingId === m.id}
-                  disabled={revoke.isPending}
-                >
-                  Revoke
-                </Button>
+                {confirmingId === m.id ? (
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                    <span className="Note">Remove this member's access?</span>
+                    <Button
+                      size="sm"
+                      variant="tertiary"
+                      onClick={() => setConfirmingId(null)}
+                      disabled={revoke.isPending}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => {
+                        if (!walletId) {
+                          return;
+                        }
+                        setRevokingId(m.id);
+                        revoke.mutate(
+                          { walletId, membershipId: m.id },
+                          {
+                            onSettled: () => {
+                              setRevokingId(null);
+                              setConfirmingId(null);
+                            },
+                          },
+                        );
+                      }}
+                      isLoading={revoke.isPending && revokingId === m.id}
+                      disabled={revoke.isPending}
+                    >
+                      Confirm revoke
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => setConfirmingId(m.id)}
+                    disabled={revoke.isPending}
+                  >
+                    Revoke
+                  </Button>
+                )}
               </div>
             ))
           ) : (
