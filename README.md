@@ -1,149 +1,151 @@
-# Stellar Disbursement Platform Frontend
+# Stellar Disbursement Studio - SAPCONE Frontend
 
-## Introduction
+This repository contains the simplified frontend application for the Stellar Disbursement Platform (SDP), customized for Sustainable Approaches for Community Empowerment (SAPCONE) under the GIVE Kenya Stellar Impact Studio (July 2026).
 
-The Stellar Disbursement Platform (SDP) enables organizations to disburse bulk
-payments to recipients using Stellar.
+---
 
-This repo contains the SDP dashboard UI, which is to be used with the
-[Stellar Disbursement Platform Backend](https://github.com/stellar/stellar-disbursement-platform-backend).
-For more information on how to get started, see the Stellar
-[dev docs](https://developers.stellar.org/docs/platforms/stellar-disbursement-platform)
-and
-[API reference](https://developers.stellar.org/docs/platforms/stellar-disbursement-platform/api-reference).
+## 1. Executive Summary and Core Concept
 
-The SDP's comprehensive dashboard includes the following pages:
+SAPCONE operates cash transfer and humanitarian programs across Kenya, Uganda, Ethiopia, and South Sudan. In Kenya, mobile money and bank transfers move funds reliably. However, in cross-border corridors or when delivering to phone-less beneficiaries, the system falls back to cash handovers or manual paper sign-offs.
 
-- Dashboard Home (Overview): Summary of recent disbursement activities and key
-  metrics, including successful payment rate, total successful/failed/remaining
-  payments, total disbursed, individuals, and wallets.
-- Disbursements Page (Management): Create, draft, search, filter, and export
-  disbursements. Detailed disbursement page includes names, total payments,
-  successes, failures, remaining, creation date, total amount, and disbursed
-  amount.
-- Receivers Page (Overview): List of individuals set to receive payments, with
-  wallet information and payment history. May also search, filter, and export
-  receiver data in CSV.
-- Payments Page (Overview): Summary of all payments, including search by payment
-  ID, filters, and export options. Payment details include Payment ID, wallet
-  address, disbursement name, completion time, amount, and status information.
-- Wallets Page (Management): View Distribution Account information including
-  public key, balance, adding funds, and more, and manage which assets you want
-  to use on the Stellar network.
-- Analytics Page (Overview): Provides insights into financial transactions,
-  including successful payment rate, total successful/failed/remaining payments,
-  total disbursed, average amount, total amount per asset, and individuals and
-  wallets involved.
+This frontend implements a simplified 3-Phase DisburseFlow Studio dashboard designed to:
+1. Validate and edit beneficiary payout details via CSV upload or manual entry.
+2. Verify beneficiary identity and KYC details (Date of Birth).
+3. Execute and trace transaction batches submitted to the Stellar Network.
 
-Feedback and contributions are welcome!
+All core SDP backend functionalities have been offloaded to the Go API services, allowing this frontend to serve as a focused, highly interactive workflow manager.
 
-## Local HTTPS Development
+---
 
-HTTPS is required for testing passkey authentication with embedded wallets.
+## 2. Local Development and Setup
 
-The development server supports HTTPS using
-[mkcert](https://github.com/FiloSottile/mkcert) for locally-trusted
-certificates.
+### Prerequisites
+* Node.js: Version >= 22.x
+* NPM: Package manager (installed automatically with Node)
 
-### Setup
+### Setup Instructions
 
-Install mkcert and generate certificates:
+```bash
+# 1. Install dependencies
+npm install
 
-```sh
-# Install mkcert (see https://web.dev/articles/how-to-use-local-https)
-brew install mkcert
-mkcert -install
+# 2. Start the Vite local development server
+npm run start
 
-# Generate certificates in project root (these are gitignored)
-mkdir -p certs
-mkcert -key-file certs/localhost-key.pem -cert-file certs/localhost.pem \
-  "*.stellar.local" localhost 127.0.0.1 ::1
+# 3. Generate a production build
+npm run build
 ```
 
-### Running with HTTPS
+The application will be available at http://localhost:3001 (or the next available port).
 
-```sh
-# HTTPS mode (required for passkeys/WebAuthn)
-yarn start:https
+---
 
-# HTTP mode (default)
-yarn start
+## 3. Environment Variables
+
+Create a .env file at the project root for local settings.
+
+| Variable | Description | Default / Example |
+|---|---|---|
+| `REACT_APP_DISABLE_WINDOW_ENV` | Skip fetching dynamic environment files | `true` |
+| `REACT_APP_API_URL` | Base URL for the future Go SDP backend API | `http://localhost:8080` |
+| `REACT_APP_HORIZON_URL` | Stellar Horizon Testnet explorer endpoint | `https://horizon-testnet.stellar.org` |
+| `REACT_APP_STELLAR_EXPERT_URL` | Stellar Expert network explorer | `https://testnet.stellar.expert` |
+| `REACT_APP_SINGLE_TENANT_MODE` | Single organization deployment mode | `true` |
+
+---
+
+## 4. Design and Aesthetics
+
+The application is styled with Tailwind CSS v4, providing:
+* High-Contrast Light Mode: Slate background (`bg-slate-50`) with white panels (`bg-white`) and bold dark-slate text (`text-slate-900`).
+* Accessibility Compliance: Colors and contrasts exceed WCAG AA 4.5:1 text-to-background contrast ratio requirements.
+* Interactive Feedback: Hover states, disabled controls, active press shifts, and focused input outlines are fully configured.
+
+---
+
+## 5. Operational Workflow: The 3 Payout Phases
+
+### Phase 1: Populating the CSV
+* Sample Simulation Batch: A button allows you to pre-populate the grid with the exact synthetic records from Section 7.1 of the SAPCONE DisburseFlow documentation:
+  * `PAY_01` | Phone: `16042424000` | Ref: `4ba1` | Amount: `520` | DOB: `01/12/1987`
+  * `PAY_02` | Phone: `16034568000` | Ref: `3ce2` | Amount: `600` | DOB: `04/06/1967`
+  * `PAY_03` | Phone: `16045638000` | Ref: `4dq1` | Amount: `800` | DOB: `09/08/1997`
+  * `PAY_04` | Phone: `16022348000` | Ref: `7re8` | Amount: `700` | DOB: `09/08/1990`
+* CSV Schema: Requires columns: `phone`, `id`, `amount`, `verification`, and `paymentID`.
+* Validation checks: Automatically detects invalid phone formats, negative amounts, empty values, or duplicate Beneficiary/Payment IDs.
+* Asset Toggle: Switch the payout token between `USDC` (Circle) and `XLM` (Native).
+
+### Phase 2: Approval and Verification
+* View and filter beneficiaries by their IDs, phone numbers, or paymentID.
+* Toggles approval manually per beneficiary or approves all loaded users instantly.
+* Calculates approved payout counts and total values.
+
+### Phase 3: Disbursement Execution
+* Reviews ledger transaction costs, distribution account status, and trustlines.
+* Traces logs step-by-step to match the Section 7.3 PDF simulation trace:
+  1. Upload and Validation: Data checks.
+  2. SMS Invitation (Dry-Run): Logging dry-run SMS codes.
+  3. SEP-24 wallet verification: OTP verification and DOB matches.
+  4. TSS queue processing: Batch transaction assembly.
+  5. Horizon Settlement: Settle ledger payments and return transaction hashes.
+
+---
+
+## 6. Codebase Cleanup Summary
+
+To simplify the codebase, the following unused directories and components were deleted:
+* `src/pages/*` (Removed 32 legacy dashboard pages)
+* `src/components/*` (Removed 90+ legacy component folders)
+* `src/store/*` (Removed legacy Redux state modules)
+* `src/hooks/*` (Removed legacy API and web auth hooks)
+* `src/api/*` and `src/apiQueries/*` (Removed legacy SDP API connections)
+* `src/types/*` and `src/helpers/*` (Cleaned up legacy schema helpers)
+
+The streamlined file structure is:
+* `src/App.tsx`: Unified multi-phase wizard controller and main workspace UI.
+* `src/index.tsx`: Main React DOM bootstrapping entrypoint.
+* `src/styles/studio.css`: Premium Tailwind CSS stylesheet.
+* `src/generated/gitInfo.ts`: Autogenerated build metadata.
+
+---
+
+## 7. Future Backend Schema Reference
+
+Once Go backend API endpoints are ready, developers can connect the frontend features by extending the database.
+
+### Postgres Tables Required (sdp_ schema)
+
+#### `sdp_proxies`
+```sql
+CREATE TABLE sdp_proxies (
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name     TEXT NOT NULL,
+    phone_number  TEXT NOT NULL,
+    national_id   TEXT NOT NULL UNIQUE,
+    relationship  TEXT NOT NULL,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 ```
 
-Access the application at `https://localhost:3000` or
-`https://[tenant].stellar.local:3000` (e.g., `https://redcorp.stellar.local:3000`).
-
-If certificates are missing, the server falls back to HTTP with a warning.
-
-## Environment Variables
-
-Environment variables can be set either on a global `window._env_` object or as
-`process.env` variables. All environment variables used in this repo are in
-`src/constants/envVariables.ts` file, including types.
-
-### `window`
-
-The default location of the `window._env_` object is
-`public/settings/env-config.js` (not included in the repo). The path can be
-updated in `src/constants/envVariables.ts` variable `WINDOW_ENV_PATH`.
-
-Example settings for local testing:
-
-```javascript
-window._env_ = {
-  API_URL: "http://localhost:8000",
-  STELLAR_EXPERT_URL: "https://stellar.expert/explorer/testnet",
-  HORIZON_URL: "https://horizon-testnet.stellar.org",
-  RECAPTCHA_SITE_KEY: "6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn",
-  SINGLE_TENANT_MODE: false,
-  RPC_ENABLED: false, // Set to true to enable contract account features
-};
+#### `sdp_proxy_deliveries`
+```sql
+CREATE TABLE sdp_proxy_deliveries (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    proxy_id        UUID NOT NULL REFERENCES sdp_proxies(id),
+    receiver_id     TEXT NOT NULL,
+    payment_id      TEXT NOT NULL,
+    delivery_status TEXT NOT NULL DEFAULT 'PENDING',
+    card_reference  TEXT,
+    scan_time       TIMESTAMPTZ,
+    stellar_tx_hash TEXT,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 ```
 
-### `process`
+---
 
-The `.env` file should be placed in the root directory of the repo. All
-variables should be prefixed with `REACT_APP_`.
+## 8. Backend Integration Guide
 
-Set the value to true to avoid fetching the file if the Window ENV is not used.
-
-<!-- prettier-ignore -->
-> [!NOTE]
-> Set `REACT_APP_DISABLE_WINDOW_ENV=true` to avoid fetching the
-> `public/settings/env-config.js` file if the `window._env_` is not used.
-
-<!-- prettier-ignore -->
-> [!NOTE]
-> Set `REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN=true` to skip prefilling the hostname from the domain.
-
-For example:
-
-```
-REACT_APP_DISABLE_WINDOW_ENV=true
-REACT_APP_DISABLE_TENANT_PREFIL_FROM_DOMAIN=false
-REACT_APP_API_URL=http://localhost:8000
-REACT_APP_STELLAR_EXPERT_URL=https://stellar.expert/explorer/testnet
-REACT_APP_HORIZON_URL=https://horizon-testnet.stellar.org
-REACT_APP_RECAPTCHA_SITE_KEY=6Lego1wmAAAAAJNwh6RoOrsHuWnsciCTIL3NN-bn
-```
-
-## Favicon
-
-[Favicon](https://developer.mozilla.org/en-US/docs/Glossary/Favicon) image files
-are located in `/public` directory. The files are:
-
-- `apple-touch-icon.png` - mostly used for shortcuts
-- `favicon.ico` - for legacy browsers and devices
-- `icon-192.png` and `icon-512.png` - fallback if SVG is not supported
-- `icon.svg` - modern browser support is very good (can be adjusted to match
-  operating system theme)
-
-Having this set of favicons should cover all devices and browsers. They are set
-in `/src/index.html` and `/public/manifest.json` files.
-
-<figure>
-  <img
-  src="public/icon-192.png"
-  alt="Stellar logo favicon">
-  <figcaption>Default favicon</figcaption>
-</figure>
+For details on connecting this frontend workspace to the Go-based Stellar Disbursement Platform API, Horizon node, and Transaction Submission Service (TSS), please refer to the separate [BACKEND_INTEGRATION.md](file:///home/bethwel/stellar-disbursement-platform-frontend/BACKEND_INTEGRATION.md) documentation file.

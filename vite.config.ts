@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 import { readFileSync, existsSync } from "fs";
 import { viteStaticCopy } from "vite-plugin-static-copy";
@@ -24,6 +25,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      tailwindcss(),
       react(),
       nodePolyfills({
         // To add only specific polyfills, add them here. If no option is passed, adds all polyfills
@@ -120,18 +122,6 @@ export default defineConfig(({ mode }) => {
       target: ["chrome89", "firefox89", "safari15", "edge89"],
       rollupOptions: {
         output: {
-          manualChunks: {
-            "vendor-react-redux": [
-              "react",
-              "react-dom",
-              "react-router-dom",
-              "react-redux",
-              "redux",
-              "@reduxjs/toolkit",
-            ],
-            "vendor-stellar": ["@stellar/design-system"],
-            "vendor-query": ["@tanstack/react-query"],
-          },
           assetFileNames: (assetInfo) => {
             const fileName = assetInfo.names?.[0];
             if (!fileName) return "assets/[name]-[hash][extname]";

@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Reset html and body with basic high-contrast colors and layout safety overrides */
+html, body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  overflow-y: auto !important;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}

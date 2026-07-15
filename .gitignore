@@ -41,3 +41,6 @@ process.env
 
 # SSL certificates (mkcert)
 /certs/
+
+# reference PDF files
+*.pdf
