@@ -1,4 +1,4 @@
-# Stellar Disbursement Studio - SAPCONE Frontend
+# SAPCONE
 
 This repository contains the simplified frontend application for the Stellar Disbursement Platform (SDP), customized for Sustainable Approaches for Community Empowerment (SAPCONE) under the GIVE Kenya Stellar Impact Studio (July 2026).
 
@@ -109,43 +109,6 @@ The streamlined file structure is:
 
 ---
 
-## 7. Future Backend Schema Reference
+## 7. Backend Integration Guide
 
-Once Go backend API endpoints are ready, developers can connect the frontend features by extending the database.
-
-### Postgres Tables Required (sdp_ schema)
-
-#### `sdp_proxies`
-```sql
-CREATE TABLE sdp_proxies (
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    full_name     TEXT NOT NULL,
-    phone_number  TEXT NOT NULL,
-    national_id   TEXT NOT NULL UNIQUE,
-    relationship  TEXT NOT NULL,
-    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-```
-
-#### `sdp_proxy_deliveries`
-```sql
-CREATE TABLE sdp_proxy_deliveries (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    proxy_id        UUID NOT NULL REFERENCES sdp_proxies(id),
-    receiver_id     TEXT NOT NULL,
-    payment_id      TEXT NOT NULL,
-    delivery_status TEXT NOT NULL DEFAULT 'PENDING',
-    card_reference  TEXT,
-    scan_time       TIMESTAMPTZ,
-    stellar_tx_hash TEXT,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-```
-
----
-
-## 8. Backend Integration Guide
-
-For details on connecting this frontend workspace to the Go-based Stellar Disbursement Platform API, Horizon node, and Transaction Submission Service (TSS), please refer to the separate [BACKEND_INTEGRATION.md](file:///home/bethwel/stellar-disbursement-platform-frontend/BACKEND_INTEGRATION.md) documentation file.
+For details on connecting this frontend workspace to the Go-based Stellar Disbursement Platform API, Horizon node, and Transaction Submission Service (TSS), please refer to the separate [BACKEND_INTEGRATION.md](BACKEND_INTEGRATION.md) documentation file.

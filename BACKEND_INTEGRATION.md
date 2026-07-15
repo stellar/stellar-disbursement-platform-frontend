@@ -132,3 +132,41 @@ The Phase 3 terminal container simulates logging by polling the Go API log strea
     "completed_at": "2026-07-15T14:16:09Z"
   }
   ```
+
+---
+
+## 6. PostgreSQL Database Schema Reference
+
+Once Go backend API endpoints are ready, developers can connect the frontend features by extending the database.
+
+### Postgres Tables Required (sdp_ schema)
+
+#### `sdp_proxies`
+```sql
+CREATE TABLE sdp_proxies (
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name     TEXT NOT NULL,
+    phone_number  TEXT NOT NULL,
+    national_id   TEXT NOT NULL UNIQUE,
+    relationship  TEXT NOT NULL,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+#### `sdp_proxy_deliveries`
+```sql
+CREATE TABLE sdp_proxy_deliveries (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    proxy_id        UUID NOT NULL REFERENCES sdp_proxies(id),
+    receiver_id     TEXT NOT NULL,
+    payment_id      TEXT NOT NULL,
+    delivery_status TEXT NOT NULL DEFAULT 'PENDING',
+    card_reference  TEXT,
+    scan_time       TIMESTAMPTZ,
+    stellar_tx_hash TEXT,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+

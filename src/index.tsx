@@ -7,8 +7,8 @@ import { createRoot } from "react-dom/client";
 import { App } from "./App";
 
 // Import our custom Tailwind stylesheet. This provides baseline reset and utilities.
-console.log("[DisbursementStudio] Importing studio.css (Tailwind v4)...");
-import "./styles/studio.css";
+console.log("[DisbursementStudio] Importing index.css (Tailwind v4)...");
+import "./index.css";
 
 console.log("[DisbursementStudio] Finding root container...");
 const container = document.getElementById("root");
