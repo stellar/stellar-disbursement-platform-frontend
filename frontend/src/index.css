@@ -1,15 +1,88 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+
+@theme {
+  --color-blue-50: #eaf4ed;
+  --color-blue-100: #cae4d3;
+  --color-blue-200: #9dd0b0;
+  --color-blue-300: #6ab988;
+  --color-blue-400: #3ea366;
+  --color-blue-500: #1b8d4e;
+  --color-blue-600: #068241;   /* SAPCONE Green Primary */
+  --color-blue-700: #096837;
+  --color-blue-800: #0a522e;
+  --color-blue-900: #0a4327;
+
+  --color-emerald-50: #fbd6ce;
+  --color-emerald-100: #f5b2a3;
+  --color-emerald-200: #ed846f;
+  --color-emerald-300: #e25b42;
+  --color-emerald-400: #d63d21;
+  --color-emerald-500: #c2381f;
+  --color-emerald-600: #b23e25;  /* SAPCONE Orange/Red Secondary */
+  --color-emerald-700: #9b2b16;
+  --color-emerald-800: #812516;
+  --color-emerald-900: #6b2216;
+
+  --color-slate-50: #fefcf3;    /* Very light beige/warm background */
+  --color-slate-100: #f8efda;
+  --color-slate-200: #f2e1bb;
+  --color-slate-800: #002266;
+  --color-slate-900: #003388;    /* SAPCONE Navy text */
+
+  --font-sans: "Outfit", system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  /* Override Stellar Design System default branding with SAPCONE variables */
+  --sds-clr-blue-50: var(--color-blue-50);
+  --sds-clr-blue-100: var(--color-blue-100);
+  --sds-clr-blue-200: var(--color-blue-200);
+  --sds-clr-blue-300: var(--color-blue-300);
+  --sds-clr-blue-400: var(--color-blue-400);
+  --sds-clr-blue-500: var(--color-blue-500);
+  --sds-clr-blue-600: var(--color-blue-600);
+  --sds-clr-blue-700: var(--color-blue-700);
+
+  --sds-clr-purple-50: var(--color-blue-50);
+  --sds-clr-purple-100: var(--color-blue-100);
+  --sds-clr-purple-200: var(--color-blue-200);
+  --sds-clr-purple-300: var(--color-blue-300);
+  --sds-clr-purple-400: var(--color-blue-400);
+  --sds-clr-purple-500: var(--color-blue-500);
+  --sds-clr-purple-600: var(--color-blue-600);
+  --sds-clr-purple-700: var(--color-blue-700);
+
+  --sds-clr-lilac-04: var(--color-blue-50);
+  --sds-clr-lilac-11: var(--color-blue-600);
+}
 
 /* HTML and body baseline overrides for high-contrast light mode visibility */
 html, body {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
+  background-color: var(--color-slate-50) !important;
+  color: var(--color-slate-900) !important;
   display: block !important;
   opacity: 1 !important;
   visibility: visible !important;
   overflow-y: auto !important;
   margin: 0;
   padding: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans);
   min-height: 100vh;
+}
+
+/* Premium micro-animations for interactive elements */
+button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(6, 130, 65, 0.2);
+}
+button.bg-emerald-600:hover {
+  box-shadow: 0 4px 12px rgba(178, 62, 37, 0.2);
+}
+
+tr {
+  transition: background-color 0.2s ease-in-out;
 }
