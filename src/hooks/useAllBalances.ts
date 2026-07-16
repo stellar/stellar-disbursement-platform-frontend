@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { useCircleAccount } from "@/hooks/useCircleAccount";
-import { useRedux } from "@/hooks/useRedux";
-import { useOrgAccountInfo } from "@/hooks/useOrgAccountInfo";
+
 import { useCircleBalances } from "@/apiQueries/useCircleBalances";
+
+import { useCircleAccount } from "@/hooks/useCircleAccount";
+import { useOrgAccountInfo } from "@/hooks/useOrgAccountInfo";
+import { useRedux } from "@/hooks/useRedux";
+
 import { AccountBalanceItem } from "@/types";
 
 export const useAllBalances = () => {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { parse } from "papaparse";
 
 import "./styles.scss";

@@ -1,6 +1,8 @@
 import { sessionExpiredAction } from "@/store/ducks/userAccount";
+
 import { USE_SSO } from "@/constants/envVariables";
 import { SESSION_EXPIRED } from "@/constants/settings";
+
 import { singleUserStore } from "@/helpers/singleSingOn";
 
 export const endSessionIfTokenInvalid = (error: string, dispatch: any) => {

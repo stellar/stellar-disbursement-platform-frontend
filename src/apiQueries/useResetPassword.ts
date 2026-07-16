@@ -1,8 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
+
 import { API_URL } from "@/constants/envVariables";
+
 import { fetchApi } from "@/helpers/fetchApi";
-import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+
 import { AppError } from "@/types";
 
 type ResetPasswordProps = {

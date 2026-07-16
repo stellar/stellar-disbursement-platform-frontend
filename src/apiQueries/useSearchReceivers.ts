@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_URL } from "@/constants/envVariables";
-import { fetchApi } from "@/helpers/fetchApi";
-import { handleSearchParams } from "@/api/handleSearchParams";
+
 import { directPayment } from "@/constants/directPayment";
+import { API_URL } from "@/constants/envVariables";
+
+import { handleSearchParams } from "@/api/handleSearchParams";
+
+import { fetchApi } from "@/helpers/fetchApi";
 
 import { ApiReceivers, AppError } from "@/types";
 

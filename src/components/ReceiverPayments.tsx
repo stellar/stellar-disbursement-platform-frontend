@@ -1,13 +1,16 @@
 import { useState } from "react";
+
 import { Heading, Select } from "@stellar/design-system";
+
+import { Pagination } from "@/components/Pagination";
+import { PaymentsTable } from "@/components/PaymentsTable";
+import { SectionHeader } from "@/components/SectionHeader";
 
 import { PAGE_LIMIT_OPTIONS } from "@/constants/settings";
 
-import { SectionHeader } from "@/components/SectionHeader";
-import { PaymentsTable } from "@/components/PaymentsTable";
-import { Pagination } from "@/components/Pagination";
 
 import { usePayments } from "@/apiQueries/usePayments";
+
 import { renderTextWithCount } from "@/helpers/renderTextWithCount";
 
 export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {

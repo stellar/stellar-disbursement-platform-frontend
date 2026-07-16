@@ -1,17 +1,24 @@
 import { useEffect } from "react";
+
 import { useDispatch } from "react-redux";
-import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
-import { AppDispatch, resetStoreAction } from "@/store";
+
+import { getOrgInfoAction, getOrgLogoAction } from "@/store/ducks/organization";
+import { getProfileInfoAction } from "@/store/ducks/profile";
 import {
   setUserInfoAction,
   restoreUserSession,
   sessionExpiredAction,
 } from "@/store/ducks/userAccount";
-import { parseJwt } from "@/helpers/parseJwt";
+
+import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
+
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { parseJwt } from "@/helpers/parseJwt";
+
 import { useRedux } from "@/hooks/useRedux";
-import { getProfileInfoAction } from "@/store/ducks/profile";
-import { getOrgInfoAction, getOrgLogoAction } from "@/store/ducks/organization";
+
+import { AppDispatch, resetStoreAction } from "@/store";
+
 
 export const UserSession = () => {
   const { userAccount, profile, organization } = useRedux("userAccount", "profile", "organization");

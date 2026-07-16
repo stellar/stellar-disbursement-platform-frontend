@@ -1,4 +1,5 @@
 import { Heading, Select, Textarea } from "@stellar/design-system";
+
 import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
 
 import "./styles.scss";

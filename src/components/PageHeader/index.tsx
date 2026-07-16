@@ -1,6 +1,9 @@
 import { Button, Icon, ThemeSwitch } from "@stellar/design-system";
-import { PROJECT_NAME, Routes } from "@/constants/settings";
+
 import { DropdownMenu } from "@/components/DropdownMenu";
+
+import { PROJECT_NAME, Routes } from "@/constants/settings";
+
 import { formatDateTimeWithGmt } from "@/helpers/formatIntlDateTime";
 import "./styles.scss";
 

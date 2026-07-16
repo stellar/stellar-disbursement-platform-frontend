@@ -1,8 +1,9 @@
-import { useRedux } from "@/hooks/useRedux";
-import { useCircleAccount } from "@/hooks/useCircleAccount";
 import { DistributionAccountCircle } from "@/components/DistributionAccountCircle";
 import { DistributionAccountStellar } from "@/components/DistributionAccountStellar";
 import { LoadingContent } from "@/components/LoadingContent";
+
+import { useCircleAccount } from "@/hooks/useCircleAccount";
+import { useRedux } from "@/hooks/useRedux";
 
 export const DistributionAccount = () => {
   const { organization } = useRedux("organization");

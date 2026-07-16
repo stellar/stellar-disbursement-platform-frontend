@@ -1,25 +1,32 @@
 import { useState } from "react";
-import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
+
 import { useQueryClient } from "@tanstack/react-query";
+import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/store";
-import { exportDataAction } from "@/store/ducks/dataExport";
+import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/design-system";
 
+
+import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { FilterMenu } from "@/components/FilterMenu";
 import { Pagination } from "@/components/Pagination";
 import { PaymentsTable } from "@/components/PaymentsTable";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ShowForRoles } from "@/components/ShowForRoles";
-import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { usePayments } from "@/apiQueries/usePayments";
-import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
+import { exportDataAction } from "@/store/ducks/dataExport";
+
 import { PAGE_LIMIT_OPTIONS } from "@/constants/settings";
+
+import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
+import { usePayments } from "@/apiQueries/usePayments";
+
 import { number } from "@/helpers/formatIntlNumber";
+
 import { CommonFilters, CreateDirectPaymentRequest } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 export const Payments = () => {
   const [isSearchInProgress] = useState(false);

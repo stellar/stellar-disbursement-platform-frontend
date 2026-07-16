@@ -1,5 +1,6 @@
-import { Floater } from "@stellar/design-system";
 import { NavLink } from "react-router-dom";
+
+import { Floater } from "@stellar/design-system";
 import "./styles.scss";
 
 interface DropdownMenuProps {

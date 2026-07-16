@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { SortDirection } from "@/types";
 
 export const useSort = <T>(onSort?: (sort?: T, direction?: SortDirection) => void) => {

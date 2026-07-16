@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { HORIZON_URL } from "@/constants/envVariables";
+
 import { fetchStellarApi } from "@/helpers/fetchStellarApi";
+
 import { ApiStellarAccount, AppError } from "@/types";
 
 export const useStellarAccountInfo = (stellarAddress: string | undefined) => {

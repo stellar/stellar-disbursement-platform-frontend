@@ -1,6 +1,8 @@
 import { Fragment } from "react";
-import { Icon } from "@stellar/design-system";
+
 import { Link } from "react-router-dom";
+
+import { Icon } from "@stellar/design-system";
 import "./styles.scss";
 
 type Breadcrumb = {

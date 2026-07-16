@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
+
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import {
   ApiKeyFormFields,
   convertToApiPermissions,
 } from "@/components/ApiKeyFormFields/ApiKeyFormFields";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
+import { parseAllowedIPs } from "@/helpers/parseIPs";
 
 import { useApiKeyForm } from "@/hooks/useApiKeyForm";
 import { usePrevious } from "@/hooks/usePrevious";
 
-import { parseAllowedIPs } from "@/helpers/parseIPs";
 
 import { AppError, CreateApiKeyRequest } from "@/types";
 

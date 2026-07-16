@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
-import { Button, Heading, Input, Link, Loader, Notification } from "@stellar/design-system";
+
 import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { Button, Heading, Input, Link, Loader, Notification } from "@stellar/design-system";
+
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 import { SINGLE_TENANT_MODE } from "@/constants/envVariables";
 import { ORG_NAME_INFO_TEXT } from "@/constants/settings";
+
 import { useResetPassword } from "@/apiQueries/useResetPassword";
+
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { validateNewPassword } from "@/helpers/validateNewPassword";
 import { validatePasswordMatch } from "@/helpers/validatePasswordMatch";
-import { getSdpTenantName } from "@/helpers/getSdpTenantName";
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 export const ResetPassword = () => {
   // Get token from URL params
   const [searchParams] = useSearchParams();
-  useEffect(() => {
-    const token = searchParams.get("token");
-    if (token) {
-      setConfirmationToken(token);
-    }
-  }, [searchParams]);
 
   const { isSuccess, isPending, error, mutateAsync, reset } = useResetPassword();
 
@@ -32,6 +31,13 @@ export const ResetPassword = () => {
 
   const [errorPassword, setErrorPassword] = useState("");
   const [errorPasswordMatch, setErrorPasswordMatch] = useState("");
+
+  useEffect(() => {
+    const token = searchParams.get("token");
+    if (token) {
+      setConfirmationToken(token);
+    }
+  }, [searchParams]);
 
   const handleResetPassword = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

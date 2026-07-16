@@ -1,13 +1,17 @@
 import { Card, Link, Notification } from "@stellar/design-system";
+
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { MultipleAmounts } from "@/components/MultipleAmounts";
+import { Table } from "@/components/Table";
+
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
 } from "@/helpers/receiverContactInfo";
+
 import { useSort } from "@/hooks/useSort";
-import { MultipleAmounts } from "@/components/MultipleAmounts";
-import { Table } from "@/components/Table";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
 import { Receiver, SortByReceivers, SortDirection } from "@/types";
 
 interface ReceiversTableProps {

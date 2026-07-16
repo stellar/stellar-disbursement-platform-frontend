@@ -1,12 +1,14 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "@/store";
+
 import { getDisbursementDetails } from "@/api/getDisbursementDetails";
 import { getDisbursementReceivers } from "@/api/getDisbursementReceivers";
 import { patchDisbursementStatus } from "@/api/patchDisbursementStatus";
+
 import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "@/helpers/refreshSessionToken";
 import { formatDisbursement } from "@/helpers/formatDisbursements";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+
 import {
   ApiDisbursementReceiver,
   ApiDisbursementReceivers,
@@ -19,6 +21,8 @@ import {
   PaginationParams,
   RejectMessage,
 } from "@/types";
+
+import { RootState } from "@/store";
 
 export const getDisbursementDetailsAction = createAsyncThunk<
   Disbursement,

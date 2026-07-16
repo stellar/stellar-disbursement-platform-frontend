@@ -1,11 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "@/store";
+
 import { getProfileInfo } from "@/api/getProfileInfo";
 import { patchProfileInfo } from "@/api/patchProfileInfo";
+
 import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "@/helpers/refreshSessionToken";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+
 import { ApiError, ApiProfileInfo, ProfileInitialState, RejectMessage } from "@/types";
+
+import { RootState } from "@/store";
 
 export const getProfileInfoAction = createAsyncThunk<
   ApiProfileInfo,

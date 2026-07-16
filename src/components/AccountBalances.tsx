@@ -1,4 +1,5 @@
 import { AssetAmount } from "@/components/AssetAmount";
+
 import { AccountBalanceItem } from "@/types";
 
 interface AccountBalancesProps {

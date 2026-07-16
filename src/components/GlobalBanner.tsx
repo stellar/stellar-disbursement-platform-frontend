@@ -1,7 +1,9 @@
-import { Banner, Icon, Link } from "@stellar/design-system";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { Banner, Icon, Link } from "@stellar/design-system";
+
 import { Routes } from "@/constants/settings";
+
 import { useCircleAccount } from "@/hooks/useCircleAccount";
 
 export const GlobalBanner = () => {

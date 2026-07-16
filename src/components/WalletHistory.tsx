@@ -1,10 +1,13 @@
 import { Card, Link, Profile, Notification } from "@stellar/design-system";
 
-import { useStellarAccountPayments } from "@/apiQueries/useStellarAccountPayments";
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { Table } from "@/components/Table";
+
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
+
+import { useStellarAccountPayments } from "@/apiQueries/useStellarAccountPayments";
+
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 
 interface WalletHistoryProps {

@@ -1,5 +1,6 @@
-import { Button, Icon, Floater } from "@stellar/design-system";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
+
+import { Button, Icon, Floater } from "@stellar/design-system";
 import "./styles.scss";
 
 interface FilterMenuProps {

@@ -1,4 +1,5 @@
 import { API_URL } from "@/constants/envVariables";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 
 export async function getOrgLogo(token: string): Promise<string> {

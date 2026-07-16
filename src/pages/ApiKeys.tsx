@@ -1,9 +1,19 @@
 import { useEffect, useCallback, useState } from "react";
+
 import { useDispatch } from "react-redux";
+
 import { Notification } from "@stellar/design-system";
 
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+
+
+import { CreateApiKeyModal } from "@/components/ApiKeyCreateModal/ApiKeyCreateModal";
+import { DeleteApiKeyModal } from "@/components/ApiKeyDeleteModal/DeleteApiKeyModal";
+import { ApiKeysDescription } from "@/components/ApiKeysDescription/ApiKeysDescription";
+import { ApiKeysTable } from "@/components/ApiKeysTable/ApiKeysTable";
+import { ApiKeySuccessModal } from "@/components/ApiKeySuccessModal/ApiKeySuccessModal";
+import { EditApiKeyModal } from "@/components/ApiKeyUpdateModal/EditApiKeyModal";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { ShowForRoles } from "@/components/ShowForRoles";
 
 import {
   getApiKeysAction,
@@ -13,17 +23,13 @@ import {
   clearApiKeysErrorAction,
 } from "@/store/ducks/apiKeys";
 
-import { ApiKeysTable } from "@/components/ApiKeysTable/ApiKeysTable";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { ShowForRoles } from "@/components/ShowForRoles";
-import { ApiKeysDescription } from "@/components/ApiKeysDescription/ApiKeysDescription";
-import { ApiKeySuccessModal } from "@/components/ApiKeySuccessModal/ApiKeySuccessModal";
-import { CreateApiKeyModal } from "@/components/ApiKeyCreateModal/ApiKeyCreateModal";
-import { DeleteApiKeyModal } from "@/components/ApiKeyDeleteModal/DeleteApiKeyModal";
-import { EditApiKeyModal } from "@/components/ApiKeyUpdateModal/EditApiKeyModal";
+import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+
+import { useRedux } from "@/hooks/useRedux";
 
 import { UserRole, CreateApiKeyRequest, ApiKey } from "@/types";
-import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+
+import { AppDispatch } from "@/store";
 
 const ACCEPTED_ROLES: UserRole[] = ["owner", "developer"];
 

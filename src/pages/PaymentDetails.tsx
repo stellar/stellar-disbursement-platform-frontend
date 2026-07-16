@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
+
 import {
   Button,
   Card,
@@ -11,28 +13,32 @@ import {
   Profile,
 } from "@stellar/design-system";
 
-import { usePaymentsPaymentId } from "@/apiQueries/usePaymentsPaymentId";
-import { useCancelPayment } from "@/apiQueries/useCancelPayment";
-import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { AssetAmount } from "@/components/AssetAmount";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { MultipleAmounts } from "@/components/MultipleAmounts";
+import { PaymentStatus } from "@/components/PaymentStatus";
+import { ReceiverStatus } from "@/components/ReceiverStatus";
+import { RetryFailedPayment } from "@/components/RetryFailedPayment";
+import { SectionHeader } from "@/components/SectionHeader";
+import { Table } from "@/components/Table";
+
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
 import { Routes, CANCELED_PAYMENT_STATUS, READY_PAYMENT_STATUS } from "@/constants/settings";
+
+import { useCancelPayment } from "@/apiQueries/useCancelPayment";
+import { usePaymentsPaymentId } from "@/apiQueries/usePaymentsPaymentId";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+
+
 import { formatDateTime, formatDateTimeWithSeconds } from "@/helpers/formatIntlDateTime";
-import { shortenString } from "@/helpers/shortenString";
 import { formatPaymentDetails } from "@/helpers/formatPaymentDetails";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
 } from "@/helpers/receiverContactInfo";
+import { shortenString } from "@/helpers/shortenString";
 
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SectionHeader } from "@/components/SectionHeader";
-import { Table } from "@/components/Table";
-import { PaymentStatus } from "@/components/PaymentStatus";
-import { ReceiverStatus } from "@/components/ReceiverStatus";
-import { AssetAmount } from "@/components/AssetAmount";
-import { MultipleAmounts } from "@/components/MultipleAmounts";
-import { RetryFailedPayment } from "@/components/RetryFailedPayment";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 import { PaymentDetailsReceiver } from "@/types";
 

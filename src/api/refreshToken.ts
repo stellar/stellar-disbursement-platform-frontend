@@ -1,8 +1,10 @@
 import { differenceInMinutes, fromUnixTime } from "date-fns";
+
 import { API_URL } from "@/constants/envVariables";
 import { SESSION_EXPIRED } from "@/constants/settings";
-import { parseJwt } from "@/helpers/parseJwt";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { parseJwt } from "@/helpers/parseJwt";
 
 const MIN_MINUTES_FOR_REFRESH = 5;
 

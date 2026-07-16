@@ -1,10 +1,10 @@
-import { Card, Heading, Input, Button, Notification } from "@stellar/design-system";
-import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+
+import { useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 
-import { useCircleBalances } from "@/apiQueries/useCircleBalances";
-import { useUpdateCircleConfig } from "@/apiQueries/useUpdateCircleConfig";
+import { Card, Heading, Input, Button, Notification } from "@stellar/design-system";
+
 import { AssetAmount } from "@/components/AssetAmount";
 import { Box } from "@/components/Box";
 import { DropdownMenu } from "@/components/DropdownMenu";
@@ -13,9 +13,15 @@ import { LoadingContent } from "@/components/LoadingContent";
 import { MoreMenuButton } from "@/components/MoreMenuButton";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { SectionHeader } from "@/components/SectionHeader";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+
 import { getOrgCircleInfoAction } from "@/store/ducks/organization";
+
+import { useCircleBalances } from "@/apiQueries/useCircleBalances";
+import { useUpdateCircleConfig } from "@/apiQueries/useUpdateCircleConfig";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch } from "@/store";
 
 export const DistributionAccountCircle = () => {
   const CIRCLE_API_MASKED_VALUE = "**************";

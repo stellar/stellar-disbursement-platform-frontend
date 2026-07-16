@@ -2,6 +2,7 @@ import { Text } from "@stellar/design-system";
 
 import { generateId } from "@/helpers/generateId";
 import { shortenAccountKey } from "@/helpers/shortenAccountKey";
+
 import { CreateReceiverRequest, VerificationFieldMap } from "@/types";
 
 interface ReceiverConfirmationProps {

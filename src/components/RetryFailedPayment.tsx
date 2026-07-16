@@ -1,7 +1,11 @@
 import { useEffect } from "react";
-import { Banner, Icon, Link, Loader } from "@stellar/design-system";
+
 import { useQueryClient } from "@tanstack/react-query";
+
+import { Banner, Icon, Link, Loader } from "@stellar/design-system";
+
 import { usePaymentsRetry } from "@/apiQueries/usePaymentsRetry";
+
 import { PaymentStatus } from "@/types";
 
 interface RetryFailedPaymentProps {

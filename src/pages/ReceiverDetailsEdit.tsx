@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
+
 import { useParams, useNavigate } from "react-router-dom";
+
 import { Card, Heading, Button, Input, Icon, Notification } from "@stellar/design-system";
 
-import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
-import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CopyWithIcon } from "@/components/CopyWithIcon";
@@ -13,6 +13,11 @@ import { LoadingContent } from "@/components/LoadingContent";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { SectionHeader } from "@/components/SectionHeader";
 
+import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
+
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { useUpdateReceiverDetails } from "@/apiQueries/useUpdateReceiverDetails";
+
 import {
   DisbursementVerificationField,
   ReceiverDetails,
@@ -20,7 +25,6 @@ import {
   ReceiverVerification,
   VerificationFieldMap,
 } from "@/types";
-import { useUpdateReceiverDetails } from "@/apiQueries/useUpdateReceiverDetails";
 
 export const ReceiverDetailsEdit = () => {
   const { id: receiverId } = useParams();

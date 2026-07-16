@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
 import {
@@ -8,13 +9,16 @@ import {
 } from "@/components/ApiKeyFormFields/ApiKeyFormFields";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useApiKeyForm } from "@/hooks/useApiKeyForm";
-import { usePrevious } from "@/hooks/usePrevious";
+import { UpdateApiKeyRequest } from "@/api/updateApiKey";
 
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import { parseAllowedIPs } from "@/helpers/parseIPs";
 
-import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+import { useApiKeyForm } from "@/hooks/useApiKeyForm";
+import { usePrevious } from "@/hooks/usePrevious";
+
+
+
 import { ApiKey, AppError } from "@/types";
 
 import "./styles.scss";

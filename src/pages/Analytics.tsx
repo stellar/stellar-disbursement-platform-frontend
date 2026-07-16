@@ -1,4 +1,5 @@
 import { Heading } from "@stellar/design-system";
+
 import { DashboardAnalytics } from "@/components/DashboardAnalytics";
 import { SectionHeader } from "@/components/SectionHeader";
 

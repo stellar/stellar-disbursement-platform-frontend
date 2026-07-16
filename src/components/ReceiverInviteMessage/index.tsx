@@ -1,13 +1,20 @@
 import { Fragment, useEffect, useState } from "react";
-import { Button, Card, Loader, Notification, RadioButton, Textarea } from "@stellar/design-system";
+
 import { useDispatch } from "react-redux";
 
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { Button, Card, Loader, Notification, RadioButton, Textarea } from "@stellar/design-system";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { useUpdateSmsTemplate } from "@/apiQueries/useUpdateOrgSmsTemplate";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+
 import { getOrgInfoAction } from "@/store/ducks/organization";
+
+import { useUpdateSmsTemplate } from "@/apiQueries/useUpdateOrgSmsTemplate";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch } from "@/store";
+
 
 import "./styles.scss";
 

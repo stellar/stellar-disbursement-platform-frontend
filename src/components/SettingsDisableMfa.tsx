@@ -1,12 +1,19 @@
-import { Card, Loader, Notification, Toggle } from "@stellar/design-system";
 import { useEffect } from "react";
+
 import { useDispatch } from "react-redux";
 
-import { useUpdateOrgMfaDisabled } from "@/apiQueries/useUpdateOrgMfaDisabled";
+import { Card, Loader, Notification, Toggle } from "@stellar/design-system";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+
 import { getOrgInfoAction } from "@/store/ducks/organization";
+
+import { useUpdateOrgMfaDisabled } from "@/apiQueries/useUpdateOrgMfaDisabled";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch } from "@/store";
+
 
 export const SettingsDisableMfa = () => {
   const { organization } = useRedux("organization");

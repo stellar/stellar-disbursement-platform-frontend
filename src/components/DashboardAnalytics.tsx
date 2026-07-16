@@ -1,11 +1,14 @@
 import { Card, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "@/components/InfoTooltip";
+
 import { AssetAmount } from "@/components/AssetAmount";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
 
 import { useStatistics } from "@/apiQueries/useStatistics";
+
 import { percent } from "@/helpers/formatIntlNumber";
 import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+
 import { useRedux } from "@/hooks/useRedux";
 
 export const DashboardAnalytics = () => {

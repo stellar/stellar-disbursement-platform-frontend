@@ -1,4 +1,5 @@
 import { Heading } from "@stellar/design-system";
+
 import { ExpandContent } from "@/components/ExpandContent";
 import { SectionHeader } from "@/components/SectionHeader";
 

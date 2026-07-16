@@ -1,4 +1,5 @@
 import { Notification } from "@stellar/design-system";
+
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 interface QueryStatusHandlerProps {

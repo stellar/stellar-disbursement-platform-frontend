@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
+
 import { Button, Heading, Text } from "@stellar/design-system";
+
 import { Routes } from "@/constants/settings";
 
 export const NotFound = () => {

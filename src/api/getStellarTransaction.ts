@@ -1,5 +1,7 @@
 import { HORIZON_URL } from "@/constants/envVariables";
+
 import { shortenString } from "@/helpers/shortenString";
+
 import { ApiStellarTransaction } from "@/types";
 
 export const getStellarTransaction = async (

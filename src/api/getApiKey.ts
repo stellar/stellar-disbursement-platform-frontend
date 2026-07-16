@@ -1,6 +1,9 @@
-import { handleApiResponse } from "@/api/handleApiResponse";
 import { API_URL } from "@/constants/envVariables";
+
+import { handleApiResponse } from "@/api/handleApiResponse";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
 import { ApiKey } from "@/types";
 
 export const getApiKey = async (token: string, apiKeyId: string): Promise<ApiKey> => {

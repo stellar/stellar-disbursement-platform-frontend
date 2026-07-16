@@ -1,4 +1,5 @@
 import { User, UserManager } from "oidc-client-ts";
+
 import {
   OIDC_AUTHORITY,
   OIDC_CLIENT_ID,

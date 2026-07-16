@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import {
   Button,
   Card,
@@ -14,21 +16,13 @@ import {
 } from "@stellar/design-system";
 
 import { DropdownMenu } from "@/components/DropdownMenu";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { FileUpload } from "@/components/FileUpload";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { MoreMenuButton } from "@/components/MoreMenuButton";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { SectionHeader } from "@/components/SectionHeader";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { USE_SSO } from "@/constants/envVariables";
-import { Routes } from "@/constants/settings";
-import { singleUserStore } from "@/helpers/singleSingOn";
-import { userRoleText } from "@/helpers/userRoleText";
-import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
-import { useRedux } from "@/hooks/useRedux";
-import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
-import { AppDispatch, resetStoreAction } from "@/store";
 import {
   getOrgInfoAction,
   updateOrgInfoAction,
@@ -42,7 +36,21 @@ import {
   getProfileInfoAction,
   updateProfileInfoAction,
 } from "@/store/ducks/profile";
+
+import { USE_SSO } from "@/constants/envVariables";
+import { Routes } from "@/constants/settings";
+
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { singleUserStore } from "@/helpers/singleSingOn";
+import { userRoleText } from "@/helpers/userRoleText";
+
+import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
+import { useRedux } from "@/hooks/useRedux";
+
 import { AccountProfile } from "@/types";
+
+import { AppDispatch, resetStoreAction } from "@/store";
+
 
 export const Profile = () => {
   const { profile, organization } = useRedux("profile", "organization");

@@ -1,12 +1,17 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "@/store";
+
 import { singleSignOnAction } from "@/store/ducks/singleSignOnUserAccount";
+
 import { authLogin } from "@/api/authLogin";
 import { mfAuth } from "@/api/mfAuth";
 import { refreshToken } from "@/api/refreshToken";
+
 import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
+
 import { ApiError, JwtUser, RejectMessage, UserAccountInitialState } from "@/types";
+
+import { RootState } from "@/store";
 
 export const signInAction = createAsyncThunk<
   { token: string | null; message: string } | string,

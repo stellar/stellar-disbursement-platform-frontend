@@ -1,4 +1,5 @@
 import { GENERIC_ERROR_MESSAGE } from "@/constants/settings";
+
 import { AnyObject, AppError } from "@/types";
 
 export const normalizeStellarApiError = (

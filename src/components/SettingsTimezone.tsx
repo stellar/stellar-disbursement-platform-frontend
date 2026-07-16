@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
+
 import { useDispatch } from "react-redux";
+
 import { Button, Card, Select, Notification } from "@stellar/design-system";
-import { InfoTooltip } from "@/components/InfoTooltip";
+
 import { DropdownMenu } from "@/components/DropdownMenu";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
 import { MoreMenuButton } from "@/components/MoreMenuButton";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { TIME_ZONES } from "@/constants/settings";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+
 import {
   updateOrgInfoAction,
   clearUpdateMessageAction,
   getOrgInfoAction,
 } from "@/store/ducks/organization";
+
+import { TIME_ZONES } from "@/constants/settings";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { AppDispatch } from "@/store";
 
 export const SettingsTimezone = () => {
   const { organization } = useRedux("organization");
@@ -23,23 +30,17 @@ export const SettingsTimezone = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
+  const resetState = () => {
+    setIsEdit(false);
+    setNewTimezone("");
+  };
+
   useEffect(() => {
     if (organization.updateMessage) {
       dispatch(getOrgInfoAction());
       resetState();
     }
   }, [dispatch, organization.updateMessage]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(clearUpdateMessageAction());
-    };
-  }, [dispatch]);
-
-  const resetState = () => {
-    setIsEdit(false);
-    setNewTimezone("");
-  };
 
   const handleCancel = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -1,8 +1,12 @@
-import { handleApiResponse } from "@/api/handleApiResponse";
 import { API_URL } from "@/constants/envVariables";
+
+import { handleApiResponse } from "@/api/handleApiResponse";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
-import { ApiDisbursement, Disbursement } from "@/types";
+
 import { preparePostDisbursementData } from "./postDisbursement";
+
+import { ApiDisbursement, Disbursement } from "@/types";
 
 export const postDisbursementWithInstructions = async (
   token: string,
