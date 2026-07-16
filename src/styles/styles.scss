@@ -1,5 +1,100 @@
 @use "./styles-utils.scss" as *;
 
+// =========================================================================
+// DisburseFlow / SAPCONE Brand Colors
+// These override the default @stellar/design-system tokens.
+// #root has higher CSS specificity than the SDS .sds-theme-light /
+// .sds-theme-dark classes, so these values win everywhere in the app
+// (buttons, links, toggles, notifications, focus rings, etc.).
+// =========================================================================
+#root {
+  // ---- Primary: Electric Violet (buttons, active nav, links, focus) ----
+  --sds-clr-lilac-01: #f5f3ff;
+  --sds-clr-lilac-02: #ede9fe;
+  --sds-clr-lilac-03: #ddd6fe;
+  --sds-clr-lilac-04: #c4b5fd;
+  --sds-clr-lilac-05: #a78bfa;
+  --sds-clr-lilac-06: #8b5cf6;
+  --sds-clr-lilac-07: #7c3aed;
+  --sds-clr-lilac-08: #6d28d9;
+  --sds-clr-lilac-09: #7c3aed; // Primary brand color
+  --sds-clr-lilac-10: #6421c2; // hover
+  --sds-clr-lilac-11: #6d28d9; // links / icons on white
+  --sds-clr-lilac-12: #2e1065;
+
+  // ---- Secondary: Vivid Rose (cards, charts, info) ----
+  --sds-clr-navy-01: #fff1f2;
+  --sds-clr-navy-02: #ffe4e6;
+  --sds-clr-navy-03: #fecdd3;
+  --sds-clr-navy-04: #fda4af;
+  --sds-clr-navy-05: #fb7185;
+  --sds-clr-navy-06: #f43f5e;
+  --sds-clr-navy-07: #e11d48;
+  --sds-clr-navy-08: #be123c;
+  --sds-clr-navy-09: #e11d48; // Secondary brand color
+  --sds-clr-navy-10: #be123c; // hover
+  --sds-clr-navy-11: #e11d48;
+  --sds-clr-navy-12: #4c0519;
+
+  // ---- Accent / Warning: Sunburst Orange (pending, notifications) ----
+  --sds-clr-amber-01: #fff7ed;
+  --sds-clr-amber-02: #ffedd5;
+  --sds-clr-amber-03: #fed7aa;
+  --sds-clr-amber-04: #fdba74;
+  --sds-clr-amber-05: #fb923c;
+  --sds-clr-amber-06: #f97316;
+  --sds-clr-amber-07: #ea580c;
+  --sds-clr-amber-08: #c2410c;
+  --sds-clr-amber-09: #f97316; // Accent brand color
+  --sds-clr-amber-10: #ea580c; // Warning brand color / hover
+  --sds-clr-amber-11: #9a3412;
+  --sds-clr-amber-12: #431407;
+
+  // ---- Success: Vivid Emerald ----
+  --sds-clr-green-01: #ecfdf5;
+  --sds-clr-green-02: #d1fae5;
+  --sds-clr-green-03: #a7f3d0;
+  --sds-clr-green-04: #6ee7b7;
+  --sds-clr-green-05: #34d399;
+  --sds-clr-green-06: #10b981;
+  --sds-clr-green-07: #059669;
+  --sds-clr-green-08: #047857;
+  --sds-clr-green-09: #10b981; // Success brand color
+  --sds-clr-green-10: #059669; // hover
+  --sds-clr-green-11: #065f46;
+  --sds-clr-green-12: #022c22;
+
+  // ---- Error: Punchy Red ----
+  --sds-clr-red-01: #fef2f2;
+  --sds-clr-red-02: #fee2e2;
+  --sds-clr-red-03: #fecaca;
+  --sds-clr-red-04: #fca5a5;
+  --sds-clr-red-05: #f87171;
+  --sds-clr-red-06: #ef4444;
+  --sds-clr-red-07: #dc2626;
+  --sds-clr-red-08: #b91c1c;
+  --sds-clr-red-09: #ef4444; // Error brand color
+  --sds-clr-red-10: #dc2626; // hover
+  --sds-clr-red-11: #991b1b;
+  --sds-clr-red-12: #450a0a;
+
+  // ---- Neutrals: Background / Cards / Text (warm violet-tinted) ----
+  --sds-clr-gray-01: #ffffff; // Cards
+  --sds-clr-gray-02: #faf7ff; // Page background
+  --sds-clr-gray-12: #1e1b2e; // Primary text (Deep Plum)
+
+  // ---- Convenience aliases for any custom components/charts you add later ----
+  --brand-primary: #7c3aed;
+  --brand-secondary: #e11d48;
+  --brand-accent: #f97316;
+  --brand-success: #10b981;
+  --brand-warning: #ea580c;
+  --brand-error: #ef4444;
+  --brand-bg: #faf7ff;
+  --brand-bg-card: #ffffff;
+  --brand-text: #1e1b2e;
+}
+
 body {
   font-family: var(--sds-ff-base);
   font-size: pxToRem(14px);
@@ -145,6 +240,80 @@ body {
 .Notification__message {
   .ErrorExtras {
     margin-top: pxToRem(8px);
+  }
+}
+
+// Colorful KPI tiles (dashboard)
+.StatTiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: pxToRem(16px);
+  margin-bottom: pxToRem(20px);
+
+  @media (max-width: 700px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.StatTile {
+  display: flex;
+  align-items: center;
+  gap: pxToRem(14px);
+  background-color: var(--sds-clr-gray-01);
+  border: 1px solid var(--sds-clr-gray-06);
+  border-radius: pxToRem(12px);
+  padding: pxToRem(18px) pxToRem(20px);
+  box-shadow: 0 pxToRem(1px) pxToRem(2px) rgba(15, 23, 42, 0.04);
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: pxToRem(2px);
+    min-width: 0;
+  }
+
+  &__value {
+    font-size: pxToRem(22px);
+    line-height: pxToRem(28px);
+    font-weight: var(--sds-fw-semi-bold);
+    color: var(--sds-clr-gray-12);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__label {
+    font-size: pxToRem(13px);
+    line-height: pxToRem(18px);
+    font-weight: var(--sds-fw-medium);
+    color: var(--sds-clr-gray-11);
+  }
+}
+
+// Colored top-border accent wrapper for dashboard Cards
+.StatCards__accent {
+  height: 100%;
+
+  .Card {
+    border-top: 3px solid transparent;
+    border-top-left-radius: pxToRem(2px);
+    border-top-right-radius: pxToRem(2px);
+  }
+
+  &--success .Card {
+    border-top-color: var(--sds-clr-green-09);
+  }
+
+  &--navy .Card {
+    border-top-color: var(--sds-clr-navy-09);
+  }
+
+  &--brand .Card {
+    border-top-color: var(--sds-clr-lilac-09);
+  }
+
+  &--warning .Card {
+    border-top-color: var(--sds-clr-amber-09);
   }
 }
 

@@ -3,15 +3,23 @@
 .InnerPage {
   display: flex;
   height: calc(100vh - pxToRem(65px));
+  background: var(--brand-bg);   // #F8FAFC
+
 
   &__sidebar {
-    width: pxToRem(242px);
-    flex-shrink: 0;
-    flex-grow: 0;
-    border-right: 1px solid var(--sds-clr-gray-05);
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
+  width: pxToRem(242px);
+  flex-shrink: 0;
+  flex-grow: 0;
+
+  background: var(--brand-primary);     // #0F766E
+  color: white;
+
+  border-right: none;
+
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+
 
     &--top,
     &--bottom {
@@ -85,11 +93,12 @@
       }
     }
 
-    &--current {
-      color: var(--sds-clr-gray-12);
-      cursor: default;
-    }
-  }
+   &--current {
+  background: #115E59;
+  color: white;
+  border-radius: pxToRem(8px);
+  padding: pxToRem(10px) pxToRem(14px);
+} }
 
   &__item {
     font-size: pxToRem(10px);
