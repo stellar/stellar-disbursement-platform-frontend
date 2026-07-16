@@ -1,0 +1,46 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# ide
+.idea/
+.vscode/
+.cursor/
+.kiro/
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.nvmrc
+.eslintcache
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env variables
+/public/settings/env-config.js
+process.env
+
+# generated Git info
+/src/generated/gitInfo.ts
+
+# SSL certificates (mkcert)
+/certs/
+
+# reference PDF files
+*.pdf
