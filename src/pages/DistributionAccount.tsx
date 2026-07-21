@@ -27,14 +27,33 @@ export const DistributionAccount = () => {
     return <DistributionAccountCircle />;
   }
 
-  const isMultiWallet = (wallets?.length ?? 0) >= 2;
-
-  // Single-account tenant: unchanged behavior (the org default account, full asset/Bridge config).
-  if (!isMultiWallet) {
+  // No wallet record at all: last-resort fallback to the legacy tenant-level account. Every
+  // other case below renders from GET /distribution-wallets — already scoped server-side to
+  // what THIS user can see — so we never fall back to organization.distributionAccountPublicKey
+  // once we have real wallet data, since that legacy field reflects the tenant's default account
+  // and can belong to a completely different account than the one this user is scoped to.
+  if (!wallets || wallets.length === 0) {
     return <DistributionAccountStellar />;
   }
 
-  const selected = wallets?.find((w) => w.id === selectedWalletId);
+  // Exactly one accessible wallet. This covers both a true legacy single-wallet tenant (that
+  // one wallet is always the default, so this renders identically to before) and a user scoped
+  // to just one of several wallets in a multi-wallet tenant (e.g. a country officer) — in both
+  // cases we render that wallet's own address/balance, never the legacy org-level field.
+  if (wallets.length === 1) {
+    const only = wallets[0];
+    return (
+      <DistributionAccountStellar
+        key={only.id}
+        accountName={only.is_default ? undefined : only.name}
+        accountAddress={only.distribution_account_address ?? undefined}
+        accountColorHex={only.is_default ? undefined : accountColor(only.id)}
+        showTrustlines={only.is_default}
+      />
+    );
+  }
+
+  const selected = wallets.find((w) => w.id === selectedWalletId);
 
   // A specific account is selected: scope the page to it. Asset/trustline + Bridge config is
   // tenant-level, so only show it on the default account.
