@@ -470,14 +470,16 @@ export const ReceiverDetails = () => {
                   <div className="StatCards__card__item StatCards__card__item--inline">
                     <label className="StatCards__card__item__label">Invited at</label>
                     <div className="StatCards__card__item__value">
-                      {formatDateTime(selectedWallet.invitedAt)}
+                      {selectedWallet.invitedAt ? formatDateTime(selectedWallet.invitedAt) : "-"}
                     </div>
                   </div>
 
                   <div className="StatCards__card__item StatCards__card__item--inline">
                     <label className="StatCards__card__item__label">Invitation last sent</label>
                     <div className="StatCards__card__item__value">
-                      {formatDateTime(selectedWallet.smsLastSentAt)}
+                      {selectedWallet.smsLastSentAt
+                        ? formatDateTime(selectedWallet.smsLastSentAt)
+                        : "-"}
                     </div>
                   </div>
                 </div>

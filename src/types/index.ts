@@ -409,9 +409,11 @@ export type ReceiverWallet = {
   stellarAddress: string;
   stellarAddressMemo?: string;
   provider: string;
-  invitedAt: string;
+  // Absent until the receiver has actually been invited / re-messaged — render a placeholder,
+  // not "now", when these are missing (see ReceiverDetails.tsx).
+  invitedAt?: string;
   createdAt: string;
-  smsLastSentAt: string;
+  smsLastSentAt?: string;
   totalPaymentsCount: number;
   totalAmountReceived: string;
   assetCode?: string;
@@ -816,8 +818,10 @@ export type ApiReceiverWallet = {
   status: ReceiverStatus;
   created_at: string;
   updated_at: string;
-  invited_at: string;
-  last_sms_sent: string;
+  // Both are absent (omitempty) until the corresponding event has actually happened — never
+  // assume "now" for a missing value here (see formatReceiver.ts / ReceiverDetails.tsx).
+  invited_at?: string;
+  last_message_sent_at?: string;
   total_payments: string | number;
   payments_received: string | number;
   failed_payments: string | number;
