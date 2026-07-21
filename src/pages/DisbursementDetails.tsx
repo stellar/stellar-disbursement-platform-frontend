@@ -25,6 +25,7 @@ import { SourceAccountDetailItem } from "@/components/SourceAccount";
 import { Table } from "@/components/Table";
 
 import {
+  cancelDisbursementAction,
   getDisbursementDetailsAction,
   getDisbursementReceiversAction,
   pauseOrStartDisbursementAction,
@@ -59,6 +60,7 @@ export const DisbursementDetails = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -73,6 +75,11 @@ export const DisbursementDetails = () => {
 
   const maxPages = disbursementDetails.details.receivers?.pagination?.pages || 1;
   const isPaused = disbursementDetails.details.status === "PAUSED";
+  // A disbursement can only be canceled before it's ever started - DRAFT/READY. Once STARTED,
+  // real on-chain submissions may already be in flight, so Pause is the correct action instead.
+  const isCancelable =
+    disbursementDetails.details.status === "DRAFT" ||
+    disbursementDetails.details.status === "READY";
 
   const saveDisbursementDetails = useCallback(() => {
     if (fetchedDisbursement) {
@@ -148,6 +155,22 @@ export const DisbursementDetails = () => {
     event.preventDefault();
     dispatch(pauseOrStartDisbursementAction(status));
     setIsModalVisible(false);
+  };
+
+  const showCancelModal = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    setIsCancelModalVisible(true);
+  };
+
+  const hideCancelModal = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event?.preventDefault();
+    setIsCancelModalVisible(false);
+  };
+
+  const handleCancelDisbursement = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    dispatch(cancelDisbursementAction());
+    setIsCancelModalVisible(false);
   };
 
   const renderStatCards = () => {
@@ -401,6 +424,15 @@ export const DisbursementDetails = () => {
           </div>
         ) : null}
 
+        {disbursementDetails.details.status === "CANCELED" ? (
+          <div className="SectionBlock">
+            <Notification variant="error" title="Disbursement canceled" isFilled={true}>
+              This disbursement was canceled before it started. Its reserved balance was released
+              and this cannot be undone.
+            </Notification>
+          </div>
+        ) : null}
+
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
@@ -412,7 +444,17 @@ export const DisbursementDetails = () => {
             </SectionHeader.Content>
 
             <SectionHeader.Content align="right">
-              {isPaused ? (
+              {isCancelable ? (
+                <Button
+                  variant="error"
+                  size="md"
+                  icon={<Icon.SlashCircle01 />}
+                  onClick={showCancelModal}
+                  isLoading={disbursementDetails.status === "PENDING"}
+                >
+                  Cancel
+                </Button>
+              ) : isPaused ? (
                 <Button
                   variant="success"
                   size="md"
@@ -569,6 +611,35 @@ export const DisbursementDetails = () => {
             </Modal.Footer>
           </>
         )}
+      </Modal>
+
+      <Modal visible={isCancelModalVisible} onClose={hideCancelModal}>
+        <Modal.Heading>Cancel disbursement permanently?</Modal.Heading>
+        <Modal.Body>
+          <div>
+            Canceling this disbursement releases the balance reserved for its remaining payments
+            back to the distribution account. This cannot be undone - the disbursement and its
+            payments will stay visible as canceled, but no funds will be sent for them.
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            size="md"
+            variant="tertiary"
+            onClick={hideCancelModal}
+            isLoading={disbursementDetails.status === "PENDING"}
+          >
+            Not now
+          </Button>
+          <Button
+            size="md"
+            variant="error"
+            onClick={handleCancelDisbursement}
+            isLoading={disbursementDetails.status === "PENDING"}
+          >
+            Cancel disbursement
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

@@ -32,7 +32,6 @@ import { CommonFilters, SortByDisbursements, SortDirection } from "@/types";
 
 import { AppDispatch } from "@/store";
 
-
 export const Disbursements = () => {
   const { disbursements } = useRedux("disbursements");
 
@@ -237,6 +236,7 @@ export const Disbursements = () => {
                   <option value="STARTED">Started</option>
                   <option value="PAUSED">Paused</option>
                   <option value="COMPLETED">Completed</option>
+                  <option value="CANCELED">Canceled</option>
                 </Select>
               </div>
 

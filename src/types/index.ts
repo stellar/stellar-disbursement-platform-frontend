@@ -225,7 +225,13 @@ export type DistributionAccountType =
 // =============================================================================
 // Disbursement
 // =============================================================================
-export type DisbursementStatusType = "DRAFT" | "READY" | "STARTED" | "PAUSED" | "COMPLETED";
+export type DisbursementStatusType =
+  | "DRAFT"
+  | "READY"
+  | "STARTED"
+  | "PAUSED"
+  | "COMPLETED"
+  | "CANCELED";
 
 export type DisbursementVerificationField =
   | "DATE_OF_BIRTH"
