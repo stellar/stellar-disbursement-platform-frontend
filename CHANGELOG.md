@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Multi-wallet support: manage and operate across multiple distribution accounts from a single dashboard session. [#553](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/553)
+  - Always-visible distribution-account switcher with an accessible picker, per-account color coding, and an active-account bar shown throughout the dashboard.
+  - Every page and write path is scoped to the selected distribution account: disbursement creation and the disbursement wizard, the Distribution Accounts page, CSV exports, direct payments, and Home/Analytics balances (including an all-wallet Total Balance tile and a restored Total Disbursed historical metric).
+  - Source-account attribution: disbursements and payments are tagged and sent with an explicit `X-Wallet-Id`, with a source-account column and detail rows so it's always clear which distribution account funded a given disbursement.
+  - Owner self-service for distribution accounts: add a new account, manage member access, and archive an account, without needing platform-operator intervention.
+  - UX and error-handling hardening shipped alongside the above: friendly empty states, two-step confirmation before revoking membership, a confirmation warning before enabling MFA (email-lockout risk), a post-confirm receipt after creating a disbursement, a Cancel action for DRAFT/READY disbursements, hardened `fetchApi` error handling with clearer operator-facing error messages, session expiry that fails loudly instead of rendering a blank page, and assorted fixes (receiver invitation timestamps, requiring a source account for direct payments, landing on a concrete account so writes never dead-end).
+
 ## [6.6.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.5.0...6.6.0))
 
 ### Added
