@@ -12,6 +12,7 @@ import { ApiDisbursements, PaymentsSearchParams } from "@/types";
 export const getDisbursements = async (
   token: string,
   searchParams?: PaymentsSearchParams,
+  walletId?: string,
 ): Promise<ApiDisbursements> => {
   // ALL status is for UI only
   if (searchParams?.status === "ALL") {
@@ -31,8 +32,8 @@ export const getDisbursements = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(),
-      // Multi-wallet: scope the list to the active distribution account.
-      ...walletIdHeader(),
+      // Multi-wallet: scope the list to the distribution account the caller is showing.
+      ...walletIdHeader(walletId),
     },
   });
 

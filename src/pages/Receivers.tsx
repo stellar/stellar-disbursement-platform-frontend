@@ -126,6 +126,7 @@ export const Receivers = () => {
       exportDataAction({
         exportType: "receivers",
         searchParams: filters,
+        walletId: selectedWalletId,
       }),
     );
   };

@@ -13,6 +13,7 @@ export const postDisbursementWithInstructions = async (
   token: string,
   disbursement: Disbursement,
   file: File,
+  sourceWalletId?: string,
 ): Promise<ApiDisbursement> => {
   const formData = new FormData();
 
@@ -25,8 +26,8 @@ export const postDisbursementWithInstructions = async (
     headers: {
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(),
-      // Multi-wallet: route this disbursement to the selected source account.
-      ...walletIdHeader(),
+      // Multi-wallet: route this disbursement to the source account chosen in the create flow.
+      ...walletIdHeader(sourceWalletId),
     },
     body: formData,
   });

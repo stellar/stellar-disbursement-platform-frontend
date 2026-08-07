@@ -11,6 +11,7 @@ export const getExport = async <T>(
   token: string,
   type: Export,
   searchParams?: T,
+  walletId?: string,
 ): Promise<void> => {
   const params = handleSearchParams(searchParams);
 
@@ -21,7 +22,7 @@ export const getExport = async <T>(
       "SDP-Tenant-Name": getSdpTenantName(),
       // Scope the export to the selected distribution account, matching the list on screen
       // (the lists' fetches send the same header; without it the export is tenant-wide).
-      ...walletIdHeader(),
+      ...walletIdHeader(walletId),
     },
   });
 

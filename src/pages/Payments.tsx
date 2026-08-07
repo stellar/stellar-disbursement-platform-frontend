@@ -120,6 +120,7 @@ export const Payments = () => {
       exportDataAction({
         exportType: "payments",
         searchParams: filters,
+        walletId: selectedWalletId,
       }),
     );
   };

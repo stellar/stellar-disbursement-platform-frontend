@@ -5,7 +5,10 @@ import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { walletIdHeader } from "@/helpers/walletIdHeader";
 import { ApiDisbursements } from "@/types";
 
-export const getDisbursementDrafts = async (token: string): Promise<ApiDisbursements> => {
+export const getDisbursementDrafts = async (
+  token: string,
+  walletId?: string,
+): Promise<ApiDisbursements> => {
   // TODO: Max page limit is 100. We will need to implement pagination for more
   const response = await fetch(
     `${API_URL}/disbursements?status=${UI_STATUS_DISBURSEMENT_DRAFT}&page_limit=100`,
@@ -15,8 +18,8 @@ export const getDisbursementDrafts = async (token: string): Promise<ApiDisbursem
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
         "SDP-Tenant-Name": getSdpTenantName(),
-        // Multi-wallet: scope the list to the active distribution account.
-        ...walletIdHeader(),
+        // Multi-wallet: scope the list to the distribution account the caller is showing.
+        ...walletIdHeader(walletId),
       },
     },
   );

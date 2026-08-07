@@ -10,6 +10,7 @@ import { ApiDisbursement, Disbursement } from "@/types";
 export const postDisbursement = async (
   token: string,
   disbursement: Disbursement,
+  sourceWalletId?: string,
 ): Promise<ApiDisbursement> => {
   const response = await fetch(`${API_URL}/disbursements`, {
     method: "POST",
@@ -17,8 +18,8 @@ export const postDisbursement = async (
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(),
-      // Multi-wallet: route this disbursement to the selected source account.
-      ...walletIdHeader(),
+      // Multi-wallet: route this disbursement to the source account chosen in the create flow.
+      ...walletIdHeader(sourceWalletId),
     },
     body: JSON.stringify(preparePostDisbursementData(disbursement)),
   });

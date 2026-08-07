@@ -20,20 +20,22 @@ import {
   RejectMessage,
 } from "@/types";
 
+// `walletId` scopes the list to the account the user is currently on (X-Wallet-Id). The caller
+// passes it from the SelectedWallet context; empty means "All accounts".
 export const getDisbursementDraftsAction = createAsyncThunk<
   {
     items: DisbursementDraft[];
     pagination: Pagination;
   },
-  undefined,
+  { walletId: string },
   { rejectValue: RejectMessage; state: RootState }
 >(
   "disbursementDrafts/getDisbursementDraftsAction",
-  async (_, { rejectWithValue, getState, dispatch }) => {
+  async ({ walletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
 
     try {
-      const { data, pagination } = await getDisbursementDrafts(token);
+      const { data, pagination } = await getDisbursementDrafts(token, walletId);
       refreshSessionToken(dispatch);
 
       return {
@@ -58,26 +60,35 @@ export const getDisbursementDraftsAction = createAsyncThunk<
   },
 );
 
+// `sourceWalletId` is the account the user picked in the create wizard — this call CREATES the
+// disbursement, so that choice (not whatever the account switcher reads later) decides which
+// distribution account funds it.
 export const saveDisbursementDraftAction = createAsyncThunk<
   string,
   {
     details: Disbursement;
     file?: File;
+    sourceWalletId?: string;
   },
   { rejectValue: DisbursementDraftRejectMessage; state: RootState }
 >(
   "disbursementDrafts/saveDisbursementDraftAction",
-  async ({ details, file }, { rejectWithValue, getState, dispatch }) => {
+  async ({ details, file, sourceWalletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
     const { newDraftId } = getState().disbursementDrafts;
 
     try {
       if (file) {
-        const newDisbursement = await postDisbursementWithInstructions(token, details, file);
+        const newDisbursement = await postDisbursementWithInstructions(
+          token,
+          details,
+          file,
+          sourceWalletId,
+        );
         refreshSessionToken(dispatch);
         return newDisbursement.id;
       } else {
-        const draftId = newDraftId ?? (await postDisbursement(token, details)).id;
+        const draftId = newDraftId ?? (await postDisbursement(token, details, sourceWalletId)).id;
         refreshSessionToken(dispatch);
         return draftId;
       }
@@ -94,29 +105,49 @@ export const saveDisbursementDraftAction = createAsyncThunk<
   },
 );
 
+// `sourceWalletId` is the account the user picked in the create wizard; it funds the disbursement
+// this thunk creates.
 export const submitDisbursementNewDraftAction = createAsyncThunk<
   string,
   {
     details: Disbursement;
     file: File;
+    sourceWalletId?: string;
   },
   { rejectValue: DisbursementDraftRejectMessage; state: RootState }
 >(
   "disbursementDrafts/submitDisbursementNewDraftAction",
-  async ({ details, file }, { rejectWithValue, getState, dispatch }) => {
+  async ({ details, file, sourceWalletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { id } = getState().disbursementDetails.details;
-    const { newDraftId } = getState().disbursementDrafts;
+    const { id, sourceWalletId: loadedDraftWalletId } = getState().disbursementDetails.details;
+    const { newDraftId, newDraftWalletId } = getState().disbursementDrafts;
 
     let draftId = id && id.length > 0 ? id : newDraftId;
+    // Start the draft on ITS OWN funding account, never the ambient selection. Three cases, in
+    // order: a draft already loaded into the details slice (trust it only when it IS this draft —
+    // the slice can hold a previously viewed one); a draft saved earlier in this wizard, whose
+    // account we recorded at save time; otherwise this call is the one creating it, so the
+    // wizard's chosen account is correct.
+    //
+    // The middle case is why newDraftWalletId exists: "Save as a draft", switch the account bar,
+    // then Confirm would otherwise start a draft funded by A while sending B's header.
+    const startWalletId =
+      (id && id.length > 0 && id === draftId ? loadedDraftWalletId : undefined) ??
+      (draftId === newDraftId ? newDraftWalletId : undefined) ??
+      sourceWalletId;
 
     try {
       if (!draftId) {
-        const newDisbursement = await postDisbursementWithInstructions(token, details, file);
+        const newDisbursement = await postDisbursementWithInstructions(
+          token,
+          details,
+          file,
+          sourceWalletId,
+        );
         draftId = newDisbursement.id;
       }
 
-      await patchDisbursementStatus(token, draftId, "STARTED");
+      await patchDisbursementStatus(token, draftId, "STARTED", startWalletId);
       refreshSessionToken(dispatch);
 
       return draftId;
@@ -164,6 +195,8 @@ export const saveNewCsvFileAction = createAsyncThunk<
   },
 );
 
+// Acts on ONE saved draft, so it takes no ambient wallet id: the account is the draft's own
+// `sourceWalletId`, read from the details slice that the draft page loaded.
 export const submitDisbursementSavedDraftAction = createAsyncThunk<
   string,
   {
@@ -178,7 +211,7 @@ export const submitDisbursementSavedDraftAction = createAsyncThunk<
   async ({ details, file, savedDraftId }, { rejectWithValue, getState, dispatch }) => {
     const { isApprovalRequired } = getState().organization.data;
     const { token } = getState().userAccount;
-    const { id } = getState().disbursementDetails.details;
+    const { id, sourceWalletId } = getState().disbursementDetails.details;
     const { newDraftId } = getState().disbursementDrafts;
     let draftId;
 
@@ -189,13 +222,23 @@ export const submitDisbursementSavedDraftAction = createAsyncThunk<
         // for now just in case
         id ??
         newDraftId ??
+        // Unreachable from the draft page (savedDraftId always comes from the URL). If it ever
+        // is reached there is no chosen source account to honour, so the create goes out without
+        // one — the backend rejects it on a multi-account tenant, which beats silently charging
+        // whichever account the switcher happens to be on.
         (await postDisbursement(token, details)).id;
 
       if (!isApprovalRequired) {
         await postDisbursementFile(token, draftId, file);
       }
 
-      await patchDisbursementStatus(token, draftId, "STARTED");
+      // Start the draft on ITS OWN funding account. The details slice is only authoritative when
+      // it actually holds THIS draft — DisbursementDraftDetails skips its load effect when
+      // details.id is already set, so a back-navigation can leave another draft's wallet there.
+      // On a mismatch send nothing rather than a wallet belonging to a different disbursement:
+      // the backend rejects it on a multi-account tenant, which is the safe failure.
+      const draftWalletId = id === draftId ? sourceWalletId : undefined;
+      await patchDisbursementStatus(token, draftId, "STARTED", draftWalletId);
       refreshSessionToken(dispatch);
 
       return draftId;
@@ -224,7 +267,7 @@ export const confirmDisbursementAction = createAsyncThunk<
   "disbursementDrafts/confirmDisbursementAction",
   async ({ savedDraftId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { id } = getState().disbursementDetails.details;
+    const { id, sourceWalletId } = getState().disbursementDetails.details;
     const { newDraftId } = getState().disbursementDrafts;
 
     try {
@@ -234,7 +277,11 @@ export const confirmDisbursementAction = createAsyncThunk<
         throw new Error("No draft ID available for confirmation");
       }
 
-      await patchDisbursementStatus(token, draftId, "STARTED");
+      // Status-only: nothing is created here. The details slice is only authoritative when it
+      // holds THIS draft (see submitDisbursementSavedDraftAction); on a mismatch send nothing
+      // rather than another disbursement's account.
+      const draftWalletId = id === draftId ? sourceWalletId : undefined;
+      await patchDisbursementStatus(token, draftId, "STARTED", draftWalletId);
       refreshSessionToken(dispatch);
 
       return draftId;
@@ -280,6 +327,7 @@ const initialState: DisbursementDraftsInitialState = {
   items: [],
   status: undefined,
   newDraftId: undefined,
+  newDraftWalletId: undefined,
   pagination: undefined,
   errorString: undefined,
   errorExtras: undefined,
@@ -330,6 +378,7 @@ const disbursementDraftsSlice = createSlice({
     });
     builder.addCase(saveDisbursementDraftAction.fulfilled, (state, action) => {
       state.newDraftId = action.payload;
+      state.newDraftWalletId = action.meta.arg.sourceWalletId;
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.errorExtras = undefined;

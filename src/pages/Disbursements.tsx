@@ -174,6 +174,7 @@ export const Disbursements = () => {
       exportDataAction({
         exportType: "disbursements",
         searchParams: disbursements.searchParams,
+        walletId: selectedWalletId,
       }),
     );
   };

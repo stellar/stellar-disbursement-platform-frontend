@@ -38,11 +38,3 @@ export const localStorageSelectedWallet = {
     return localStorage.removeItem(selectedWalletStorageKey());
   },
 };
-
-// The distribution wallet id to send as X-Wallet-Id, or null when scoping to all accounts /
-// nothing chosen yet. Centralizes the "all"/null handling so the raw fetch helpers agree with
-// the React context.
-export const getScopedWalletId = (): string | null => {
-  const raw = localStorageSelectedWallet.get();
-  return raw && raw !== ALL_ACCOUNTS ? raw : null;
-};

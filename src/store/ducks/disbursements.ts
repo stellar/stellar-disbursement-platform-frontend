@@ -13,30 +13,34 @@ import {
   RejectMessage,
 } from "@/types";
 
-// `walletId` is not sent to the API (the request is scoped by the X-Wallet-Id header): it rides
-// along on the action so the reducers can tell which distribution account a result belongs to.
+// `walletId` is not a query param — it becomes the X-Wallet-Id header, and it also rides along on
+// the action so the reducers can tell which distribution account a result belongs to. The caller
+// passes it from the SelectedWallet context so the header always matches the account on screen.
 export const getDisbursementsAction = createAsyncThunk<
   ApiDisbursements,
   { walletId: string },
   { rejectValue: RejectMessage; state: RootState }
->("disbursements/getDisbursementsAction", async (_, { rejectWithValue, getState, dispatch }) => {
-  const { token } = getState().userAccount;
+>(
+  "disbursements/getDisbursementsAction",
+  async ({ walletId }, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
 
-  try {
-    const disbursements = await getDisbursements(token);
-    refreshSessionToken(dispatch);
+    try {
+      const disbursements = await getDisbursements(token, undefined, walletId);
+      refreshSessionToken(dispatch);
 
-    return disbursements;
-  } catch (error: unknown) {
-    const apiError = normalizeApiError(error as ApiError);
-    const errorString = apiError.message;
-    endSessionIfTokenInvalid(errorString, dispatch);
+      return disbursements;
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
 
-    return rejectWithValue({
-      errorString: `Error fetching disbursements: ${errorString}`,
-    });
-  }
-});
+      return rejectWithValue({
+        errorString: `Error fetching disbursements: ${errorString}`,
+      });
+    }
+  },
+);
 
 export const getDisbursementsWithParamsAction = createAsyncThunk<
   {
@@ -47,17 +51,17 @@ export const getDisbursementsWithParamsAction = createAsyncThunk<
   { rejectValue: RejectMessage; state: RootState }
 >(
   "disbursements/getDisbursementsWithParamsAction",
-  // `walletId` is stripped here: every remaining key is serialized into the query string and
-  // persisted as `state.searchParams` (then replayed by the export), so it must not leak in.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async ({ walletId: _walletId, ...params }, { rejectWithValue, getState, dispatch }) => {
+  // `walletId` is split out here: it travels as the X-Wallet-Id header, while every remaining key
+  // is serialized into the query string and persisted as `state.searchParams` (then replayed by
+  // the export), so it must not leak in.
+  async ({ walletId, ...params }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
     const { searchParams } = getState().disbursements;
 
     const newParams = { ...searchParams, ...params };
 
     try {
-      const disbursements = await getDisbursements(token, newParams);
+      const disbursements = await getDisbursements(token, newParams, walletId);
       refreshSessionToken(dispatch);
 
       return {

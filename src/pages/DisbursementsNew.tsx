@@ -186,6 +186,8 @@ export const DisbursementsNew = () => {
             receiverRegistrationMessageTemplate: customMessage,
           },
           file: csvFile,
+          // The account chosen in this wizard funds the disbursement (see `renderSendingFrom`).
+          sourceWalletId: selectedWalletId || undefined,
         }),
       );
     }
@@ -213,6 +215,8 @@ export const DisbursementsNew = () => {
             receiverRegistrationMessageTemplate: customMessage,
           },
           file: csvFile,
+          // The account chosen in this wizard funds the disbursement (see `renderSendingFrom`).
+          sourceWalletId: selectedWalletId || undefined,
         }),
       );
     }
