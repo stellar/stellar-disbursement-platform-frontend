@@ -96,6 +96,19 @@ export const ActiveWalletBar = () => {
     }
     const defaultWalletId = (wallets.find((w) => w.is_default) ?? wallets[0]).id;
 
+    // Exactly one accessible account: there is nothing to aggregate, and the static bar below
+    // names that account — so pin to it regardless of any earlier "All accounts" choice. A
+    // stale "all" (stored before entitlements narrowed) leaves hasChosenWallet true and
+    // selectedWalletId "", which both checks below skip, and every request then goes out with
+    // no X-Wallet-Id — which the backend rejects for writes in a multi-wallet tenant.
+    if (wallets.length === 1) {
+      // Guarded: an unconditional set would re-run this effect via a new `wallets` identity.
+      if (selectedWalletId !== wallets[0].id) {
+        setSelectedWalletId(wallets[0].id);
+      }
+      return;
+    }
+
     // A stored selection that no longer exists (different login, archived) → reset to a valid one.
     if (selectedWalletId && !wallets.some((w) => w.id === selectedWalletId)) {
       setSelectedWalletId(defaultWalletId);

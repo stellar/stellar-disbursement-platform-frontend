@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Badge, Heading, Link, Button, Icon, Modal } from "@stellar/design-system";
+import { Badge, Heading, Link, Button, Icon, Modal, Notification } from "@stellar/design-system";
 
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DisbursementButtons } from "@/components/DisbursementButtons";
@@ -59,6 +59,7 @@ export const DisbursementDraftDetails = () => {
   const [csvFile, setCsvFile] = useState<File>();
   const [isCsvFileUpdated, setIsCsvFileUpdated] = useState(false);
   const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
+  const [csvParseError, setCsvParseError] = useState<string | undefined>();
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("preview");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
@@ -174,6 +175,7 @@ export const DisbursementDraftDetails = () => {
     setCurrentStep("edit");
     setDraftDetails(undefined);
     setCsvFile(undefined);
+    setCsvParseError(undefined);
     setIsCsvFileUpdated(false);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
@@ -191,6 +193,7 @@ export const DisbursementDraftDetails = () => {
     if (apiError) {
       dispatch(clearDisbursementDraftsErrorAction());
     }
+    setCsvParseError(undefined);
     updateTotalAmount(file);
     setCsvFile(file);
     setIsCsvFileUpdated(true);
@@ -198,20 +201,25 @@ export const DisbursementDraftDetails = () => {
   };
 
   const updateTotalAmount = (csvFile?: File) => {
-    csvTotalAmount({ csvFile }).then((totalAmount) => {
-      if (!totalAmount || !draftDetails) return;
+    csvTotalAmount({ csvFile })
+      .then((summary) => {
+        if (!summary || !draftDetails) return;
 
-      setDraftDetails({
-        ...draftDetails,
-        details: {
-          ...draftDetails.details,
-          stats: {
-            ...draftDetails.details.stats!,
-            totalAmount: totalAmount.toString(),
+        setDraftDetails({
+          ...draftDetails,
+          details: {
+            ...draftDetails.details,
+            stats: {
+              ...draftDetails.details.stats!,
+              totalAmount: summary.totalAmount.toString(),
+            },
           },
-        },
+        });
+      })
+      // A file that fails to parse must be a visible error, not a silently stale total.
+      .catch((e: Error) => {
+        setCsvParseError(e.message);
       });
-    });
   };
 
   const handleGoBackToDrafts = () => {
@@ -408,6 +416,12 @@ export const DisbursementDraftDetails = () => {
             registrationContactType={draftDetails?.details.registrationContactType}
             verificationField={draftDetails?.details.verificationField}
           />
+
+          {csvParseError ? (
+            <Notification variant="error" title="This file can't be used" isFilled>
+              {csvParseError} — fix the file and upload it again.
+            </Notification>
+          ) : null}
 
           {renderButtons("preview")}
         </form>

@@ -10,20 +10,28 @@ import { Pagination } from "@/components/Pagination";
 import { usePayments } from "@/apiQueries/usePayments";
 import { renderTextWithCount } from "@/helpers/renderTextWithCount";
 
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 export const ReceiverPayments = ({ receiverId }: { receiverId: string }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
+
+  // The active account comes from the global ActiveWalletBar (shared context).
+  const { selectedWalletId } = useSelectedWallet();
 
   const {
     data: receiverPayments,
     error,
     isLoading,
     isFetching,
-  } = usePayments({
-    receiver_id: receiverId,
-    page: currentPage.toString(),
-    page_limit: pageLimit.toString(),
-  });
+  } = usePayments(
+    {
+      receiver_id: receiverId,
+      page: currentPage.toString(),
+      page_limit: pageLimit.toString(),
+    },
+    selectedWalletId,
+  );
 
   const maxPages = receiverPayments?.pagination?.pages || 1;
 

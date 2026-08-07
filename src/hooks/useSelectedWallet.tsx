@@ -1,8 +1,10 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-import { useQueryClient } from "@tanstack/react-query";
-
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { ALL_ACCOUNTS, localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
+import { parseJwt } from "@/helpers/parseJwt";
+
+import { useRedux } from "@/hooks/useRedux";
 
 type SelectedWalletContextValue = {
   // "" means "All accounts" (Owners: tenant-wide aggregate).
@@ -17,11 +19,10 @@ type SelectedWalletContextValue = {
 const SelectedWalletContext = createContext<SelectedWalletContextValue | undefined>(undefined);
 
 // App-wide selected distribution (sending) account. This is the single source of truth for
-// which account the user is currently acting on. It backs the always-visible ActiveWalletBar
-// and is persisted to localStorage so fetchApi attaches the matching X-Wallet-Id to every
-// request. Changing it invalidates react-query caches so every wallet-scoped view refetches.
-export const SelectedWalletProvider = ({ children }: { children: ReactNode }) => {
-  const queryClient = useQueryClient();
+// which account the user is currently acting on: it backs the always-visible ActiveWalletBar,
+// and every wallet-scoped query keys on it and hands it to fetchApi as the X-Wallet-Id. It is
+// persisted to localStorage only to bootstrap the next page load for this (tenant, user).
+const SelectedWalletProviderInner = ({ children }: { children: ReactNode }) => {
   const initialRaw = localStorageSelectedWallet.get(); // null | "all" | "<id>"
   const [selectedWalletId, setSelected] = useState<string>(() =>
     initialRaw && initialRaw !== ALL_ACCOUNTS ? initialRaw : "",
@@ -34,8 +35,6 @@ export const SelectedWalletProvider = ({ children }: { children: ReactNode }) =>
     setHasChosenWallet(true);
     // Persists "" as the "all" sentinel so the explicit choice survives a reload.
     localStorageSelectedWallet.set(walletId);
-    // Refetch every wallet-scoped query with the new X-Wallet-Id header.
-    queryClient.invalidateQueries();
   };
 
   return (
@@ -44,6 +43,20 @@ export const SelectedWalletProvider = ({ children }: { children: ReactNode }) =>
     >
       {children}
     </SelectedWalletContext.Provider>
+  );
+};
+
+export const SelectedWalletProvider = ({ children }: { children: ReactNode }) => {
+  const { userAccount } = useRedux("userAccount");
+  const userId = userAccount.token ? (parseJwt(userAccount.token)?.user?.id ?? "") : "";
+
+  // Remount on identity change so the state above is re-seeded from THIS user's namespaced
+  // storage entry. Without it the provider outlives sign-out and the next user acts on the
+  // previous user's account until the ActiveWalletBar happens to reconcile.
+  return (
+    <SelectedWalletProviderInner key={`${getSdpTenantName()}:${userId}`}>
+      {children}
+    </SelectedWalletProviderInner>
   );
 };
 

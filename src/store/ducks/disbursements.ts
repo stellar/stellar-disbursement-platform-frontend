@@ -13,9 +13,11 @@ import {
   RejectMessage,
 } from "@/types";
 
+// `walletId` is not sent to the API (the request is scoped by the X-Wallet-Id header): it rides
+// along on the action so the reducers can tell which distribution account a result belongs to.
 export const getDisbursementsAction = createAsyncThunk<
   ApiDisbursements,
-  undefined,
+  { walletId: string },
   { rejectValue: RejectMessage; state: RootState }
 >("disbursements/getDisbursementsAction", async (_, { rejectWithValue, getState, dispatch }) => {
   const { token } = getState().userAccount;
@@ -41,11 +43,14 @@ export const getDisbursementsWithParamsAction = createAsyncThunk<
     disbursements: ApiDisbursements;
     searchParams: DisbursementsSearchParams;
   },
-  DisbursementsSearchParams,
+  DisbursementsSearchParams & { walletId: string },
   { rejectValue: RejectMessage; state: RootState }
 >(
   "disbursements/getDisbursementsWithParamsAction",
-  async (params, { rejectWithValue, getState, dispatch }) => {
+  // `walletId` is stripped here: every remaining key is serialized into the query string and
+  // persisted as `state.searchParams` (then replayed by the export), so it must not leak in.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async ({ walletId: _walletId, ...params }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
     const { searchParams } = getState().disbursements;
 
@@ -77,6 +82,7 @@ const initialState: DisbursementsInitialState = {
   pagination: undefined,
   errorString: undefined,
   searchParams: undefined,
+  walletId: undefined,
 };
 
 const disbursementsSlice = createSlice({
@@ -85,10 +91,17 @@ const disbursementsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     // Get disbursements
-    builder.addCase(getDisbursementsAction.pending, (state = initialState) => {
+    builder.addCase(getDisbursementsAction.pending, (state, action) => {
       state.status = "PENDING";
+      state.walletId = action.meta.arg.walletId;
     });
     builder.addCase(getDisbursementsAction.fulfilled, (state, action) => {
+      // Drop results for an account the user has already switched away from: without this a
+      // slow response for the previous account repaints the table under the new account's bar.
+      if (action.meta.arg.walletId !== state.walletId) {
+        return;
+      }
+
       state.items = formatDisbursements(action.payload.data);
       state.pagination = action.payload.pagination;
       state.status = "SUCCESS";
@@ -96,14 +109,23 @@ const disbursementsSlice = createSlice({
       state.searchParams = undefined;
     });
     builder.addCase(getDisbursementsAction.rejected, (state, action) => {
+      if (action.meta.arg.walletId !== state.walletId) {
+        return;
+      }
+
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
     });
     // Disbursements with search params
-    builder.addCase(getDisbursementsWithParamsAction.pending, (state = initialState) => {
+    builder.addCase(getDisbursementsWithParamsAction.pending, (state, action) => {
       state.status = "PENDING";
+      state.walletId = action.meta.arg.walletId;
     });
     builder.addCase(getDisbursementsWithParamsAction.fulfilled, (state, action) => {
+      if (action.meta.arg.walletId !== state.walletId) {
+        return;
+      }
+
       state.items = formatDisbursements(action.payload.disbursements.data);
       state.pagination = action.payload.disbursements.pagination;
       state.status = "SUCCESS";
@@ -111,6 +133,10 @@ const disbursementsSlice = createSlice({
       state.searchParams = action.payload.searchParams;
     });
     builder.addCase(getDisbursementsWithParamsAction.rejected, (state, action) => {
+      if (action.meta.arg.walletId !== state.walletId) {
+        return;
+      }
+
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
     });

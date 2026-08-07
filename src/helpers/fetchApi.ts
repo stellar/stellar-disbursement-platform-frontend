@@ -5,7 +5,6 @@ import { SESSION_EXPIRED_EVENT } from "@/constants/settings";
 import { refreshToken } from "@/api/refreshToken";
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
-import { getScopedWalletId } from "@/helpers/localStorageSelectedWallet";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
 import { parseJwt } from "@/helpers/parseJwt";
@@ -17,6 +16,10 @@ type FetchApiOptions = {
   omitContentType?: boolean;
   customCallback?: (request: Response) => void;
   organizationName?: string;
+  // The active distribution account, passed explicitly by the caller. The React context — not
+  // localStorage — decides which account a request is for; localStorage is shared across tabs
+  // and would desync the wire from the UI. Omitted/null means "All accounts": no header.
+  walletId?: string | null;
 };
 
 export const fetchApi = async (
@@ -48,7 +51,7 @@ export const fetchApi = async (
       localStorageSessionToken.set(token);
     }
 
-    const selectedWalletId = getScopedWalletId();
+    const selectedWalletId = options?.walletId || null;
 
     config.headers = {
       ...config.headers,

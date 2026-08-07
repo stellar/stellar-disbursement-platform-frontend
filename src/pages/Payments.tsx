@@ -22,7 +22,6 @@ import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 import { usePayments } from "@/apiQueries/usePayments";
 
-import { accountColor } from "@/helpers/accountColor";
 import { number } from "@/helpers/formatIntlNumber";
 
 import { useRedux } from "@/hooks/useRedux";
@@ -50,15 +49,9 @@ export const Payments = () => {
 
   const queryClient = useQueryClient();
 
-  // A direct payment leaves a specific distribution account. Under "All accounts" the backend
-  // has no source account to charge and rejects with a raw 400. Rather than dead-ending on a
-  // disabled button, if the user opens the flow under "All accounts" we drop them into their
-  // default account first (they can still switch source via the account bar).
   const { userAccount } = useRedux("userAccount");
-  const { selectedWalletId, setSelectedWalletId } = useSelectedWallet();
+  const { selectedWalletId } = useSelectedWallet();
   const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
-  const isMultiWallet = (distributionWallets?.length ?? 0) >= 2;
-  const selectedWallet = distributionWallets?.find((w) => w.id === selectedWalletId);
   const defaultWallet = distributionWallets?.find((w) => w.is_default) ?? distributionWallets?.[0];
 
   const {
@@ -66,12 +59,15 @@ export const Payments = () => {
     error,
     isLoading,
     isFetching,
-  } = usePayments({
-    page: currentPage.toString(),
-    page_limit: pageLimit.toString(),
-    ...queryFilters,
-    ...searchQuery,
-  });
+  } = usePayments(
+    {
+      page: currentPage.toString(),
+      page_limit: pageLimit.toString(),
+      ...queryFilters,
+      ...searchQuery,
+    },
+    selectedWalletId,
+  );
 
   const {
     mutateAsync: createDirectPayment,
@@ -135,11 +131,6 @@ export const Payments = () => {
   };
 
   const handleCreateDirectPayment = () => {
-    // A direct payment must leave a concrete account. If we're on "All accounts", pick the
-    // default account so the modal opens ready to send instead of erroring on submit.
-    if (isMultiWallet && !selectedWalletId && defaultWallet) {
-      setSelectedWalletId(defaultWallet.id);
-    }
     setIsDirectPaymentModalVisible(true);
   };
 
@@ -148,8 +139,11 @@ export const Payments = () => {
     resetCreatePaymentQuery();
   };
 
-  const handleSubmitDirectPayment = async (paymentData: CreateDirectPaymentRequest) => {
-    await createDirectPayment(paymentData);
+  const handleSubmitDirectPayment = async (
+    paymentData: CreateDirectPaymentRequest,
+    sourceWalletId?: string,
+  ) => {
+    await createDirectPayment({ paymentData, sourceWalletId });
   };
 
   return (
@@ -292,6 +286,9 @@ export const Payments = () => {
         isLoading={isLoading || isFetching}
       />
 
+      {/* The source account is the modal's own state, seeded from the current selection (or the
+          default account under "All accounts", which the backend can't charge). Opening the flow
+          must not re-scope the app — only the account switcher does that. */}
       <DirectPaymentCreateModal
         visible={isDirectPaymentModalVisible}
         onClose={handleCloseDirectPaymentModal}
@@ -299,10 +296,8 @@ export const Payments = () => {
         onResetQuery={resetCreatePaymentQuery}
         isLoading={isCreatingPayment}
         errorMessage={createPaymentError?.message}
-        sendingFromName={isMultiWallet && selectedWallet ? selectedWallet.name : undefined}
-        sendingFromColor={
-          isMultiWallet && selectedWallet ? accountColor(selectedWallet.id) : undefined
-        }
+        sourceWallets={distributionWallets}
+        initialSourceWalletId={selectedWalletId || defaultWallet?.id}
       />
     </>
   );

@@ -15,13 +15,18 @@ export type DistributionWallet = {
   is_default: boolean;
 };
 
-// The tenant's distribution wallets (sending accounts). Archived wallets are hidden from this
-// operational surface by the API.
-export const useDistributionWallets = (isAuthenticated: boolean) => {
+// The tenant's distribution wallets (sending accounts). The API hides archived wallets from this
+// operational surface unless include_archived=true. That stays opt-in: only surfaces that label
+// past activity want archived accounts — anything that offers an account to send from must not.
+export const useDistributionWallets = (isAuthenticated: boolean, includeArchived = false) => {
   return useQuery<DistributionWallet[], AppError>({
-    queryKey: ["distribution-wallets"],
+    // Vary the key on the flag, or the two lists would overwrite each other in the cache and an
+    // archived account could leak into the switcher and the create flows.
+    queryKey: ["distribution-wallets", includeArchived ? "with-archived" : "active"],
     queryFn: async () => {
-      return await fetchApi(`${API_URL}/distribution-wallets`);
+      return await fetchApi(
+        `${API_URL}/distribution-wallets${includeArchived ? "?include_archived=true" : ""}`,
+      );
     },
     enabled: Boolean(isAuthenticated),
   });

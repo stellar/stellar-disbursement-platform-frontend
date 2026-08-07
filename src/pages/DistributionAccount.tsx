@@ -1,7 +1,8 @@
-import { Heading } from "@stellar/design-system";
+import { Heading, Notification } from "@stellar/design-system";
 
 import { DistributionAccountCircle } from "@/components/DistributionAccountCircle";
 import { DistributionAccountStellar } from "@/components/DistributionAccountStellar";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { LoadingContent } from "@/components/LoadingContent";
 import { SectionHeader } from "@/components/SectionHeader";
 
@@ -17,7 +18,12 @@ export const DistributionAccount = () => {
   const { organization, userAccount } = useRedux("organization", "userAccount");
   const { isCircleAccount } = useCircleAccount();
   const { selectedWalletId } = useSelectedWallet();
-  const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const {
+    data: wallets,
+    isPending: isWalletsPending,
+    isError: isWalletsError,
+    error: walletsError,
+  } = useDistributionWallets(userAccount.isAuthenticated);
 
   if (organization.status === "PENDING") {
     return <LoadingContent />;
@@ -27,12 +33,30 @@ export const DistributionAccount = () => {
     return <DistributionAccountCircle />;
   }
 
-  // No wallet record at all: last-resort fallback to the legacy tenant-level account. Every
-  // other case below renders from GET /distribution-wallets — already scoped server-side to
-  // what THIS user can see — so we never fall back to organization.distributionAccountPublicKey
-  // once we have real wallet data, since that legacy field reflects the tenant's default account
-  // and can belong to a completely different account than the one this user is scoped to.
-  if (!wallets || wallets.length === 0) {
+  // `wallets` is undefined while the fetch is in flight and after it fails, so both states have
+  // to be handled here: falling through to the legacy fallback below would show this user the
+  // tenant's default account — its address, balance and history — when they may only be entitled
+  // to a completely different one. isPending rather than isLoading, because between retry attempts
+  // react-query reports isLoading false with data still undefined.
+  if (isWalletsPending) {
+    return <LoadingContent />;
+  }
+
+  if (isWalletsError) {
+    return (
+      <Notification variant="error" title="Error" isFilled={true}>
+        <ErrorWithExtras appError={walletsError} />
+      </Notification>
+    );
+  }
+
+  // No wallet record at all (a SUCCESSFUL but empty response): last-resort fallback to the legacy
+  // tenant-level account. Every other case below renders from GET /distribution-wallets — already
+  // scoped server-side to what THIS user can see — so we never fall back to
+  // organization.distributionAccountPublicKey once we have real wallet data, since that legacy
+  // field reflects the tenant's default account and can belong to a completely different account
+  // than the one this user is scoped to.
+  if (wallets.length === 0) {
     return <DistributionAccountStellar />;
   }
 
@@ -46,7 +70,7 @@ export const DistributionAccount = () => {
       <DistributionAccountStellar
         key={only.id}
         accountName={only.is_default ? undefined : only.name}
-        accountAddress={only.distribution_account_address ?? undefined}
+        accountAddress={only.distribution_account_address ?? null}
         accountColorHex={only.is_default ? undefined : accountColor(only.id)}
         showTrustlines={only.is_default}
       />
@@ -62,7 +86,7 @@ export const DistributionAccount = () => {
       <DistributionAccountStellar
         key={selected.id}
         accountName={`${selected.name}${selected.is_default ? " (default)" : ""}`}
-        accountAddress={selected.distribution_account_address ?? undefined}
+        accountAddress={selected.distribution_account_address ?? null}
         accountColorHex={accountColor(selected.id)}
         showTrustlines={selected.is_default}
       />
@@ -95,7 +119,7 @@ export const DistributionAccount = () => {
           <DistributionAccountStellar
             key={w.id}
             accountName={`${w.name}${w.is_default ? " (default)" : ""}`}
-            accountAddress={w.distribution_account_address ?? undefined}
+            accountAddress={w.distribution_account_address ?? null}
             accountColorHex={accountColor(w.id)}
             showTrustlines={w.is_default}
           />

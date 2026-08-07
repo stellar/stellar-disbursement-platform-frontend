@@ -440,7 +440,21 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       <Select
         id={FieldId.REGISTRATION_CONTACT_TYPE}
         label={
-          <InfoTooltip infoText="How you identify each receiver in your CSV — by phone number, email, or their Stellar wallet address. This sets which columns the template expects.">
+          <InfoTooltip
+            infoText={
+              <>
+                {
+                  "How you identify each receiver in your CSV — by phone number, email, or their Stellar wallet address. This sets which columns the template expects."
+                }
+                {/* deriveFormState drops the wallet-address options from registrationOptions when
+                    user-managed wallets are off. Without this sentence they are simply absent,
+                    with no hint that they exist or how to enable them. */}
+                {derived.isWalletRegistrationEnabled
+                  ? null
+                  : " Registering receivers wallet directly is disabled. It can be enabled in the 'Wallet Providers' section."}
+              </>
+            }
+          >
             Contact method
           </InfoTooltip>
         }

@@ -29,7 +29,11 @@ interface DistributionAccountStellarProps {
   // Multi-account: scope the page to a specific distribution account. Defaults to the
   // tenant's (single/default) account for unchanged single-account behavior.
   accountName?: string;
-  accountAddress?: string;
+  // `undefined` means there is no wallet record at all (legacy single-account tenant), and the
+  // tenant-level fallback below is correct. `null` means a real wallet record whose Stellar
+  // account isn't provisioned yet — falling back there would label this account's name with the
+  // tenant default's address, balances and history.
+  accountAddress?: string | null;
   accountColorHex?: string;
   // Asset/trustline management is tenant-level and applies to the DEFAULT account only —
   // hidden when viewing a non-default account.
@@ -45,8 +49,11 @@ export const DistributionAccountStellar = ({
   const [isBridgeOptInModalVisible, setIsBridgeOptInModalVisible] = useState(false);
 
   const { organization } = useRedux("organization");
-  const distributionAccountPublicKey =
-    accountAddress ?? organization.data.distributionAccountPublicKey;
+  const hasWalletRecord = accountAddress !== undefined;
+  const distributionAccountPublicKey = hasWalletRecord
+    ? accountAddress || undefined
+    : organization.data.distributionAccountPublicKey;
+  const isAddressUnavailable = !distributionAccountPublicKey;
 
   const { balances, fetchAccountBalances } = useOrgAccountInfo(distributionAccountPublicKey);
 
@@ -104,6 +111,17 @@ export const DistributionAccountStellar = ({
             }}
           />
         </Notification>
+      );
+    }
+
+    // No address of its own yet. The tenant default is not a stand-in here: it belongs to a
+    // different account than the one this page is named after.
+    if (isAddressUnavailable) {
+      return (
+        <div className="Note">
+          This account doesn’t have a Stellar address yet — its balances and history will appear
+          once its on-chain account has been provisioned.
+        </div>
       );
     }
 
@@ -196,21 +214,23 @@ export const DistributionAccountStellar = ({
           />
         ) : null}
 
-        <Card>
-          <div className="CardStack__card">
-            <div className="CardStack__title">
-              <Box gap="xs" direction="row" align="center">
-                <InfoTooltip infoText="A record of payments to and from this account, sourced directly from the Stellar network">
-                  Account history
-                </InfoTooltip>
-                <Link href={`${STELLAR_EXPERT_URL}/account/${distributionAccountPublicKey}`}>
-                  <Icon.LinkExternal01 className="ExternalLinkIcon" />
-                </Link>
-              </Box>
+        {isAddressUnavailable ? null : (
+          <Card>
+            <div className="CardStack__card">
+              <div className="CardStack__title">
+                <Box gap="xs" direction="row" align="center">
+                  <InfoTooltip infoText="A record of payments to and from this account, sourced directly from the Stellar network">
+                    Account history
+                  </InfoTooltip>
+                  <Link href={`${STELLAR_EXPERT_URL}/account/${distributionAccountPublicKey}`}>
+                    <Icon.LinkExternal01 className="ExternalLinkIcon" />
+                  </Link>
+                </Box>
+              </div>
+              <WalletHistory stellarAddress={distributionAccountPublicKey} />
             </div>
-            <WalletHistory stellarAddress={distributionAccountPublicKey} />
-          </div>
-        </Card>
+          </Card>
+        )}
 
         {showTrustlines ? (
           <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>

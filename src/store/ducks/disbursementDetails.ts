@@ -93,10 +93,10 @@ export const pauseOrStartDisbursementAction = createAsyncThunk<
   "disbursementDetails/pauseOrStartDisbursementAction",
   async (newStatus, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { id } = getState().disbursementDetails.details;
+    const { id, sourceWalletId } = getState().disbursementDetails.details;
 
     try {
-      const { message } = await patchDisbursementStatus(token, id, newStatus);
+      const { message } = await patchDisbursementStatus(token, id, newStatus, sourceWalletId);
       refreshSessionToken(dispatch);
 
       return { status: newStatus, message };
@@ -122,10 +122,10 @@ export const cancelDisbursementAction = createAsyncThunk<
   "disbursementDetails/cancelDisbursementAction",
   async (_, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { id } = getState().disbursementDetails.details;
+    const { id, sourceWalletId } = getState().disbursementDetails.details;
 
     try {
-      const { message } = await patchDisbursementStatus(token, id, "CANCELED");
+      const { message } = await patchDisbursementStatus(token, id, "CANCELED", sourceWalletId);
       refreshSessionToken(dispatch);
 
       return { status: "CANCELED" as DisbursementStatusType, message };

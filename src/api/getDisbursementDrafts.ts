@@ -2,6 +2,7 @@ import { handleApiResponse } from "@/api/handleApiResponse";
 import { API_URL } from "@/constants/envVariables";
 import { UI_STATUS_DISBURSEMENT_DRAFT } from "@/constants/settings";
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { walletIdHeader } from "@/helpers/walletIdHeader";
 import { ApiDisbursements } from "@/types";
 
 export const getDisbursementDrafts = async (token: string): Promise<ApiDisbursements> => {
@@ -14,6 +15,8 @@ export const getDisbursementDrafts = async (token: string): Promise<ApiDisbursem
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
         "SDP-Tenant-Name": getSdpTenantName(),
+        // Multi-wallet: scope the list to the active distribution account.
+        ...walletIdHeader(),
       },
     },
   );

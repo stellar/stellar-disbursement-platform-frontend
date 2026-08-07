@@ -11,15 +11,18 @@ import { SelectedReceiverInfo } from "@/components/SelectedReceiverInfo/Selected
 import { directPayment } from "@/constants/directPayment";
 
 import { useAllAssets } from "@/apiQueries/useAllAssets";
+import { DistributionWallet } from "@/apiQueries/useDistributionWallets";
 import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
 import { useSearchReceivers } from "@/apiQueries/useSearchReceivers";
 import { useWallets } from "@/apiQueries/useWallets";
 
+import { accountColor } from "@/helpers/accountColor";
 import { getEnhancedWalletErrorMessage } from "@/helpers/walletErrorMessages";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePrevious } from "@/hooks/usePrevious";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
 import { ApiAssetWithTrustline, ApiReceiver, CreateDirectPaymentRequest } from "@/types";
 
@@ -28,14 +31,14 @@ import "./styles.scss";
 interface DirectPaymentCreateModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (paymentData: CreateDirectPaymentRequest) => void;
+  onSubmit: (paymentData: CreateDirectPaymentRequest, sourceWalletId?: string) => void;
   onResetQuery: () => void;
   isLoading: boolean;
   errorMessage?: string;
-  // The distribution (sending) account this payment will leave — shown so the operator always
-  // knows which account funds it. Only set for multi-account tenants.
-  sendingFromName?: string;
-  sendingFromColor?: string;
+  // The distribution (sending) accounts this payment can leave from. The choice is made and kept
+  // here, in the modal, so opening the flow never re-scopes the rest of the app.
+  sourceWallets?: DistributionWallet[];
+  initialSourceWalletId?: string;
 }
 
 // A compact "Sending from [dot] Account" banner so the source account is visible at the point
@@ -77,8 +80,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   onResetQuery,
   isLoading,
   errorMessage,
-  sendingFromName,
-  sendingFromColor,
+  sourceWallets,
+  initialSourceWalletId,
 }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -86,6 +89,9 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   const [paymentDataToConfirm, setPaymentDataToConfirm] =
     useState<CreateDirectPaymentRequest | null>(null);
   const [selectedReceiverId, setSelectedReceiverId] = useState<string | undefined>(undefined);
+  // Kept out of formData: it isn't a validated form field, and the asset/receiver cascades in
+  // handleInputChange clear their sibling fields on every change.
+  const [sourceWalletId, setSourceWalletId] = useState(initialSourceWalletId ?? "");
   const queryClient = useQueryClient();
   const debouncedReceiverSearch = useDebounce(
     formData.receiverSearch,
@@ -115,9 +121,12 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     // For non-verified, get all wallets (undefined = no filter)
     userManaged: isReceiverVerified ? false : undefined,
   });
+  // The active account comes from the global ActiveWalletBar (shared context).
+  const { selectedWalletId } = useSelectedWallet();
   const { data: searchResults, isLoading: searchLoading } = useSearchReceivers(
     debouncedReceiverSearch,
     true,
+    selectedWalletId,
   );
   const filteredWallets = useMemo(() => {
     if (!supportedWallets.length || !formData.assetId || !formData.selectedReceiver) {
@@ -174,6 +183,10 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     formData.assetId && isAmountValid && isReceiverValid && isWalletValid,
   );
 
+  // Single-account tenants have nothing to choose between, so they get neither selector nor banner.
+  const canChooseSource = (sourceWallets?.length ?? 0) >= 2;
+  const sourceWallet = sourceWallets?.find((w) => w.id === sourceWalletId);
+
   useEffect(() => {
     if (previousVisible && !visible) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -183,7 +196,12 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       setPaymentDataToConfirm(null);
       setSelectedReceiverId(undefined);
     }
-  }, [visible, previousVisible]);
+    // Re-seed on every open so a source account picked for an earlier payment can't silently
+    // fund the next one.
+    if (!previousVisible && visible) {
+      setSourceWalletId(initialSourceWalletId ?? "");
+    }
+  }, [visible, previousVisible, initialSourceWalletId]);
 
   useEffect(() => {
     if (receiverDetailsRaw && formData.selectedReceiver?.id === receiverDetailsRaw.id) {
@@ -304,7 +322,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
 
   const handleConfirmPayment = () => {
     if (paymentDataToConfirm) {
-      onSubmit(paymentDataToConfirm);
+      onSubmit(paymentDataToConfirm, sourceWalletId || undefined);
     }
   };
 
@@ -451,7 +469,10 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       {showConfirmation ? (
         <>
           <Modal.Body>
-            <SendingFromBanner name={sendingFromName} color={sendingFromColor} />
+            <SendingFromBanner
+              name={canChooseSource ? sourceWallet?.name : undefined}
+              color={canChooseSource && sourceWallet ? accountColor(sourceWallet.id) : undefined}
+            />
             {errorMessage && (
               <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras
@@ -491,7 +512,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       ) : (
         <form onSubmit={handleSubmit} onReset={handleClose}>
           <Modal.Body>
-            <SendingFromBanner name={sendingFromName} color={sendingFromColor} />
             <div className="DirectPaymentCreateModal__description">
               Send a single payment directly to a receiver via email, phone number, or wallet
               address.
@@ -505,6 +525,26 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
             )}
 
             <div className="DirectPaymentCreateModal__form">
+              {/* Source Account — the operator confirms which account funds this payment instead
+                  of being moved onto one behind their back. */}
+              {canChooseSource && (
+                <Select
+                  fieldSize="sm"
+                  id="sourceWalletId"
+                  label="Sending from"
+                  value={sourceWalletId}
+                  onChange={(event) => setSourceWalletId(event.target.value)}
+                  required
+                >
+                  <option value="">Select…</option>
+                  {sourceWallets?.map((wallet) => (
+                    <option key={wallet.id} value={wallet.id}>
+                      {`${wallet.name}${wallet.is_default ? " (default)" : ""}`}
+                    </option>
+                  ))}
+                </Select>
+              )}
+
               {/* Asset Selection */}
               <Select
                 fieldSize="sm"

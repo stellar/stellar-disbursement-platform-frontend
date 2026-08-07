@@ -12,6 +12,7 @@ import { USE_SSO } from "@/constants/envVariables";
 import { Routes } from "@/constants/settings";
 
 import { getAppVersion } from "@/helpers/getAppVersion";
+import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { singleUserStore } from "@/helpers/singleSingOn";
 
@@ -41,6 +42,9 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       singleUserStore().then();
     }
     dispatch(resetStoreAction());
+    // Before the token: the selected-account key is derived from the signed-in user, so
+    // clearing the token first would compute a different key and orphan the entry.
+    localStorageSelectedWallet.remove();
     localStorageSessionToken.remove();
   };
 

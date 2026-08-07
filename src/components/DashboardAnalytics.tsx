@@ -45,6 +45,22 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
     return Number(numerator / denominator);
   };
 
+  // One row per asset from the UNION of the live balance map and the historical stats, zero-filling
+  // only the missing side. Driving rows off balances alone dropped "Total disbursed" — a lifetime
+  // figure — for any asset whose balance or trustline is gone, and showed nothing at all whenever
+  // the balance request was unavailable.
+  const balanceEntries = Object.entries(walletBalance?.balances ?? {});
+  const assetRows = [
+    ...balanceEntries.map(([assetKey, amount]) => ({
+      key: assetKey,
+      assetCode: assetKey.split(":")[0],
+      balance: amount || "0",
+    })),
+    ...(stats?.assets ?? [])
+      .filter((a) => !balanceEntries.some(([assetKey]) => assetKey.split(":")[0] === a.assetCode))
+      .map((a) => ({ key: a.assetCode, assetCode: a.assetCode, balance: "0" })),
+  ];
+
   if (error) {
     return (
       <Notification variant="error" title="Error" isFilled={true}>
@@ -146,28 +162,26 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
             </div>
 
             <div className="StatCards__card__assets">
-              {Object.entries(walletBalance?.balances ?? {}).map(([assetKey, amount]) => (
-                <div className="StatCards__card--flexCols" key={assetKey}>
+              {assetRows.map((row) => (
+                <div className="StatCards__card--flexCols" key={row.key}>
                   <div>
-                    <AssetAmount amount={amount || "0"} assetCode={assetKey.split(":")[0]} />
+                    <AssetAmount amount={row.balance} assetCode={row.assetCode} />
                   </div>
                   <div>
                     <AssetAmount
                       amount={
-                        stats?.assets.find((a) => a.assetCode === assetKey.split(":")[0])
-                          ?.success || "0"
+                        stats?.assets.find((a) => a.assetCode === row.assetCode)?.success || "0"
                       }
-                      assetCode={assetKey.split(":")[0]}
+                      assetCode={row.assetCode}
                     />
                   </div>
                   {showAverageAmount ? (
                     <div>
                       <AssetAmount
                         amount={
-                          stats?.assets.find((a) => a.assetCode === assetKey.split(":")[0])
-                            ?.average || "0"
+                          stats?.assets.find((a) => a.assetCode === row.assetCode)?.average || "0"
                         }
-                        assetCode={assetKey.split(":")[0]}
+                        assetCode={row.assetCode}
                       />
                     </div>
                   ) : null}

@@ -70,6 +70,8 @@ export type DisbursementsInitialState = {
   pagination?: Pagination;
   errorString?: string;
   searchParams?: DisbursementsSearchParams;
+  // Distribution account the in-flight (last requested) list belongs to ("" === All accounts).
+  walletId?: string;
 };
 
 export type DisbursementDetailsInitialState = {

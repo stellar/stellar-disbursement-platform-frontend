@@ -43,8 +43,9 @@ export const Home = () => {
   useEffect(() => {
     if (userAccount.isAuthenticated) {
       if (isRoleAccepted) {
-        // Re-fetch recent disbursements scoped to the active account when it changes.
-        dispatch(getDisbursementsAction());
+        // Re-fetch recent disbursements scoped to the active account when it changes. The id is
+        // passed along so the reducer can drop a late response for a previously active account.
+        dispatch(getDisbursementsAction({ walletId: selectedWalletId }));
       }
       dispatch(resetDisbursementDetailsAction());
       dispatch(setDraftIdAction(undefined));

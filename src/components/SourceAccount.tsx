@@ -19,9 +19,12 @@ export const useShowSourceAccountColumn = (): boolean => {
 // Rows predating the multi-wallet migration carry no source_wallet_id; those were funded by
 // the tenant default account, so an EMPTY id falls back to the default. An id we can't
 // resolve (e.g. a wallet outside this user's read scope) renders "-" rather than mislabeling.
+// This is the one place that resolves against archived accounts too: archiving must not relabel
+// the history it funded as "-". Only the label comes from that list — nothing here selects an
+// account to send from.
 export const SourceAccount = ({ sourceWalletId }: { sourceWalletId?: string }) => {
   const { userAccount } = useRedux("userAccount");
-  const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated, true);
 
   if (!wallets?.length) {
     return <>-</>;
@@ -48,6 +51,9 @@ export const SourceAccount = ({ sourceWalletId }: { sourceWalletId?: string }) =
         aria-hidden="true"
       />
       {wallet.name}
+      {wallet.status === "ARCHIVED" ? (
+        <span className="Note Note--small Note--noMargin">(archived)</span>
+      ) : null}
     </span>
   );
 };

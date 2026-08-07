@@ -1,4 +1,16 @@
-const LOCAL_STORAGE_SELECTED_WALLET_ID = "sdp_selected_distribution_wallet_id";
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { parseJwt } from "@/helpers/parseJwt";
+
+const SELECTED_WALLET_KEY_PREFIX = "sdp_selected_distribution_wallet_id";
+
+// The selection belongs to one (tenant, user) pair. A single global key let the previous
+// user's choice ride into the next login's first requests on a shared browser.
+const selectedWalletStorageKey = (): string => {
+  const token = localStorageSessionToken.get();
+  const userId = token ? (parseJwt(token)?.user?.id ?? "") : "";
+  return `${SELECTED_WALLET_KEY_PREFIX}:${getSdpTenantName()}:${userId}`;
+};
 
 // The selected distribution wallet (the tenant's SENDING account — unrelated to recipient
 // wallet providers). When a concrete account is set, every API request carries it via the
@@ -16,14 +28,14 @@ export const ALL_ACCOUNTS = "all";
 export const localStorageSelectedWallet = {
   // Returns the raw stored value: null | "all" | "<id>".
   get: () => {
-    return localStorage.getItem(LOCAL_STORAGE_SELECTED_WALLET_ID);
+    return localStorage.getItem(selectedWalletStorageKey());
   },
   // Persists the selection. An empty string means "All accounts" and is stored as the sentinel.
   set: (walletId: string) => {
-    return localStorage.setItem(LOCAL_STORAGE_SELECTED_WALLET_ID, walletId || ALL_ACCOUNTS);
+    return localStorage.setItem(selectedWalletStorageKey(), walletId || ALL_ACCOUNTS);
   },
   remove: () => {
-    return localStorage.removeItem(LOCAL_STORAGE_SELECTED_WALLET_ID);
+    return localStorage.removeItem(selectedWalletStorageKey());
   },
 };
 

@@ -9,9 +9,11 @@ import { fetchApi } from "@/helpers/fetchApi";
 import { AppError } from "@/types";
 
 // Owner-only: archive a distribution (sending) account. Archived accounts accept no new
-// disbursements but keep their history and balances queryable; the backend refuses to archive
-// the default account or the tenant's last active one. Refreshes the wallet list on success
-// (archived wallets drop out of GET /distribution-wallets).
+// disbursements. Their data stays queryable server-side, but the dashboard only keeps them as the
+// source-account label on past rows (see SourceAccount) — they are gone from the switcher, the
+// balances card and the accounts page. The backend refuses to archive the default account or the
+// tenant's last active one. Invalidating by key prefix on success refreshes both the active-only
+// and the archived-inclusive wallet lists.
 export const useArchiveDistributionWallet = () => {
   const queryClient = useQueryClient();
 

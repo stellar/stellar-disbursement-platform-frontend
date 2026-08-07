@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -29,6 +29,7 @@ import {
   getDisbursementDetailsAction,
   getDisbursementReceiversAction,
   pauseOrStartDisbursementAction,
+  resetDisbursementDetailsAction,
   setDisbursementDetailsAction,
 } from "@/store/ducks/disbursementDetails";
 
@@ -47,6 +48,7 @@ import { saveFile } from "@/helpers/saveFile";
 
 import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
 import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
 import { VerificationFieldMap } from "@/types";
 
@@ -64,6 +66,10 @@ export const DisbursementDetails = () => {
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Active distribution account (the global ActiveWalletBar stays usable on this page).
+  const { selectedWalletId, hasChosenWallet } = useSelectedWallet();
+
   const { isLoading: csvDownloadIsLoading, getFile } = useDownloadCsvFile((file: File) => {
     saveFile({
       file,
@@ -94,6 +100,32 @@ export const DisbursementDetails = () => {
       );
     }
   }, [dispatch, fetchedDisbursement]);
+
+  // Null until the bar commits a selection: on a fresh login it bootstraps "" to the default
+  // account after mount, and that first assignment is not the user switching accounts.
+  const activeWalletRef = useRef<string | null>(null);
+
+  // Everything on this page belongs to one account, and Cancel/Pause act on it. Leaving it on
+  // screen after a switch would let an operator cancel account A's disbursement while the bar
+  // reads B, so drop the account-bound state and go back to the list.
+  useEffect(() => {
+    if (!hasChosenWallet) {
+      return;
+    }
+
+    if (activeWalletRef.current === null) {
+      activeWalletRef.current = selectedWalletId;
+      return;
+    }
+
+    if (activeWalletRef.current === selectedWalletId) {
+      return;
+    }
+
+    activeWalletRef.current = selectedWalletId;
+    dispatch(resetDisbursementDetailsAction());
+    navigate(Routes.DISBURSEMENTS);
+  }, [dispatch, hasChosenWallet, navigate, selectedWalletId]);
 
   useEffect(() => {
     if (fetchedDisbursement?.id) {

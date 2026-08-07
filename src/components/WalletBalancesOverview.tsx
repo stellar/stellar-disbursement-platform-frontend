@@ -113,12 +113,16 @@ export const WalletBalancesOverview = () => {
   }
 
   const newlyCreated = wallets.find((w) => w.name === createdName);
+  const archiveWalletAddress = wallets.find(
+    (w) => w.id === archiveWallet?.id,
+  )?.distribution_account_address;
 
   return (
     <>
       {archivedName ? (
         <Notification variant="success" title={`Account "${archivedName}" archived`} isFilled>
-          It no longer accepts new disbursements; its history and balances remain visible.
+          It no longer accepts new disbursements or payments, and is gone from the account switcher
+          and the list below. Past disbursements and payments it funded still show its name.
         </Notification>
       ) : null}
 
@@ -196,6 +200,7 @@ export const WalletBalancesOverview = () => {
           visible={Boolean(archiveWallet)}
           walletId={archiveWallet?.id ?? null}
           walletName={archiveWallet?.name ?? ""}
+          walletAddress={archiveWalletAddress}
           onClose={() => setArchiveWallet(null)}
           onArchived={(name) => setArchivedName(name)}
         />
