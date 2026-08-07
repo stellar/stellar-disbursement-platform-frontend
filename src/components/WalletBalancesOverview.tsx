@@ -87,8 +87,8 @@ const WalletBalanceRow = ({
   );
 };
 
-// All distribution wallet balances on the home screen — Paul's playtest ask: see every wallet's
-// balance without switching the picker. For Owners this doubles as the account-management
+// All distribution wallet balances on the home screen — see every wallet's balance without
+// switching the picker. For Owners this doubles as the account-management
 // surface (add an account, manage per-account access). Hidden for single-account non-owners.
 export const WalletBalancesOverview = () => {
   const { userAccount } = useRedux("userAccount");
