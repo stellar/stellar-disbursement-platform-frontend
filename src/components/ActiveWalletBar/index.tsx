@@ -8,6 +8,7 @@ import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWallet
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
 import { accountColor } from "@/helpers/accountColor";
+import { parseAssetKey } from "@/helpers/parseAssetKey";
 
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
@@ -47,7 +48,11 @@ const RowBalance = ({
   return (
     <span className="WalletSwitcher__balance">
       {toShow.map(([assetKey, amount]) => (
-        <AssetAmount key={assetKey} amount={amount || "0"} assetCode={assetKey.split(":")[0]} />
+        <AssetAmount
+          key={assetKey}
+          amount={amount || "0"}
+          assetCode={parseAssetKey(assetKey).code}
+        />
       ))}
     </span>
   );

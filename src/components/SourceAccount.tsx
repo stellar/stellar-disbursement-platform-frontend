@@ -8,10 +8,13 @@ import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 // The Disbursements/Payments tables only need a source-account column when rows can mix
 // accounts — a multi-account tenant viewing "All accounts". Under a concrete selection (or a
 // single-account tenant) the column would repeat the account bar.
+// The count includes archived accounts: rows outlive the account that funded them, so a tenant
+// that archives back down to one active account still has mixed history to attribute. Only a
+// tenant that has never had a second account is genuinely single-account.
 export const useShowSourceAccountColumn = (): boolean => {
   const { userAccount } = useRedux("userAccount");
   const { selectedWalletId } = useSelectedWallet();
-  const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated, true);
   return (wallets?.length ?? 0) >= 2 && !selectedWalletId;
 };
 
@@ -59,7 +62,8 @@ export const SourceAccount = ({ sourceWalletId }: { sourceWalletId?: string }) =
 };
 
 // A labeled "Source account" row for the detail pages. Renders nothing for single-account
-// tenants, where the source is unambiguous.
+// tenants, where the source is unambiguous — counting archived accounts too, so archiving down
+// to one active account doesn't strip the attribution off the history that account funded.
 export const SourceAccountDetailItem = ({
   sourceWalletId,
   variant = "statCard",
@@ -68,7 +72,7 @@ export const SourceAccountDetailItem = ({
   variant?: "statCard" | "paymentInfo";
 }) => {
   const { userAccount } = useRedux("userAccount");
-  const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated, true);
 
   if ((wallets?.length ?? 0) < 2) {
     return null;

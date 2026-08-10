@@ -493,6 +493,9 @@ export type HomeStatistics = {
   individualsTotalCount: number;
   assets: {
     assetCode: string;
+    // Optional until the backend ships `asset_issuer` on /statistics. Consumers must keep
+    // working (matching on code alone) while it is undefined.
+    assetIssuer?: string;
     success: string;
     average: string;
   }[];
@@ -738,6 +741,9 @@ export type ApiPayments = {
 
 export type ApiStatisticsAsset = {
   asset_code: string;
+  // Added alongside asset_code so two assets sharing a code can be told apart. Optional
+  // because older backends don't return it.
+  asset_issuer?: string;
   payment_amounts: {
     canceled: number;
     draft: number;

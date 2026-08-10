@@ -8,6 +8,7 @@ import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWallet
 import { useStatistics } from "@/apiQueries/useStatistics";
 
 import { percent } from "@/helpers/formatIntlNumber";
+import { parseAssetKey } from "@/helpers/parseAssetKey";
 import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
 
 import { useRedux } from "@/hooks/useRedux";
@@ -31,10 +32,11 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
     error,
     isLoading,
   } = useStatistics(userAccount.isAuthenticated, effectiveWalletId);
-  const { data: walletBalance } = useDistributionWalletBalance(
-    userAccount.isAuthenticated,
-    effectiveWalletId || null,
-  );
+  const {
+    data: walletBalance,
+    error: balanceError,
+    isLoading: isBalanceLoading,
+  } = useDistributionWalletBalance(userAccount.isAuthenticated, effectiveWalletId || null);
 
   const calculateRate = () => {
     if (!stats) return 0;
@@ -45,22 +47,63 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
     return Number(numerator / denominator);
   };
 
+  const statsAssets = stats?.assets ?? [];
+
+  // Balance keys carry the issuer (`CODE:ISSUER`) but /statistics only started returning
+  // `asset_issuer` recently, so match on the full pair when it is there and fall back to the
+  // old code-only match when it is not — otherwise this table would render empty against a
+  // backend that hasn't shipped the field yet. Native has no issuer: parseAssetKey resolves
+  // the balance side to "native", and an empty/absent issuer on the stats side takes the
+  // code-only path, so XLM joins either way.
+  const isSameAsset = (
+    statsAsset: { assetCode: string; assetIssuer?: string },
+    assetCode: string,
+    assetIssuer: string,
+  ) => {
+    if (statsAsset.assetCode !== assetCode) {
+      return false;
+    }
+    return statsAsset.assetIssuer ? statsAsset.assetIssuer === assetIssuer : true;
+  };
+
   // One row per asset from the UNION of the live balance map and the historical stats, zero-filling
   // only the missing side. Driving rows off balances alone dropped "Total disbursed" — a lifetime
   // figure — for any asset whose balance or trustline is gone, and showed nothing at all whenever
   // the balance request was unavailable.
-  const balanceEntries = Object.entries(walletBalance?.balances ?? {});
-  const assetRows = [
-    ...balanceEntries.map(([assetKey, amount]) => ({
+  const balanceRows = Object.entries(walletBalance?.balances ?? {}).map(([assetKey, amount]) => {
+    const { code, issuer } = parseAssetKey(assetKey);
+    const statsAsset = statsAssets.find((a) => isSameAsset(a, code, issuer));
+
+    return {
       key: assetKey,
-      assetCode: assetKey.split(":")[0],
+      assetCode: code,
+      assetIssuer: issuer,
       balance: amount || "0",
-    })),
-    ...(stats?.assets ?? [])
-      .filter((a) => !balanceEntries.some(([assetKey]) => assetKey.split(":")[0] === a.assetCode))
-      .map((a) => ({ key: a.assetCode, assetCode: a.assetCode, balance: "0" })),
+      success: statsAsset?.success || "0",
+      average: statsAsset?.average || "0",
+    };
+  });
+
+  const assetRows = [
+    ...balanceRows,
+    ...statsAssets
+      .filter((a) => !balanceRows.some((row) => isSameAsset(a, row.assetCode, row.assetIssuer)))
+      .map((a) => ({
+        key: a.assetIssuer ? `${a.assetCode}:${a.assetIssuer}` : a.assetCode,
+        assetCode: a.assetCode,
+        assetIssuer: a.assetIssuer || "native",
+        balance: "0",
+        success: a.success,
+        average: a.average,
+      })),
   ];
 
+  // A failed /statistics fetch has nothing left to draw, so it still replaces the whole card.
+  // A failed BALANCE fetch is different: everything else here — payment rate, recipients,
+  // recipient wallets, total disbursed — comes from /statistics and is still valid, so blanking
+  // the dashboard would lose more than it protects. It is scoped to the balance column below.
+  // What matters either way is that a broken request never renders as "0", which is
+  // indistinguishable from an account that genuinely holds nothing.
   if (error) {
     return (
       <Notification variant="error" title="Error" isFilled={true}>
@@ -72,7 +115,7 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
   // Only block on the first load. On an account switch we keep the previous cards visible
   // (react-query serves cached data while refetching) so the dashboard doesn't blank out —
   // this is what made switching "feel slow" before.
-  if (isLoading) {
+  if (isLoading || isBalanceLoading) {
     return (
       <div className="StatCards StatCards--home">
         <Loader size="2rem" />
@@ -165,24 +208,20 @@ export const DashboardAnalytics = ({ showAverageAmount = true }: DashboardAnalyt
               {assetRows.map((row) => (
                 <div className="StatCards__card--flexCols" key={row.key}>
                   <div>
-                    <AssetAmount amount={row.balance} assetCode={row.assetCode} />
+                    {balanceError ? (
+                      <span className="Note" title={balanceError.message}>
+                        Unavailable
+                      </span>
+                    ) : (
+                      <AssetAmount amount={row.balance} assetCode={row.assetCode} />
+                    )}
                   </div>
                   <div>
-                    <AssetAmount
-                      amount={
-                        stats?.assets.find((a) => a.assetCode === row.assetCode)?.success || "0"
-                      }
-                      assetCode={row.assetCode}
-                    />
+                    <AssetAmount amount={row.success} assetCode={row.assetCode} />
                   </div>
                   {showAverageAmount ? (
                     <div>
-                      <AssetAmount
-                        amount={
-                          stats?.assets.find((a) => a.assetCode === row.assetCode)?.average || "0"
-                        }
-                        assetCode={row.assetCode}
-                      />
+                      <AssetAmount amount={row.average} assetCode={row.assetCode} />
                     </div>
                   ) : null}
                 </div>

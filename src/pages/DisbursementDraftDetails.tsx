@@ -203,6 +203,9 @@ export const DisbursementDraftDetails = () => {
   const updateTotalAmount = (csvFile?: File) => {
     csvTotalAmount({ csvFile })
       .then((summary) => {
+        // The replacement file parsed, so a previous file's error no longer applies.
+        setCsvParseError(undefined);
+
         if (!summary || !draftDetails) return;
 
         setDraftDetails({
@@ -289,7 +292,11 @@ export const DisbursementDraftDetails = () => {
 
     let tooltip;
 
-    if (isCsvFileUpdated) {
+    if (csvParseError) {
+      // Takes precedence: while the file is unreadable neither saving nor confirming is
+      // possible, so pointing the operator at "save as a draft" would be a dead end.
+      tooltip = `The uploaded file could not be read: ${csvParseError}`;
+    } else if (isCsvFileUpdated) {
       tooltip = "Please save your changes as a draft before confirming the disbursement";
     } else if (!canUserSubmit) {
       tooltip =
@@ -305,9 +312,14 @@ export const DisbursementDraftDetails = () => {
         clearDrafts={() => {
           dispatch(resetDisbursementDraftsAction());
         }}
-        isDraftDisabled={!isCsvFileUpdated}
+        // A file that failed to parse is still held in `csvFile` and the totals on screen are
+        // the previous file's, so both writes stay locked until a replacement parses: saving
+        // would upload the unreadable file, confirming would submit against a stale total.
+        isDraftDisabled={!isCsvFileUpdated || Boolean(csvParseError)}
         isSubmitDisabled={
-          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) || futureBalance < 0
+          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) ||
+          futureBalance < 0 ||
+          Boolean(csvParseError)
         }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}

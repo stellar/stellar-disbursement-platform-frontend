@@ -12,6 +12,8 @@ import { ShowForRoles } from "@/components/ShowForRoles";
 import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
+import { parseAssetKey } from "@/helpers/parseAssetKey";
+
 import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
@@ -64,7 +66,7 @@ const WalletBalanceRow = ({
               <AssetAmount
                 key={assetKey}
                 amount={amount || "0"}
-                assetCode={assetKey.split(":")[0]}
+                assetCode={parseAssetKey(assetKey).code}
               />
             ))
           ) : (

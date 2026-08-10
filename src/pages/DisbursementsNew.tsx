@@ -35,6 +35,7 @@ import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
 import { accountColor } from "@/helpers/accountColor";
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
+import { parseAssetKey } from "@/helpers/parseAssetKey";
 
 import { useAllBalances } from "@/hooks/useAllBalances";
 import { useRedux } from "@/hooks/useRedux";
@@ -125,11 +126,15 @@ export const DisbursementsNew = () => {
   const getEffectiveBalances = (): AccountBalanceItem[] | undefined => {
     if (isMultiWallet && selectedWalletId) {
       if (!selectedWalletBalance) return undefined;
-      return Object.entries(selectedWalletBalance.balances).map(([assetKey, amount]) => ({
-        balance: amount || "0",
-        assetCode: assetKey.split(":")[0],
-        assetIssuer: assetKey.split(":")[1] ?? "native",
-      }));
+      return Object.entries(selectedWalletBalance.balances).map(([assetKey, amount]) => {
+        const { code, issuer } = parseAssetKey(assetKey);
+
+        return {
+          balance: amount || "0",
+          assetCode: code,
+          assetIssuer: issuer,
+        };
+      });
     }
     return allBalances;
   };

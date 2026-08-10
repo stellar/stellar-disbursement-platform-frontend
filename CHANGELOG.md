@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Multi-wallet support: manage and operate across multiple distribution accounts from a single dashboard session. [#553](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/553)
+- Multi-wallet support: manage and operate across multiple distribution accounts from a single dashboard session. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
   - Always-visible distribution-account switcher with an accessible picker, per-account color coding, and an active-account bar shown throughout the dashboard.
   - Every page and write path is scoped to the selected distribution account: disbursement creation and the disbursement wizard, the Distribution Accounts page, CSV exports, direct payments, and Home/Analytics balances (including an all-wallet Total Balance tile and a restored Total Disbursed historical metric).
   - Source-account attribution: disbursements and payments are tagged and sent with an explicit `X-Wallet-Id`, with a source-account column and detail rows so it's always clear which distribution account funded a given disbursement.
