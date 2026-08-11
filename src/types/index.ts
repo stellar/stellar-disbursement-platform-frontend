@@ -57,6 +57,9 @@ export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
   newDraftId?: string;
+  // The distribution account newDraftId was created against. Kept alongside the id because the
+  // draft is started later, by which time the account switcher may have moved.
+  newDraftWalletId?: string;
   pagination?: Pagination;
   errorString?: string;
   errorExtras?: AnyObject;
@@ -70,6 +73,8 @@ export type DisbursementsInitialState = {
   pagination?: Pagination;
   errorString?: string;
   searchParams?: DisbursementsSearchParams;
+  // Distribution account the in-flight (last requested) list belongs to ("" === All accounts).
+  walletId?: string;
 };
 
 export type DisbursementDetailsInitialState = {
@@ -211,6 +216,10 @@ export type NewUser = {
   last_name: string;
   role: UserRole;
   email: string;
+  // The distribution account the new user is scoped to. Optional, because there are two cases
+  // with no scoping decision to make: the owner role is tenant-wide (the backend rejects owner
+  // + wallet_id), and a single-account tenant has only one account to land on.
+  wallet_id?: string;
 };
 
 // =============================================================================
@@ -225,7 +234,13 @@ export type DistributionAccountType =
 // =============================================================================
 // Disbursement
 // =============================================================================
-export type DisbursementStatusType = "DRAFT" | "READY" | "STARTED" | "PAUSED" | "COMPLETED";
+export type DisbursementStatusType =
+  | "DRAFT"
+  | "READY"
+  | "STARTED"
+  | "PAUSED"
+  | "COMPLETED"
+  | "CANCELED";
 
 export type DisbursementVerificationField =
   | "DATE_OF_BIRTH"
@@ -275,6 +290,9 @@ export type Disbursement = {
     id: string;
     name: string;
   };
+  // Distribution (sending) account this disbursement is funded from. Optional because rows
+  // created before the multi-wallet migration may not carry it (they used the default account).
+  sourceWalletId?: string;
   verificationField?: string;
   status: DisbursementStatusType;
   fileName?: string;
@@ -366,6 +384,8 @@ export type PaymentDetails = {
   statusHistory: PaymentDetailsStatusHistoryItem[];
   externalPaymentId?: string;
   circleTransferRequestId?: string;
+  // Distribution wallet the funds leave from; empty/absent on pre-migration rows.
+  sourceWalletId?: string;
 };
 
 // =============================================================================
@@ -398,9 +418,11 @@ export type ReceiverWallet = {
   stellarAddress: string;
   stellarAddressMemo?: string;
   provider: string;
-  invitedAt: string;
+  // Absent until the receiver has actually been invited / re-messaged — render a placeholder,
+  // not "now", when these are missing (see ReceiverDetails.tsx).
+  invitedAt?: string;
   createdAt: string;
-  smsLastSentAt: string;
+  smsLastSentAt?: string;
   totalPaymentsCount: number;
   totalAmountReceived: string;
   assetCode?: string;
@@ -475,6 +497,9 @@ export type HomeStatistics = {
   individualsTotalCount: number;
   assets: {
     assetCode: string;
+    // Optional until the backend ships `asset_issuer` on /statistics. Consumers must keep
+    // working (matching on code alone) while it is undefined.
+    assetIssuer?: string;
     success: string;
     average: string;
   }[];
@@ -652,6 +677,8 @@ export type ApiDisbursement = {
   total_amount: string;
   average_amount: string;
   file_name?: string;
+  // Distribution wallet the funds leave from; empty/absent on pre-migration rows.
+  source_wallet_id?: string;
 };
 
 export type ApiPaymentStatusHistory = {
@@ -707,6 +734,8 @@ export type ApiPayment = {
   updated_at: string;
   external_payment_id?: string;
   circle_transfer_request_id?: string;
+  // Distribution wallet the funds leave from; empty/absent on pre-migration rows.
+  source_wallet_id?: string;
 };
 
 export type ApiPayments = {
@@ -716,6 +745,9 @@ export type ApiPayments = {
 
 export type ApiStatisticsAsset = {
   asset_code: string;
+  // Added alongside asset_code so two assets sharing a code can be told apart. Optional
+  // because older backends don't return it.
+  asset_issuer?: string;
   payment_amounts: {
     canceled: number;
     draft: number;
@@ -801,8 +833,10 @@ export type ApiReceiverWallet = {
   status: ReceiverStatus;
   created_at: string;
   updated_at: string;
-  invited_at: string;
-  last_sms_sent: string;
+  // Both are absent (omitempty) until the corresponding event has actually happened — never
+  // assume "now" for a missing value here (see formatReceiver.ts / ReceiverDetails.tsx).
+  invited_at?: string;
+  last_message_sent_at?: string;
   total_payments: string | number;
   payments_received: string | number;
   failed_payments: string | number;

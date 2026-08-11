@@ -22,7 +22,7 @@ export const formatReceiver = (receiver: ApiReceiver): ReceiverDetails => ({
     provider: w.wallet.name,
     invitedAt: w.invited_at,
     createdAt: w.created_at,
-    smsLastSentAt: w.last_sms_sent,
+    smsLastSentAt: w.last_message_sent_at,
     totalPaymentsCount: Number(w.payments_received),
     // TODO: how to handle multiple
     assetCode: w.received_amounts?.[0]?.asset_code,

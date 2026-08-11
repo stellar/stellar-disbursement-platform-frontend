@@ -19,6 +19,7 @@ import { useCreateReceiver } from "@/apiQueries/useCreateReceiver";
 import { useReceivers } from "@/apiQueries/useReceivers";
 import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
 import { number } from "@/helpers/formatIntlNumber";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 import {
   CommonFilters,
   CreateReceiverRequest,
@@ -46,17 +47,23 @@ export const Receivers = () => {
 
   const queryClient = useQueryClient();
 
+  // The active account comes from the global ActiveWalletBar (shared context).
+  const { selectedWalletId } = useSelectedWallet();
+
   const {
     data: receivers,
     error,
     isLoading,
     isFetching,
-  } = useReceivers({
-    page: currentPage.toString(),
-    page_limit: pageLimit.toString(),
-    ...queryFilters,
-    ...searchQuery,
-  });
+  } = useReceivers(
+    {
+      page: currentPage.toString(),
+      page_limit: pageLimit.toString(),
+      ...queryFilters,
+      ...searchQuery,
+    },
+    selectedWalletId,
+  );
 
   const {
     mutateAsync: createReceiver,
@@ -119,6 +126,7 @@ export const Receivers = () => {
       exportDataAction({
         exportType: "receivers",
         searchParams: filters,
+        walletId: selectedWalletId,
       }),
     );
   };

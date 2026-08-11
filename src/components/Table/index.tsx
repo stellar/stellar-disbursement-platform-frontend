@@ -4,7 +4,8 @@ import { SortDirection } from "@/types";
 import "./styles.scss";
 
 interface HeaderProps {
-  children: React.ReactElement | React.ReactElement[];
+  // ReactNode so callers can render conditional cells ({cond ? <HeaderCell/> : null}).
+  children: React.ReactNode;
 }
 
 const Header: React.FC<HeaderProps> = ({ children }: HeaderProps) => {
@@ -37,13 +38,12 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
     throw Error("onSort method is required for sorting");
   }
 
-  const SortIconEl = () =>
-    sortDirection ? (
-      <span className="Table-v2__header__cell__sortIcon">
-        <Icon.ChevronUp />
-        <Icon.ChevronDown />
-      </span>
-    ) : null;
+  const sortIconEl = sortDirection ? (
+    <span className="Table-v2__header__cell__sortIcon">
+      <Icon.ChevronUp />
+      <Icon.ChevronDown />
+    </span>
+  ) : null;
 
   const sortButtonProps = sortDirection
     ? {
@@ -63,7 +63,7 @@ const HeaderCell: React.FC<HeaderCellProps> = ({
     >
       {elementLeft || sortDirection ? (
         <span className="Table-v2__header__cell" {...sortButtonProps}>
-          {elementLeft ?? null} {children} <SortIconEl />
+          {elementLeft ?? null} {children} {sortIconEl}
         </span>
       ) : (
         children
@@ -81,7 +81,8 @@ const Body: React.FC<BodyProps> = ({ children }: BodyProps) => {
 };
 
 interface BodyRowProps {
-  children: React.ReactElement | React.ReactElement[];
+  // ReactNode so callers can render conditional cells ({cond ? <BodyCell/> : null}).
+  children: React.ReactNode;
   isHighlighted?: boolean;
 }
 

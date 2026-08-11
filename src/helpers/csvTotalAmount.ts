@@ -6,10 +6,16 @@ type CSVTotalAmountProps = {
   columnName?: string;
 };
 
+export type CsvSummary = {
+  totalAmount: BigNumber;
+  // Number of data rows (payments) in the file, excluding the header.
+  rowCount: number;
+};
+
 export const csvTotalAmount = ({
   csvFile,
   columnName = "amount",
-}: CSVTotalAmountProps): Promise<BigNumber | null> => {
+}: CSVTotalAmountProps): Promise<CsvSummary | null> => {
   if (!csvFile) return Promise.resolve(null);
 
   return new Promise((resolve, reject) => {
@@ -25,7 +31,7 @@ export const csvTotalAmount = ({
 
           const data = result.data as Record<string, string>[];
           if (data.length === 0) {
-            resolve(new BigNumber(0));
+            resolve({ totalAmount: new BigNumber(0), rowCount: 0 });
             return;
           }
 
@@ -52,7 +58,7 @@ export const csvTotalAmount = ({
             }
           }
 
-          resolve(totalAmount);
+          resolve({ totalAmount, rowCount: data.length });
         } catch (error) {
           reject(error);
         }

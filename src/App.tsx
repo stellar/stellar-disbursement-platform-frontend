@@ -48,6 +48,8 @@ import { WalletProvidersNew } from "@/pages/WalletProvidersNew";
 
 import { Routes } from "@/constants/settings";
 
+import { SelectedWalletProvider } from "@/hooks/useSelectedWallet";
+
 import GitInfo from "@/generated/gitInfo";
 import { store } from "@/store";
 import "@/styles/styles.scss";
@@ -83,364 +85,366 @@ export const App = () => {
       <SessionTokenRefresher />
       <QueryClientProvider client={queryClient}>
         <UserSession />
-        <BrowserRouter>
-          <GlobalBanner />
-          <RouterRoutes>
-            {/* Sign in */}
-            <Route
-              path="/"
-              element={
-                <InnerPage isCardLayout>
-                  <SignIn />
-                </InnerPage>
-              }
-            />
-            {/* Forgot password */}
-            <Route
-              path={Routes.FORGOT_PASSWORD}
-              element={
-                <InnerPage isCardLayout>
-                  <ForgotPassword />
-                </InnerPage>
-              }
-            />
-            {/* Reset password */}
-            <Route
-              path={Routes.RESET_PASSWORD}
-              element={
-                <InnerPage isCardLayout>
-                  <ResetPassword />
-                </InnerPage>
-              }
-            />
-            {/* Reset password (authenticated user) */}
-            <Route
-              path={Routes.SET_NEW_PASSWORD}
-              element={
-                <InnerPage isCardLayout>
-                  <SetNewPassword />
-                </InnerPage>
-              }
-            />
-            {/* 2FA Verification */}
-            <Route
-              path={Routes.MFA}
-              element={
-                <InnerPage isCardLayout>
-                  <MFAuth />
-                </InnerPage>
-              }
-            />
-            {/* Home */}
-            <Route
-              path={Routes.HOME}
-              element={
-                <PrivateRoute>
-                  <InnerPage>
-                    <Home />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Disbursements */}
-            <Route
-              path={Routes.DISBURSEMENTS}
-              element={
-                <PrivateRoute
-                  acceptedRoles={[
-                    "owner",
-                    "financial_controller",
-                    "business",
-                    "initiator",
-                    "approver",
-                  ]}
-                >
-                  <InnerPage>
-                    <Disbursements />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`${Routes.DISBURSEMENTS}/:id`}
-              element={
-                <PrivateRoute
-                  acceptedRoles={[
-                    "owner",
-                    "financial_controller",
-                    "business",
-                    "initiator",
-                    "approver",
-                  ]}
-                >
-                  <InnerPage>
-                    <DisbursementDetails />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={Routes.DISBURSEMENT_NEW}
-              element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller", "initiator"]}>
-                  <InnerPage isNarrow>
-                    <DisbursementsNew />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={Routes.DISBURSEMENT_DRAFTS}
-              element={
-                <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
-                >
-                  <InnerPage isNarrow>
-                    <DisbursementsDrafts />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`${Routes.DISBURSEMENT_DRAFTS}/:id`}
-              element={
-                <PrivateRoute
-                  acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
-                >
-                  <InnerPage isNarrow>
-                    <DisbursementDraftDetails />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Receivers */}
-            <Route
-              path={Routes.RECEIVERS}
-              element={
-                <PrivateRoute
-                  acceptedRoles={[
-                    "owner",
-                    "financial_controller",
-                    "business",
-                    "initiator",
-                    "approver",
-                  ]}
-                >
-                  <InnerPage>
-                    <Receivers />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`${Routes.RECEIVERS}/:id`}
-              element={
-                <PrivateRoute
-                  acceptedRoles={[
-                    "owner",
-                    "financial_controller",
-                    "business",
-                    "initiator",
-                    "approver",
-                  ]}
-                >
-                  <InnerPage>
-                    <ReceiverDetails />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`${Routes.RECEIVERS_EDIT}/:id`}
-              element={
-                <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
-                  <InnerPage isNarrow>
-                    <ReceiverDetailsEdit />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Payments */}
-            <Route
-              path={`${Routes.PAYMENTS}/:id`}
-              element={
-                <PrivateRoute
-                  acceptedRoles={[
-                    "owner",
-                    "financial_controller",
-                    "business",
-                    "initiator",
-                    "approver",
-                  ]}
-                >
-                  <InnerPage>
-                    <PaymentDetails />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={Routes.PAYMENTS}
-              element={
-                <PrivateRoute
-                  acceptedRoles={[
-                    "owner",
-                    "financial_controller",
-                    "business",
-                    "initiator",
-                    "approver",
-                  ]}
-                >
-                  <InnerPage>
-                    <Payments />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Distribution Account */}
-            <Route
-              path={Routes.DISTRIBUTION_ACCOUNT}
-              element={
-                <PrivateRoute>
-                  <InnerPage>
-                    <DistributionAccount />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Wallet Providers */}
-            <Route
-              path={Routes.WALLET_PROVIDERS}
-              element={
-                <PrivateRoute>
-                  <InnerPage isNarrow>
-                    <WalletProviders />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path={`${Routes.WALLET_PROVIDERS_NEW}/:walletId?`}
-              element={
-                <PrivateRoute acceptedRoles={["owner", "developer"]}>
-                  <InnerPage isNarrow>
-                    <WalletProvidersNew />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Analytics */}
-            <Route
-              path={Routes.ANALYTICS}
-              element={
-                <PrivateRoute>
-                  <InnerPage>
-                    <Analytics />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Api Keys */}
-            <Route
-              path={Routes.API_KEYS}
-              element={
-                <PrivateRoute acceptedRoles={["owner", "developer"]}>
-                  <InnerPage>
-                    <ApiKeys />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Api Key Details */}
-            <Route
-              path={`${Routes.API_KEYS}/:id`}
-              element={
-                <PrivateRoute acceptedRoles={["owner", "developer"]}>
-                  <InnerPage>
-                    <ApiKeyDetails />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Profile */}
-            <Route
-              path={Routes.PROFILE}
-              element={
-                <PrivateRoute>
-                  <InnerPage isNarrow>
-                    <Profile />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Settings */}
-            <Route
-              path={Routes.SETTINGS}
-              element={
-                <PrivateRoute acceptedRoles={["owner"]}>
-                  <InnerPage isNarrow>
-                    <Settings />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Help */}
-            <Route
-              path={Routes.HELP}
-              element={
-                <PrivateRoute>
-                  <InnerPage isNarrow>
-                    <Help />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* Unauthorized */}
-            <Route
-              path={Routes.UNAUTHORIZED}
-              element={
-                <PrivateRoute>
-                  <InnerPage>
-                    <Unauthorized />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            {/* 404 */}
-            <Route
-              path="*"
-              element={
-                <PrivateRoute>
-                  <InnerPage>
-                    <NotFound />
-                  </InnerPage>
-                </PrivateRoute>
-              }
-            />
-            <Route path="/signin-oidc" element={<SigninOidc />} />
-            {/* Embedded Wallet Routes */}
-            <Route element={<WalletLayout />}>
+        <SelectedWalletProvider>
+          <BrowserRouter>
+            <GlobalBanner />
+            <RouterRoutes>
+              {/* Sign in */}
               <Route
-                path={Routes.WALLET}
+                path="/"
                 element={
                   <InnerPage isCardLayout>
-                    <EmbeddedWallet />
+                    <SignIn />
                   </InnerPage>
                 }
               />
+              {/* Forgot password */}
               <Route
-                path={Routes.WALLET_HOME}
+                path={Routes.FORGOT_PASSWORD}
                 element={
-                  <WalletPrivateRoute>
-                    <InnerPage isCardLayout>
-                      <EmbeddedWalletHome />
-                    </InnerPage>
-                  </WalletPrivateRoute>
+                  <InnerPage isCardLayout>
+                    <ForgotPassword />
+                  </InnerPage>
                 }
               />
-            </Route>
-          </RouterRoutes>
-        </BrowserRouter>
+              {/* Reset password */}
+              <Route
+                path={Routes.RESET_PASSWORD}
+                element={
+                  <InnerPage isCardLayout>
+                    <ResetPassword />
+                  </InnerPage>
+                }
+              />
+              {/* Reset password (authenticated user) */}
+              <Route
+                path={Routes.SET_NEW_PASSWORD}
+                element={
+                  <InnerPage isCardLayout>
+                    <SetNewPassword />
+                  </InnerPage>
+                }
+              />
+              {/* 2FA Verification */}
+              <Route
+                path={Routes.MFA}
+                element={
+                  <InnerPage isCardLayout>
+                    <MFAuth />
+                  </InnerPage>
+                }
+              />
+              {/* Home */}
+              <Route
+                path={Routes.HOME}
+                element={
+                  <PrivateRoute>
+                    <InnerPage>
+                      <Home />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Disbursements */}
+              <Route
+                path={Routes.DISBURSEMENTS}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={[
+                      "owner",
+                      "financial_controller",
+                      "business",
+                      "initiator",
+                      "approver",
+                    ]}
+                  >
+                    <InnerPage>
+                      <Disbursements />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`${Routes.DISBURSEMENTS}/:id`}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={[
+                      "owner",
+                      "financial_controller",
+                      "business",
+                      "initiator",
+                      "approver",
+                    ]}
+                  >
+                    <InnerPage>
+                      <DisbursementDetails />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={Routes.DISBURSEMENT_NEW}
+                element={
+                  <PrivateRoute acceptedRoles={["owner", "financial_controller", "initiator"]}>
+                    <InnerPage isNarrow>
+                      <DisbursementsNew />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={Routes.DISBURSEMENT_DRAFTS}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
+                  >
+                    <InnerPage isNarrow>
+                      <DisbursementsDrafts />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`${Routes.DISBURSEMENT_DRAFTS}/:id`}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={["owner", "financial_controller", "initiator", "approver"]}
+                  >
+                    <InnerPage isNarrow>
+                      <DisbursementDraftDetails />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Receivers */}
+              <Route
+                path={Routes.RECEIVERS}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={[
+                      "owner",
+                      "financial_controller",
+                      "business",
+                      "initiator",
+                      "approver",
+                    ]}
+                  >
+                    <InnerPage>
+                      <Receivers />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`${Routes.RECEIVERS}/:id`}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={[
+                      "owner",
+                      "financial_controller",
+                      "business",
+                      "initiator",
+                      "approver",
+                    ]}
+                  >
+                    <InnerPage>
+                      <ReceiverDetails />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`${Routes.RECEIVERS_EDIT}/:id`}
+                element={
+                  <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
+                    <InnerPage isNarrow>
+                      <ReceiverDetailsEdit />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Payments */}
+              <Route
+                path={`${Routes.PAYMENTS}/:id`}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={[
+                      "owner",
+                      "financial_controller",
+                      "business",
+                      "initiator",
+                      "approver",
+                    ]}
+                  >
+                    <InnerPage>
+                      <PaymentDetails />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={Routes.PAYMENTS}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={[
+                      "owner",
+                      "financial_controller",
+                      "business",
+                      "initiator",
+                      "approver",
+                    ]}
+                  >
+                    <InnerPage>
+                      <Payments />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Distribution Account */}
+              <Route
+                path={Routes.DISTRIBUTION_ACCOUNT}
+                element={
+                  <PrivateRoute>
+                    <InnerPage>
+                      <DistributionAccount />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Wallet Providers */}
+              <Route
+                path={Routes.WALLET_PROVIDERS}
+                element={
+                  <PrivateRoute>
+                    <InnerPage isNarrow>
+                      <WalletProviders />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={`${Routes.WALLET_PROVIDERS_NEW}/:walletId?`}
+                element={
+                  <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                    <InnerPage isNarrow>
+                      <WalletProvidersNew />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Analytics */}
+              <Route
+                path={Routes.ANALYTICS}
+                element={
+                  <PrivateRoute>
+                    <InnerPage>
+                      <Analytics />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Api Keys */}
+              <Route
+                path={Routes.API_KEYS}
+                element={
+                  <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                    <InnerPage>
+                      <ApiKeys />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Api Key Details */}
+              <Route
+                path={`${Routes.API_KEYS}/:id`}
+                element={
+                  <PrivateRoute acceptedRoles={["owner", "developer"]}>
+                    <InnerPage>
+                      <ApiKeyDetails />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Profile */}
+              <Route
+                path={Routes.PROFILE}
+                element={
+                  <PrivateRoute>
+                    <InnerPage isNarrow>
+                      <Profile />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Settings */}
+              <Route
+                path={Routes.SETTINGS}
+                element={
+                  <PrivateRoute acceptedRoles={["owner"]}>
+                    <InnerPage isNarrow>
+                      <Settings />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Help */}
+              <Route
+                path={Routes.HELP}
+                element={
+                  <PrivateRoute>
+                    <InnerPage isNarrow>
+                      <Help />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Unauthorized */}
+              <Route
+                path={Routes.UNAUTHORIZED}
+                element={
+                  <PrivateRoute>
+                    <InnerPage>
+                      <Unauthorized />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* 404 */}
+              <Route
+                path="*"
+                element={
+                  <PrivateRoute>
+                    <InnerPage>
+                      <NotFound />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/signin-oidc" element={<SigninOidc />} />
+              {/* Embedded Wallet Routes */}
+              <Route element={<WalletLayout />}>
+                <Route
+                  path={Routes.WALLET}
+                  element={
+                    <InnerPage isCardLayout>
+                      <EmbeddedWallet />
+                    </InnerPage>
+                  }
+                />
+                <Route
+                  path={Routes.WALLET_HOME}
+                  element={
+                    <WalletPrivateRoute>
+                      <InnerPage isCardLayout>
+                        <EmbeddedWalletHome />
+                      </InnerPage>
+                    </WalletPrivateRoute>
+                  }
+                />
+              </Route>
+            </RouterRoutes>
+          </BrowserRouter>
+        </SelectedWalletProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </Provider>

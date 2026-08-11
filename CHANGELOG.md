@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Add multi-wallet support, with an always-visible distribution-account switcher, per-account color coding, and an active-account bar throughout the dashboard. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+- Scope every page and write path to the selected distribution account, including the disbursement wizard, CSV exports, direct payments, and Home/Analytics balances. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+- Show which distribution account funded a disbursement or payment, with a source-account column and detail rows. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+- Add a Total Balance tile aggregating every distribution account, and restore the Total Disbursed historical metric. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+- Let owners add, archive, and manage member access on distribution accounts without platform-operator intervention. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+
+### Changed
+
+- Warn of the email-lockout risk before enabling MFA. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+- Add empty states to the disbursement, payment, and receiver tables. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+
+### Fixed
+
+- Surface `fetchApi` errors with operator-facing messages instead of failing silently. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+- Fail loudly on session expiry instead of rendering a blank page. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+- Fix receiver invitation timestamps showing "now" instead of the actual time. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+
 ## [6.6.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.5.0...6.6.0))
 
 ### Added

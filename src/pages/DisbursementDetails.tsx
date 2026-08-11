@@ -1,5 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+
 import {
   Button,
   Card,
@@ -10,39 +13,46 @@ import {
   Link,
   Modal,
 } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/store";
+import { AssetAmount } from "@/components/AssetAmount";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CopyWithIcon } from "@/components/CopyWithIcon";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { Pagination } from "@/components/Pagination";
+import { PaymentStatus } from "@/components/PaymentStatus";
+import { SectionHeader } from "@/components/SectionHeader";
+import { SourceAccountDetailItem } from "@/components/SourceAccount";
+import { Table } from "@/components/Table";
+
 import {
+  cancelDisbursementAction,
   getDisbursementDetailsAction,
   getDisbursementReceiversAction,
   pauseOrStartDisbursementAction,
+  resetDisbursementDetailsAction,
   setDisbursementDetailsAction,
 } from "@/store/ducks/disbursementDetails";
-import { useRedux } from "@/hooks/useRedux";
-import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
 import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
 
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SectionHeader } from "@/components/SectionHeader";
-import { CopyWithIcon } from "@/components/CopyWithIcon";
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
-import { AssetAmount } from "@/components/AssetAmount";
-import { Pagination } from "@/components/Pagination";
-import { Table } from "@/components/Table";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { PaymentStatus } from "@/components/PaymentStatus";
-
-import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
 import { number } from "@/helpers/formatIntlNumber";
 import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
-import { saveFile } from "@/helpers/saveFile";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
 } from "@/helpers/receiverContactInfo";
+import { renderNumberOrDash } from "@/helpers/renderNumberOrDash";
+import { saveFile } from "@/helpers/saveFile";
+
+import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import { VerificationFieldMap } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 export const DisbursementDetails = () => {
   const { id: disbursementId } = useParams();
@@ -52,9 +62,14 @@ export const DisbursementDetails = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(20);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Active distribution account (the global ActiveWalletBar stays usable on this page).
+  const { selectedWalletId, hasChosenWallet } = useSelectedWallet();
+
   const { isLoading: csvDownloadIsLoading, getFile } = useDownloadCsvFile((file: File) => {
     saveFile({
       file,
@@ -66,6 +81,11 @@ export const DisbursementDetails = () => {
 
   const maxPages = disbursementDetails.details.receivers?.pagination?.pages || 1;
   const isPaused = disbursementDetails.details.status === "PAUSED";
+  // A disbursement can only be canceled before it's ever started - DRAFT/READY. Once STARTED,
+  // real on-chain submissions may already be in flight, so Pause is the correct action instead.
+  const isCancelable =
+    disbursementDetails.details.status === "DRAFT" ||
+    disbursementDetails.details.status === "READY";
 
   const saveDisbursementDetails = useCallback(() => {
     if (fetchedDisbursement) {
@@ -80,6 +100,32 @@ export const DisbursementDetails = () => {
       );
     }
   }, [dispatch, fetchedDisbursement]);
+
+  // Null until the bar commits a selection: on a fresh login it bootstraps "" to the default
+  // account after mount, and that first assignment is not the user switching accounts.
+  const activeWalletRef = useRef<string | null>(null);
+
+  // Everything on this page belongs to one account, and Cancel/Pause act on it. Leaving it on
+  // screen after a switch would let an operator cancel account A's disbursement while the bar
+  // reads B, so drop the account-bound state and go back to the list.
+  useEffect(() => {
+    if (!hasChosenWallet) {
+      return;
+    }
+
+    if (activeWalletRef.current === null) {
+      activeWalletRef.current = selectedWalletId;
+      return;
+    }
+
+    if (activeWalletRef.current === selectedWalletId) {
+      return;
+    }
+
+    activeWalletRef.current = selectedWalletId;
+    dispatch(resetDisbursementDetailsAction());
+    navigate(Routes.DISBURSEMENTS);
+  }, [dispatch, hasChosenWallet, navigate, selectedWalletId]);
 
   useEffect(() => {
     if (fetchedDisbursement?.id) {
@@ -143,6 +189,22 @@ export const DisbursementDetails = () => {
     setIsModalVisible(false);
   };
 
+  const showCancelModal = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    setIsCancelModalVisible(true);
+  };
+
+  const hideCancelModal = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event?.preventDefault();
+    setIsCancelModalVisible(false);
+  };
+
+  const handleCancelDisbursement = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault();
+    dispatch(cancelDisbursementAction());
+    setIsCancelModalVisible(false);
+  };
+
   const renderStatCards = () => {
     return (
       <div className="StatCards StatCards--disbursementDetails">
@@ -186,6 +248,8 @@ export const DisbursementDetails = () => {
               </div>
             </div>
 
+            <SourceAccountDetailItem sourceWalletId={disbursementDetails.details.sourceWalletId} />
+
             <div className="StatCards__card__item">
               <label className="StatCards__card__item__label">Created by</label>
               <div className="StatCards__card__item__value">
@@ -208,9 +272,7 @@ export const DisbursementDetails = () => {
           >
             <div className="StatCards__card__column">
               <div className="StatCards__card__item StatCards__card__item--inline">
-                <label className="StatCards__card__item__label">
-                  Receivers invitation was sent to
-                </label>
+                <label className="StatCards__card__item__label">Receivers invited</label>
                 <div className="StatCards__card__item__value">
                   {renderNumberOrDash(disbursementDetails.details.stats?.paymentsTotalCount)}
                 </div>
@@ -394,6 +456,15 @@ export const DisbursementDetails = () => {
           </div>
         ) : null}
 
+        {disbursementDetails.details.status === "CANCELED" ? (
+          <div className="SectionBlock">
+            <Notification variant="error" title="Disbursement canceled" isFilled={true}>
+              This disbursement was canceled before it started. Its reserved balance was released
+              and this cannot be undone.
+            </Notification>
+          </div>
+        ) : null}
+
         <SectionHeader>
           <SectionHeader.Row>
             <SectionHeader.Content>
@@ -405,7 +476,17 @@ export const DisbursementDetails = () => {
             </SectionHeader.Content>
 
             <SectionHeader.Content align="right">
-              {isPaused ? (
+              {isCancelable ? (
+                <Button
+                  variant="error"
+                  size="md"
+                  icon={<Icon.SlashCircle01 />}
+                  onClick={showCancelModal}
+                  isLoading={disbursementDetails.status === "PENDING"}
+                >
+                  Cancel
+                </Button>
+              ) : isPaused ? (
                 <Button
                   variant="success"
                   size="md"
@@ -562,6 +643,35 @@ export const DisbursementDetails = () => {
             </Modal.Footer>
           </>
         )}
+      </Modal>
+
+      <Modal visible={isCancelModalVisible} onClose={hideCancelModal}>
+        <Modal.Heading>Cancel disbursement permanently?</Modal.Heading>
+        <Modal.Body>
+          <div>
+            Canceling this disbursement releases the balance reserved for its remaining payments
+            back to the distribution account. This cannot be undone - the disbursement and its
+            payments will stay visible as canceled, but no funds will be sent for them.
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            size="md"
+            variant="tertiary"
+            onClick={hideCancelModal}
+            isLoading={disbursementDetails.status === "PENDING"}
+          >
+            Not now
+          </Button>
+          <Button
+            size="md"
+            variant="error"
+            onClick={handleCancelDisbursement}
+            isLoading={disbursementDetails.status === "PENDING"}
+          >
+            Cancel disbursement
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

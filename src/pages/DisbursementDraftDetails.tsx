@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Badge, Heading, Link, Button, Icon, Modal } from "@stellar/design-system";
+import { Badge, Heading, Link, Button, Icon, Modal, Notification } from "@stellar/design-system";
 
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DisbursementButtons } from "@/components/DisbursementButtons";
@@ -59,6 +59,7 @@ export const DisbursementDraftDetails = () => {
   const [csvFile, setCsvFile] = useState<File>();
   const [isCsvFileUpdated, setIsCsvFileUpdated] = useState(false);
   const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
+  const [csvParseError, setCsvParseError] = useState<string | undefined>();
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("preview");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
@@ -174,6 +175,7 @@ export const DisbursementDraftDetails = () => {
     setCurrentStep("edit");
     setDraftDetails(undefined);
     setCsvFile(undefined);
+    setCsvParseError(undefined);
     setIsCsvFileUpdated(false);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
@@ -191,6 +193,7 @@ export const DisbursementDraftDetails = () => {
     if (apiError) {
       dispatch(clearDisbursementDraftsErrorAction());
     }
+    setCsvParseError(undefined);
     updateTotalAmount(file);
     setCsvFile(file);
     setIsCsvFileUpdated(true);
@@ -198,20 +201,28 @@ export const DisbursementDraftDetails = () => {
   };
 
   const updateTotalAmount = (csvFile?: File) => {
-    csvTotalAmount({ csvFile }).then((totalAmount) => {
-      if (!totalAmount || !draftDetails) return;
+    csvTotalAmount({ csvFile })
+      .then((summary) => {
+        // The replacement file parsed, so a previous file's error no longer applies.
+        setCsvParseError(undefined);
 
-      setDraftDetails({
-        ...draftDetails,
-        details: {
-          ...draftDetails.details,
-          stats: {
-            ...draftDetails.details.stats!,
-            totalAmount: totalAmount.toString(),
+        if (!summary || !draftDetails) return;
+
+        setDraftDetails({
+          ...draftDetails,
+          details: {
+            ...draftDetails.details,
+            stats: {
+              ...draftDetails.details.stats!,
+              totalAmount: summary.totalAmount.toString(),
+            },
           },
-        },
+        });
+      })
+      // A file that fails to parse must be a visible error, not a silently stale total.
+      .catch((e: Error) => {
+        setCsvParseError(e.message);
       });
-    });
   };
 
   const handleGoBackToDrafts = () => {
@@ -281,7 +292,11 @@ export const DisbursementDraftDetails = () => {
 
     let tooltip;
 
-    if (isCsvFileUpdated) {
+    if (csvParseError) {
+      // Takes precedence: while the file is unreadable neither saving nor confirming is
+      // possible, so pointing the operator at "save as a draft" would be a dead end.
+      tooltip = `The uploaded file could not be read: ${csvParseError}`;
+    } else if (isCsvFileUpdated) {
       tooltip = "Please save your changes as a draft before confirming the disbursement";
     } else if (!canUserSubmit) {
       tooltip =
@@ -297,9 +312,14 @@ export const DisbursementDraftDetails = () => {
         clearDrafts={() => {
           dispatch(resetDisbursementDraftsAction());
         }}
-        isDraftDisabled={!isCsvFileUpdated}
+        // A file that failed to parse is still held in `csvFile` and the totals on screen are
+        // the previous file's, so both writes stay locked until a replacement parses: saving
+        // would upload the unreadable file, confirming would submit against a stale total.
+        isDraftDisabled={!isCsvFileUpdated || Boolean(csvParseError)}
         isSubmitDisabled={
-          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) || futureBalance < 0
+          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) ||
+          futureBalance < 0 ||
+          Boolean(csvParseError)
         }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
@@ -408,6 +428,12 @@ export const DisbursementDraftDetails = () => {
             registrationContactType={draftDetails?.details.registrationContactType}
             verificationField={draftDetails?.details.verificationField}
           />
+
+          {csvParseError ? (
+            <Notification variant="error" title="This file can't be used" isFilled>
+              {csvParseError} — fix the file and upload it again.
+            </Notification>
+          ) : null}
 
           {renderButtons("preview")}
         </form>

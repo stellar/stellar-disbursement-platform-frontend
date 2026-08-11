@@ -14,6 +14,7 @@ export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
     assetCode: payment.asset.code,
     externalPaymentId: payment?.external_payment_id,
     circleTransferRequestId: payment?.circle_transfer_request_id,
+    sourceWalletId: payment.source_wallet_id,
     status: payment.status,
     statusHistory: payment?.status_history
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())

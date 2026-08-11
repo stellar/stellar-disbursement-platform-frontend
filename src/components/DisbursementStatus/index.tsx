@@ -13,6 +13,8 @@ export const DisbursementStatus = ({ status }: { status: DisbursementStatusType 
       return <span className="DisbursementStatus DisbursementStatus--disabled">Paused</span>;
     case "COMPLETED":
       return <span className="DisbursementStatus DisbursementStatus--success">Completed</span>;
+    case "CANCELED":
+      return <span className="DisbursementStatus DisbursementStatus--disabled">Canceled</span>;
     default:
       return null;
   }
