@@ -311,14 +311,16 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
               </div>
             ) : null}
 
+            {/* Deliberately one line, not a Notification: the roles below are what the operator
+                came for, and a full error block pushes them past the modal's fold. Granting still
+                works — it just goes out unannotated. */}
             {selectedUser && capabilitiesError ? (
-              <Notification variant="warning" title="Could not check what each role would grant">
-                <ErrorWithExtras appError={capabilitiesError} />
-              </Notification>
+              <div className="Note" style={{ marginBottom: "0.5rem" }}>
+                Could not check what each role would grant — you can still grant, but the outcomes
+                below are unavailable.
+              </div>
             ) : null}
 
-            {/* Every role yields the same thing for this grantee: the picker is decorative, and
-                saying so once beats five identical annotations. */}
             {WALLET_SCOPED_ROLES.map((r) => {
               const annotation = roleOutcomes.find((outcome) => outcome.role === r)?.text ?? null;
 
