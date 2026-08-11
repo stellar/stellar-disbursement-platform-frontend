@@ -89,6 +89,10 @@ export const Home = () => {
         <WalletBalancesOverview />
       </div>
 
+      {/* The distribution-accounts card is a bordered surface, so the following section header
+          sat flush against its edge without this. */}
+      <div style={{ marginTop: "2rem" }} />
+
       <ShowForRoles
         acceptedRoles={["business", "financial_controller", "owner", "initiator", "approver"]}
       >

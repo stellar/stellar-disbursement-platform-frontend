@@ -66,7 +66,6 @@ const capabilitiesText = (capabilities: WalletCapabilities) => {
 };
 
 // The outcome lines above stand alone, so they start capitalised; this splices one mid-sentence.
-const lowerFirst = (text: string) => `${text.charAt(0).toLowerCase()}${text.slice(1)}`;
 
 interface ManageWalletAccessModalProps {
   visible: boolean;
@@ -124,14 +123,6 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
     [users],
   );
 
-  // Owners are withheld from the picker rather than allowed and rejected on submit: an owner
-  // short-circuits both gates, so the row would confer nothing and the backend 400s it. Counting
-  // them lets the UI say why the list is shorter than the team.
-  const hiddenOwnerCount = useMemo(
-    () => (users ?? []).filter((u) => u.is_active && (u.roles ?? []).includes("owner")).length,
-    [users],
-  );
-
   const selectedUser = useMemo(
     () => grantableUsers.find((u) => u.id === userId) ?? null,
     [grantableUsers, userId],
@@ -156,17 +147,6 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
       })),
     [byRole],
   );
-
-  // For some grantees every role produces an identical answer — a global developer fails the
-  // tenant-wide write gate before any membership is consulted, so the five options differ only in
-  // what gets stored. Say that once rather than repeating one annotation five times.
-  const uniformOutcome = useMemo(() => {
-    if (roleOutcomes.length === 0 || roleOutcomes.some((outcome) => outcome.text === null)) {
-      return null;
-    }
-    const [first, ...rest] = roleOutcomes;
-    return rest.every((outcome) => outcome.text === first.text) ? first.text : null;
-  }, [roleOutcomes]);
 
   const handleGrant = (event: React.FormEvent) => {
     event.preventDefault();
@@ -225,9 +205,20 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                   <div className="Note">{userRoleText(m.role)}</div>
                 </div>
                 {confirmingId === m.id ? (
-                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                  // Wraps and the buttons never shrink: in a narrow modal the old single
+                  // non-wrapping line squeezed them until the destructive label overflowed.
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.5rem",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      justifyContent: "flex-end",
+                    }}
+                  >
                     <span className="Note">Remove this member's access?</span>
                     <Button
+                      style={{ flexShrink: 0, whiteSpace: "nowrap" }}
                       size="sm"
                       variant="tertiary"
                       onClick={() => setConfirmingId(null)}
@@ -236,6 +227,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                       Cancel
                     </Button>
                     <Button
+                      style={{ flexShrink: 0, whiteSpace: "nowrap" }}
                       size="sm"
                       variant="destructive"
                       onClick={() => {
@@ -298,12 +290,6 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
             ))}
           </Select>
 
-          {hiddenOwnerCount > 0 ? (
-            <div className="Note" style={{ marginTop: "0.5rem" }}>
-              {`${hiddenOwnerCount === 1 ? "1 owner is" : `${hiddenOwnerCount} owners are`} not listed. An owner already acts on every account, so a membership for one would change nothing.`}
-            </div>
-          ) : null}
-
           <fieldset style={{ border: "none", padding: 0, margin: "1rem 0 0" }}>
             <legend
               style={{ padding: 0, marginBottom: "0.25rem", fontSize: "0.875rem", fontWeight: 500 }}
@@ -333,20 +319,14 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
 
             {/* Every role yields the same thing for this grantee: the picker is decorative, and
                 saying so once beats five identical annotations. */}
-            {uniformOutcome ? (
-              <div className="Note" style={{ marginBottom: "0.5rem" }}>
-                {`Every role below gives ${selectedUserName} exactly the same access here: ${lowerFirst(uniformOutcome)}. The role you pick is recorded, but it does not change what they can do on this account.`}
-              </div>
-            ) : null}
-
             {WALLET_SCOPED_ROLES.map((r) => {
-              // In the uniform case the per-role line is suppressed: it is already stated above.
-              const annotation = uniformOutcome
-                ? null
-                : (roleOutcomes.find((outcome) => outcome.role === r)?.text ?? null);
+              const annotation = roleOutcomes.find((outcome) => outcome.role === r)?.text ?? null;
 
               return (
-                <div key={r} style={{ padding: "0.25rem 0" }}>
+                // The annotation is a sibling, not part of `label`: a multi-line node inside
+                // the design-system RadioButton overflows its row and collides with the next
+                // option. Indent matches the control + gap so it reads as part of the option.
+                <div key={r} style={{ padding: "0.375rem 0" }}>
                   <RadioButton
                     fieldSize="sm"
                     id={`grant-role-${r}`}
@@ -355,17 +335,13 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                     checked={role === r}
                     onChange={() => setRole(r)}
                     disabled={!userId || grant.isPending}
-                    label={
-                      <span style={{ display: "block" }}>
-                        <span style={{ display: "block" }}>{userRoleText(r)}</span>
-                        {annotation ? (
-                          <span className="Note" style={{ display: "block" }}>
-                            {annotation}
-                          </span>
-                        ) : null}
-                      </span>
-                    }
+                    label={userRoleText(r)}
                   />
+                  {annotation ? (
+                    <div className="Note" style={{ marginLeft: "1.75rem", marginTop: "0.125rem" }}>
+                      {annotation}
+                    </div>
+                  ) : null}
                 </div>
               );
             })}
