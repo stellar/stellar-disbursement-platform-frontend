@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Button, Modal, Notification, Select } from "@stellar/design-system";
+import { Button, Modal, Notification, RadioButton, Select } from "@stellar/design-system";
 
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
@@ -10,6 +10,10 @@ import { useGrantWalletMembership } from "@/apiQueries/useGrantWalletMembership"
 import { useRevokeWalletMembership } from "@/apiQueries/useRevokeWalletMembership";
 import { useUsers } from "@/apiQueries/useUsers";
 import { useWalletMemberships } from "@/apiQueries/useWalletMemberships";
+import {
+  WalletCapabilities,
+  useWalletRoleCapabilities,
+} from "@/apiQueries/useWalletRoleCapabilities";
 
 import { userRoleText } from "@/helpers/userRoleText";
 
@@ -17,6 +21,52 @@ import { UserRole } from "@/types";
 
 // The owner role is always tenant-wide, so it cannot be granted per account.
 const WALLET_SCOPED_ROLES: UserRole[] = USER_ROLES_ARRAY.filter((r) => r !== "owner");
+
+// Human labels for the write actions the capabilities endpoint reports, grouped so a full set
+// reads as two short phrases instead of seven. WHICH role yields which of these is only ever the
+// server's answer — this list names the actions, it does not map them to roles.
+const CAPABILITY_GROUPS: {
+  title: string;
+  actions: { key: keyof WalletCapabilities; verb: string }[];
+}[] = [
+  {
+    title: "Disbursements",
+    actions: [
+      { key: "can_create_disbursement", verb: "create" },
+      { key: "can_start_disbursement", verb: "start" },
+      { key: "can_pause_disbursement", verb: "pause" },
+      { key: "can_cancel_disbursement", verb: "cancel" },
+    ],
+  },
+  {
+    title: "Payments",
+    actions: [
+      { key: "can_create_payment", verb: "create" },
+      { key: "can_retry_payment", verb: "retry" },
+      { key: "can_cancel_payment", verb: "cancel" },
+    ],
+  },
+];
+
+// An empty write set is "view only", not "nothing": the membership row itself is what makes the
+// account visible to the member, and read visibility is deliberately outside the capability
+// matrix. That is why such roles are annotated rather than disabled — granting an account's
+// activity to someone read-only is a real thing an owner may want, and disabling the option would
+// take it away while claiming the grant is a no-op, which it isn't.
+const VIEW_ONLY_TEXT = "View only — can see this account, but cannot act on it";
+
+// One line saying what the server reports this role would yield here.
+const capabilitiesText = (capabilities: WalletCapabilities) => {
+  const granted = CAPABILITY_GROUPS.flatMap(({ title, actions }) => {
+    const verbs = actions.filter(({ key }) => capabilities[key]).map(({ verb }) => verb);
+    return verbs.length > 0 ? [`${title}: ${verbs.join(", ")}`] : [];
+  });
+
+  return granted.length > 0 ? granted.join(" · ") : VIEW_ONLY_TEXT;
+};
+
+// The outcome lines above stand alone, so they start capitalised; this splices one mid-sentence.
+const lowerFirst = (text: string) => `${text.charAt(0).toLowerCase()}${text.slice(1)}`;
 
 interface ManageWalletAccessModalProps {
   visible: boolean;
@@ -73,6 +123,50 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
     () => (users ?? []).filter((u) => u.is_active && !(u.roles ?? []).includes("owner")),
     [users],
   );
+
+  // Owners are withheld from the picker rather than allowed and rejected on submit: an owner
+  // short-circuits both gates, so the row would confer nothing and the backend 400s it. Counting
+  // them lets the UI say why the list is shorter than the team.
+  const hiddenOwnerCount = useMemo(
+    () => (users ?? []).filter((u) => u.is_active && (u.roles ?? []).includes("owner")).length,
+    [users],
+  );
+
+  const selectedUser = useMemo(
+    () => grantableUsers.find((u) => u.id === userId) ?? null,
+    [grantableUsers, userId],
+  );
+  const selectedUserName = selectedUser ? selectedUser.first_name : "this user";
+  const selectedUserRoleText = userRoleText(selectedUser?.roles?.[0]);
+
+  // What each role would actually yield for the chosen grantee on this account. Nothing is
+  // requested until a grantee is picked, and the answers come from the server — the frontend
+  // does not hold a copy of the capability matrix.
+  const {
+    byRole,
+    isLoading: capabilitiesLoading,
+    error: capabilitiesError,
+  } = useWalletRoleCapabilities(visible ? walletId : null, userId || null, WALLET_SCOPED_ROLES);
+
+  const roleOutcomes = useMemo(
+    () =>
+      byRole.map(({ role: outcomeRole, capabilities }) => ({
+        role: outcomeRole,
+        text: capabilities ? capabilitiesText(capabilities) : null,
+      })),
+    [byRole],
+  );
+
+  // For some grantees every role produces an identical answer — a global developer fails the
+  // tenant-wide write gate before any membership is consulted, so the five options differ only in
+  // what gets stored. Say that once rather than repeating one annotation five times.
+  const uniformOutcome = useMemo(() => {
+    if (roleOutcomes.length === 0 || roleOutcomes.some((outcome) => outcome.text === null)) {
+      return null;
+    }
+    const [first, ...rest] = roleOutcomes;
+    return rest.every((outcome) => outcome.text === first.text) ? first.text : null;
+  }, [roleOutcomes]);
 
   const handleGrant = (event: React.FormEvent) => {
     event.preventDefault();
@@ -183,37 +277,101 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
         </div>
 
         <form onSubmit={handleGrant}>
-          <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-end" }}>
-            <Select
-              fieldSize="sm"
-              id="grant-user"
-              name="grant-user"
-              label="User"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
+          <Select
+            fieldSize="sm"
+            id="grant-user"
+            name="grant-user"
+            label="User"
+            value={userId}
+            onChange={(e) => {
+              setUserId(e.target.value);
+              // A role picked for the previous grantee can mean something entirely different for
+              // this one, so make the operator choose again against the new annotations.
+              setRole("");
+            }}
+          >
+            <option value="">Select a user</option>
+            {grantableUsers.map((u) => (
+              <option value={u.id} key={u.id}>
+                {`${u.first_name} ${u.last_name} (${u.email})`}
+              </option>
+            ))}
+          </Select>
+
+          {hiddenOwnerCount > 0 ? (
+            <div className="Note" style={{ marginTop: "0.5rem" }}>
+              {`${hiddenOwnerCount === 1 ? "1 owner is" : `${hiddenOwnerCount} owners are`} not listed. An owner already acts on every account, so a membership for one would change nothing.`}
+            </div>
+          ) : null}
+
+          <fieldset style={{ border: "none", padding: 0, margin: "1rem 0 0" }}>
+            <legend
+              style={{ padding: 0, marginBottom: "0.25rem", fontSize: "0.875rem", fontWeight: 500 }}
             >
-              <option value="">Select a user</option>
-              {grantableUsers.map((u) => (
-                <option value={u.id} key={u.id}>
-                  {`${u.first_name} ${u.last_name} (${u.email})`}
-                </option>
-              ))}
-            </Select>
-            <Select
-              fieldSize="sm"
-              id="grant-role"
-              name="grant-role"
-              label="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value as UserRole)}
-            >
-              <option value="">Select a role</option>
-              {WALLET_SCOPED_ROLES.map((r) => (
-                <option value={r} key={r}>
-                  {userRoleText(r)}
-                </option>
-              ))}
-            </Select>
+              Role on this account
+            </legend>
+
+            <div className="Note" style={{ marginBottom: "0.5rem" }}>
+              {selectedUser
+                ? `A membership can only narrow ${selectedUserName}'s tenant-wide role${
+                    selectedUserRoleText ? ` (${selectedUserRoleText})` : ""
+                  } on this account — it never adds capability they do not already have.`
+                : "Select a user first: what a role grants depends on the tenant-wide role of the person you grant it to."}
+            </div>
+
+            {selectedUser && capabilitiesLoading ? (
+              <div className="Note" style={{ marginBottom: "0.5rem" }}>
+                Checking what each role would grant…
+              </div>
+            ) : null}
+
+            {selectedUser && capabilitiesError ? (
+              <Notification variant="warning" title="Could not check what each role would grant">
+                <ErrorWithExtras appError={capabilitiesError} />
+              </Notification>
+            ) : null}
+
+            {/* Every role yields the same thing for this grantee: the picker is decorative, and
+                saying so once beats five identical annotations. */}
+            {uniformOutcome ? (
+              <div className="Note" style={{ marginBottom: "0.5rem" }}>
+                {`Every role below gives ${selectedUserName} exactly the same access here: ${lowerFirst(uniformOutcome)}. The role you pick is recorded, but it does not change what they can do on this account.`}
+              </div>
+            ) : null}
+
+            {WALLET_SCOPED_ROLES.map((r) => {
+              // In the uniform case the per-role line is suppressed: it is already stated above.
+              const annotation = uniformOutcome
+                ? null
+                : (roleOutcomes.find((outcome) => outcome.role === r)?.text ?? null);
+
+              return (
+                <div key={r} style={{ padding: "0.25rem 0" }}>
+                  <RadioButton
+                    fieldSize="sm"
+                    id={`grant-role-${r}`}
+                    name="grant-role"
+                    value={r}
+                    checked={role === r}
+                    onChange={() => setRole(r)}
+                    disabled={!userId || grant.isPending}
+                    label={
+                      <span style={{ display: "block" }}>
+                        <span style={{ display: "block" }}>{userRoleText(r)}</span>
+                        {annotation ? (
+                          <span className="Note" style={{ display: "block" }}>
+                            {annotation}
+                          </span>
+                        ) : null}
+                      </span>
+                    }
+                  />
+                </div>
+              );
+            })}
+          </fieldset>
+
+          <div style={{ marginTop: "1rem" }}>
             <Button
               size="sm"
               variant="primary"

@@ -35,9 +35,16 @@ interface DistributionAccountStellarProps {
   // tenant default's address, balances and history.
   accountAddress?: string | null;
   accountColorHex?: string;
-  // Asset/trustline management is tenant-level and applies to the DEFAULT account only —
-  // hidden when viewing a non-default account.
+  // Trustlines are per-account on-chain state: the rows come from this account's own Horizon
+  // balances, and adding one now targets this account via X-Wallet-Id. Shown for any account
+  // whose identity is unambiguous — hidden only on the "All accounts" aggregate, where there is
+  // no single account for the mutation to target.
   showTrustlines?: boolean;
+  // Bridge is genuinely TENANT-level (PATCH /bridge-integration takes no wallet scope), so it
+  // belongs on the default account's card only. Previously this rode on showTrustlines; once
+  // trustlines were un-gated for secondary accounts that would have implied per-account Bridge
+  // config which does not exist.
+  showBridgeIntegration?: boolean;
 }
 
 export const DistributionAccountStellar = ({
@@ -45,6 +52,7 @@ export const DistributionAccountStellar = ({
   accountAddress,
   accountColorHex,
   showTrustlines = true,
+  showBridgeIntegration = true,
 }: DistributionAccountStellarProps) => {
   const [isBridgeOptInModalVisible, setIsBridgeOptInModalVisible] = useState(false);
 
@@ -232,7 +240,7 @@ export const DistributionAccountStellar = ({
           </Card>
         )}
 
-        {showTrustlines ? (
+        {showBridgeIntegration ? (
           <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
             <BridgeIntegrationSection
               onOptIn={handleBridgeOptIn}

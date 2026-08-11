@@ -64,6 +64,9 @@ export const DistributionAccount = () => {
   // one wallet is always the default, so this renders identically to before) and a user scoped
   // to just one of several wallets in a multi-wallet tenant (e.g. a country officer) — in both
   // cases we render that wallet's own address/balance, never the legacy org-level field.
+  // Trustlines render here regardless of is_default: a trustline is on-chain state of THIS
+  // account, and ActiveWalletBar pins the selection to the single accessible wallet, so the
+  // X-Wallet-Id useAssetsAdd sends names the very account shown here.
   if (wallets.length === 1) {
     const only = wallets[0];
     return (
@@ -72,15 +75,20 @@ export const DistributionAccount = () => {
         accountName={only.is_default ? undefined : only.name}
         accountAddress={only.distribution_account_address ?? null}
         accountColorHex={only.is_default ? undefined : accountColor(only.id)}
-        showTrustlines={only.is_default}
+        // Bridge is tenant-level config, so it belongs on the default account's card only —
+        // unlike trustlines, which are this account's own on-chain state.
+        showBridgeIntegration={only.is_default}
       />
     );
   }
 
   const selected = wallets.find((w) => w.id === selectedWalletId);
 
-  // A specific account is selected: scope the page to it. Asset/trustline + Bridge config is
-  // tenant-level, so only show it on the default account.
+  // A specific account is selected: scope the page to it, trustline panel included. Trustlines
+  // are per-account on-chain state, not tenant config: hiding the panel on secondary accounts
+  // left them with no route to a trustline after creation, since adding an asset is the only
+  // self-heal for an asset nothing trusts. `selected.id` IS the app-wide selection, so the
+  // X-Wallet-Id useAssetsAdd sends targets exactly the account rendered here.
   if (selected) {
     return (
       <DistributionAccountStellar
@@ -88,13 +96,20 @@ export const DistributionAccount = () => {
         accountName={`${selected.name}${selected.is_default ? " (default)" : ""}`}
         accountAddress={selected.distribution_account_address ?? null}
         accountColorHex={accountColor(selected.id)}
-        showTrustlines={selected.is_default}
+        showBridgeIntegration={selected.is_default}
       />
     );
   }
 
-  // "All accounts": overview listing every account. Deep config lives on the default account;
-  // the rest show their own address, balances, and history.
+  // "All accounts": overview listing every account. The rest show their own address, balances,
+  // and history.
+  //
+  // The trustline panel stays gated on is_default HERE only, and not as a permissions rule: in
+  // this aggregate view there is no selected account, so useAssetsAdd sends no X-Wallet-Id and
+  // the backend falls back to the tenant default. The default account's card is therefore the
+  // one card whose panel acts on the account it is attached to; a panel on any other card would
+  // silently add the trustline to the default account instead. To manage a secondary account's
+  // trustlines, pick it in the switcher — the branch above then renders the panel for it.
   return (
     <>
       <SectionHeader>
@@ -122,6 +137,7 @@ export const DistributionAccount = () => {
             accountAddress={w.distribution_account_address ?? null}
             accountColorHex={accountColor(w.id)}
             showTrustlines={w.is_default}
+            showBridgeIntegration={w.is_default}
           />
         ))}
     </>
