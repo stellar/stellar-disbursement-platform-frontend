@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
+
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import {
   ApiKeyFormFields,
   convertToApiPermissions,
 } from "@/components/ApiKeyFormFields/ApiKeyFormFields";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+
+import { parseAllowedIPs } from "@/helpers/parseIPs";
 
 import { useApiKeyForm } from "@/hooks/useApiKeyForm";
 import { usePrevious } from "@/hooks/usePrevious";
-
-import { parseAllowedIPs } from "@/helpers/parseIPs";
 
 import { AppError, CreateApiKeyRequest } from "@/types";
 
@@ -39,26 +42,31 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
 
   const {
     formData,
+    setFormData,
     handleAllowedIPsChange,
     handlePermissionChange,
     handleAllowedIPsBlur,
+    handleWalletToggle,
     validatePermissions,
     getAllowedIPsError,
     getPermissionsError,
     isFormValid,
-    resetForm,
   } = useApiKeyForm({ onResetQuery, appError });
+
+  const { data: distributionWallets } = useDistributionWallets(visible);
 
   const previousVisible = usePrevious(visible);
 
+  // Opening the form pre-selects every account the creator can reach, matching what the API grants
+  // a key that names none. Narrowing from there is the point of the picker.
   useEffect(() => {
-    if (previousVisible && !visible) {
-      setName("");
-      setExpiryDate("");
-      setNameError(false);
-      resetForm();
+    if (visible && !previousVisible && distributionWallets) {
+      setFormData((prev) => ({
+        ...prev,
+        distributionWalletIds: distributionWallets.map((wallet) => wallet.id),
+      }));
     }
-  }, [visible, previousVisible, resetForm]);
+  }, [visible, previousVisible, distributionWallets, setFormData]);
 
   const handleClose = () => {
     onClose();
@@ -105,6 +113,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       permissions: apiPermissions,
       expiry_date: expiryDate ? new Date(expiryDate).toISOString() : undefined,
       allowed_ips: allowedIPs.length > 0 ? allowedIPs : undefined,
+      distribution_wallet_ids: formData.distributionWalletIds,
     };
 
     onSubmit(apiKeyData);
@@ -159,6 +168,9 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               onPermissionChange={handlePermissionChange}
               allowedIPsError={getAllowedIPsError()}
               permissionsError={getPermissionsError()}
+              distributionWallets={distributionWallets}
+              selectedWalletIds={formData.distributionWalletIds}
+              onWalletToggle={handleWalletToggle}
             />
           </div>
         </Modal.Body>

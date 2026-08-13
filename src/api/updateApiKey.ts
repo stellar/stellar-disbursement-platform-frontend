@@ -1,10 +1,12 @@
 import { API_URL } from "@/constants/envVariables";
 import { SESSION_EXPIRED } from "@/constants/settings";
+
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 
 export interface UpdateApiKeyRequest {
   permissions: string[];
   allowed_ips?: string[] | null;
+  distribution_wallet_ids?: string[];
 }
 
 export const updateApiKey = async (

@@ -1,5 +1,8 @@
-import { Heading, Select, Textarea } from "@stellar/design-system";
+import { Checkbox, Heading, Select, Textarea } from "@stellar/design-system";
+
 import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
+
+import { DistributionWallet } from "@/apiQueries/useDistributionWallets";
 
 import "./styles.scss";
 
@@ -37,6 +40,9 @@ interface ApiKeyFormFieldsProps {
   onPermissionChange: (resource: keyof PermissionState, level: PermissionLevel) => void;
   allowedIPsError?: string;
   permissionsError?: string;
+  distributionWallets?: DistributionWallet[];
+  selectedWalletIds?: string[];
+  onWalletToggle?: (walletId: string) => void;
 }
 
 export const ApiKeyFormFields: React.FC<ApiKeyFormFieldsProps> = ({
@@ -47,8 +53,12 @@ export const ApiKeyFormFields: React.FC<ApiKeyFormFieldsProps> = ({
   onPermissionChange,
   allowedIPsError,
   permissionsError,
+  distributionWallets,
+  selectedWalletIds = [],
+  onWalletToggle,
 }) => {
   const isAllReadWrite = permissions.all === "read_write";
+  const showWallets = Boolean(onWalletToggle && distributionWallets?.length);
 
   return (
     <>
@@ -66,6 +76,31 @@ export const ApiKeyFormFields: React.FC<ApiKeyFormFieldsProps> = ({
         rows={3}
         className="ApiKeyFormFields__allowedIPs"
       />
+
+      {showWallets && (
+        <div className="ApiKeyFormFields__wallets">
+          <div className="Label__wrapper ApiKeyFormFields__walletsLabel">
+            <div className="Label Label--sm">Distribution accounts</div>
+          </div>
+
+          <div className="ApiKeyFormFields__walletsList">
+            {distributionWallets?.map((wallet) => (
+              <Checkbox
+                key={wallet.id}
+                id={`wallet-${wallet.id}`}
+                fieldSize="sm"
+                label={wallet.status === "ARCHIVED" ? `${wallet.name} (archived)` : wallet.name}
+                checked={selectedWalletIds.includes(wallet.id)}
+                onChange={() => onWalletToggle?.(wallet.id)}
+              />
+            ))}
+          </div>
+
+          <div className="FieldNote FieldNote--note FieldNote--sm ApiKeyFormFields__walletsNote">
+            This key can only send from the accounts you select, and only sees their activity.
+          </div>
+        </div>
+      )}
 
       <div className="ApiKeyFormFields__permissions">
         <Heading as="h4" size="xs" className="ApiKeyFormFields__permissionsHeading">
