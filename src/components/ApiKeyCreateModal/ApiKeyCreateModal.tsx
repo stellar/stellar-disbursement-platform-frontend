@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
@@ -13,7 +13,6 @@ import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 import { parseAllowedIPs } from "@/helpers/parseIPs";
 
 import { useApiKeyForm } from "@/hooks/useApiKeyForm";
-import { usePrevious } from "@/hooks/usePrevious";
 
 import { AppError, CreateApiKeyRequest } from "@/types";
 
@@ -54,19 +53,19 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
   } = useApiKeyForm({ onResetQuery, appError });
 
   const { data: distributionWallets } = useDistributionWallets(visible);
+  const hasPreselected = useRef(false);
 
-  const previousVisible = usePrevious(visible);
-
-  // Opening the form pre-selects every account the creator can reach, matching what the API grants
-  // a key that names none. Narrowing from there is the point of the picker.
+  // Pre-selects every account the creator can reach, once, whenever the list arrives — the modal
+  // remounts on each open, so the ref starts false again with it.
   useEffect(() => {
-    if (visible && !previousVisible && distributionWallets) {
+    if (!hasPreselected.current && distributionWallets) {
+      hasPreselected.current = true;
       setFormData((prev) => ({
         ...prev,
         distributionWalletIds: distributionWallets.map((wallet) => wallet.id),
       }));
     }
-  }, [visible, previousVisible, distributionWallets, setFormData]);
+  }, [distributionWallets, setFormData]);
 
   const handleClose = () => {
     onClose();
