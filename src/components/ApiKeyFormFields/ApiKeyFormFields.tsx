@@ -1,4 +1,5 @@
 import { Heading, Select, Textarea } from "@stellar/design-system";
+
 import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
 
 import "./styles.scss";
@@ -13,6 +14,7 @@ export type PermissionState = {
   organization: PermissionLevel;
   users: PermissionLevel;
   wallets: PermissionLevel;
+  distribution_wallets: PermissionLevel;
   statistics: PermissionLevel;
   exports: PermissionLevel;
 };
@@ -25,6 +27,7 @@ export const INITIAL_PERMISSIONS: PermissionState = {
   organization: "none",
   users: "none",
   wallets: "none",
+  distribution_wallets: "none",
   statistics: "none",
   exports: "none",
 };
@@ -181,6 +184,7 @@ export const parseExistingPermissions = (permissions: string[]): PermissionState
     organization: "organization",
     users: "users",
     wallets: "wallets",
+    distribution_wallets: "distribution_wallets",
     statistics: "statistics",
     exports: "exports",
   };
