@@ -1,27 +1,30 @@
 import { useEffect, useState } from "react";
+
 import { Button, Card, Icon, Modal, Notification, Select } from "@stellar/design-system";
 
-import { InfoTooltip } from "@/components/InfoTooltip";
 import { DropdownMenu } from "@/components/DropdownMenu";
-import { MoreMenuButton } from "@/components/MoreMenuButton";
-import { Table } from "@/components/Table";
-import { NewUserModal } from "@/components/NewUserModal";
-import { LoadingContent } from "@/components/LoadingContent";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NewUserModal } from "@/components/NewUserModal";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { Table } from "@/components/Table";
 
 import { USER_ROLES_ARRAY } from "@/constants/settings";
-import { userRoleText } from "@/helpers/userRoleText";
 
-import { useUsers } from "@/apiQueries/useUsers";
-import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
-import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
 import { useCreateNewUser } from "@/apiQueries/useCreateNewUser";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
+import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
+import { useUsers } from "@/apiQueries/useUsers";
+
+import { userRoleText } from "@/helpers/userRoleText";
 
 import { useRedux } from "@/hooks/useRedux";
+import { useSort } from "@/hooks/useSort";
 
-import { ApiUser, NewUser, UserRole } from "@/types";
+import { ApiUser, NewUser, SortByUsers, SortDirection, UserRole, UsersSearchParams } from "@/types";
 
 export const SettingsTeamMembers = () => {
   const [selectedUser, setSelectedUser] = useState<ApiUser | null>(null);
@@ -38,6 +41,18 @@ export const SettingsTeamMembers = () => {
   const [pendingUser, setPendingUser] = useState<NewUser | null>(null);
   const [inviteWalletId, setInviteWalletId] = useState("");
 
+  // Ordering happens on the server, so this only holds what to ask for.
+  const [sortParams, setSortParams] = useState<UsersSearchParams>({});
+
+  const onSort = (sort?: SortByUsers, direction?: SortDirection) => {
+    // The third click returns "default", which means no ordering rather than an
+    // ordering called default. Drop both params so the request goes back to the
+    // server's own default instead of pinning direction=default.
+    setSortParams(!sort || !direction || direction === "default" ? {} : { sort, direction });
+  };
+
+  const { sortBy, sortDir, handleSort } = useSort<SortByUsers>(onSort);
+
   const { userAccount } = useRedux("userAccount");
   const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
   const isMultiWallet = (distributionWallets?.length ?? 0) >= 2;
@@ -48,7 +63,7 @@ export const SettingsTeamMembers = () => {
     isLoading: isUsersLoading,
     isFetching: isUsersFetching,
     refetch: getUsers,
-  } = useUsers();
+  } = useUsers(sortParams);
 
   const {
     error: roleError,
@@ -220,9 +235,20 @@ export const SettingsTeamMembers = () => {
         <Table>
           <Table.Header>
             <Table.HeaderCell>Member</Table.HeaderCell>
-            <Table.HeaderCell width="12rem">Email</Table.HeaderCell>
+            <Table.HeaderCell
+              width="12rem"
+              sortDirection={sortBy === "email" ? sortDir : "default"}
+              onSort={() => handleSort("email")}
+            >
+              Email
+            </Table.HeaderCell>
             <Table.HeaderCell>Role</Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell
+              sortDirection={sortBy === "is_active" ? sortDir : "default"}
+              onSort={() => handleSort("is_active")}
+            >
+              Status
+            </Table.HeaderCell>
             <Table.HeaderCell> </Table.HeaderCell>
           </Table.Header>
 
