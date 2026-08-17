@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Fail loudly on session expiry instead of rendering a blank page. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
 - Fix receiver invitation timestamps showing "now" instead of the actual time. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
 - Add missing distribution-account permissions to API-key creation/editing modal [#572](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/572)
+- Fix distribution-account scoping on per-receiver payment counters. [#573](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/573)
 
 ## [6.6.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.5.0...6.6.0))
 
