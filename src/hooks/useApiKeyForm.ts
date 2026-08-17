@@ -1,11 +1,14 @@
 import { useCallback, useState } from "react";
+
 import {
   INITIAL_PERMISSIONS,
   PermissionLevel,
   PermissionState,
   hasAnyPermissions,
 } from "@/components/ApiKeyFormFields/ApiKeyFormFields";
+
 import { validateAllowedIPs } from "@/helpers/validateIPs";
+
 import { AppError } from "@/types";
 
 interface UseApiKeyFormProps {
@@ -16,12 +19,14 @@ interface UseApiKeyFormProps {
 export interface ApiKeyFormState {
   allowedIPs: string;
   permissions: PermissionState;
+  distributionWalletIds: string[];
 }
 
 export const useApiKeyForm = ({ onResetQuery, appError }: UseApiKeyFormProps) => {
   const [formData, setFormData] = useState<ApiKeyFormState>({
     allowedIPs: "",
     permissions: { ...INITIAL_PERMISSIONS },
+    distributionWalletIds: [],
   });
   const [formErrors, setFormErrors] = useState<string[]>([]);
 
@@ -75,6 +80,22 @@ export const useApiKeyForm = ({ onResetQuery, appError }: UseApiKeyFormProps) =>
       });
     },
     [appError, onResetQuery, removeItemFromErrors],
+  );
+
+  const handleWalletToggle = useCallback(
+    (walletId: string) => {
+      if (appError) {
+        onResetQuery();
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        distributionWalletIds: prev.distributionWalletIds.includes(walletId)
+          ? prev.distributionWalletIds.filter((id) => id !== walletId)
+          : [...prev.distributionWalletIds, walletId],
+      }));
+    },
+    [appError, onResetQuery],
   );
 
   const handleAllowedIPsBlur = useCallback(() => {
@@ -132,6 +153,7 @@ export const useApiKeyForm = ({ onResetQuery, appError }: UseApiKeyFormProps) =>
     setFormData({
       allowedIPs: "",
       permissions: { ...INITIAL_PERMISSIONS },
+      distributionWalletIds: [],
     });
     setFormErrors([]);
   }, []);
@@ -148,6 +170,7 @@ export const useApiKeyForm = ({ onResetQuery, appError }: UseApiKeyFormProps) =>
     handleAllowedIPsChange,
     handlePermissionChange,
     handleAllowedIPsBlur,
+    handleWalletToggle,
     validatePermissions,
     getAllowedIPsError,
     getPermissionsError,
