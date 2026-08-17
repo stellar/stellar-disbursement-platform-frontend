@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Show which distribution account funded a disbursement or payment, with a source-account column and detail rows. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
 - Add a Total Balance tile aggregating every distribution account, and restore the Total Disbursed historical metric. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
 - Let owners add, archive, and manage member access on distribution accounts without platform-operator intervention. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
+- Add distribution-account scoping when creating or editing API-key [#571](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/571)
 
 ### Changed
 

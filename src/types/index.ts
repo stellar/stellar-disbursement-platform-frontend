@@ -1042,6 +1042,7 @@ export type ApiKey = {
   updated_by: string;
   last_used_at: string | null;
   allowed_ips: string[];
+  distribution_wallet_ids: string[];
   enabled: boolean;
 };
 
@@ -1061,6 +1062,7 @@ export type CreateApiKeyRequest = {
   expiry_date?: string | null;
   permissions: string[];
   allowed_ips?: string[];
+  distribution_wallet_ids?: string[];
 };
 
 export type UpdateApiKeyRequest = {
@@ -1068,6 +1070,7 @@ export type UpdateApiKeyRequest = {
   expiry_date?: string | null;
   permissions?: string[];
   allowed_ips?: string[];
+  distribution_wallet_ids?: string[];
   enabled?: boolean;
 };
 

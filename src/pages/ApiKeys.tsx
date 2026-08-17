@@ -35,6 +35,7 @@ export const ApiKeys = () => {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [createdApiKey, setCreatedApiKey] = useState<{ name: string; key: string } | undefined>();
+  const [createModalKey, setCreateModalKey] = useState(0);
   const [selectedApiKey, setSelectedApiKey] = useState<ApiKey | undefined>();
   const [editingApiKey, setEditingApiKey] = useState<ApiKey | undefined>();
 
@@ -43,6 +44,7 @@ export const ApiKeys = () => {
   }, [dispatch]);
 
   const handleCreateApiKey = useCallback(() => {
+    setCreateModalKey((k) => k + 1);
     setIsCreateModalVisible(true);
   }, []);
 
@@ -173,6 +175,7 @@ export const ApiKeys = () => {
 
       {/* Modals - rendered once outside of conditional logic */}
       <CreateApiKeyModal
+        key={createModalKey}
         visible={isCreateModalVisible}
         onClose={handleCloseCreateModal}
         onSubmit={handleSubmitCreateApiKey}
