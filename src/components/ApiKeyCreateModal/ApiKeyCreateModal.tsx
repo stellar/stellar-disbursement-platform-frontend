@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import {
   ApiKeyFormFields,
   convertToApiPermissions,
 } from "@/components/ApiKeyFormFields/ApiKeyFormFields";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useApiKeyForm } from "@/hooks/useApiKeyForm";
-import { usePrevious } from "@/hooks/usePrevious";
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
 import { parseAllowedIPs } from "@/helpers/parseIPs";
+
+import { useApiKeyForm } from "@/hooks/useApiKeyForm";
 
 import { AppError, CreateApiKeyRequest } from "@/types";
 
@@ -39,26 +41,31 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
 
   const {
     formData,
+    setFormData,
     handleAllowedIPsChange,
     handlePermissionChange,
     handleAllowedIPsBlur,
+    handleWalletToggle,
     validatePermissions,
     getAllowedIPsError,
     getPermissionsError,
     isFormValid,
-    resetForm,
   } = useApiKeyForm({ onResetQuery, appError });
 
-  const previousVisible = usePrevious(visible);
+  const { data: distributionWallets } = useDistributionWallets(visible);
+  const hasPreselected = useRef(false);
 
+  // Pre-selects every account the creator can reach, once, whenever the list arrives — the modal
+  // remounts on each open, so the ref starts false again with it.
   useEffect(() => {
-    if (previousVisible && !visible) {
-      setName("");
-      setExpiryDate("");
-      setNameError(false);
-      resetForm();
+    if (!hasPreselected.current && distributionWallets) {
+      hasPreselected.current = true;
+      setFormData((prev) => ({
+        ...prev,
+        distributionWalletIds: distributionWallets.map((wallet) => wallet.id),
+      }));
     }
-  }, [visible, previousVisible, resetForm]);
+  }, [distributionWallets, setFormData]);
 
   const handleClose = () => {
     onClose();
@@ -105,6 +112,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
       permissions: apiPermissions,
       expiry_date: expiryDate ? new Date(expiryDate).toISOString() : undefined,
       allowed_ips: allowedIPs.length > 0 ? allowedIPs : undefined,
+      distribution_wallet_ids: formData.distributionWalletIds,
     };
 
     onSubmit(apiKeyData);
@@ -159,6 +167,9 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               onPermissionChange={handlePermissionChange}
               allowedIPsError={getAllowedIPsError()}
               permissionsError={getPermissionsError()}
+              distributionWallets={distributionWallets}
+              selectedWalletIds={formData.distributionWalletIds}
+              onWalletToggle={handleWalletToggle}
             />
           </div>
         </Modal.Body>

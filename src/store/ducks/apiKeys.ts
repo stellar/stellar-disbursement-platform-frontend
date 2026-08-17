@@ -1,15 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "@/store";
 
-import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "@/helpers/refreshSessionToken";
-import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { deleteApiKey } from "@/api/deleteApiKey";
 import { getApiKeys } from "@/api/getApiKeys";
 import { postApiKey } from "@/api/postApiKey";
-import { deleteApiKey } from "@/api/deleteApiKey";
 import { updateApiKey, UpdateApiKeyRequest } from "@/api/updateApiKey";
 
+import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+
 import { ApiKey, ApiKeysInitialState, ApiError, RejectMessage, CreateApiKeyRequest } from "@/types";
+
+import { RootState } from "@/store";
 
 export const apiKeysInitialState: ApiKeysInitialState = {
   items: [],
@@ -196,6 +198,10 @@ const apiKeysSlice = createSlice({
             ...state.items[index],
             permissions: updateData.permissions,
             allowed_ips: updateData.allowed_ips || [],
+            // Omitted means the API left the scope untouched, so keep what we already had.
+            ...(updateData.distribution_wallet_ids
+              ? { distribution_wallet_ids: updateData.distribution_wallet_ids }
+              : {}),
           };
         }
         state.errorString = undefined;
