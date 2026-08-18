@@ -261,10 +261,14 @@ export const PaymentDetails = () => {
                     </div>
                   </div>
 
-                  {formattedPayment.circleTransferRequestId ? (
+                  {formattedPayment.circleTransactionId ? (
                     <div className="PaymentDetails__info">
-                      <label className="Label">Circle Transfer ID</label>
-                      <div>{formattedPayment.circleTransferRequestId}</div>
+                      <label className="Label">
+                        {formattedPayment.circleTransactionType === "PAYOUT"
+                          ? "Circle Payout ID"
+                          : "Circle Transfer ID"}
+                      </label>
+                      <div>{formattedPayment.circleTransactionId}</div>
                     </div>
                   ) : null}
                 </div>

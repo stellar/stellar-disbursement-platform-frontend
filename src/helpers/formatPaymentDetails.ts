@@ -13,7 +13,8 @@ export const formatPaymentDetails = (payment: ApiPayment): PaymentDetails => {
     totalAmount: payment.amount,
     assetCode: payment.asset.code,
     externalPaymentId: payment?.external_payment_id,
-    circleTransferRequestId: payment?.circle_transfer_request_id,
+    circleTransactionId: payment?.circle_transaction_id,
+    circleTransactionType: payment?.circle_transaction_type,
     sourceWalletId: payment.source_wallet_id,
     status: payment.status,
     statusHistory: payment?.status_history
