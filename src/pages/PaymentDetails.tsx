@@ -39,7 +39,14 @@ import {
 } from "@/helpers/receiverContactInfo";
 import { shortenString } from "@/helpers/shortenString";
 
-import { PaymentDetailsReceiver } from "@/types";
+import { CircleTransactionType, PaymentDetailsReceiver } from "@/types";
+
+// Falls back to the neutral label when the type is absent or unrecognised.
+const CIRCLE_ID_LABELS: Partial<Record<CircleTransactionType, string>> = {
+  PAYOUT: "Circle Payout ID",
+  TRANSFER: "Circle Transfer ID",
+};
+const CIRCLE_ID_LABEL_FALLBACK = "Circle Transaction ID";
 
 // TODO: handle loading/fetching state (create component that handles it
 // everywhere)
@@ -264,9 +271,9 @@ export const PaymentDetails = () => {
                   {formattedPayment.circleTransactionId ? (
                     <div className="PaymentDetails__info">
                       <label className="Label">
-                        {formattedPayment.circleTransactionType === "PAYOUT"
-                          ? "Circle Payout ID"
-                          : "Circle Transfer ID"}
+                        {(formattedPayment.circleTransactionType &&
+                          CIRCLE_ID_LABELS[formattedPayment.circleTransactionType]) ||
+                          CIRCLE_ID_LABEL_FALLBACK}
                       </label>
                       <div>{formattedPayment.circleTransactionId}</div>
                     </div>
