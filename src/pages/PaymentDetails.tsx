@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
+
 import {
   Button,
   Card,
@@ -11,30 +13,40 @@ import {
   Profile,
 } from "@stellar/design-system";
 
-import { usePaymentsPaymentId } from "@/apiQueries/usePaymentsPaymentId";
-import { useCancelPayment } from "@/apiQueries/useCancelPayment";
-import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+import { AssetAmount } from "@/components/AssetAmount";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { MultipleAmounts } from "@/components/MultipleAmounts";
+import { PaymentStatus } from "@/components/PaymentStatus";
+import { ReceiverStatus } from "@/components/ReceiverStatus";
+import { RetryFailedPayment } from "@/components/RetryFailedPayment";
+import { SectionHeader } from "@/components/SectionHeader";
+import { SourceAccountDetailItem } from "@/components/SourceAccount";
+import { Table } from "@/components/Table";
+
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
 import { Routes, CANCELED_PAYMENT_STATUS, READY_PAYMENT_STATUS } from "@/constants/settings";
+
+import { useCancelPayment } from "@/apiQueries/useCancelPayment";
+import { usePaymentsPaymentId } from "@/apiQueries/usePaymentsPaymentId";
+import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
+
 import { formatDateTime, formatDateTimeWithSeconds } from "@/helpers/formatIntlDateTime";
-import { shortenString } from "@/helpers/shortenString";
 import { formatPaymentDetails } from "@/helpers/formatPaymentDetails";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
 } from "@/helpers/receiverContactInfo";
+import { shortenString } from "@/helpers/shortenString";
 
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SectionHeader } from "@/components/SectionHeader";
-import { Table } from "@/components/Table";
-import { PaymentStatus } from "@/components/PaymentStatus";
-import { ReceiverStatus } from "@/components/ReceiverStatus";
-import { AssetAmount } from "@/components/AssetAmount";
-import { MultipleAmounts } from "@/components/MultipleAmounts";
-import { RetryFailedPayment } from "@/components/RetryFailedPayment";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { CircleTransactionType, PaymentDetailsReceiver } from "@/types";
 
-import { PaymentDetailsReceiver } from "@/types";
+// Falls back to the neutral label when the type is absent or unrecognised.
+const CIRCLE_ID_LABELS: Partial<Record<CircleTransactionType, string>> = {
+  PAYOUT: "Circle Payout ID",
+  TRANSFER: "Circle Transfer ID",
+};
+const CIRCLE_ID_LABEL_FALLBACK = "Circle Transaction ID";
 
 // TODO: handle loading/fetching state (create component that handles it
 // everywhere)
@@ -104,6 +116,7 @@ export const PaymentDetails = () => {
 
   useEffect(() => {
     if (isCancelPaymentSuccess || isCancelPaymentError) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       hideModal();
     }
 
@@ -188,6 +201,11 @@ export const PaymentDetails = () => {
                       </Link>
                     </div>
                   </div>
+
+                  <SourceAccountDetailItem
+                    sourceWalletId={formattedPayment.sourceWalletId}
+                    variant="paymentInfo"
+                  />
                 </div>
               </Card>
 
@@ -250,10 +268,14 @@ export const PaymentDetails = () => {
                     </div>
                   </div>
 
-                  {formattedPayment.circleTransferRequestId ? (
+                  {formattedPayment.circleTransactionId ? (
                     <div className="PaymentDetails__info">
-                      <label className="Label">Circle Transfer ID</label>
-                      <div>{formattedPayment.circleTransferRequestId}</div>
+                      <label className="Label">
+                        {(formattedPayment.circleTransactionType &&
+                          CIRCLE_ID_LABELS[formattedPayment.circleTransactionType]) ||
+                          CIRCLE_ID_LABEL_FALLBACK}
+                      </label>
+                      <div>{formattedPayment.circleTransactionId}</div>
                     </div>
                   ) : null}
                 </div>

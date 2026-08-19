@@ -6,7 +6,9 @@ import { Card, Heading, Icon, Link, Notification } from "@stellar/design-system"
 import { Routes } from "@/constants/settings";
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
+import { usePrevious } from "@/hooks/usePrevious";
 import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 import { AppDispatch } from "@/store";
 import { getDisbursementDraftsAction, setDraftIdAction } from "@/store/ducks/disbursementDrafts";
 import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
@@ -24,13 +26,26 @@ export const DisbursementsDrafts = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Active distribution account (global ActiveWalletBar) — scopes the drafts list.
+  const { selectedWalletId } = useSelectedWallet();
+
+  // null until the first commit, so it also tells a mount apart from an account switch.
+  const previousWalletId = usePrevious(selectedWalletId);
+
   useEffect(() => {
-    if (!disbursementDrafts.status || disbursementDrafts.actionType) {
-      dispatch(getDisbursementDraftsAction());
+    // An account switch must refetch even though the list already loaded: the status guard below
+    // is false after the first success, so without this the table would keep rendering the
+    // previous account's drafts under a bar naming the new one.
+    const walletChanged = previousWalletId !== null && previousWalletId !== selectedWalletId;
+
+    if (walletChanged || !disbursementDrafts.status || disbursementDrafts.actionType) {
+      dispatch(getDisbursementDraftsAction({ walletId: selectedWalletId }));
       dispatch(resetDisbursementDetailsAction());
       dispatch(setDraftIdAction(undefined));
     }
-  }, [disbursementDrafts.actionType, disbursementDrafts.status, dispatch]);
+    // `previousWalletId` is read but deliberately not a dep: it must not trigger a re-fetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [disbursementDrafts.actionType, disbursementDrafts.status, dispatch, selectedWalletId]);
 
   const apiError = disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
   const isLoading =

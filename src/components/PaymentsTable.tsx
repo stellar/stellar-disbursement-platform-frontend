@@ -1,12 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { Link, Profile, Notification, Card } from "@stellar/design-system";
-import { Routes } from "@/constants/settings";
+
+import { Link, Profile, Notification, Card, Icon } from "@stellar/design-system";
 
 import { AssetAmount } from "@/components/AssetAmount";
-import { PaymentStatus } from "@/components/PaymentStatus";
-import { Table } from "@/components/Table";
+import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { PaymentStatus } from "@/components/PaymentStatus";
+import { SourceAccount, useShowSourceAccountColumn } from "@/components/SourceAccount";
+import { Table } from "@/components/Table";
+
+import { Routes } from "@/constants/settings";
+
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
+
 import { ApiPayment } from "@/types";
 
 interface PaymentsTableProps {
@@ -23,6 +29,7 @@ export const PaymentsTable = ({
   isLoading,
 }: PaymentsTableProps) => {
   const navigate = useNavigate();
+  const showSourceAccount = useShowSourceAccountColumn();
 
   const handlePaymentClicked = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -61,7 +68,12 @@ export const PaymentsTable = ({
       return <div className="Note">There are no payments matching your selected filters</div>;
     }
 
-    return <div className="Note">There are no payments</div>;
+    return (
+      <EmptyStateMessage
+        icon={<Icon.CoinsStacked01 />}
+        message="No payments yet. Individual payments appear here once a disbursement starts sending."
+      />
+    );
   }
 
   return (
@@ -76,6 +88,7 @@ export const PaymentsTable = ({
             <Table.HeaderCell>Payment ID</Table.HeaderCell>
             <Table.HeaderCell>Wallet address</Table.HeaderCell>
             <Table.HeaderCell>Disbursement name</Table.HeaderCell>
+            {showSourceAccount ? <Table.HeaderCell width="7rem">Account</Table.HeaderCell> : null}
             <Table.HeaderCell width="9.375rem">Completed at</Table.HeaderCell>
             <Table.HeaderCell textAlign="right" width="8.125rem">
               Amount
@@ -132,6 +145,11 @@ export const PaymentsTable = ({
                     );
                   })()}
                 </Table.BodyCell>
+                {showSourceAccount ? (
+                  <Table.BodyCell width="7rem">
+                    <SourceAccount sourceWalletId={p.source_wallet_id} />
+                  </Table.BodyCell>
+                ) : null}
                 <Table.BodyCell>
                   <span className="Table-v2__cell--secondary">
                     {p.status === "SUCCESS" ? formatDateTime(p.updated_at) : "-"}

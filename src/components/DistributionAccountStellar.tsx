@@ -25,11 +25,43 @@ import { ShowForRoles } from "./ShowForRoles";
 
 import { BridgeIntegrationUpdate } from "@/types";
 
-export const DistributionAccountStellar = () => {
+interface DistributionAccountStellarProps {
+  // Multi-account: scope the page to a specific distribution account. Defaults to the
+  // tenant's (single/default) account for unchanged single-account behavior.
+  accountName?: string;
+  // `undefined` means there is no wallet record at all (legacy single-account tenant), and the
+  // tenant-level fallback below is correct. `null` means a real wallet record whose Stellar
+  // account isn't provisioned yet — falling back there would label this account's name with the
+  // tenant default's address, balances and history.
+  accountAddress?: string | null;
+  accountColorHex?: string;
+  // Trustlines are per-account on-chain state: the rows come from this account's own Horizon
+  // balances, and adding one now targets this account via X-Wallet-Id. Shown for any account
+  // whose identity is unambiguous — hidden only on the "All accounts" aggregate, where there is
+  // no single account for the mutation to target.
+  showTrustlines?: boolean;
+  // Bridge is genuinely TENANT-level (PATCH /bridge-integration takes no wallet scope), so it
+  // belongs on the default account's card only. Previously this rode on showTrustlines; once
+  // trustlines were un-gated for secondary accounts that would have implied per-account Bridge
+  // config which does not exist.
+  showBridgeIntegration?: boolean;
+}
+
+export const DistributionAccountStellar = ({
+  accountName,
+  accountAddress,
+  accountColorHex,
+  showTrustlines = true,
+  showBridgeIntegration = true,
+}: DistributionAccountStellarProps) => {
   const [isBridgeOptInModalVisible, setIsBridgeOptInModalVisible] = useState(false);
 
   const { organization } = useRedux("organization");
-  const { distributionAccountPublicKey } = organization.data;
+  const hasWalletRecord = accountAddress !== undefined;
+  const distributionAccountPublicKey = hasWalletRecord
+    ? accountAddress || undefined
+    : organization.data.distributionAccountPublicKey;
+  const isAddressUnavailable = !distributionAccountPublicKey;
 
   const { balances, fetchAccountBalances } = useOrgAccountInfo(distributionAccountPublicKey);
 
@@ -90,8 +122,21 @@ export const DistributionAccountStellar = () => {
       );
     }
 
+    // No address of its own yet. The tenant default is not a stand-in here: it belongs to a
+    // different account than the one this page is named after.
+    if (isAddressUnavailable) {
+      return (
+        <div className="Note">
+          This account doesn’t have a Stellar address yet — its balances and history will appear
+          once its on-chain account has been provisioned.
+        </div>
+      );
+    }
+
     if (balances?.length === 0) {
-      return <div className="Note">There are no distribution accounts</div>;
+      return (
+        <div className="Note">No funds yet — send assets to the address above to get started.</div>
+      );
     }
 
     return (
@@ -131,7 +176,25 @@ export const DistributionAccountStellar = () => {
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              Distribution Account
+              {accountName ? (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                  {accountColorHex ? (
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        display: "inline-block",
+                        width: "0.625rem",
+                        height: "0.625rem",
+                        borderRadius: "999px",
+                        backgroundColor: accountColorHex,
+                      }}
+                    />
+                  ) : null}
+                  {accountName}
+                </span>
+              ) : (
+                "Distribution account"
+              )}
             </Heading>
           </SectionHeader.Content>
         </SectionHeader.Row>
@@ -141,8 +204,8 @@ export const DistributionAccountStellar = () => {
         <Card>
           <div className="CardStack__card">
             <div className="CardStack__title">
-              <InfoTooltip infoText="The Stellar wallet address of the source of funds for your organization’s payments">
-                Distribution account public key
+              <InfoTooltip infoText="The Stellar address that funds this account's outgoing payments">
+                Account address
               </InfoTooltip>
             </div>
 
@@ -150,36 +213,41 @@ export const DistributionAccountStellar = () => {
           </div>
         </Card>
 
-        {/* TODO: hard-coded to a single wallet, figure out how to handle multiple */}
-        <WalletTrustlines
-          balances={balances || undefined}
-          onSuccess={() => {
-            fetchAccountBalances();
-          }}
-        />
-
-        <Card>
-          <div className="CardStack__card">
-            <div className="CardStack__title">
-              <Box gap="xs" direction="row" align="center">
-                <InfoTooltip infoText="A record of payments to and from your distribution account, sourced directly from the Stellar network">
-                  Wallet history
-                </InfoTooltip>
-                <Link href={`${STELLAR_EXPERT_URL}/account/${distributionAccountPublicKey}`}>
-                  <Icon.LinkExternal01 className="ExternalLinkIcon" />
-                </Link>
-              </Box>
-            </div>
-            <WalletHistory stellarAddress={distributionAccountPublicKey} />
-          </div>
-        </Card>
-
-        <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
-          <BridgeIntegrationSection
-            onOptIn={handleBridgeOptIn}
-            onCreateVirtualAccount={handleCreateVirtualAccount}
+        {showTrustlines ? (
+          <WalletTrustlines
+            balances={balances || undefined}
+            onSuccess={() => {
+              fetchAccountBalances();
+            }}
           />
-        </ShowForRoles>
+        ) : null}
+
+        {isAddressUnavailable ? null : (
+          <Card>
+            <div className="CardStack__card">
+              <div className="CardStack__title">
+                <Box gap="xs" direction="row" align="center">
+                  <InfoTooltip infoText="A record of payments to and from this account, sourced directly from the Stellar network">
+                    Account history
+                  </InfoTooltip>
+                  <Link href={`${STELLAR_EXPERT_URL}/account/${distributionAccountPublicKey}`}>
+                    <Icon.LinkExternal01 className="ExternalLinkIcon" />
+                  </Link>
+                </Box>
+              </div>
+              <WalletHistory stellarAddress={distributionAccountPublicKey} />
+            </div>
+          </Card>
+        )}
+
+        {showBridgeIntegration ? (
+          <ShowForRoles acceptedRoles={["owner", "financial_controller"]}>
+            <BridgeIntegrationSection
+              onOptIn={handleBridgeOptIn}
+              onCreateVirtualAccount={handleCreateVirtualAccount}
+            />
+          </ShowForRoles>
+        ) : null}
       </div>
 
       <BridgeOptInModal

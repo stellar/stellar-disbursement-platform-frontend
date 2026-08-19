@@ -17,6 +17,7 @@ export const formatStatistics = (statistics: ApiStatistics): HomeStatistics => {
     individualsTotalCount: statistics.total_receivers,
     assets: statistics.payment_amounts_by_asset.map((a) => ({
       assetCode: a.asset_code,
+      assetIssuer: a.asset_issuer,
       success: a.payment_amounts.success.toString(),
       average: a.payment_amounts.average.toString(),
     })),

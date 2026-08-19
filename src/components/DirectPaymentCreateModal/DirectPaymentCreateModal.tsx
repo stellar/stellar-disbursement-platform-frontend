@@ -11,15 +11,19 @@ import { SelectedReceiverInfo } from "@/components/SelectedReceiverInfo/Selected
 import { directPayment } from "@/constants/directPayment";
 
 import { useAllAssets } from "@/apiQueries/useAllAssets";
+import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
+import { DistributionWallet } from "@/apiQueries/useDistributionWallets";
 import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
 import { useSearchReceivers } from "@/apiQueries/useSearchReceivers";
 import { useWallets } from "@/apiQueries/useWallets";
 
+import { accountColor } from "@/helpers/accountColor";
 import { getEnhancedWalletErrorMessage } from "@/helpers/walletErrorMessages";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePrevious } from "@/hooks/usePrevious";
+import { useRedux } from "@/hooks/useRedux";
 
 import { ApiAssetWithTrustline, ApiReceiver, CreateDirectPaymentRequest } from "@/types";
 
@@ -28,11 +32,38 @@ import "./styles.scss";
 interface DirectPaymentCreateModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (paymentData: CreateDirectPaymentRequest) => void;
+  onSubmit: (paymentData: CreateDirectPaymentRequest, sourceWalletId?: string) => void;
   onResetQuery: () => void;
   isLoading: boolean;
   errorMessage?: string;
+  // The distribution (sending) accounts this payment can leave from. The choice is made and kept
+  // here, in the modal, so opening the flow never re-scopes the rest of the app.
+  sourceWallets?: DistributionWallet[];
+  initialSourceWalletId?: string;
 }
+
+// A compact "Sending from [dot] Account" banner so the source account is visible at the point
+// of committing a direct payment (single-account tenants don't need it).
+const SendingFromBanner = ({ name, color }: { name?: string; color?: string }) => {
+  if (!name) {
+    return null;
+  }
+  return (
+    <div className="DirectPaymentCreateModal__sendingFrom">
+      <span className="DirectPaymentCreateModal__sendingFrom__label">Sending from</span>
+      <span className="DirectPaymentCreateModal__sendingFrom__value">
+        {color ? (
+          <span
+            className="DirectPaymentCreateModal__sendingFrom__dot"
+            style={{ backgroundColor: color }}
+            aria-hidden="true"
+          />
+        ) : null}
+        {name}
+      </span>
+    </div>
+  );
+};
 
 const INITIAL_FORM_DATA = {
   assetId: "",
@@ -50,6 +81,8 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   onResetQuery,
   isLoading,
   errorMessage,
+  sourceWallets,
+  initialSourceWalletId,
 }) => {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -57,6 +90,9 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   const [paymentDataToConfirm, setPaymentDataToConfirm] =
     useState<CreateDirectPaymentRequest | null>(null);
   const [selectedReceiverId, setSelectedReceiverId] = useState<string | undefined>(undefined);
+  // Kept out of formData: it isn't a validated form field, and the asset/receiver cascades in
+  // handleInputChange clear their sibling fields on every change.
+  const [sourceWalletId, setSourceWalletId] = useState(initialSourceWalletId ?? "");
   const queryClient = useQueryClient();
   const debouncedReceiverSearch = useDebounce(
     formData.receiverSearch,
@@ -86,10 +122,43 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     // For non-verified, get all wallets (undefined = no filter)
     userManaged: isReceiverVerified ? false : undefined,
   });
+  // Single-account tenants have nothing to choose between, so they get neither selector nor banner.
+  const canChooseSource = (sourceWallets?.length ?? 0) >= 2;
+  const sourceWallet = sourceWallets?.find((w) => w.id === sourceWalletId);
+  // Scope the receiver search to the account this payment will actually leave from — the
+  // modal's own source, NOT the app-wide selection. Under "All accounts" (or after picking a
+  // different source here) the ambient scope would offer receivers outside the source's reach
+  // and then submit the payment against the source anyway.
   const { data: searchResults, isLoading: searchLoading } = useSearchReceivers(
     debouncedReceiverSearch,
-    true,
+    // Only wait on a source where one is actually chosen; single-account tenants (and
+    // deployments without the distribution-wallets routes) never resolve one.
+    !canChooseSource || Boolean(sourceWalletId),
+    sourceWalletId || null,
   );
+  // GET /assets resolves its balances from the tenant's DEFAULT distribution account and
+  // ignores X-Wallet-Id (its `wallet` query param scopes to a receiver wallet provider, not a
+  // distribution account), so useAllAssets cannot be re-scoped. On a multi-account tenant the
+  // source's real balance has to come from the per-wallet endpoint instead.
+  const { userAccount } = useRedux("userAccount");
+  const { data: sourceWalletBalance, isError: isSourceBalanceError } = useDistributionWalletBalance(
+    Boolean(userAccount.isAuthenticated) && visible && canChooseSource && Boolean(sourceWalletId),
+    sourceWalletId || null,
+  );
+  // The balance of the selected asset on the selected source, or undefined when the source's
+  // balance doesn't apply (single-account tenant) or isn't known yet. Balances come back keyed
+  // "XLM" for the native asset and "CODE:ISSUER" for everything else.
+  // (The query key is shared with the account switcher, so gate on the source explicitly:
+  // cached data can be present even while this query is disabled.)
+  const sourceAssetBalance = useMemo(() => {
+    if (!canChooseSource || !sourceWalletId || !selectedAsset || !sourceWalletBalance) {
+      return undefined;
+    }
+    const key = selectedAsset.issuer?.trim()
+      ? `${selectedAsset.code}:${selectedAsset.issuer}`
+      : "XLM";
+    return sourceWalletBalance.balances?.[key] ?? "0";
+  }, [canChooseSource, sourceWalletId, selectedAsset, sourceWalletBalance]);
   const filteredWallets = useMemo(() => {
     if (!supportedWallets.length || !formData.assetId || !formData.selectedReceiver) {
       return [];
@@ -132,6 +201,25 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     }
     return `${filteredWallets.length} compatible wallet(s) available`;
   };
+  // Where a source account is chosen, the balance shown is that account's. Falling back to the
+  // asset list's balance would quietly show the tenant default account's number instead, so
+  // while the source's balance is in flight (or failed) we say so rather than show a figure
+  // that belongs to a different account.
+  const getAssetFieldNote = (): string | undefined => {
+    if (!selectedAsset) {
+      return undefined;
+    }
+    if (canChooseSource && sourceWalletId) {
+      if (isSourceBalanceError) {
+        return "Could not load this account's balance";
+      }
+      if (sourceAssetBalance === undefined) {
+        return "Loading available balance…";
+      }
+      return `Available balance: ${sourceAssetBalance} ${selectedAsset.code}`;
+    }
+    return `Available balance: ${selectedAsset.balance} ${selectedAsset.code}`;
+  };
 
   const isAmountValid =
     formData.amount.trim() !== "" && !isNaN(Number(formData.amount)) && Number(formData.amount) > 0;
@@ -154,7 +242,12 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       setPaymentDataToConfirm(null);
       setSelectedReceiverId(undefined);
     }
-  }, [visible, previousVisible]);
+    // Re-seed on every open so a source account picked for an earlier payment can't silently
+    // fund the next one.
+    if (!previousVisible && visible) {
+      setSourceWalletId(initialSourceWalletId ?? "");
+    }
+  }, [visible, previousVisible, initialSourceWalletId]);
 
   useEffect(() => {
     if (receiverDetailsRaw && formData.selectedReceiver?.id === receiverDetailsRaw.id) {
@@ -232,6 +325,29 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
+  // Everything below the source account is scoped to it: receivers come from that account's
+  // scope, and the amount is shown/validated against that account's balance. Carrying any of it
+  // across a source change would let a receiver picked under account A be submitted from
+  // account B without ever being revalidated, so the dependent fields start over.
+  const handleSourceWalletChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const nextSourceWalletId = event.target.value;
+    if (nextSourceWalletId === sourceWalletId) {
+      return;
+    }
+
+    if (errorMessage) {
+      onResetQuery();
+    }
+
+    setSourceWalletId(nextSourceWalletId);
+    // externalPaymentId is the organization's own identifier for the payment — it isn't scoped
+    // to an account, so it survives.
+    setFormData((prev) => ({ ...INITIAL_FORM_DATA, externalPaymentId: prev.externalPaymentId }));
+    setFormErrors({});
+    setSelectedReceiverId(undefined);
+    queryClient.removeQueries({ queryKey: ["receivers", "search"] });
+  };
+
   const handleReceiverSelect = (receiver: ApiReceiver) => {
     setSelectedReceiverId(receiver.id);
 
@@ -275,7 +391,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
 
   const handleConfirmPayment = () => {
     if (paymentDataToConfirm) {
-      onSubmit(paymentDataToConfirm);
+      onSubmit(paymentDataToConfirm, sourceWalletId || undefined);
     }
   };
 
@@ -298,6 +414,14 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       errors.amount = "Amount is required";
     } else if (isNaN(Number(formData.amount)) || Number(formData.amount) <= 0) {
       errors.amount = "Amount must be a valid positive number";
+    } else if (
+      // Only when we actually know the chosen source's balance — sourceAssetBalance stays
+      // undefined for single-account tenants and while/if the balance can't be read, so this
+      // never blocks Review on a number we aren't sure of.
+      sourceAssetBalance !== undefined &&
+      Number(formData.amount) > Number(sourceAssetBalance)
+    ) {
+      errors.amount = `Amount exceeds this account's available balance (${sourceAssetBalance} ${selectedAsset?.code})`;
     }
     if (!formData.receiverSearch.trim()) {
       errors.receiverSearch = "Receiver is required";
@@ -318,7 +442,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     if (isReceiverSearchLoading) {
       return (
         <div className="DirectPaymentCreateModal__searchResults">
-          <div className="DirectPaymentCreateModal__searchResult">Searching...</div>
+          <div className="DirectPaymentCreateModal__searchResult">Searching…</div>
         </div>
       );
     }
@@ -417,11 +541,15 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
   return (
     <Modal visible={visible} onClose={handleClose}>
       <Modal.Heading>
-        {showConfirmation ? "Confirm Direct Payment" : "Create A Direct Payment"}
+        {showConfirmation ? "Confirm direct payment" : "Create a direct payment"}
       </Modal.Heading>
       {showConfirmation ? (
         <>
           <Modal.Body>
+            <SendingFromBanner
+              name={canChooseSource ? sourceWallet?.name : undefined}
+              color={canChooseSource && sourceWallet ? accountColor(sourceWallet.id) : undefined}
+            />
             {errorMessage && (
               <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras
@@ -474,6 +602,26 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
             )}
 
             <div className="DirectPaymentCreateModal__form">
+              {/* Source Account — the operator confirms which account funds this payment instead
+                  of being moved onto one behind their back. */}
+              {canChooseSource && (
+                <Select
+                  fieldSize="sm"
+                  id="sourceWalletId"
+                  label="Sending from"
+                  value={sourceWalletId}
+                  onChange={handleSourceWalletChange}
+                  required
+                >
+                  <option value="">Select…</option>
+                  {sourceWallets?.map((wallet) => (
+                    <option key={wallet.id} value={wallet.id}>
+                      {`${wallet.name}${wallet.is_default ? " (default)" : ""}`}
+                    </option>
+                  ))}
+                </Select>
+              )}
+
               {/* Asset Selection */}
               <Select
                 fieldSize="sm"
@@ -482,13 +630,10 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                 value={formData.assetId}
                 onChange={handleInputChange}
                 error={formErrors.assetId}
-                note={
-                  selectedAsset &&
-                  `Available balance: ${selectedAsset?.balance} ${selectedAsset?.code}`
-                }
+                note={getAssetFieldNote()}
                 required
               >
-                <option value="">Select asset</option>
+                <option value="">Select…</option>
                 {allAssets?.map((asset) => (
                   <option key={asset.id} value={asset.id}>
                     {asset.code}{" "}
@@ -528,7 +673,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                     fieldSize="sm"
                     id="receiverSearch"
                     label="Receiver"
-                    placeholder="Search by email, phone, or enter wallet address (GXXX...)"
+                    placeholder="Search by email, phone, or enter wallet address (GXXX…)"
                     infoText="Search results appear after entering at least 3 characters"
                     tooltipPlacement="top-start"
                     value={formData.receiverSearch}
@@ -563,7 +708,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                     note={getWalletFieldNote()}
                     required
                   >
-                    <option value="">Select wallet</option>
+                    <option value="">Select…</option>
                     {renderWalletOptions()}
                   </Select>
                 </div>
