@@ -346,6 +346,9 @@ export type PaymentStatus =
   | "FAILED"
   | "CANCELED";
 
+// Which Circle API produced a payment's identifier.
+export type CircleTransactionType = "PAYOUT" | "TRANSFER";
+
 export type PaymentsSearchParams = CommonFilters &
   SortParams &
   PaginationParams & { receiver_id?: string };
@@ -383,7 +386,8 @@ export type PaymentDetails = {
   status: PaymentStatus;
   statusHistory: PaymentDetailsStatusHistoryItem[];
   externalPaymentId?: string;
-  circleTransferRequestId?: string;
+  circleTransactionId?: string;
+  circleTransactionType?: CircleTransactionType;
   // Distribution wallet the funds leave from; empty/absent on pre-migration rows.
   sourceWalletId?: string;
 };
@@ -733,7 +737,8 @@ export type ApiPayment = {
   created_at: string;
   updated_at: string;
   external_payment_id?: string;
-  circle_transfer_request_id?: string;
+  circle_transaction_id?: string;
+  circle_transaction_type?: CircleTransactionType;
   // Distribution wallet the funds leave from; empty/absent on pre-migration rows.
   source_wallet_id?: string;
 };
