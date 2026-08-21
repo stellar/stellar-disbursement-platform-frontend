@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [7.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/7.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.6.0...7.0.0))
+
 ### Added
 
 - Add multi-wallet support, with an always-visible distribution-account switcher, per-account color coding, and an active-account bar throughout the dashboard. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
@@ -27,6 +29,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Fix receiver invitation timestamps showing "now" instead of the actual time. [#569](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/569)
 - Add missing distribution-account permissions to API-key creation/editing modal [#572](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/572)
 - Fix distribution-account scoping on per-receiver payment counters. [#573](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/573)
+- Expose Circle transaction ID for payments made through both Payouts (previously returned `null`) and Transfers API. [#575](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/575)
+
+### Security and Dependencies
+
+- Bump docker/login-action from 4.5.1 to 4.6.0 in the all-actions group across 1 directory. [#570](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/570)
+- Bump postcss from 8.5.14 to 8.5.25. [#568](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/568)
+- Bump brace-expansion from 5.0.6 to 5.0.9. [#567](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/567)
+- Bump js-yaml from 4.2.0 to 4.3.1. [#566](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/566)
+- Bump docker/login-action from 4.4.0 to 4.5.1 in the all-actions group. [#563](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/563)
+- Bump immutable from 5.1.5 to 5.1.9. [#562](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/562)
+- Bump axios from 1.16.0 to 1.18.1. [#559](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/559)
+- Bump actions/setup-node from 6 to 7 in the all-actions group. [#558](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/558)
+- Bump the all-actions group with 2 updates (docker/login-action from 4.2.0 to 4.4.0, docker/build-push-action from 7.2.0 to 7.3.0). [#554](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/554)
+- Bump actions/checkout from 6 to 7 in the all-actions group. [#550](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/550)
 
 ## [6.6.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/6.6.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.5.0...6.6.0))
 
