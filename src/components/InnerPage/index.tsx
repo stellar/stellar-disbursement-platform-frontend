@@ -1,16 +1,27 @@
 import React from "react";
+
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
+
 import { Icon } from "@stellar/design-system";
 
+import { ActiveWalletBar } from "@/components/ActiveWalletBar";
 import { PageHeader } from "@/components/PageHeader";
+
 import { USE_SSO } from "@/constants/envVariables";
 import { Routes } from "@/constants/settings";
-import { AppDispatch, resetStoreAction } from "@/store";
-import { useRedux } from "@/hooks/useRedux";
-import { singleUserStore } from "@/helpers/singleSingOn";
+
 import { getAppVersion } from "@/helpers/getAppVersion";
+import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
+import { singleUserStore } from "@/helpers/singleSingOn";
+
+import { useRedux } from "@/hooks/useRedux";
+
+import { UserRole } from "@/types";
+
+import { AppDispatch, resetStoreAction } from "@/store";
+
 
 import "./styles.scss";
 
@@ -31,6 +42,9 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       singleUserStore().then();
     }
     dispatch(resetStoreAction());
+    // Before the token: the selected-account key is derived from the signed-in user, so
+    // clearing the token first would compute a different key and orphan the entry.
+    localStorageSelectedWallet.remove();
     localStorageSessionToken.remove();
   };
 
@@ -39,7 +53,18 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
     label: string;
     route: string;
     icon: React.ReactNode;
+    // Mirror each route's acceptedRoles (App.tsx) so members don't see nav links that
+    // dead-end at the Unauthorized page. Omit to show for every authenticated role.
+    acceptedRoles?: UserRole[];
   };
+
+  const DISBURSEMENT_ROLES: UserRole[] = [
+    "owner",
+    "financial_controller",
+    "business",
+    "initiator",
+    "approver",
+  ];
 
   const ITEMS_TOP: NavItem[] = [
     {
@@ -53,18 +78,21 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       label: "Disbursements",
       route: Routes.DISBURSEMENTS,
       icon: <Icon.Inbox01 />,
+      acceptedRoles: DISBURSEMENT_ROLES,
     },
     {
       id: "nav-receivers",
       label: "Receivers",
       route: Routes.RECEIVERS,
       icon: <Icon.Users02 />,
+      acceptedRoles: DISBURSEMENT_ROLES,
     },
     {
       id: "nav-payments",
       label: "Payments",
       route: Routes.PAYMENTS,
       icon: <Icon.BankNote01 />,
+      acceptedRoles: DISBURSEMENT_ROLES,
     },
     {
       id: "nav-wallet-providers",
@@ -74,7 +102,7 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
     },
     {
       id: "nav-distribution-account",
-      label: "Distribution Account",
+      label: "Distribution Accounts",
       route: Routes.DISTRIBUTION_ACCOUNT,
       icon: <Icon.Dataflow01 />,
     },
@@ -92,6 +120,7 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       label: "API Keys",
       route: Routes.API_KEYS,
       icon: <Icon.Key01 />,
+      acceptedRoles: ["owner", "developer"],
     },
     {
       id: "nav-profile",
@@ -104,8 +133,14 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       label: "Settings",
       route: Routes.SETTINGS,
       icon: <Icon.Settings01 />,
+      acceptedRoles: ["owner"],
     },
   ];
+
+  // Hide nav links the current user can't open, so they don't dead-end at the Unauthorized page.
+  const currentRole = userAccount.role;
+  const canSee = (item: NavItem) =>
+    !item.acceptedRoles || (currentRole && item.acceptedRoles.includes(currentRole));
 
   const navLinkStyle = ({ isActive }: { isActive: boolean }) => {
     return ["Sidebar__navItem", isActive ? "Sidebar__navItem--current" : null]
@@ -156,12 +191,12 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       <div className="InnerPage">
         <div className="InnerPage__sidebar">
           <div className="InnerPage__sidebar--top">
-            {ITEMS_TOP.map((i) => (
+            {ITEMS_TOP.filter(canSee).map((i) => (
               <NavItem key={i.id} item={i} />
             ))}
           </div>
           <div className="InnerPage__sidebar--bottom">
-            {ITEMS_BOTTOM.map((i) => (
+            {ITEMS_BOTTOM.filter(canSee).map((i) => (
               <NavItem key={i.id} item={i} />
             ))}
 
@@ -170,6 +205,7 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
         </div>
         <div className="InnerPage__container">
           <div className={`InnerPage__content ${isNarrow ? "InnerPage__content--narrow" : ""}`}>
+            <ActiveWalletBar />
             {children}
           </div>
         </div>

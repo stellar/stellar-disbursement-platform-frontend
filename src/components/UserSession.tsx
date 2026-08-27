@@ -8,6 +8,7 @@ import {
   sessionExpiredAction,
 } from "@/store/ducks/userAccount";
 import { parseJwt } from "@/helpers/parseJwt";
+import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { getProfileInfoAction } from "@/store/ducks/profile";
@@ -64,6 +65,10 @@ export const UserSession = () => {
         userAccount.status === "SUCCESS"
       ) {
         dispatch(resetStoreAction());
+        // Always before the token: the selected-account key is derived from the signed-in
+        // user, so clearing the token first would compute a different key and orphan the
+        // entry — leaving the next user on this browser scoped to the previous one's account.
+        localStorageSelectedWallet.remove();
         localStorageSessionToken.remove();
       }
     }
@@ -79,6 +84,7 @@ export const UserSession = () => {
     // Clear local storage when session expired
     if (isSessionExpired) {
       dispatch(resetStoreAction());
+      localStorageSelectedWallet.remove();
       localStorageSessionToken.remove();
       return;
     }
@@ -95,6 +101,7 @@ export const UserSession = () => {
   useEffect(() => {
     const onSessionExpired = () => {
       dispatch(sessionExpiredAction());
+      localStorageSelectedWallet.remove();
       localStorageSessionToken.remove();
     };
 

@@ -381,20 +381,20 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
   };
 
   const renderDropdownDefault = (isLoading: boolean) => (
-    <option>{isLoading ? "Loading…" : ""}</option>
+    <option value="">{isLoading ? "Loading…" : "Select…"}</option>
   );
 
   const renderSummaryFields = () => (
     <>
       <div>
-        <label className="Label Label--sm">Registration Contact Type</label>
+        <label className="Label Label--sm">Contact method</label>
         <div className="DisbursementDetailsFields__value">
           {formatRegistrationContactType(details.registrationContactType)}
         </div>
       </div>
 
       <div>
-        <label className="Label Label--sm">Wallet provider</label>
+        <label className="Label Label--sm">Receiver wallet app</label>
         <div className="DisbursementDetailsFields__value">{derived.labels.walletProvider}</div>
       </div>
 
@@ -404,7 +404,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
       </div>
 
       <div>
-        <label className="Label Label--sm">Verification Type</label>
+        <label className="Label Label--sm">Verification type</label>
         <div className="DisbursementDetailsFields__value">{derived.labels.verification}</div>
       </div>
 
@@ -441,10 +441,21 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
         id={FieldId.REGISTRATION_CONTACT_TYPE}
         label={
           <InfoTooltip
-            hideTooltip={derived.isWalletRegistrationEnabled}
-            infoText="Registering receivers wallet directly is disabled. It can be enabled in the 'Wallet Providers' section."
+            infoText={
+              <>
+                {
+                  "How you identify each receiver in your CSV — by phone number, email, or their Stellar wallet address. This sets which columns the template expects."
+                }
+                {/* deriveFormState drops the wallet-address options from registrationOptions when
+                    user-managed wallets are off. Without this sentence they are simply absent,
+                    with no hint that they exist or how to enable them. */}
+                {derived.isWalletRegistrationEnabled
+                  ? null
+                  : " Registering receivers wallet directly is disabled. It can be enabled in the 'Wallet Providers' section."}
+              </>
+            }
           >
-            Registration Contact Type
+            Contact method
           </InfoTooltip>
         }
         fieldSize="sm"
@@ -462,7 +473,11 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
 
       <Select
         id={FieldId.WALLET_ID}
-        label="Wallet provider"
+        label={
+          <InfoTooltip infoText="The wallet application your receivers will use to collect funds (the receiving app) — not your distribution account.">
+            Receiver wallet app
+          </InfoTooltip>
+        }
         fieldSize="sm"
         onChange={handleFieldChange}
         value={derived.selectValues.walletId}

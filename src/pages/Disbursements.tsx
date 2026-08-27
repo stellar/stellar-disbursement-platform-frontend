@@ -1,28 +1,37 @@
 import { useEffect, useState } from "react";
-import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { FilterMenu } from "@/components/FilterMenu";
+import { Button, Heading, Icon, Input, Select } from "@stellar/design-system";
+
 import { DisbursementsTable } from "@/components/DisbursementsTable";
+import { FilterMenu } from "@/components/FilterMenu";
 import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 import { Pagination } from "@/components/Pagination";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ShowForRoles } from "@/components/ShowForRoles";
 
-import { PAGE_LIMIT_OPTIONS, Routes, UI_STATUS_DISBURSEMENT } from "@/constants/settings";
-import { number } from "@/helpers/formatIntlNumber";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+import { exportDataAction } from "@/store/ducks/dataExport";
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
+import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
 import {
   getDisbursementsAction,
   getDisbursementsWithParamsAction,
 } from "@/store/ducks/disbursements";
-import { exportDataAction } from "@/store/ducks/dataExport";
-import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
-import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+
+import { PAGE_LIMIT_OPTIONS, Routes, UI_STATUS_DISBURSEMENT } from "@/constants/settings";
+
+import { number } from "@/helpers/formatIntlNumber";
+
+import { usePrevious } from "@/hooks/usePrevious";
+import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import { CommonFilters, SortByDisbursements, SortDirection } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 export const Disbursements = () => {
   const { disbursements } = useRedux("disbursements");
@@ -50,11 +59,27 @@ export const Disbursements = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Active distribution account (global ActiveWalletBar). Re-list when it changes.
+  const { selectedWalletId } = useSelectedWallet();
+
+  // null until the first commit, so it also tells a mount apart from an account switch.
+  const previousWalletId = usePrevious(selectedWalletId);
+
   useEffect(() => {
-    dispatch(getDisbursementsAction());
+    if (previousWalletId !== null && previousWalletId !== selectedWalletId) {
+      // On a switch, replay the current view against the new account — the thunk merges the
+      // stored search params (filters, search, sort, page, page limit), so the controls, which
+      // keep their local state, and the rows keep agreeing.
+      dispatch(getDisbursementsWithParamsAction({ walletId: selectedWalletId }));
+    } else {
+      dispatch(getDisbursementsAction({ walletId: selectedWalletId }));
+    }
+
     dispatch(resetDisbursementDetailsAction());
     dispatch(setDraftIdAction(undefined));
-  }, [dispatch]);
+    // `previousWalletId` is read but deliberately not a dep: it must not trigger a re-fetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, selectedWalletId]);
 
   const apiError =
     disbursements.status === "ERROR" && disbursements.errorString
@@ -75,6 +100,7 @@ export const Disbursements = () => {
         page: "1",
         ...filters,
         q: searchText,
+        walletId: selectedWalletId,
       }),
     );
 
@@ -93,6 +119,7 @@ export const Disbursements = () => {
       getDisbursementsWithParamsAction({
         page: "1",
         ...filters,
+        walletId: selectedWalletId,
       }),
     );
 
@@ -104,6 +131,7 @@ export const Disbursements = () => {
       getDisbursementsWithParamsAction({
         page: "1",
         ...initFilters,
+        walletId: selectedWalletId,
       }),
     );
 
@@ -118,6 +146,7 @@ export const Disbursements = () => {
           page: "1",
           sort: undefined,
           direction: undefined,
+          walletId: selectedWalletId,
         }),
       );
     } else {
@@ -126,6 +155,7 @@ export const Disbursements = () => {
           page: "1",
           sort,
           direction,
+          walletId: selectedWalletId,
         }),
       );
     }
@@ -144,6 +174,7 @@ export const Disbursements = () => {
       exportDataAction({
         exportType: "disbursements",
         searchParams: disbursements.searchParams,
+        walletId: selectedWalletId,
       }),
     );
   };
@@ -160,6 +191,7 @@ export const Disbursements = () => {
       getDisbursementsWithParamsAction({
         page_limit: pageLimit.toString(),
         page: "1",
+        walletId: selectedWalletId,
       }),
     );
   };
@@ -225,6 +257,7 @@ export const Disbursements = () => {
                   <option value="STARTED">Started</option>
                   <option value="PAUSED">Paused</option>
                   <option value="COMPLETED">Completed</option>
+                  <option value="CANCELED">Canceled</option>
                 </Select>
               </div>
 
@@ -281,7 +314,12 @@ export const Disbursements = () => {
               maxPages={Number(maxPages)}
               onSetPage={(page) => {
                 setCurrentPage(page);
-                dispatch(getDisbursementsWithParamsAction({ page: page.toString() }));
+                dispatch(
+                  getDisbursementsWithParamsAction({
+                    page: page.toString(),
+                    walletId: selectedWalletId,
+                  }),
+                );
               }}
               isLoading={disbursements.status === "PENDING"}
             />

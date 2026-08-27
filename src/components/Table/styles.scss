@@ -165,7 +165,9 @@ table.Table-v2 {
     }
 
     &[data-wrap="true"] {
-      word-break: break-all;
+      // anywhere breaks at existing break opportunities first (only splitting a long
+      // unbroken token like an address as a last resort) instead of mid-word "payo/ut".
+      overflow-wrap: anywhere;
 
       .Link {
         flex-wrap: wrap;
