@@ -256,7 +256,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
           )}
         </div>
 
-        <form onSubmit={handleGrant}>
+        <form id="grant-access-form" onSubmit={handleGrant}>
           <Select
             fieldSize="sm"
             id="grant-user"
@@ -328,21 +328,19 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
               );
             })}
           </fieldset>
-
-          <div className="ManageWalletAccessModal__submit">
-            <Button
-              size="sm"
-              variant="primary"
-              type="submit"
-              disabled={!userId || !role}
-              isLoading={grant.isPending}
-            >
-              Grant
-            </Button>
-          </div>
         </form>
       </Modal.Body>
       <Modal.Footer>
+        <Button
+          size="md"
+          variant="primary"
+          type="submit"
+          form="grant-access-form"
+          disabled={!userId || !role}
+          isLoading={grant.isPending}
+        >
+          Grant
+        </Button>
         <Button size="md" variant="tertiary" onClick={onClose}>
           Done
         </Button>
