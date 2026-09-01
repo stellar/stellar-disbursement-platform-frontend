@@ -70,9 +70,8 @@ export const DistributionAccount = () => {
     return (
       <DistributionAccountStellar
         key={only.id}
-        accountName={only.is_default ? undefined : only.name}
+        account={only.is_default ? undefined : only}
         accountAddress={only.distribution_account_address ?? null}
-        accountId={only.is_default ? undefined : only.id}
         // Bridge is tenant-level config, so it belongs on the default account's card only —
         // unlike trustlines, which are this account's own on-chain state.
         showBridgeIntegration={only.is_default}
@@ -91,10 +90,8 @@ export const DistributionAccount = () => {
     return (
       <DistributionAccountStellar
         key={selected.id}
-        accountName={selected.name}
+        account={selected}
         accountAddress={selected.distribution_account_address ?? null}
-        accountId={selected.id}
-        isDefaultAccount={selected.is_default}
         showBridgeIntegration={selected.is_default}
       />
     );
@@ -132,10 +129,8 @@ export const DistributionAccount = () => {
         .map((w) => (
           <DistributionAccountStellar
             key={w.id}
-            accountName={w.name}
+            account={w}
             accountAddress={w.distribution_account_address ?? null}
-            accountId={w.id}
-            isDefaultAccount={w.is_default}
             showTrustlines={w.is_default}
             showBridgeIntegration={w.is_default}
           />

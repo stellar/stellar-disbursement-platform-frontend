@@ -17,6 +17,7 @@ import { WalletTrustlines } from "@/components/WalletTrustlines";
 
 import { STELLAR_EXPERT_URL } from "@/constants/envVariables";
 
+import { DistributionWallet } from "@/apiQueries/useDistributionWallets";
 import { useUpdateBridgeIntegration } from "@/apiQueries/useUpdateBridgeIntegration";
 
 import { useOrgAccountInfo } from "@/hooks/useOrgAccountInfo";
@@ -29,14 +30,12 @@ import { BridgeIntegrationUpdate } from "@/types";
 interface DistributionAccountStellarProps {
   // Multi-account: scope the page to a specific distribution account. Defaults to the
   // tenant's (single/default) account for unchanged single-account behavior.
-  accountName?: string;
+  account?: Pick<DistributionWallet, "id" | "name" | "is_default">;
   // `undefined` means there is no wallet record at all (legacy single-account tenant), and the
   // tenant-level fallback below is correct. `null` means a real wallet record whose Stellar
   // account isn't provisioned yet — falling back there would label this account's name with the
   // tenant default's address, balances and history.
   accountAddress?: string | null;
-  accountId?: string;
-  isDefaultAccount?: boolean;
   // Trustlines are per-account on-chain state: the rows come from this account's own Horizon
   // balances, and adding one now targets this account via X-Wallet-Id. Shown for any account
   // whose identity is unambiguous — hidden only on the "All accounts" aggregate, where there is
@@ -50,10 +49,8 @@ interface DistributionAccountStellarProps {
 }
 
 export const DistributionAccountStellar = ({
-  accountName,
+  account,
   accountAddress,
-  accountId,
-  isDefaultAccount = false,
   showTrustlines = true,
   showBridgeIntegration = true,
 }: DistributionAccountStellarProps) => {
@@ -179,13 +176,10 @@ export const DistributionAccountStellar = ({
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              {accountName && accountId ? (
-                <DistributionAccountLabel
-                  wallet={{ id: accountId, name: accountName, is_default: isDefaultAccount }}
-                  defaultMarker="text"
-                />
+              {account ? (
+                <DistributionAccountLabel wallet={account} defaultMarker="text" />
               ) : (
-                (accountName ?? "Distribution account")
+                "Distribution account"
               )}
             </Heading>
           </SectionHeader.Content>
