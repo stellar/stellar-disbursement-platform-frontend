@@ -6,6 +6,7 @@ import { AccountBalances } from "@/components/AccountBalances";
 import { Box } from "@/components/Box";
 import { BridgeIntegrationSection } from "@/components/BridgeIntegrationSection";
 import { BridgeOptInModal } from "@/components/BridgeOptInModal";
+import { DistributionAccountLabel } from "@/components/DistributionAccountLabel";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { LoadingContent } from "@/components/LoadingContent";
@@ -34,7 +35,8 @@ interface DistributionAccountStellarProps {
   // account isn't provisioned yet — falling back there would label this account's name with the
   // tenant default's address, balances and history.
   accountAddress?: string | null;
-  accountColorHex?: string;
+  accountId?: string;
+  isDefaultAccount?: boolean;
   // Trustlines are per-account on-chain state: the rows come from this account's own Horizon
   // balances, and adding one now targets this account via X-Wallet-Id. Shown for any account
   // whose identity is unambiguous — hidden only on the "All accounts" aggregate, where there is
@@ -50,7 +52,8 @@ interface DistributionAccountStellarProps {
 export const DistributionAccountStellar = ({
   accountName,
   accountAddress,
-  accountColorHex,
+  accountId,
+  isDefaultAccount = false,
   showTrustlines = true,
   showBridgeIntegration = true,
 }: DistributionAccountStellarProps) => {
@@ -176,24 +179,13 @@ export const DistributionAccountStellar = ({
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              {accountName ? (
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-                  {accountColorHex ? (
-                    <span
-                      aria-hidden="true"
-                      style={{
-                        display: "inline-block",
-                        width: "0.625rem",
-                        height: "0.625rem",
-                        borderRadius: "999px",
-                        backgroundColor: accountColorHex,
-                      }}
-                    />
-                  ) : null}
-                  {accountName}
-                </span>
+              {accountName && accountId ? (
+                <DistributionAccountLabel
+                  wallet={{ id: accountId, name: accountName, is_default: isDefaultAccount }}
+                  defaultMarker="text"
+                />
               ) : (
-                "Distribution account"
+                (accountName ?? "Distribution account")
               )}
             </Heading>
           </SectionHeader.Content>

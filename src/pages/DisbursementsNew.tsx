@@ -13,6 +13,7 @@ import { DisbursementButtons } from "@/components/DisbursementButtons";
 import { DisbursementDetails } from "@/components/DisbursementDetails";
 import { DisbursementInstructions } from "@/components/DisbursementInstructions";
 import { DisbursementInviteMessage } from "@/components/DisbursementInviteMessage";
+import { DistributionAccountLabel } from "@/components/DistributionAccountLabel";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
@@ -33,7 +34,6 @@ import { Routes } from "@/constants/settings";
 import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
-import { accountColor } from "@/helpers/accountColor";
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
 import { parseAssetKey } from "@/helpers/parseAssetKey";
 
@@ -296,17 +296,9 @@ export const DisbursementsNew = () => {
     return (
       <div className="Note" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
         Sending from
-        <span
-          aria-hidden="true"
-          style={{
-            display: "inline-block",
-            width: "0.5rem",
-            height: "0.5rem",
-            borderRadius: "999px",
-            backgroundColor: accountColor(selectedWallet.id),
-          }}
-        />
-        <strong>{selectedWallet.name}</strong>
+        <strong>
+          <DistributionAccountLabel wallet={selectedWallet} />
+        </strong>
         {selectedWallet.distribution_account_address ? (
           <span>
             ({selectedWallet.distribution_account_address.slice(0, 4)}…
@@ -372,19 +364,7 @@ export const DisbursementsNew = () => {
                     setSelectedWalletId(wallet.id);
                   }}
                 >
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      display: "inline-block",
-                      width: "0.5rem",
-                      height: "0.5rem",
-                      borderRadius: "999px",
-                      marginRight: "0.5rem",
-                      backgroundColor: accountColor(wallet.id),
-                    }}
-                  />
-                  {wallet.name}
-                  {wallet.is_default ? " (default)" : ""}
+                  <DistributionAccountLabel wallet={wallet} defaultMarker="text" />
                 </Button>
               ))}
             </div>

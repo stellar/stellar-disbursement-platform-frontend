@@ -98,14 +98,6 @@
     }
   }
 
-  &__dot {
-    display: inline-block;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    flex-shrink: 0;
-  }
-
   &__chevron {
     display: inline-flex;
     color: var(--sds-clr-gray-10);
@@ -176,26 +168,6 @@
     gap: 0.5rem;
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--sds-clr-gray-12);
-  }
-
-  &__dot {
-    display: inline-block;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 999px;
-    flex-shrink: 0;
-  }
-
-  &__badge {
-    font-size: 0.625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 999px;
-    // gray-06/gray-12 clears WCAG AA in both themes (gray-04/gray-11 fell below in light).
-    background-color: var(--sds-clr-gray-06);
     color: var(--sds-clr-gray-12);
   }
 

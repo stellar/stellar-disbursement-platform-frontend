@@ -174,12 +174,5 @@
       font-weight: 600;
       color: var(--sds-clr-gray-12);
     }
-
-    &__dot {
-      width: pxToRem(10px);
-      height: pxToRem(10px);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
   }
 }

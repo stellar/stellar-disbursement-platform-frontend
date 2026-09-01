@@ -1,0 +1,35 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.DistributionAccountLabel {
+  display: inline-flex;
+  align-items: center;
+
+  &__dot {
+    display: inline-block;
+    // Centers dot on the text when the parent is not a flex container (ignored in flex).
+    vertical-align: middle;
+    width: pxToRem(10px);
+    height: pxToRem(10px);
+    margin-right: var(--sds-gap-sm);
+    border-radius: pxToRem(999px);
+    flex-shrink: 0;
+    background-color: var(--DistributionAccountLabel-dot-color);
+  }
+
+  &__badge {
+    margin-left: var(--sds-gap-sm);
+    font-size: pxToRem(10px);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: var(--sds-fw-bold);
+    padding: pxToRem(1px) pxToRem(6px);
+    border-radius: pxToRem(999px);
+    // gray-06/gray-12 clears WCAG AA in both themes (gray-04/gray-11 fell below in light).
+    background-color: var(--sds-clr-gray-06);
+    color: var(--sds-clr-gray-12);
+  }
+
+  &__archived {
+    margin-left: var(--sds-gap-sm);
+  }
+}

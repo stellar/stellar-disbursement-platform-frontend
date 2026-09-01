@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
+
 import { Button, Card, Icon, Modal, Notification, Select } from "@stellar/design-system";
 
-import { InfoTooltip } from "@/components/InfoTooltip";
 import { DropdownMenu } from "@/components/DropdownMenu";
-import { MoreMenuButton } from "@/components/MoreMenuButton";
-import { Table } from "@/components/Table";
-import { NewUserModal } from "@/components/NewUserModal";
-import { LoadingContent } from "@/components/LoadingContent";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NewUserModal } from "@/components/NewUserModal";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { Table } from "@/components/Table";
 
 import { USER_ROLES_ARRAY } from "@/constants/settings";
-import { userRoleText } from "@/helpers/userRoleText";
 
-import { useUsers } from "@/apiQueries/useUsers";
-import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
-import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
 import { useCreateNewUser } from "@/apiQueries/useCreateNewUser";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
+import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
+import { useUsers } from "@/apiQueries/useUsers";
+
+import { distributionAccountDisplayName } from "@/helpers/distributionAccountDisplayName";
+import { userRoleText } from "@/helpers/userRoleText";
 
 import { useRedux } from "@/hooks/useRedux";
 
@@ -78,9 +81,20 @@ export const SettingsTeamMembers = () => {
     reset: resetNewUser,
   } = useCreateNewUser();
 
+  const hideModal = () => {
+    setIsStatusModalVisible(false);
+    setIsRoleModalVisible(false);
+    setIsNewUserModalVisible(false);
+    setSelectedUser(null);
+    setNewRole(null);
+    setPendingUser(null);
+    setInviteWalletId("");
+  };
+
   useEffect(() => {
     if (isRoleSuccess || isStatusSuccess) {
       getUsers();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       hideModal();
     }
 
@@ -110,6 +124,7 @@ export const SettingsTeamMembers = () => {
   useEffect(() => {
     if (isNewUserSuccess) {
       getUsers();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       hideModal();
     }
 
@@ -126,16 +141,6 @@ export const SettingsTeamMembers = () => {
     }
 
     return "this user";
-  };
-
-  const hideModal = () => {
-    setIsStatusModalVisible(false);
-    setIsRoleModalVisible(false);
-    setIsNewUserModalVisible(false);
-    setSelectedUser(null);
-    setNewRole(null);
-    setPendingUser(null);
-    setInviteWalletId("");
   };
 
   // Whether this invite has an account scope to decide. Owners are tenant-wide and get no
@@ -479,7 +484,7 @@ export const SettingsTeamMembers = () => {
             <option value="">Select an account</option>
             {(distributionWallets ?? []).map((w) => (
               <option value={w.id} key={w.id}>
-                {`${w.name}${w.is_default ? " (default)" : ""}`}
+                {distributionAccountDisplayName(w)}
               </option>
             ))}
           </Select>
