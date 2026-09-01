@@ -7,10 +7,6 @@ import { distributionAccountDisplayName } from "@/helpers/distributionAccountDis
 
 import "./styles.scss";
 
-// Colour dot + name of a distribution account. `defaultMarker` renders the default account either
-// as the pill badge (switcher rows) or as literal "(default)" text; `showArchived` appends an
-// "(archived)" note for historical rows. Inline so it can sit in a heading, a table cell or a
-// button label. The colour is the only dynamic value, so it travels as a CSS custom property.
 export const DistributionAccountLabel = ({
   wallet,
   defaultMarker,
