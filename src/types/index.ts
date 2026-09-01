@@ -162,7 +162,12 @@ export type CommonFilters = {
 };
 
 export type SortParams = {
-  sort?: SortByDisbursements | SortByReceivers | SortByPayments;
+  sort?: SortByDisbursements | SortByReceivers | SortByPayments | SortByUsers;
+  direction?: SortDirection;
+};
+
+export type UsersSearchParams = {
+  sort?: SortByUsers;
   direction?: SortDirection;
 };
 
@@ -180,6 +185,8 @@ export type SortByDisbursements = "name" | "created_at";
 export type SortByReceivers = "created_at";
 
 export type SortByPayments = "created_at";
+
+export type SortByUsers = "email" | "is_active";
 
 export type AccountBalanceItem = {
   balance: string;
