@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Add distribution account label to WalletBalancesOverview. [#582](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/582)
+
 ### Changed
 
 - Consolidate distribution account labels into shared component. [#583](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/583)

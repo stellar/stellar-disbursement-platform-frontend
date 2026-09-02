@@ -5,6 +5,7 @@ import { Button, Card, Notification } from "@stellar/design-system";
 import { AddDistributionWalletModal } from "@/components/AddDistributionWalletModal";
 import { ArchiveDistributionWalletModal } from "@/components/ArchiveDistributionWalletModal";
 import { AssetAmount } from "@/components/AssetAmount";
+import { DistributionAccountLabel } from "@/components/DistributionAccountLabel";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { ManageWalletAccessModal } from "@/components/ManageWalletAccessModal";
 import { ShowForRoles } from "@/components/ShowForRoles";
@@ -12,7 +13,6 @@ import { ShowForRoles } from "@/components/ShowForRoles";
 import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
-import { distributionAccountDisplayName } from "@/helpers/distributionAccountDisplayName";
 import { parseAssetKey } from "@/helpers/parseAssetKey";
 
 import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
@@ -55,7 +55,10 @@ const WalletBalanceRow = ({
       }}
     >
       <div style={{ fontWeight: 500 }}>
-        {distributionAccountDisplayName({ name, is_default: isDefault })}
+        <DistributionAccountLabel
+          wallet={{ id: walletId, name, is_default: isDefault }}
+          defaultMarker="badge"
+        />
       </div>
       <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
