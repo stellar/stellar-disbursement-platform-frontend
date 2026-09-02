@@ -8,8 +8,6 @@ import { SectionHeader } from "@/components/SectionHeader";
 
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
-import { accountColor } from "@/helpers/accountColor";
-
 import { useCircleAccount } from "@/hooks/useCircleAccount";
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
@@ -72,9 +70,8 @@ export const DistributionAccount = () => {
     return (
       <DistributionAccountStellar
         key={only.id}
-        accountName={only.is_default ? undefined : only.name}
+        account={only.is_default ? undefined : only}
         accountAddress={only.distribution_account_address ?? null}
-        accountColorHex={only.is_default ? undefined : accountColor(only.id)}
         // Bridge is tenant-level config, so it belongs on the default account's card only —
         // unlike trustlines, which are this account's own on-chain state.
         showBridgeIntegration={only.is_default}
@@ -93,9 +90,8 @@ export const DistributionAccount = () => {
     return (
       <DistributionAccountStellar
         key={selected.id}
-        accountName={`${selected.name}${selected.is_default ? " (default)" : ""}`}
+        account={selected}
         accountAddress={selected.distribution_account_address ?? null}
-        accountColorHex={accountColor(selected.id)}
         showBridgeIntegration={selected.is_default}
       />
     );
@@ -133,9 +129,8 @@ export const DistributionAccount = () => {
         .map((w) => (
           <DistributionAccountStellar
             key={w.id}
-            accountName={`${w.name}${w.is_default ? " (default)" : ""}`}
+            account={w}
             accountAddress={w.distribution_account_address ?? null}
-            accountColorHex={accountColor(w.id)}
             showTrustlines={w.is_default}
             showBridgeIntegration={w.is_default}
           />

@@ -12,6 +12,7 @@ import { ShowForRoles } from "@/components/ShowForRoles";
 import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
+import { distributionAccountDisplayName } from "@/helpers/distributionAccountDisplayName";
 import { parseAssetKey } from "@/helpers/parseAssetKey";
 
 import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
@@ -54,8 +55,7 @@ const WalletBalanceRow = ({
       }}
     >
       <div style={{ fontWeight: 500 }}>
-        {name}
-        {isDefault ? " (default)" : ""}
+        {distributionAccountDisplayName({ name, is_default: isDefault })}
       </div>
       <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "flex-end" }}>

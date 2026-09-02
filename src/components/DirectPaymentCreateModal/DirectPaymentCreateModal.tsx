@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button, Icon, Input, Modal, Notification, Select } from "@stellar/design-system";
 
 import { DirectPaymentConfirmation } from "@/components/DirectPaymentConfirmation/DirectPaymentConfirmation";
+import { DistributionAccountLabel } from "@/components/DistributionAccountLabel";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { SelectedReceiverInfo } from "@/components/SelectedReceiverInfo/SelectedReceiverInfo";
 
@@ -17,7 +18,7 @@ import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
 import { useSearchReceivers } from "@/apiQueries/useSearchReceivers";
 import { useWallets } from "@/apiQueries/useWallets";
 
-import { accountColor } from "@/helpers/accountColor";
+import { distributionAccountDisplayName } from "@/helpers/distributionAccountDisplayName";
 import { getEnhancedWalletErrorMessage } from "@/helpers/walletErrorMessages";
 import { isValidWalletAddress } from "@/helpers/walletValidate";
 
@@ -44,22 +45,15 @@ interface DirectPaymentCreateModalProps {
 
 // A compact "Sending from [dot] Account" banner so the source account is visible at the point
 // of committing a direct payment (single-account tenants don't need it).
-const SendingFromBanner = ({ name, color }: { name?: string; color?: string }) => {
-  if (!name) {
+const SendingFromBanner = ({ wallet }: { wallet?: DistributionWallet }) => {
+  if (!wallet) {
     return null;
   }
   return (
     <div className="DirectPaymentCreateModal__sendingFrom">
       <span className="DirectPaymentCreateModal__sendingFrom__label">Sending from</span>
       <span className="DirectPaymentCreateModal__sendingFrom__value">
-        {color ? (
-          <span
-            className="DirectPaymentCreateModal__sendingFrom__dot"
-            style={{ backgroundColor: color }}
-            aria-hidden="true"
-          />
-        ) : null}
-        {name}
+        <DistributionAccountLabel wallet={wallet} />
       </span>
     </div>
   );
@@ -546,10 +540,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
       {showConfirmation ? (
         <>
           <Modal.Body>
-            <SendingFromBanner
-              name={canChooseSource ? sourceWallet?.name : undefined}
-              color={canChooseSource && sourceWallet ? accountColor(sourceWallet.id) : undefined}
-            />
+            <SendingFromBanner wallet={canChooseSource ? sourceWallet : undefined} />
             {errorMessage && (
               <Notification variant="error" title="Error" isFilled={true}>
                 <ErrorWithExtras
@@ -616,7 +607,7 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
                   <option value="">Select…</option>
                   {sourceWallets?.map((wallet) => (
                     <option key={wallet.id} value={wallet.id}>
-                      {`${wallet.name}${wallet.is_default ? " (default)" : ""}`}
+                      {distributionAccountDisplayName(wallet)}
                     </option>
                   ))}
                 </Select>

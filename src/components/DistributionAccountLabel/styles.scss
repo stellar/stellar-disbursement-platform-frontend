@@ -1,0 +1,40 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.DistributionAccountLabel {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+
+  &__name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__dot {
+    display: inline-block;
+    vertical-align: middle;
+    width: pxToRem(10px);
+    height: pxToRem(10px);
+    margin-right: var(--sds-gap-sm);
+    border-radius: pxToRem(999px);
+    flex-shrink: 0;
+    background-color: var(--DistributionAccountLabel-dot-color);
+  }
+
+  &__badge {
+    margin-left: var(--sds-gap-sm);
+    font-size: pxToRem(10px);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: var(--sds-fw-bold);
+    padding: pxToRem(1px) pxToRem(6px);
+    border-radius: pxToRem(999px);
+    background-color: var(--sds-clr-gray-06);
+    color: var(--sds-clr-gray-12);
+  }
+
+  &__archived {
+    margin-left: var(--sds-gap-sm);
+  }
+}
