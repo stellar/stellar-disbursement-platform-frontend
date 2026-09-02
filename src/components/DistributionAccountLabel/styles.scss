@@ -24,7 +24,6 @@
     font-weight: var(--sds-fw-bold);
     padding: pxToRem(1px) pxToRem(6px);
     border-radius: pxToRem(999px);
-    // gray-06/gray-12 clears WCAG AA in both themes (gray-04/gray-11 fell below in light).
     background-color: var(--sds-clr-gray-06);
     color: var(--sds-clr-gray-12);
   }
