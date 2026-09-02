@@ -24,7 +24,9 @@ export const DistributionAccountLabel = ({
   return (
     <span className="DistributionAccountLabel">
       <span className="DistributionAccountLabel__dot" style={dotStyle} aria-hidden="true" />
-      {defaultMarker === "text" ? distributionAccountDisplayName(wallet) : wallet.name}
+      <span className="DistributionAccountLabel__name">
+        {defaultMarker === "text" ? distributionAccountDisplayName(wallet) : wallet.name}
+      </span>
       {defaultMarker === "badge" && wallet.is_default ? (
         <span className="DistributionAccountLabel__badge">default</span>
       ) : null}

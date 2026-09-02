@@ -3,10 +3,16 @@
 .DistributionAccountLabel {
   display: inline-flex;
   align-items: center;
+  min-width: 0;
+
+  &__name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   &__dot {
     display: inline-block;
-    // Centers dot on the text when the parent is not a flex container (ignored in flex).
     vertical-align: middle;
     width: pxToRem(10px);
     height: pxToRem(10px);
