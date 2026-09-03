@@ -279,9 +279,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
           </Select>
 
           <fieldset className="ManageWalletAccessModal__roles">
-            <legend className="Label Label--sm ManageWalletAccessModal__legend">
-              Role on this account
-            </legend>
+            <legend className="ManageWalletAccessModal__legend">Role on this account</legend>
 
             <div className="Note ManageWalletAccessModal__hint">
               {selectedUser
@@ -325,11 +323,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                     disabled={!userId || grant.isPending}
                     label={userRoleText(r)}
                   />
-                  {annotation ? (
-                    <div className="Note ManageWalletAccessModal__roleOption__note">
-                      {annotation}
-                    </div>
-                  ) : null}
+                  {annotation ? <div className="Note">{annotation}</div> : null}
                 </div>
               );
             })}

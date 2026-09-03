@@ -29,8 +29,6 @@
     font-weight: var(--sds-fw-medium);
   }
 
-  // Wraps, and the buttons never shrink: in a narrow modal a single non-wrapping line squeezed
-  // them until the label overflowed.
   &__confirm > * {
     flex-shrink: 0;
     white-space: nowrap;
@@ -45,13 +43,14 @@
   &__legend {
     padding: 0;
     margin-bottom: pxToRem(4px);
+    font-size: pxToRem(14px);
+    font-weight: var(--sds-fw-medium);
   }
 
   &__roleOption {
     padding: pxToRem(6px) 0;
 
-    // Hand-tuned so the note sits under the option label rather than under the control.
-    &__note {
+    .Note {
       margin-left: pxToRem(28px);
       margin-top: pxToRem(2px);
     }
