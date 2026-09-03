@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { Button, Modal, Notification, RadioButton, Select } from "@stellar/design-system";
 
+import { Box } from "@/components/Box";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
 import { USER_ROLES_ARRAY } from "@/constants/settings";
@@ -18,6 +19,8 @@ import {
 import { userRoleText } from "@/helpers/userRoleText";
 
 import { UserRole } from "@/types";
+
+import "./styles.scss";
 
 // The owner role is always tenant-wide, so it cannot be granted per account.
 const WALLET_SCOPED_ROLES: UserRole[] = USER_ROLES_ARRAY.filter((r) => r !== "owner");
@@ -64,8 +67,6 @@ const capabilitiesText = (capabilities: WalletCapabilities) => {
 
   return granted.length > 0 ? granted.join(" · ") : VIEW_ONLY_TEXT;
 };
-
-// The outcome lines above stand alone, so they start capitalised; this splices one mid-sentence.
 
 interface ManageWalletAccessModalProps {
   visible: boolean;
@@ -179,46 +180,34 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
           </Notification>
         ) : null}
 
-        <div className="Note" style={{ marginBottom: "0.75rem" }}>
+        <div className="Note ManageWalletAccessModal__hint ManageWalletAccessModal__hint--intro">
           Owners have access to every account and are not listed here. Only members granted below
           can act on this account.
         </div>
 
-        <div style={{ marginBottom: "1.25rem" }}>
+        <div className="ManageWalletAccessModal__members">
           {membershipsLoading ? (
             <span className="Note">Loading…</span>
           ) : memberships && memberships.length > 0 ? (
             memberships.map((m) => (
-              <div
-                key={m.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: "1rem",
-                  padding: "0.5rem 0",
-                  borderBottom: "1px solid var(--sds-clr-gray-06)",
-                }}
-              >
+              <div key={m.id} className="ManageWalletAccessModal__member">
                 <div>
-                  <div style={{ fontWeight: 500 }}>{usersById[m.user_id] ?? m.user_id}</div>
+                  <div className="ManageWalletAccessModal__memberName">
+                    {usersById[m.user_id] ?? m.user_id}
+                  </div>
                   <div className="Note">{userRoleText(m.role)}</div>
                 </div>
                 {confirmingId === m.id ? (
-                  // Wraps and the buttons never shrink: in a narrow modal the old single
-                  // non-wrapping line squeezed them until the destructive label overflowed.
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "0.5rem",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      justifyContent: "flex-end",
-                    }}
+                  <Box
+                    gap="sm"
+                    direction="row"
+                    align="center"
+                    wrap="wrap"
+                    justify="end"
+                    addlClassName="ManageWalletAccessModal__confirm"
                   >
                     <span className="Note">Remove this member's access?</span>
                     <Button
-                      style={{ flexShrink: 0, whiteSpace: "nowrap" }}
                       size="sm"
                       variant="tertiary"
                       onClick={() => setConfirmingId(null)}
@@ -227,7 +216,6 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                       Cancel
                     </Button>
                     <Button
-                      style={{ flexShrink: 0, whiteSpace: "nowrap" }}
                       size="sm"
                       variant="destructive"
                       onClick={() => {
@@ -250,7 +238,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                     >
                       Confirm revoke
                     </Button>
-                  </div>
+                  </Box>
                 ) : (
                   <Button
                     size="sm"
@@ -290,14 +278,12 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
             ))}
           </Select>
 
-          <fieldset style={{ border: "none", padding: 0, margin: "1rem 0 0" }}>
-            <legend
-              style={{ padding: 0, marginBottom: "0.25rem", fontSize: "0.875rem", fontWeight: 500 }}
-            >
+          <fieldset className="ManageWalletAccessModal__roles">
+            <legend className="Label Label--sm ManageWalletAccessModal__legend">
               Role on this account
             </legend>
 
-            <div className="Note" style={{ marginBottom: "0.5rem" }}>
+            <div className="Note ManageWalletAccessModal__hint">
               {selectedUser
                 ? `A membership can only narrow ${selectedUserName}'s tenant-wide role${
                     selectedUserRoleText ? ` (${selectedUserRoleText})` : ""
@@ -306,7 +292,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
             </div>
 
             {selectedUser && capabilitiesLoading ? (
-              <div className="Note" style={{ marginBottom: "0.5rem" }}>
+              <div className="Note ManageWalletAccessModal__hint">
                 Checking what each role would grant…
               </div>
             ) : null}
@@ -315,7 +301,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                 came for, and a full error block pushes them past the modal's fold. Granting still
                 works — it just goes out unannotated. */}
             {selectedUser && capabilitiesError ? (
-              <div className="Note" style={{ marginBottom: "0.5rem" }}>
+              <div className="Note ManageWalletAccessModal__hint">
                 Could not check what each role would grant — you can still grant, but the outcomes
                 below are unavailable.
               </div>
@@ -327,8 +313,8 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
               return (
                 // The annotation is a sibling, not part of `label`: a multi-line node inside
                 // the design-system RadioButton overflows its row and collides with the next
-                // option. Indent matches the control + gap so it reads as part of the option.
-                <div key={r} style={{ padding: "0.375rem 0" }}>
+                // option.
+                <div key={r} className="ManageWalletAccessModal__roleOption">
                   <RadioButton
                     fieldSize="sm"
                     id={`grant-role-${r}`}
@@ -340,7 +326,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
                     label={userRoleText(r)}
                   />
                   {annotation ? (
-                    <div className="Note" style={{ marginLeft: "1.75rem", marginTop: "0.125rem" }}>
+                    <div className="Note ManageWalletAccessModal__roleOption__note">
                       {annotation}
                     </div>
                   ) : null}
@@ -349,7 +335,7 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
             })}
           </fieldset>
 
-          <div style={{ marginTop: "1rem" }}>
+          <div className="ManageWalletAccessModal__submit">
             <Button
               size="sm"
               variant="primary"
