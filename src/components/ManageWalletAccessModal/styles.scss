@@ -29,7 +29,7 @@
     font-weight: var(--sds-fw-medium);
   }
 
-  &__confirm > * {
+  &__confirm > .Button {
     flex-shrink: 0;
     white-space: nowrap;
   }
