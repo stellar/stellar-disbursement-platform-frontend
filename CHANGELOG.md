@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Consolidate distribution account labels into shared component. [#583](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/583)
+- Move ManageWalletAccess modal inline styles to stylesheet. [#587](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/587)
 
 ### Fixed
 
