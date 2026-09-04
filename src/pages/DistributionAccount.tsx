@@ -118,7 +118,7 @@ export const DistributionAccount = () => {
         </SectionHeader.Row>
       </SectionHeader>
 
-      <div className="Note" style={{ marginBottom: "1.5rem" }}>
+      <div className="Note DistributionAccount__note">
         Showing all {wallets?.length} accounts. Pick a single account in the switcher above to
         manage it, or see each account's live balances on the dashboard.
       </div>
