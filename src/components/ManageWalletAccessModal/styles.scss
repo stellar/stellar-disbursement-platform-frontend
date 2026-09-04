@@ -1,0 +1,62 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.ManageWalletAccessModal {
+  &__hint {
+    margin-bottom: pxToRem(8px);
+
+    &--intro {
+      margin-bottom: pxToRem(12px);
+    }
+  }
+
+  &__members {
+    margin-bottom: pxToRem(20px);
+  }
+
+  &__member {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sds-gap-lg);
+    padding: pxToRem(8px) 0;
+
+    &:not(:last-child) {
+      border-bottom: pxToRem(1px) solid var(--sds-clr-gray-04);
+    }
+  }
+
+  &__memberName {
+    font-weight: var(--sds-fw-medium);
+  }
+
+  &__confirm > .Button {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  &__roles {
+    border: none;
+    padding: 0;
+    margin: pxToRem(16px) 0 0;
+  }
+
+  &__legend {
+    padding: 0;
+    margin-bottom: pxToRem(4px);
+    font-size: pxToRem(14px);
+    font-weight: var(--sds-fw-medium);
+  }
+
+  &__roleOption {
+    padding: pxToRem(6px) 0;
+
+    .Note {
+      margin-left: pxToRem(28px);
+      margin-top: pxToRem(2px);
+    }
+  }
+
+  &__submit {
+    margin-top: pxToRem(16px);
+  }
+}

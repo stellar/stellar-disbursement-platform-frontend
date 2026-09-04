@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Consolidate distribution account labels into shared component. [#583](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/583)
 - Refactor WalletBalancesOverview and move page-level inline styles to stylesheets. [#585](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/585)
+- Move ManageWalletAccess modal inline styles to stylesheet. [#587](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/587)
 
 ### Fixed
 
