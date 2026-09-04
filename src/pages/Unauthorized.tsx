@@ -16,7 +16,7 @@ export const Unauthorized = () => {
         Your role doesn't include this feature. If you think you should have access, ask an owner on
         your team to grant it.
       </Text>
-      <div style={{ marginTop: "1rem" }}>
+      <div className="UnauthorizedPage__action">
         <Button size="md" variant="primary" onClick={() => navigate(Routes.HOME)}>
           Back to Home
         </Button>

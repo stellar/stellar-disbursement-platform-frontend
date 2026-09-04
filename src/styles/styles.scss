@@ -319,6 +319,8 @@ body {
 }
 
 .HomeStatistics {
+  margin-bottom: pxToRem(32px);
+
   .Notification {
     margin-bottom: pxToRem(32px);
   }
@@ -694,6 +696,13 @@ body {
   }
 }
 
+// Distribution account
+.DistributionAccount {
+  &__note {
+    margin-bottom: pxToRem(24px);
+  }
+}
+
 // Circle Distribution Account
 .CircleDistributionAccountPending {
   .Banner__content {
@@ -754,6 +763,13 @@ body {
     --Link-color-default: var(--sds-clr-red-11);
     --Link-color-hover: var(--sds-clr-red-12);
     --Link-color-disabled: var(--sds-clr-red-08);
+  }
+}
+
+// Unauthorized page
+.UnauthorizedPage {
+  &__action {
+    margin-top: pxToRem(16px);
   }
 }
 
