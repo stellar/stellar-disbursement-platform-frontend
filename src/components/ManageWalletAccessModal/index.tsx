@@ -331,6 +331,9 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
         </form>
       </Modal.Body>
       <Modal.Footer>
+        <Button size="md" variant="tertiary" onClick={onClose}>
+          Done
+        </Button>
         <Button
           size="md"
           variant="primary"
@@ -340,9 +343,6 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
           isLoading={grant.isPending}
         >
           Grant
-        </Button>
-        <Button size="md" variant="tertiary" onClick={onClose}>
-          Done
         </Button>
       </Modal.Footer>
     </Modal>
