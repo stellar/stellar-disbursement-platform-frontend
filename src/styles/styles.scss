@@ -351,6 +351,34 @@ body {
     line-height: pxToRem(22px);
     color: var(--sds-clr-gray-11);
   }
+
+  &__pickerNote {
+    margin-bottom: pxToRem(16px);
+  }
+}
+
+.DisbursementReceipt {
+  margin-top: pxToRem(12px);
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sds-gap-lg);
+    padding: pxToRem(8px) 0;
+
+    &:not(:last-child) {
+      border-bottom: pxToRem(1px) solid var(--sds-clr-gray-04);
+    }
+  }
+
+  &__value {
+    font-weight: var(--sds-fw-medium);
+  }
+
+  &__actions {
+    margin-top: pxToRem(16px);
+  }
 }
 
 // Disbursement drafts
