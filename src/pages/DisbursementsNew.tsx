@@ -456,7 +456,12 @@ export const DisbursementsNew = () => {
                 ))}
               </div>
 
-              <Box gap="md" direction="row" addlClassName="DisbursementReceipt__actions">
+              <Box
+                gap="md"
+                direction="row"
+                wrap="wrap"
+                addlClassName="DisbursementReceipt__actions"
+              >
                 <Button size="md" variant="primary" onClick={handleViewDetails}>
                   View disbursement
                 </Button>
