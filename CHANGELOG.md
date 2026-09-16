@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Consolidate distribution account labels into shared component. [#583](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/583)
 - Move multi-distribution account inline styles to stylesheets. [#585](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/585), [#587](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/587), [#594](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/594)
+- Move Grant button to Manage Access modal footer. [#595](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/595)
 
 ### Fixed
 
