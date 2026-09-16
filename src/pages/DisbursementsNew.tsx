@@ -8,6 +8,7 @@ import { Badge, Button, Card, Heading, Notification } from "@stellar/design-syst
 
 import { AccountBalances } from "@/components/AccountBalances";
 import { AssetAmount } from "@/components/AssetAmount";
+import { Box } from "@/components/Box";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DisbursementButtons } from "@/components/DisbursementButtons";
 import { DisbursementDetails } from "@/components/DisbursementDetails";
@@ -294,8 +295,8 @@ export const DisbursementsNew = () => {
   const renderSendingFrom = () => {
     if (!isMultiWallet || !selectedWallet) return null;
     return (
-      <div className="Note" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-        Sending from
+      <Box gap="sm" direction="row" align="center" addlClassName="Note">
+        <span>Sending from</span>
         <strong>
           <DistributionAccountLabel wallet={selectedWallet} />
         </strong>
@@ -304,8 +305,10 @@ export const DisbursementsNew = () => {
             ({selectedWallet.distribution_account_address.slice(0, 4)}…
             {selectedWallet.distribution_account_address.slice(-4)})
           </span>
-        ) : null}
-      </div>
+        ) : (
+          <></>
+        )}
+      </Box>
     );
   };
 
@@ -349,12 +352,12 @@ export const DisbursementsNew = () => {
         <div className="DisbursementForm">
           <Card>
             <Title size="md">Choose the account to send from</Title>
-            <div className="Note" style={{ margin: "0.5rem 0 1rem" }}>
+            <div className="Note DisbursementForm__pickerNote">
               Every disbursement is funded by a single distribution account. Pick one to continue —
               you can also use the account switcher at the top of the page.
             </div>
-            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-              {distributionWallets?.map((wallet) => (
+            <Box gap="md" direction="row" wrap="wrap">
+              {(distributionWallets ?? []).map((wallet) => (
                 <Button
                   key={wallet.id}
                   size="md"
@@ -367,7 +370,7 @@ export const DisbursementsNew = () => {
                   <DistributionAccountLabel wallet={wallet} defaultMarker="text" />
                 </Button>
               ))}
-            </div>
+            </Box>
           </Card>
         </div>
       );
@@ -424,7 +427,7 @@ export const DisbursementsNew = () => {
 
             <Card>
               <Title size="md">Receipt</Title>
-              <div style={{ marginTop: "0.75rem" }}>
+              <div className="DisbursementReceipt">
                 {[
                   { label: "Disbursement name", value: draftDetails?.name ?? "-" },
                   {
@@ -446,31 +449,26 @@ export const DisbursementsNew = () => {
                     value: <SourceAccount sourceWalletId={selectedWalletId || undefined} />,
                   },
                 ].map((row) => (
-                  <div
-                    key={row.label}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: "1rem",
-                      padding: "0.5rem 0",
-                      borderBottom: "1px solid var(--sds-clr-gray-06)",
-                    }}
-                  >
+                  <div key={row.label} className="DisbursementReceipt__row">
                     <span className="Note">{row.label}</span>
-                    <span style={{ fontWeight: 500 }}>{row.value}</span>
+                    <span className="DisbursementReceipt__value">{row.value}</span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem" }}>
+              <Box
+                gap="md"
+                direction="row"
+                wrap="wrap"
+                addlClassName="DisbursementReceipt__actions"
+              >
                 <Button size="md" variant="primary" onClick={handleViewDetails}>
                   View disbursement
                 </Button>
                 <Button size="md" variant="secondary" onClick={handleStartNewDisbursement}>
                   Create another
                 </Button>
-              </div>
+              </Box>
             </Card>
           </div>
         );
