@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Left-align Total Disbursed column in DashboardAnalytics. [#581](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/581)
 - Fix the Box component's gap="custom" variant, which rendered no gap. [#586](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/586)
 
+### Security and Dependencies
+
+- Remove orphaned `brace-expansion` pin from `dependencies` and refresh the transitive 1.x copy used by ESLint from 1.1.12 to 1.1.21. [#601](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/601)
+
 ## [7.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/7.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.6.0...7.0.0))
 
 ### Added
