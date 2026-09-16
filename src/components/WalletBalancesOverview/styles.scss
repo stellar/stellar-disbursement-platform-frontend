@@ -1,0 +1,38 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.WalletBalancesOverview {
+  margin: pxToRem(12px) calc(-1 * var(--Card-padding)) calc(-1 * var(--Card-padding));
+  overflow-x: auto;
+  container-type: inline-size;
+
+  &__rows {
+    box-sizing: border-box;
+    width: max-content;
+    min-width: 100%;
+    padding: 0 var(--Card-padding) var(--Card-padding);
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sds-gap-lg);
+    padding: pxToRem(8px) 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--sds-clr-gray-04);
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+
+  &__name {
+    font-weight: var(--sds-fw-medium);
+    display: flex;
+    min-width: 0;
+    max-width: calc(50cqi - var(--Card-padding));
+    white-space: nowrap;
+  }
+}
