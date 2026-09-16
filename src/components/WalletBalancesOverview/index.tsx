@@ -5,6 +5,7 @@ import { Button, Card, Notification } from "@stellar/design-system";
 import { AddDistributionWalletModal } from "@/components/AddDistributionWalletModal";
 import { ArchiveDistributionWalletModal } from "@/components/ArchiveDistributionWalletModal";
 import { AssetAmount } from "@/components/AssetAmount";
+import { Box } from "@/components/Box";
 import { DistributionAccountLabel } from "@/components/DistributionAccountLabel";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { ManageWalletAccessModal } from "@/components/ManageWalletAccessModal";
@@ -19,9 +20,10 @@ import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
-// One row = one distribution wallet + its live on-chain balances. Each row owns its own
-// balance query (keyed per wallet), so the overview shows every wallet at a glance without
-// touching the picker. Owners also get a per-account "Manage access" action.
+import "./styles.scss";
+
+// One row = one distribution wallet + its live on-chain balances.
+// Owners get a per-account "Manage access" action.
 const WalletBalanceRow = ({
   walletId,
   name,
@@ -43,39 +45,29 @@ const WalletBalanceRow = ({
   const balances = Object.entries(data?.balances ?? {});
 
   return (
-    <div
-      className="WalletBalancesOverview__row"
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: "1rem",
-        padding: "0.5rem 0",
-        borderBottom: "1px solid var(--sds-clr-gray-06)",
-      }}
-    >
-      <div style={{ fontWeight: 500 }}>
+    <div className="WalletBalancesOverview__row">
+      <div className="WalletBalancesOverview__name">
         <DistributionAccountLabel
           wallet={{ id: walletId, name, is_default: isDefault }}
           defaultMarker="badge"
         />
       </div>
-      <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "flex-end" }}>
-          {isLoading ? (
-            <span className="Note">…</span>
-          ) : balances.length ? (
-            balances.map(([assetKey, amount]) => (
+      <Box gap="lg" direction="row" align="center">
+        {isLoading ? (
+          <span className="Note">…</span>
+        ) : balances.length ? (
+          <>
+            {balances.map(([assetKey, amount]) => (
               <AssetAmount
                 key={assetKey}
                 amount={amount || "0"}
                 assetCode={parseAssetKey(assetKey).code}
               />
-            ))
-          ) : (
-            <span className="Note">—</span>
-          )}
-        </div>
+            ))}
+          </>
+        ) : (
+          <span className="Note">—</span>
+        )}
         <ShowForRoles acceptedRoles={["owner"]}>
           <Button size="sm" variant="tertiary" onClick={() => onManageAccess(walletId, name)}>
             Manage access
@@ -87,14 +79,13 @@ const WalletBalanceRow = ({
             </Button>
           ) : null}
         </ShowForRoles>
-      </div>
+      </Box>
     </div>
   );
 };
 
-// All distribution wallet balances on the home screen — see every wallet's balance without
-// switching the picker. For Owners this doubles as the account-management
-// surface (add an account, manage per-account access). Hidden for single-account non-owners.
+// All distribution wallet balances on the home screen.
+// Hidden for single-account non-owners.
 export const WalletBalancesOverview = () => {
   const { userAccount } = useRedux("userAccount");
   const { data: wallets } = useDistributionWallets(userAccount.isAuthenticated);
@@ -111,8 +102,6 @@ export const WalletBalancesOverview = () => {
     return null;
   }
 
-  // Non-owners only need this card when there's more than one account to compare. Owners always
-  // see it so they can add the second account and manage access.
   if (wallets.length < 2 && !isOwner) {
     return null;
   }
@@ -154,38 +143,31 @@ export const WalletBalancesOverview = () => {
       ) : null}
 
       <Card>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "1rem",
-          }}
-        >
-          <div className="StatCards__card__title">
-            <InfoTooltip infoText="Live on-chain balance of each of your distribution (sending) accounts — no need to switch the picker.">
-              Distribution accounts
-            </InfoTooltip>
-          </div>
+        <div className="CardStack__title">
+          <InfoTooltip infoText="Live on-chain balance of each of your distribution (sending) accounts — no need to switch the picker.">
+            Distribution accounts
+          </InfoTooltip>
           <ShowForRoles acceptedRoles={["owner"]}>
             <Button size="sm" variant="secondary" onClick={() => setShowAdd(true)}>
               Add account
             </Button>
           </ShowForRoles>
         </div>
-        <div className="WalletBalancesOverview" style={{ marginTop: "0.75rem" }}>
-          {wallets.map((wallet) => (
-            <WalletBalanceRow
-              key={wallet.id}
-              walletId={wallet.id}
-              name={wallet.name}
-              isDefault={wallet.is_default}
-              canArchive={wallets.length >= 2}
-              isAuthenticated={userAccount.isAuthenticated}
-              onManageAccess={(id, name) => setManageWallet({ id, name })}
-              onArchive={(id, name) => setArchiveWallet({ id, name })}
-            />
-          ))}
+        <div className="WalletBalancesOverview">
+          <div className="WalletBalancesOverview__rows">
+            {wallets.map((wallet) => (
+              <WalletBalanceRow
+                key={wallet.id}
+                walletId={wallet.id}
+                name={wallet.name}
+                isDefault={wallet.is_default}
+                canArchive={wallets.length >= 2}
+                isAuthenticated={userAccount.isAuthenticated}
+                onManageAccess={(id, name) => setManageWallet({ id, name })}
+                onArchive={(id, name) => setArchiveWallet({ id, name })}
+              />
+            ))}
+          </div>
         </div>
       </Card>
 
