@@ -119,6 +119,14 @@ export const DisbursementsNew = () => {
     }
   }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
 
+  useEffect(() => {
+    dispatch(resetDisbursementDraftsAction());
+
+    return () => {
+      dispatch(resetDisbursementDraftsAction());
+    };
+  }, [dispatch]);
+
   const { allBalances } = useAllBalances();
 
   // The balances the wizard shows AND validates against. On a multi-account tenant these are
