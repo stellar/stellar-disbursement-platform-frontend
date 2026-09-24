@@ -57,9 +57,8 @@ export type DisbursementDraftsInitialState = {
   items: DisbursementDraft[];
   status: ActionStatus | undefined;
   newDraftId?: string;
-  // The distribution account newDraftId was created against. Kept alongside the id because the
-  // draft is started later, by which time the account switcher may have moved.
   newDraftWalletId?: string;
+  newDraftFingerprint?: string;
   pagination?: Pagination;
   errorString?: string;
   errorExtras?: AnyObject;
@@ -308,6 +307,8 @@ export type DisbursementsSearchParams = CommonFilters & SortParams & PaginationP
 
 export interface DisbursementDraftRejectMessage extends RejectMessage {
   newDraftId?: string;
+  newDraftWalletId?: string;
+  newDraftFingerprint?: string;
 }
 
 export type DisbursementDetailsStats = {
