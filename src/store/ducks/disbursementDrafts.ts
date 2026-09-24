@@ -1,15 +1,17 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "@/store";
+
 import { deleteDisbursementDraft } from "@/api/deleteDisbursementDraft";
 import { getDisbursementDrafts } from "@/api/getDisbursementDrafts";
+import { patchDisbursementStatus } from "@/api/patchDisbursementStatus";
 import { postDisbursement } from "@/api/postDisbursement";
 import { postDisbursementFile } from "@/api/postDisbursementFile";
 import { postDisbursementWithInstructions } from "@/api/postDisbursementWithInstructions";
-import { patchDisbursementStatus } from "@/api/patchDisbursementStatus";
-import { formatDisbursement } from "@/helpers/formatDisbursements";
+
 import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+import { formatDisbursement } from "@/helpers/formatDisbursements";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+
 import {
   ApiError,
   Disbursement,
@@ -19,6 +21,8 @@ import {
   Pagination,
   RejectMessage,
 } from "@/types";
+
+import { RootState } from "@/store";
 
 // `walletId` scopes the list to the account the user is currently on (X-Wallet-Id). The caller
 // passes it from the SelectedWallet context; empty means "All accounts".
@@ -75,23 +79,15 @@ export const saveDisbursementDraftAction = createAsyncThunk<
   "disbursementDrafts/saveDisbursementDraftAction",
   async ({ details, file, sourceWalletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { newDraftId } = getState().disbursementDrafts;
 
+    // Every save creates a new draft.
+    // Saving under an existing name is rejected instead of overwriting.
     try {
-      if (file) {
-        const newDisbursement = await postDisbursementWithInstructions(
-          token,
-          details,
-          file,
-          sourceWalletId,
-        );
-        refreshSessionToken(dispatch);
-        return newDisbursement.id;
-      } else {
-        const draftId = newDraftId ?? (await postDisbursement(token, details, sourceWalletId)).id;
-        refreshSessionToken(dispatch);
-        return draftId;
-      }
+      const newDisbursement = file
+        ? await postDisbursementWithInstructions(token, details, file, sourceWalletId)
+        : await postDisbursement(token, details, sourceWalletId);
+      refreshSessionToken(dispatch);
+      return newDisbursement.id;
     } catch (error: unknown) {
       const apiError = normalizeApiError(error as ApiError);
       const errorString = apiError.message;
@@ -387,7 +383,6 @@ const disbursementDraftsSlice = createSlice({
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
       state.errorExtras = action.payload?.errorExtras;
-      state.newDraftId = action.payload?.newDraftId;
     });
     // Submit new disbursement
     builder.addCase(submitDisbursementNewDraftAction.pending, (state = initialState) => {
