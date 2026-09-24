@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Left-align Total Disbursed column in DashboardAnalytics. [#581](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/581)
 - Fix the Box component's gap="custom" variant, which rendered no gap. [#586](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/586)
+- Disbursement wizard always confirms current form and selected account [#605](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/605)
 
 ### Security and Dependencies
 
