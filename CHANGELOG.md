@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Left-align Total Disbursed column in DashboardAnalytics. [#581](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/581)
 - Fix the Box component's gap="custom" variant, which rendered no gap. [#586](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/586)
 - Fix unreadable Bridge setup cards in dark mode. [#604](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/604)
+- Draft page no longer shows a previously opened draft. [607](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/607)
 - Drafts list respects distribution account switch. [#608](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/608)
 
 ### Security and Dependencies

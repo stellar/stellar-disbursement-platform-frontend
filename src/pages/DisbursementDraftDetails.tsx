@@ -32,7 +32,7 @@ import {
   submitDisbursementSavedDraftAction,
 } from "@/store/ducks/disbursementDrafts";
 
-import { Routes } from "@/constants/settings";
+import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
 
@@ -79,7 +79,8 @@ export const DisbursementDraftDetails = () => {
   }, [dispatch, navigate]);
   useOnAccountSwitch(leaveOnAccountSwitch);
 
-  const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(setCsvFile, true);
+  const isDraftLoaded = disbursementDetails.details.id === draftId;
+  const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(setCsvFile, isDraftLoaded);
   const { allBalances } = useAllBalances();
 
   const notificationRef = useRef<HTMLDivElement | null>(null);
@@ -110,23 +111,12 @@ export const DisbursementDraftDetails = () => {
   }, [dispatch, fetchedDisbursement, fetchedDisbursementDraft]);
 
   useEffect(() => {
-    if (disbursementDetails.details.id || disbursementDetails.status === "PENDING") {
-      return;
-    }
-
     if (fetchedDisbursement?.id) {
       saveDisbursementDetails();
     } else if (draftId) {
       dispatch(getDisbursementDetailsAction(draftId));
     }
-  }, [
-    draftId,
-    fetchedDisbursement?.id,
-    saveDisbursementDetails,
-    dispatch,
-    disbursementDetails.details.id,
-    disbursementDetails.status,
-  ]);
+  }, [draftId, dispatch, fetchedDisbursement?.id, saveDisbursementDetails]);
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -342,7 +332,17 @@ export const DisbursementDraftDetails = () => {
   };
 
   const renderContent = () => {
-    if (isLoading || csvDownloadIsLoading) {
+    if (!isDraftLoaded && disbursementDetails.status === "ERROR") {
+      return (
+        <Notification variant="error" title="Error" isFilled={true}>
+          <ErrorWithExtras
+            appError={{ message: disbursementDetails.errorString ?? GENERIC_ERROR_MESSAGE }}
+          />
+        </Notification>
+      );
+    }
+
+    if (!isDraftLoaded || isLoading || csvDownloadIsLoading) {
       return <div className="Note">Loading…</div>;
     }
 
@@ -484,6 +484,7 @@ export const DisbursementDraftDetails = () => {
               size="md"
               icon={<Icon.Trash01 />}
               onClick={showDeleteModal}
+              disabled={!isDraftLoaded}
               isLoading={disbursementDrafts.status === "PENDING"}
             >
               Delete Draft
