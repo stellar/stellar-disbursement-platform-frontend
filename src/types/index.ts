@@ -60,6 +60,7 @@ export type DisbursementDraftsInitialState = {
   // The distribution account newDraftId was created against. Kept alongside the id because the
   // draft is started later, by which time the account switcher may have moved.
   newDraftWalletId?: string;
+  walletId?: string;
   pagination?: Pagination;
   errorString?: string;
   errorExtras?: AnyObject;

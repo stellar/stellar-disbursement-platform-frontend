@@ -1,24 +1,32 @@
 import { useEffect } from "react";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import { Card, Heading, Icon, Link, Notification } from "@stellar/design-system";
 
-import { Routes } from "@/constants/settings";
-import { formatDateTime } from "@/helpers/formatIntlDateTime";
-import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
-import { usePrevious } from "@/hooks/usePrevious";
-import { useRedux } from "@/hooks/useRedux";
-import { useSelectedWallet } from "@/hooks/useSelectedWallet";
-import { AppDispatch } from "@/store";
-import { getDisbursementDraftsAction, setDraftIdAction } from "@/store/ducks/disbursementDrafts";
-import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
-
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Table } from "@/components/Table";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
+import { getDisbursementDraftsAction, setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+
+import { Routes } from "@/constants/settings";
+
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
+
+import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import { DisbursementDraft } from "@/types";
+
+import { AppDispatch } from "@/store";
+
+
 
 export const DisbursementsDrafts = () => {
   const { disbursementDrafts } = useRedux("disbursementDrafts");
@@ -29,27 +37,14 @@ export const DisbursementsDrafts = () => {
   // Active distribution account (global ActiveWalletBar) — scopes the drafts list.
   const { selectedWalletId } = useSelectedWallet();
 
-  // null until the first commit, so it also tells a mount apart from an account switch.
-  const previousWalletId = usePrevious(selectedWalletId);
-
   useEffect(() => {
-    // An account switch must refetch even though the list already loaded: the status guard below
-    // is false after the first success, so without this the table would keep rendering the
-    // previous account's drafts under a bar naming the new one.
-    const walletChanged = previousWalletId !== null && previousWalletId !== selectedWalletId;
-
-    if (walletChanged || !disbursementDrafts.status || disbursementDrafts.actionType) {
-      dispatch(getDisbursementDraftsAction({ walletId: selectedWalletId }));
-      dispatch(resetDisbursementDetailsAction());
-      dispatch(setDraftIdAction(undefined));
-    }
-    // `previousWalletId` is read but deliberately not a dep: it must not trigger a re-fetch.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [disbursementDrafts.actionType, disbursementDrafts.status, dispatch, selectedWalletId]);
+    dispatch(getDisbursementDraftsAction({ walletId: selectedWalletId }));
+    dispatch(resetDisbursementDetailsAction());
+    dispatch(setDraftIdAction(undefined));
+  }, [dispatch, selectedWalletId]);
 
   const apiError = disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
-  const isLoading =
-    disbursementDrafts.items.length === 0 && disbursementDrafts.status === "PENDING";
+  const isLoading = disbursementDrafts.status === "PENDING";
   const doneLoading = disbursementDrafts.status && disbursementDrafts.status !== "PENDING";
   const hasData = doneLoading && disbursementDrafts.items.length > 0;
 
