@@ -328,6 +328,7 @@ const initialState: DisbursementDraftsInitialState = {
   status: undefined,
   newDraftId: undefined,
   newDraftWalletId: undefined,
+  walletId: undefined,
   pagination: undefined,
   errorString: undefined,
   errorExtras: undefined,
@@ -355,10 +356,16 @@ const disbursementDraftsSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Get disbursement drafts
-    builder.addCase(getDisbursementDraftsAction.pending, (state = initialState) => {
+    builder.addCase(getDisbursementDraftsAction.pending, (state, action) => {
       state.status = "PENDING";
+      state.walletId = action.meta.arg.walletId;
     });
     builder.addCase(getDisbursementDraftsAction.fulfilled, (state, action) => {
+      // Drop results for an account the user has already switched away from.
+      if (action.meta.arg.walletId !== state.walletId) {
+        return;
+      }
+
       state.items = action.payload.items;
       state.pagination = action.payload.pagination;
       state.status = "SUCCESS";
@@ -368,6 +375,10 @@ const disbursementDraftsSlice = createSlice({
       state.actionType = undefined;
     });
     builder.addCase(getDisbursementDraftsAction.rejected, (state, action) => {
+      if (action.meta.arg.walletId !== state.walletId) {
+        return;
+      }
+
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
     });

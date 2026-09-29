@@ -18,6 +18,7 @@ import { Toast } from "@/components/Toast";
 
 import {
   getDisbursementDetailsAction,
+  resetDisbursementDetailsAction,
   setDisbursementDetailsAction,
 } from "@/store/ducks/disbursementDetails";
 import {
@@ -37,6 +38,7 @@ import { csvTotalAmount } from "@/helpers/csvTotalAmount";
 
 import { useAllBalances } from "@/hooks/useAllBalances";
 import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+import { useOnAccountSwitch } from "@/hooks/useOnAccountSwitch";
 import { useRedux } from "@/hooks/useRedux";
 
 import { DisbursementDraft, DisbursementStep, hasWallet } from "@/types";
@@ -70,6 +72,13 @@ export const DisbursementDraftDetails = () => {
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+
+  const leaveOnAccountSwitch = useCallback(() => {
+    dispatch(resetDisbursementDetailsAction());
+    navigate(Routes.DISBURSEMENT_DRAFTS);
+  }, [dispatch, navigate]);
+  useOnAccountSwitch(leaveOnAccountSwitch);
+
   const isDraftLoaded = disbursementDetails.details.id === draftId;
   const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(setCsvFile, isDraftLoaded);
   const { allBalances } = useAllBalances();
@@ -255,12 +264,15 @@ export const DisbursementDraftDetails = () => {
     );
   };
 
-  const handleDeleteDraft = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleDeleteDraft = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (draftId) {
-      dispatch(deleteDisbursementDraftAction(draftId));
+      const resultAction = await dispatch(deleteDisbursementDraftAction(draftId));
       setIsDeleteModalVisible(false);
-      navigate(Routes.DISBURSEMENT_DRAFTS);
+
+      if (deleteDisbursementDraftAction.fulfilled.match(resultAction)) {
+        navigate(Routes.DISBURSEMENT_DRAFTS);
+      }
     }
   };
 
