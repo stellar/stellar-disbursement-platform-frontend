@@ -274,12 +274,15 @@ export const DisbursementDraftDetails = () => {
     );
   };
 
-  const handleDeleteDraft = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleDeleteDraft = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (draftId) {
-      dispatch(deleteDisbursementDraftAction(draftId));
+      const resultAction = await dispatch(deleteDisbursementDraftAction(draftId));
       setIsDeleteModalVisible(false);
-      navigate(Routes.DISBURSEMENT_DRAFTS);
+
+      if (deleteDisbursementDraftAction.fulfilled.match(resultAction)) {
+        navigate(Routes.DISBURSEMENT_DRAFTS);
+      }
     }
   };
 
