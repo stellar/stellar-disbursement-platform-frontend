@@ -32,17 +32,15 @@ import {
 
 import { Routes } from "@/constants/settings";
 
-import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
-import { parseAssetKey } from "@/helpers/parseAssetKey";
 
-import { useAllBalances } from "@/hooks/useAllBalances";
+import { useAccountBalances } from "@/hooks/useAccountBalances";
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
-import { AccountBalanceItem, Disbursement, DisbursementStep, hasWallet } from "@/types";
+import { Disbursement, DisbursementStep, hasWallet } from "@/types";
 
 import { AppDispatch } from "@/store";
 
@@ -76,10 +74,6 @@ export const DisbursementsNew = () => {
   const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
   const isMultiWallet = (distributionWallets?.length ?? 0) >= 2;
   const selectedWallet = distributionWallets?.find((w) => w.id === selectedWalletId);
-  const { data: selectedWalletBalance } = useDistributionWalletBalance(
-    userAccount.isAuthenticated && isMultiWallet && Boolean(selectedWalletId),
-    selectedWalletId || null,
-  );
 
   const isDraftEnabled = isDetailsValid;
   const isReviewEnabled = isDraftEnabled && Boolean(csvFile) && !csvParseError;
@@ -105,6 +99,7 @@ export const DisbursementsNew = () => {
     if (disbursementDrafts.newDraftId && disbursementDrafts.status === "SUCCESS") {
       // Show success response page
       if (disbursementDrafts.actionType === "submit") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentStep("confirmation");
         setIsResponseSuccess(true);
 
@@ -119,49 +114,21 @@ export const DisbursementsNew = () => {
     }
   }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
 
-  const { allBalances } = useAllBalances();
-
-  // The balances the wizard shows AND validates against. On a multi-account tenant these are
-  // the SELECTED account's live balances; the tenant-default fallback is only correct for
-  // single-account tenants.
-  const getEffectiveBalances = (): AccountBalanceItem[] | undefined => {
-    if (isMultiWallet && selectedWalletId) {
-      if (!selectedWalletBalance) return undefined;
-      return Object.entries(selectedWalletBalance.balances).map(([assetKey, amount]) => {
-        const { code, issuer } = parseAssetKey(assetKey);
-
-        return {
-          balance: amount || "0",
-          assetCode: code,
-          assetIssuer: issuer,
-        };
-      });
-    }
-    return allBalances;
-  };
-  const effectiveBalances = getEffectiveBalances();
+  const effectiveBalances = useAccountBalances(selectedWalletId || undefined);
 
   // Recompute the projected post-disbursement balance whenever the CSV total, the chosen
   // asset, or the account's live balance changes (previously it was only computed at upload
   // time, so switching the asset afterwards validated against a stale number).
   useEffect(() => {
-    if (!csvTotal) {
+    if (!csvTotal || !effectiveBalances) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFutureBalance(0);
       return;
     }
     const assetBalance =
-      getEffectiveBalances()?.find((a) => a.assetCode === draftDetails?.asset?.code)?.balance ??
-      "0";
+      effectiveBalances.find((a) => a.assetCode === draftDetails?.asset?.code)?.balance ?? "0";
     setFutureBalance(Number(assetBalance) - Number(csvTotal));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    csvTotal,
-    draftDetails?.asset?.code,
-    selectedWalletBalance,
-    allBalances,
-    isMultiWallet,
-    selectedWalletId,
-  ]);
+  }, [csvTotal, draftDetails?.asset?.code, effectiveBalances]);
 
   const resetState = () => {
     setCurrentStep("edit");
@@ -282,6 +249,9 @@ export const DisbursementsNew = () => {
     if (csvParseError) {
       return `The uploaded file could not be read: ${csvParseError}`;
     }
+    if (draftDetails && csvFile && !effectiveBalances) {
+      return "The available balance hasn't loaded yet.";
+    }
     if (draftDetails && csvFile && BigNumber(futureBalance).lt(0)) {
       const assetCode = draftDetails?.asset?.code ?? "";
       const accountName = isMultiWallet && selectedWallet ? ` of ${selectedWallet.name}` : "";
@@ -330,6 +300,7 @@ export const DisbursementsNew = () => {
           organization.data.isApprovalRequired ||
           !(draftDetails && csvFile) ||
           Boolean(csvParseError) ||
+          !effectiveBalances ||
           BigNumber(futureBalance).lt(0)
         }
         isReviewDisabled={!isReviewEnabled}
