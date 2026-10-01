@@ -5,7 +5,7 @@ import { Button, Modal, Notification, RadioButton, Select } from "@stellar/desig
 import { Box } from "@/components/Box";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { USER_ROLES_ARRAY } from "@/constants/settings";
+import { TENANT_WIDE_ROLES, WALLET_SCOPED_ROLES } from "@/constants/settings";
 
 import { useGrantWalletMembership } from "@/apiQueries/useGrantWalletMembership";
 import { useRevokeWalletMembership } from "@/apiQueries/useRevokeWalletMembership";
@@ -21,9 +21,6 @@ import { userRoleText } from "@/helpers/userRoleText";
 import { UserRole } from "@/types";
 
 import "./styles.scss";
-
-// The owner role is always tenant-wide, so it cannot be granted per account.
-const WALLET_SCOPED_ROLES: UserRole[] = USER_ROLES_ARRAY.filter((r) => r !== "owner");
 
 // Human labels for the write actions the capabilities endpoint reports, grouped so a full set
 // reads as two short phrases instead of seven. WHICH role yields which of these is only ever the
@@ -118,9 +115,12 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
     return map;
   }, [users]);
 
-  // Active users who are not tenant owners (owners already see every account) are grantable.
+  // Active users who are not tenant-wide (owners and developers already see every account) are grantable.
   const grantableUsers = useMemo(
-    () => (users ?? []).filter((u) => u.is_active && !(u.roles ?? []).includes("owner")),
+    () =>
+      (users ?? []).filter(
+        (u) => u.is_active && !(u.roles ?? []).some((r) => TENANT_WIDE_ROLES.includes(r)),
+      ),
     [users],
   );
 

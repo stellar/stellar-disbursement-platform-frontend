@@ -57,6 +57,11 @@ export const USER_ROLES_ARRAY: UserRole[] = [
   "initiator",
   "approver",
 ];
+// Owner and developer are tenant-wide: never scoped to, or grantable on, a distribution account.
+export const TENANT_WIDE_ROLES: UserRole[] = ["owner", "developer"];
+export const WALLET_SCOPED_ROLES: UserRole[] = USER_ROLES_ARRAY.filter(
+  (r) => !TENANT_WIDE_ROLES.includes(r),
+);
 
 export const TIME_ZONES = [
   {
