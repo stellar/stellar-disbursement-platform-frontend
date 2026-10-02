@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Consolidate distribution account labels into shared component. [#583](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/583)
 - Move multi-distribution account inline styles to stylesheets. [#585](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/585), [#587](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/587), [#594](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/594)
 - Move Grant button to Manage Access modal footer. [#595](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/595)
-- Treat developers as tenant-wide: hide them and the developer role from Manage Access, skip the account step when inviting one, and name the default account when a role change moves an owner or developer onto it.
+- Restore tenant-wide access for Developer role. [#610](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/610)
 
 ### Fixed
 
