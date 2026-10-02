@@ -218,8 +218,8 @@ export type NewUser = {
   role: UserRole;
   email: string;
   // The distribution account the new user is scoped to. Optional, because there are two cases
-  // with no scoping decision to make: the owner role is tenant-wide (the backend rejects owner
-  // + wallet_id), and a single-account tenant has only one account to land on.
+  // with no scoping decision to make: owner and developer are tenant-wide (the backend rejects
+  // them with a wallet_id), and a single-account tenant has only one account to land on.
   wallet_id?: string;
 };
 
