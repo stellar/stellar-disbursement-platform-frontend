@@ -443,7 +443,7 @@ export const SettingsTeamMembers = () => {
             resetNewUser();
           }
 
-          // On a multi-account tenant a non-owner invite has to say which account it is for,
+          // On a multi-account tenant an invite for a scoped role has to say which account it is for,
           // otherwise the backend silently scopes the member to the tenant default.
           if (needsAccountChoice(newUser.role)) {
             setIsNewUserModalVisible(false);

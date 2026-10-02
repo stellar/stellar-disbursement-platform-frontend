@@ -181,8 +181,8 @@ export const ManageWalletAccessModal: React.FC<ManageWalletAccessModalProps> = (
         ) : null}
 
         <div className="Note ManageWalletAccessModal__hint ManageWalletAccessModal__hint--intro">
-          Owners have access to every account and are not listed here. Only members granted below
-          can act on this account.
+          Owners and developers have access to every account and are not listed here. Only members
+          granted below can act on this account.
         </div>
 
         <div className="ManageWalletAccessModal__members">
