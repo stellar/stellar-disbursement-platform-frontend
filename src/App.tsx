@@ -49,7 +49,6 @@ import { WalletProvidersNew } from "@/pages/WalletProvidersNew";
 
 import { Routes } from "@/constants/settings";
 
-import { useAppConfig } from "@/hooks/useAppConfig";
 import { SelectedWalletProvider } from "@/hooks/useSelectedWallet";
 
 import GitInfo from "@/generated/gitInfo";
@@ -72,19 +71,6 @@ const WalletLayout = () => {
       <WalletSessionRefresher />
       <Outlet />
     </EmbeddedWalletNoticesProvider>
-  );
-};
-
-/** Renders Reports when reporting is enabled for the tenant; otherwise 404. */
-const ReportsPageGate = () => {
-  const { isReportingEnabled } = useAppConfig();
-  if (!isReportingEnabled) return <NotFound />;
-  return (
-    <PrivateRoute>
-      <InnerPage isNarrow>
-        <Reports />
-      </InnerPage>
-    </PrivateRoute>
   );
 };
 
@@ -392,7 +378,24 @@ export const App = () => {
                 }
               />
               {/* Reports */}
-              <Route path={Routes.REPORTS} element={<ReportsPageGate />} />
+              <Route
+                path={Routes.REPORTS}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={[
+                      "owner",
+                      "financial_controller",
+                      "business",
+                      "initiator",
+                      "approver",
+                    ]}
+                  >
+                    <InnerPage isNarrow>
+                      <Reports />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
               {/* Settings */}
               <Route
                 path={Routes.SETTINGS}

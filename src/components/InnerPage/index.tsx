@@ -120,6 +120,7 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
             label: "Reports",
             route: Routes.REPORTS,
             icon: <Icon.File05 />,
+            acceptedRoles: DISBURSEMENT_ROLES,
           },
         ]
       : []),
