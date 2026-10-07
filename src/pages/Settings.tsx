@@ -9,6 +9,7 @@ import { SettingsEnablePaymentCancellation } from "@/components/SettingsEnablePa
 import { SettingsEnableReceiverInvitationRetry } from "@/components/SettingsEnableReceiverInvitationRetry";
 import { SettingsEnableReporting } from "@/components/SettingsEnableReporting";
 import { SettingsEnableShortLinking } from "@/components/SettingsEnableShortLinking";
+import { SettingsReceiverInvitationsDisabled } from "@/components/SettingsReceiverInvitationsDisabled";
 import { SettingsTeamMembers } from "@/components/SettingsTeamMembers";
 
 export const Settings = () => {
@@ -42,6 +43,9 @@ export const Settings = () => {
 
         {/* Enable automatic ready payments cancellation */}
         <SettingsEnablePaymentCancellation />
+
+        {/* Disable receiver invitations */}
+        <SettingsReceiverInvitationsDisabled />
 
         {/* Enable Receiver Invitation retry */}
         <SettingsEnableReceiverInvitationRetry />

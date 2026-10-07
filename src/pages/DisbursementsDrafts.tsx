@@ -1,22 +1,32 @@
 import { useEffect } from "react";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import { Card, Heading, Icon, Link, Notification } from "@stellar/design-system";
 
-import { Routes } from "@/constants/settings";
-import { formatDateTime } from "@/helpers/formatIntlDateTime";
-import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
-import { getDisbursementDraftsAction, setDraftIdAction } from "@/store/ducks/disbursementDrafts";
-import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
-
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { Table } from "@/components/Table";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
+import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
+import { getDisbursementDraftsAction, setDraftIdAction } from "@/store/ducks/disbursementDrafts";
+
+import { Routes } from "@/constants/settings";
+
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
+
+import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import { DisbursementDraft } from "@/types";
+
+import { AppDispatch } from "@/store";
+
+
 
 export const DisbursementsDrafts = () => {
   const { disbursementDrafts } = useRedux("disbursementDrafts");
@@ -24,17 +34,17 @@ export const DisbursementsDrafts = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Active distribution account (global ActiveWalletBar) — scopes the drafts list.
+  const { selectedWalletId } = useSelectedWallet();
+
   useEffect(() => {
-    if (!disbursementDrafts.status || disbursementDrafts.actionType) {
-      dispatch(getDisbursementDraftsAction());
-      dispatch(resetDisbursementDetailsAction());
-      dispatch(setDraftIdAction(undefined));
-    }
-  }, [disbursementDrafts.actionType, disbursementDrafts.status, dispatch]);
+    dispatch(getDisbursementDraftsAction({ walletId: selectedWalletId }));
+    dispatch(resetDisbursementDetailsAction());
+    dispatch(setDraftIdAction(undefined));
+  }, [dispatch, selectedWalletId]);
 
   const apiError = disbursementDrafts.status === "ERROR" && disbursementDrafts.errorString;
-  const isLoading =
-    disbursementDrafts.items.length === 0 && disbursementDrafts.status === "PENDING";
+  const isLoading = disbursementDrafts.status === "PENDING";
   const doneLoading = disbursementDrafts.status && disbursementDrafts.status !== "PENDING";
   const hasData = doneLoading && disbursementDrafts.items.length > 0;
 

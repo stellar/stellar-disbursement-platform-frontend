@@ -1,12 +1,17 @@
 import { API_URL } from "@/constants/envVariables";
-import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+
 import { handleSearchParams } from "@/api/handleSearchParams";
+
+import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { walletIdHeader } from "@/helpers/walletIdHeader";
+
 import { Export } from "@/types";
 
 export const getExport = async <T>(
   token: string,
   type: Export,
   searchParams?: T,
+  walletId?: string,
 ): Promise<void> => {
   const params = handleSearchParams(searchParams);
 
@@ -15,6 +20,9 @@ export const getExport = async <T>(
     headers: {
       Authorization: `Bearer ${token}`,
       "SDP-Tenant-Name": getSdpTenantName(),
+      // Scope the export to the selected distribution account, matching the list on screen
+      // (the lists' fetches send the same header; without it the export is tenant-wide).
+      ...walletIdHeader(walletId),
     },
   });
 

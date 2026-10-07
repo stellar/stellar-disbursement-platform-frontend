@@ -1,22 +1,28 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Icon, Modal, Notification } from "@stellar/design-system";
 
-import { InfoTooltip } from "@/components/InfoTooltip";
+import { Button, Card, Icon, Modal, Notification, Select } from "@stellar/design-system";
+
 import { DropdownMenu } from "@/components/DropdownMenu";
-import { MoreMenuButton } from "@/components/MoreMenuButton";
-import { Table } from "@/components/Table";
-import { NewUserModal } from "@/components/NewUserModal";
-import { LoadingContent } from "@/components/LoadingContent";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NewUserModal } from "@/components/NewUserModal";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { Table } from "@/components/Table";
 
-import { USER_ROLES_ARRAY } from "@/constants/settings";
-import { userRoleText } from "@/helpers/userRoleText";
+import { TENANT_WIDE_ROLES, USER_ROLES_ARRAY } from "@/constants/settings";
 
-import { useUsers } from "@/apiQueries/useUsers";
+import { useCreateNewUser } from "@/apiQueries/useCreateNewUser";
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
 import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
-import { useCreateNewUser } from "@/apiQueries/useCreateNewUser";
+import { useUsers } from "@/apiQueries/useUsers";
+
+import { distributionAccountDisplayName } from "@/helpers/distributionAccountDisplayName";
+import { userRoleText } from "@/helpers/userRoleText";
+
+import { useRedux } from "@/hooks/useRedux";
 
 import { ApiUser, NewUser, UserRole } from "@/types";
 
@@ -31,6 +37,13 @@ export const SettingsTeamMembers = () => {
     role?: UserRole | null;
     isActive?: boolean;
   } | null>(null);
+  // An invite whose form is filled in but whose distribution account is still unchosen.
+  const [pendingUser, setPendingUser] = useState<NewUser | null>(null);
+  const [inviteWalletId, setInviteWalletId] = useState("");
+
+  const { userAccount } = useRedux("userAccount");
+  const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const isMultiWallet = (distributionWallets?.length ?? 0) >= 2;
 
   const {
     data: usersData,
@@ -68,9 +81,20 @@ export const SettingsTeamMembers = () => {
     reset: resetNewUser,
   } = useCreateNewUser();
 
+  const hideModal = () => {
+    setIsStatusModalVisible(false);
+    setIsRoleModalVisible(false);
+    setIsNewUserModalVisible(false);
+    setSelectedUser(null);
+    setNewRole(null);
+    setPendingUser(null);
+    setInviteWalletId("");
+  };
+
   useEffect(() => {
     if (isRoleSuccess || isStatusSuccess) {
       getUsers();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       hideModal();
     }
 
@@ -100,6 +124,7 @@ export const SettingsTeamMembers = () => {
   useEffect(() => {
     if (isNewUserSuccess) {
       getUsers();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       hideModal();
     }
 
@@ -118,12 +143,34 @@ export const SettingsTeamMembers = () => {
     return "this user";
   };
 
-  const hideModal = () => {
-    setIsStatusModalVisible(false);
-    setIsRoleModalVisible(false);
-    setIsNewUserModalVisible(false);
-    setSelectedUser(null);
-    setNewRole(null);
+  // Tenant-wide roles get no membership (the backend 400s on them + wallet_id), and a single-account
+  // tenant has nothing to pick — the same reason ActiveWalletBar drops its switcher below two accounts.
+  const needsAccountChoice = (role: UserRole) => isMultiWallet && !TENANT_WIDE_ROLES.includes(role);
+
+  // Leaving a tenant-wide role lands the user on the default account (see UpdateUserRoles).
+  const defaultWallet = distributionWallets?.find((w) => w.is_default);
+  const roleChangeGrantsDefaultAccount =
+    isMultiWallet &&
+    Boolean(defaultWallet) &&
+    (selectedUser?.roles ?? []).some((r) => TENANT_WIDE_ROLES.includes(r)) &&
+    Boolean(newRole) &&
+    !TENANT_WIDE_ROLES.includes(newRole as UserRole);
+
+  const submitInvite = (newUser: NewUser) => {
+    const t = setTimeout(() => {
+      createNewUser(newUser);
+      clearTimeout(t);
+    }, 100);
+  };
+
+  // Abandons the invite, dropping a failed attempt with it so the error does not follow the
+  // next one into the form — the same clean-up NewUserModal does on its own close.
+  const cancelAccountStep = () => {
+    hideModal();
+
+    if (isNewUserError) {
+      resetNewUser();
+    }
   };
 
   const renderRoleItems = (user: ApiUser) => {
@@ -352,6 +399,11 @@ export const SettingsTeamMembers = () => {
               selectedUser?.last_name,
             )}.`}
           </div>
+          {roleChangeGrantsDefaultAccount && defaultWallet ? (
+            <div className="Note">
+              {`They will get access to ${defaultWallet.name}, the default distribution account. You can grant more from Manage access.`}
+            </div>
+          ) : null}
         </Modal.Body>
         <Modal.Footer>
           <Button size="md" variant="tertiary" onClick={hideModal} isLoading={isRolePending}>
@@ -391,10 +443,15 @@ export const SettingsTeamMembers = () => {
             resetNewUser();
           }
 
-          const t = setTimeout(() => {
-            createNewUser(newUser);
-            clearTimeout(t);
-          }, 100);
+          // On a multi-account tenant an invite for a scoped role has to say which account it is for,
+          // otherwise the backend silently scopes the member to the tenant default.
+          if (needsAccountChoice(newUser.role)) {
+            setIsNewUserModalVisible(false);
+            setPendingUser(newUser);
+            return;
+          }
+
+          submitInvite(newUser);
         }}
         onResetQuery={() => {
           resetNewUser();
@@ -402,6 +459,72 @@ export const SettingsTeamMembers = () => {
         isLoading={isNewUserPending}
         errorMessage={newUserError?.message}
       />
+
+      {/* Distribution account modal: the final step of an invite that has an account scope to
+          decide, so a new member's access is chosen explicitly instead of defaulted silently. */}
+      <Modal visible={Boolean(pendingUser)} onClose={cancelAccountStep}>
+        <Modal.Heading>Select distribution account</Modal.Heading>
+        <Modal.Body>
+          {newUserError ? (
+            <Notification variant="error" title="Error" isFilled={true}>
+              <ErrorWithExtras appError={newUserError} />
+            </Notification>
+          ) : null}
+
+          <div>
+            {`${getUserNameText(
+              pendingUser?.first_name,
+              pendingUser?.last_name,
+            )} will join as ${userRoleText(
+              pendingUser?.role,
+            )} and will only see and act on the account you choose here. An owner can change this later from Manage access.`}
+          </div>
+
+          <Select
+            fieldSize="sm"
+            id="invite-wallet"
+            name="invite-wallet"
+            label="Distribution account"
+            value={inviteWalletId}
+            onChange={(event) => {
+              if (isNewUserError) {
+                resetNewUser();
+              }
+              setInviteWalletId(event.target.value);
+            }}
+          >
+            <option value="">Select an account</option>
+            {(distributionWallets ?? []).map((w) => (
+              <option value={w.id} key={w.id}>
+                {distributionAccountDisplayName(w)}
+              </option>
+            ))}
+          </Select>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            size="md"
+            variant="tertiary"
+            onClick={cancelAccountStep}
+            isLoading={isNewUserPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="md"
+            variant="primary"
+            onClick={() => {
+              if (pendingUser && inviteWalletId) {
+                submitInvite({ ...pendingUser, wallet_id: inviteWalletId });
+              }
+            }}
+            disabled={!inviteWalletId}
+            isLoading={isNewUserPending}
+          >
+            Send invite
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

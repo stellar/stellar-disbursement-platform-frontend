@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Badge, Heading, Link, Button, Icon, Modal } from "@stellar/design-system";
+import { Badge, Heading, Link, Button, Icon, Modal, Notification } from "@stellar/design-system";
 
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DisbursementButtons } from "@/components/DisbursementButtons";
@@ -18,6 +18,7 @@ import { Toast } from "@/components/Toast";
 
 import {
   getDisbursementDetailsAction,
+  resetDisbursementDetailsAction,
   setDisbursementDetailsAction,
 } from "@/store/ducks/disbursementDetails";
 import {
@@ -31,12 +32,13 @@ import {
   submitDisbursementSavedDraftAction,
 } from "@/store/ducks/disbursementDrafts";
 
-import { Routes } from "@/constants/settings";
+import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
 
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
 
-import { useAllBalances } from "@/hooks/useAllBalances";
+import { useAccountBalances } from "@/hooks/useAccountBalances";
 import { useDownloadCsvFile } from "@/hooks/useDownloadCsvFile";
+import { useOnAccountSwitch } from "@/hooks/useOnAccountSwitch";
 import { useRedux } from "@/hooks/useRedux";
 
 import { DisbursementDraft, DisbursementStep, hasWallet } from "@/types";
@@ -59,6 +61,7 @@ export const DisbursementDraftDetails = () => {
   const [csvFile, setCsvFile] = useState<File>();
   const [isCsvFileUpdated, setIsCsvFileUpdated] = useState(false);
   const [isCsvUpdatedSuccess, setIsCsvUpdatedSuccess] = useState(false);
+  const [csvParseError, setCsvParseError] = useState<string | undefined>();
 
   const [currentStep, setCurrentStep] = useState<DisbursementStep>("preview");
   const [isDraftInProgress, setIsDraftInProgress] = useState(false);
@@ -69,8 +72,16 @@ export const DisbursementDraftDetails = () => {
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(setCsvFile, true);
-  const { allBalances } = useAllBalances();
+
+  const leaveOnAccountSwitch = useCallback(() => {
+    dispatch(resetDisbursementDetailsAction());
+    navigate(Routes.DISBURSEMENT_DRAFTS);
+  }, [dispatch, navigate]);
+  useOnAccountSwitch(leaveOnAccountSwitch);
+
+  const isDraftLoaded = disbursementDetails.details.id === draftId;
+  const { isLoading: csvDownloadIsLoading } = useDownloadCsvFile(setCsvFile, isDraftLoaded);
+  const balances = useAccountBalances(disbursementDetails.details.sourceWalletId);
 
   const notificationRef = useRef<HTMLDivElement | null>(null);
   const apiError = disbursementDrafts.errorString;
@@ -100,23 +111,12 @@ export const DisbursementDraftDetails = () => {
   }, [dispatch, fetchedDisbursement, fetchedDisbursementDraft]);
 
   useEffect(() => {
-    if (disbursementDetails.details.id || disbursementDetails.status === "PENDING") {
-      return;
-    }
-
     if (fetchedDisbursement?.id) {
       saveDisbursementDetails();
     } else if (draftId) {
       dispatch(getDisbursementDetailsAction(draftId));
     }
-  }, [
-    draftId,
-    fetchedDisbursement?.id,
-    saveDisbursementDetails,
-    dispatch,
-    disbursementDetails.details.id,
-    disbursementDetails.status,
-  ]);
+  }, [draftId, dispatch, fetchedDisbursement?.id, saveDisbursementDetails]);
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -159,21 +159,19 @@ export const DisbursementDraftDetails = () => {
   // Update future balance when total amount changes
   useEffect(() => {
     const totalAmount = draftDetails?.details.stats?.totalAmount;
-    if (!totalAmount) return;
+    if (!totalAmount || !balances) return;
 
     const assetBalance =
-      allBalances?.find((a) => a.assetCode === draftDetails?.details.asset.code)?.balance ?? "0";
+      balances.find((a) => a.assetCode === draftDetails?.details.asset.code)?.balance ?? "0";
 
-    if (totalAmount) {
-      setFutureBalance(Number(assetBalance) - BigNumber(totalAmount).toNumber());
-    }
-  }, [draftDetails?.details.stats?.totalAmount, draftDetails?.details.asset.code, allBalances]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+    setFutureBalance(Number(assetBalance) - BigNumber(totalAmount).toNumber());
+  }, [draftDetails?.details.stats?.totalAmount, draftDetails?.details.asset.code, balances]);
 
   const resetState = () => {
     setCurrentStep("edit");
     setDraftDetails(undefined);
     setCsvFile(undefined);
+    setCsvParseError(undefined);
     setIsCsvFileUpdated(false);
     setIsResponseSuccess(false);
     dispatch(resetDisbursementDraftsAction());
@@ -191,6 +189,7 @@ export const DisbursementDraftDetails = () => {
     if (apiError) {
       dispatch(clearDisbursementDraftsErrorAction());
     }
+    setCsvParseError(undefined);
     updateTotalAmount(file);
     setCsvFile(file);
     setIsCsvFileUpdated(true);
@@ -198,20 +197,28 @@ export const DisbursementDraftDetails = () => {
   };
 
   const updateTotalAmount = (csvFile?: File) => {
-    csvTotalAmount({ csvFile }).then((totalAmount) => {
-      if (!totalAmount || !draftDetails) return;
+    csvTotalAmount({ csvFile })
+      .then((summary) => {
+        // The replacement file parsed, so a previous file's error no longer applies.
+        setCsvParseError(undefined);
 
-      setDraftDetails({
-        ...draftDetails,
-        details: {
-          ...draftDetails.details,
-          stats: {
-            ...draftDetails.details.stats!,
-            totalAmount: totalAmount.toString(),
+        if (!summary || !draftDetails) return;
+
+        setDraftDetails({
+          ...draftDetails,
+          details: {
+            ...draftDetails.details,
+            stats: {
+              ...draftDetails.details.stats!,
+              totalAmount: summary.totalAmount.toString(),
+            },
           },
-        },
+        });
+      })
+      // A file that fails to parse must be a visible error, not a silently stale total.
+      .catch((e: Error) => {
+        setCsvParseError(e.message);
       });
-    });
   };
 
   const handleGoBackToDrafts = () => {
@@ -254,12 +261,15 @@ export const DisbursementDraftDetails = () => {
     );
   };
 
-  const handleDeleteDraft = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleDeleteDraft = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     if (draftId) {
-      dispatch(deleteDisbursementDraftAction(draftId));
+      const resultAction = await dispatch(deleteDisbursementDraftAction(draftId));
       setIsDeleteModalVisible(false);
-      navigate(Routes.DISBURSEMENT_DRAFTS);
+
+      if (deleteDisbursementDraftAction.fulfilled.match(resultAction)) {
+        navigate(Routes.DISBURSEMENT_DRAFTS);
+      }
     }
   };
 
@@ -281,11 +291,17 @@ export const DisbursementDraftDetails = () => {
 
     let tooltip;
 
-    if (isCsvFileUpdated) {
+    if (csvParseError) {
+      // Takes precedence: while the file is unreadable neither saving nor confirming is
+      // possible, so pointing the operator at "save as a draft" would be a dead end.
+      tooltip = `The uploaded file could not be read: ${csvParseError}`;
+    } else if (isCsvFileUpdated) {
       tooltip = "Please save your changes as a draft before confirming the disbursement";
     } else if (!canUserSubmit) {
       tooltip =
         "Your organization requires disbursements to be approved by another user. Save as a draft and make sure another user reviews and submits.";
+    } else if (!balances) {
+      tooltip = "The available balance hasn't loaded yet.";
     }
 
     return (
@@ -297,9 +313,15 @@ export const DisbursementDraftDetails = () => {
         clearDrafts={() => {
           dispatch(resetDisbursementDraftsAction());
         }}
-        isDraftDisabled={!isCsvFileUpdated}
+        // A file that failed to parse is still held in `csvFile` and the totals on screen are
+        // the previous file's, so both writes stay locked until a replacement parses: saving
+        // would upload the unreadable file, confirming would submit against a stale total.
+        isDraftDisabled={!isCsvFileUpdated || Boolean(csvParseError)}
         isSubmitDisabled={
-          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) || futureBalance < 0
+          !(Boolean(draftDetails) && Boolean(csvFile) && canUserSubmit) ||
+          !balances ||
+          futureBalance < 0 ||
+          Boolean(csvParseError)
         }
         isDraftPending={disbursementDrafts.status === "PENDING"}
         actionType={disbursementDrafts.actionType}
@@ -310,7 +332,17 @@ export const DisbursementDraftDetails = () => {
   };
 
   const renderContent = () => {
-    if (isLoading || csvDownloadIsLoading) {
+    if (!isDraftLoaded && disbursementDetails.status === "ERROR") {
+      return (
+        <Notification variant="error" title="Error" isFilled={true}>
+          <ErrorWithExtras
+            appError={{ message: disbursementDetails.errorString ?? GENERIC_ERROR_MESSAGE }}
+          />
+        </Notification>
+      );
+    }
+
+    if (!isDraftLoaded || isLoading || csvDownloadIsLoading) {
       return <div className="Note">Loading…</div>;
     }
 
@@ -409,6 +441,12 @@ export const DisbursementDraftDetails = () => {
             verificationField={draftDetails?.details.verificationField}
           />
 
+          {csvParseError ? (
+            <Notification variant="error" title="This file can't be used" isFilled>
+              {csvParseError} — fix the file and upload it again.
+            </Notification>
+          ) : null}
+
           {renderButtons("preview")}
         </form>
       </>
@@ -446,6 +484,7 @@ export const DisbursementDraftDetails = () => {
               size="md"
               icon={<Icon.Trash01 />}
               onClick={showDeleteModal}
+              disabled={!isDraftLoaded}
               isLoading={disbursementDrafts.status === "PENDING"}
             >
               Delete Draft

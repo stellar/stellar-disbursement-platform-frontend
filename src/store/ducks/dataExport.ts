@@ -8,6 +8,9 @@ import { ApiError, Export, RejectMessage } from "@/types";
 type ExportParams<T> = {
   exportType: Export;
   searchParams?: T;
+  // Multi-wallet: the account the exported list is scoped to, passed in from the SelectedWallet
+  // context so the export matches the rows on screen. Empty means "All accounts".
+  walletId?: string;
 };
 
 export const exportDataAction = createAsyncThunk<
@@ -16,11 +19,11 @@ export const exportDataAction = createAsyncThunk<
   { rejectValue: RejectMessage; state: RootState }
 >(
   "common/exportDataAction",
-  async ({ exportType, searchParams }, { rejectWithValue, getState, dispatch }) => {
+  async ({ exportType, searchParams, walletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
 
     try {
-      await getExport(token, exportType, searchParams);
+      await getExport(token, exportType, searchParams, walletId);
       refreshSessionToken(dispatch);
       return;
     } catch (error: unknown) {

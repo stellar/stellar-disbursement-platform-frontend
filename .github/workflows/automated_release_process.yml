@@ -1,9 +1,9 @@
 name: Automated Release Process
 
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+# Revoke all default GITHUB_TOKEN permissions at the workflow level. Each job
+# below opts in to what it needs, so a future job added without its own
+# `permissions:` block inherits nothing.
+permissions: {}
 
 on:
   workflow_dispatch:
@@ -21,6 +21,11 @@ env:
 jobs:
   create-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write # required: claude-code-action exchanges the GitHub OIDC token for a federated Anthropic token
     steps:
       - name: Validate version format
         run: |
@@ -33,7 +38,7 @@ jobs:
           fi
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -99,7 +104,10 @@ jobs:
             If the [Unreleased] section is empty AND there are no uncovered commits, use `- Release ${{ inputs.version }}` as the body.
 
             Use the Edit tool to modify CHANGELOG.md. Do not create or modify any other files.
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_organization_id: ${{ vars.ANTHROPIC_ORGANIZATION_ID }}
+          anthropic_service_account_id: ${{ vars.ANTHROPIC_SERVICE_ACCOUNT_ID }}
+          anthropic_federation_rule_id: ${{ vars.ANTHROPIC_FEDERATION_RULE_ID }}
+          anthropic_workspace_id: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           claude_args: --max-turns 10 --allowedTools Read,Edit
 

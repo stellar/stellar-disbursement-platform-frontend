@@ -1,25 +1,35 @@
 import { useState } from "react";
-import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
+
 import { useQueryClient } from "@tanstack/react-query";
+import { useDispatch } from "react-redux";
 
-import { AppDispatch } from "@/store";
-import { exportDataAction } from "@/store/ducks/dataExport";
+import { Button, Heading, Icon, Input, Select, Notification } from "@stellar/design-system";
 
+import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { FilterMenu } from "@/components/FilterMenu";
 import { Pagination } from "@/components/Pagination";
 import { PaymentsTable } from "@/components/PaymentsTable";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ShowForRoles } from "@/components/ShowForRoles";
-import { DirectPaymentCreateModal } from "@/components/DirectPaymentCreateModal/DirectPaymentCreateModal";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { usePayments } from "@/apiQueries/usePayments";
-import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
+import { exportDataAction } from "@/store/ducks/dataExport";
+
 import { PAGE_LIMIT_OPTIONS } from "@/constants/settings";
+
+import { useCreateDirectPayment } from "@/apiQueries/useCreateDirectPayment";
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+import { usePayments } from "@/apiQueries/usePayments";
+
 import { number } from "@/helpers/formatIntlNumber";
+
+import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import { CommonFilters, CreateDirectPaymentRequest } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 export const Payments = () => {
   const [isSearchInProgress] = useState(false);
@@ -39,17 +49,25 @@ export const Payments = () => {
 
   const queryClient = useQueryClient();
 
+  const { userAccount } = useRedux("userAccount");
+  const { selectedWalletId } = useSelectedWallet();
+  const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
+  const defaultWallet = distributionWallets?.find((w) => w.is_default) ?? distributionWallets?.[0];
+
   const {
     data: payments,
     error,
     isLoading,
     isFetching,
-  } = usePayments({
-    page: currentPage.toString(),
-    page_limit: pageLimit.toString(),
-    ...queryFilters,
-    ...searchQuery,
-  });
+  } = usePayments(
+    {
+      page: currentPage.toString(),
+      page_limit: pageLimit.toString(),
+      ...queryFilters,
+      ...searchQuery,
+    },
+    selectedWalletId,
+  );
 
   const {
     mutateAsync: createDirectPayment,
@@ -102,6 +120,7 @@ export const Payments = () => {
       exportDataAction({
         exportType: "payments",
         searchParams: filters,
+        walletId: selectedWalletId,
       }),
     );
   };
@@ -121,8 +140,11 @@ export const Payments = () => {
     resetCreatePaymentQuery();
   };
 
-  const handleSubmitDirectPayment = async (paymentData: CreateDirectPaymentRequest) => {
-    await createDirectPayment(paymentData);
+  const handleSubmitDirectPayment = async (
+    paymentData: CreateDirectPaymentRequest,
+    sourceWalletId?: string,
+  ) => {
+    await createDirectPayment({ paymentData, sourceWalletId });
   };
 
   return (
@@ -146,7 +168,7 @@ export const Payments = () => {
                 onClick={handleCreateDirectPayment}
                 disabled={isLoading || isFetching}
               >
-                New Direct Payment
+                New direct payment
               </Button>
             </ShowForRoles>
           </SectionHeader.Content>
@@ -265,6 +287,9 @@ export const Payments = () => {
         isLoading={isLoading || isFetching}
       />
 
+      {/* The source account is the modal's own state, seeded from the current selection (or the
+          default account under "All accounts", which the backend can't charge). Opening the flow
+          must not re-scope the app — only the account switcher does that. */}
       <DirectPaymentCreateModal
         visible={isDirectPaymentModalVisible}
         onClose={handleCloseDirectPaymentModal}
@@ -272,6 +297,8 @@ export const Payments = () => {
         onResetQuery={resetCreatePaymentQuery}
         isLoading={isCreatingPayment}
         errorMessage={createPaymentError?.message}
+        sourceWallets={distributionWallets}
+        initialSourceWalletId={selectedWalletId || defaultWallet?.id}
       />
     </>
   );

@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { Box } from "@/components/Box";
 import { NetworkType } from "@/constants/network";
+import { parseAssetKey } from "@/helpers/parseAssetKey";
 import { Trustline } from "@/types";
 
 import "./styles.scss";
@@ -62,7 +63,7 @@ export const AddPresetAssetModal = ({
     : [];
 
   const isAssetAlreadyTrustline = (asset: PresetAsset) => {
-    const [code, issuer] = asset.id.split(":");
+    const { code, issuer } = parseAssetKey(asset.id);
     return (
       trustlines?.some((trustline) => trustline.code === code && trustline.issuer === issuer) ||
       false
@@ -77,7 +78,7 @@ export const AddPresetAssetModal = ({
   const handleSubmit = async () => {
     if (!selectedAsset) return;
 
-    const [code, issuer] = selectedAsset.split(":");
+    const { code, issuer } = parseAssetKey(selectedAsset);
     await onSubmit({
       assetCode: code,
       assetIssuer: issuer,

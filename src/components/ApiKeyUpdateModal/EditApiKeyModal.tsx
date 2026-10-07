@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+
 import { Button, Input, Modal, Notification } from "@stellar/design-system";
 
 import {
@@ -8,13 +9,16 @@ import {
 } from "@/components/ApiKeyFormFields/ApiKeyFormFields";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 
-import { useApiKeyForm } from "@/hooks/useApiKeyForm";
-import { usePrevious } from "@/hooks/usePrevious";
+import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import { parseAllowedIPs } from "@/helpers/parseIPs";
 
-import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+import { useApiKeyForm } from "@/hooks/useApiKeyForm";
+import { usePrevious } from "@/hooks/usePrevious";
+
 import { ApiKey, AppError } from "@/types";
 
 import "./styles.scss";
@@ -43,6 +47,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
     handleAllowedIPsChange,
     handlePermissionChange,
     handleAllowedIPsBlur,
+    handleWalletToggle,
     validatePermissions,
     getAllowedIPsError,
     getPermissionsError,
@@ -50,6 +55,18 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
     resetForm,
     setForm,
   } = useApiKeyForm({ onResetQuery, appError });
+
+  const { data: allWallets } = useDistributionWallets(visible, true);
+
+  // An account archived after this key was scoped to it stays offerable, checked, so saving an
+  // unrelated change doesn't silently drop it. Archived accounts the key doesn't hold are omitted:
+  // the API refuses to add them.
+  const selectableWallets = useMemo(() => {
+    const held = apiKey?.distribution_wallet_ids ?? [];
+    return (allWallets ?? []).filter(
+      (wallet) => wallet.status === "ACTIVE" || held.includes(wallet.id),
+    );
+  }, [allWallets, apiKey]);
 
   const previousVisible = usePrevious(visible);
 
@@ -64,6 +81,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
       setForm({
         allowedIPs: allowedIpsString,
         permissions,
+        distributionWalletIds: apiKey.distribution_wallet_ids ?? [],
       });
     } else if (previousVisible && !visible) {
       resetForm();
@@ -93,6 +111,7 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
     const updateData: UpdateApiKeyRequest = {
       permissions: apiPermissions,
       allowed_ips: allowedIPs.length > 0 ? allowedIPs : null,
+      distribution_wallet_ids: formData.distributionWalletIds,
     };
 
     onSubmit(apiKey.id, updateData);
@@ -148,6 +167,9 @@ export const EditApiKeyModal: React.FC<EditApiKeyModalProps> = ({
                 onPermissionChange={handlePermissionChange}
                 allowedIPsError={getAllowedIPsError()}
                 permissionsError={getPermissionsError()}
+                distributionWallets={selectableWallets}
+                selectedWalletIds={formData.distributionWalletIds}
+                onWalletToggle={handleWalletToggle}
               />
             </div>
           </Modal.Body>

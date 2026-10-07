@@ -1,12 +1,14 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "@/store";
+
 import { getDisbursementDetails } from "@/api/getDisbursementDetails";
 import { getDisbursementReceivers } from "@/api/getDisbursementReceivers";
 import { patchDisbursementStatus } from "@/api/patchDisbursementStatus";
+
 import { endSessionIfTokenInvalid } from "@/helpers/endSessionIfTokenInvalid";
-import { refreshSessionToken } from "@/helpers/refreshSessionToken";
 import { formatDisbursement } from "@/helpers/formatDisbursements";
 import { normalizeApiError } from "@/helpers/normalizeApiError";
+import { refreshSessionToken } from "@/helpers/refreshSessionToken";
+
 import {
   ApiDisbursementReceiver,
   ApiDisbursementReceivers,
@@ -19,6 +21,8 @@ import {
   PaginationParams,
   RejectMessage,
 } from "@/types";
+
+import { RootState } from "@/store";
 
 export const getDisbursementDetailsAction = createAsyncThunk<
   Disbursement,
@@ -89,10 +93,10 @@ export const pauseOrStartDisbursementAction = createAsyncThunk<
   "disbursementDetails/pauseOrStartDisbursementAction",
   async (newStatus, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { id } = getState().disbursementDetails.details;
+    const { id, sourceWalletId } = getState().disbursementDetails.details;
 
     try {
-      const { message } = await patchDisbursementStatus(token, id, newStatus);
+      const { message } = await patchDisbursementStatus(token, id, newStatus, sourceWalletId);
       refreshSessionToken(dispatch);
 
       return { status: newStatus, message };
@@ -105,6 +109,33 @@ export const pauseOrStartDisbursementAction = createAsyncThunk<
         errorString: `Error ${
           newStatus === "PAUSED" ? "starting" : "pausing"
         } the disbursement: ${errorString}`,
+      });
+    }
+  },
+);
+
+export const cancelDisbursementAction = createAsyncThunk<
+  { status: DisbursementStatusType; message: string },
+  void,
+  { rejectValue: RejectMessage; state: RootState }
+>(
+  "disbursementDetails/cancelDisbursementAction",
+  async (_, { rejectWithValue, getState, dispatch }) => {
+    const { token } = getState().userAccount;
+    const { id, sourceWalletId } = getState().disbursementDetails.details;
+
+    try {
+      const { message } = await patchDisbursementStatus(token, id, "CANCELED", sourceWalletId);
+      refreshSessionToken(dispatch);
+
+      return { status: "CANCELED" as DisbursementStatusType, message };
+    } catch (error: unknown) {
+      const apiError = normalizeApiError(error as ApiError);
+      const errorString = apiError.message;
+      endSessionIfTokenInvalid(errorString, dispatch);
+
+      return rejectWithValue({
+        errorString: `Error canceling the disbursement: ${errorString}`,
       });
     }
   },
@@ -210,6 +241,22 @@ const disbursementDetailsSlice = createSlice({
       state.errorString = undefined;
     });
     builder.addCase(pauseOrStartDisbursementAction.rejected, (state, action) => {
+      state.status = "ERROR";
+      state.errorString = action.payload?.errorString;
+    });
+    // Cancel disbursement
+    builder.addCase(cancelDisbursementAction.pending, (state = initialState) => {
+      state.status = "PENDING";
+    });
+    builder.addCase(cancelDisbursementAction.fulfilled, (state, action) => {
+      state.details = {
+        ...state.details,
+        status: action.payload.status,
+      };
+      state.status = "SUCCESS";
+      state.errorString = undefined;
+    });
+    builder.addCase(cancelDisbursementAction.rejected, (state, action) => {
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
     });

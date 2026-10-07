@@ -1,11 +1,11 @@
-import { Button, Heading, Icon, Input, Notification, Select } from "@stellar/design-system";
-import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+
+import { useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { AppDispatch } from "@/store";
-import { exportDataAction } from "@/store/ducks/dataExport";
+import { Button, Heading, Icon, Input, Notification, Select } from "@stellar/design-system";
+
 
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { FilterMenu } from "@/components/FilterMenu";
@@ -15,10 +15,17 @@ import { ReceiversTable } from "@/components/ReceiversTable";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
 
+import { exportDataAction } from "@/store/ducks/dataExport";
+
+import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
+
 import { useCreateReceiver } from "@/apiQueries/useCreateReceiver";
 import { useReceivers } from "@/apiQueries/useReceivers";
-import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
+
 import { number } from "@/helpers/formatIntlNumber";
+
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import {
   CommonFilters,
   CreateReceiverRequest,
@@ -26,6 +33,8 @@ import {
   SortDirection,
   SortParams,
 } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 export const Receivers = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,17 +55,23 @@ export const Receivers = () => {
 
   const queryClient = useQueryClient();
 
+  // The active account comes from the global ActiveWalletBar (shared context).
+  const { selectedWalletId } = useSelectedWallet();
+
   const {
     data: receivers,
     error,
     isLoading,
     isFetching,
-  } = useReceivers({
-    page: currentPage.toString(),
-    page_limit: pageLimit.toString(),
-    ...queryFilters,
-    ...searchQuery,
-  });
+  } = useReceivers(
+    {
+      page: currentPage.toString(),
+      page_limit: pageLimit.toString(),
+      ...queryFilters,
+      ...searchQuery,
+    },
+    selectedWalletId,
+  );
 
   const {
     mutateAsync: createReceiver,
@@ -68,6 +83,7 @@ export const Receivers = () => {
       setIsReceiverCreateModalVisible(false);
       queryClient.invalidateQueries({ queryKey: ["receivers"] });
     },
+    selectedWalletId,
   });
 
   const isFiltersSelected = Object.values(filters).filter((v) => Boolean(v)).length > 0;
@@ -119,6 +135,7 @@ export const Receivers = () => {
       exportDataAction({
         exportType: "receivers",
         searchParams: filters,
+        walletId: selectedWalletId,
       }),
     );
   };

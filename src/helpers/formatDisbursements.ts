@@ -36,6 +36,7 @@ export const formatDisbursement = (disbursement: ApiDisbursement): Disbursement 
     id: disbursement.wallet.id,
     name: disbursement.wallet.name,
   },
+  sourceWalletId: disbursement.source_wallet_id,
   verificationField: disbursement.verification_field,
   fileName: disbursement.file_name,
   statusHistory: disbursement.status_history

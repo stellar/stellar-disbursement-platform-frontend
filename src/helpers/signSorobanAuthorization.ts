@@ -3,7 +3,9 @@ import { Buffer } from "buffer";
 import { p256 } from "@noble/curves/p256";
 import { startAuthentication } from "@simplewebauthn/browser";
 
-import { Address, hash, xdr } from "@stellar/stellar-sdk";
+import { hash, xdr } from "@stellar/stellar-sdk";
+
+import { isAddressCredentialForContract } from "@/helpers/isAddressCredentialForContract";
 
 type SignSorobanAuthorizationParams = {
   authEntries: xdr.SorobanAuthorizationEntry[];
@@ -25,24 +27,6 @@ const decodeBase64Url = (value: string): Buffer => {
   return Buffer.from(base64, "base64");
 };
 
-const shouldSignEntry = (
-  entry: xdr.SorobanAuthorizationEntry,
-  contractAddress: string,
-): boolean => {
-  if (entry.credentials().switch() !== xdr.SorobanCredentialsType.sorobanCredentialsAddress()) {
-    return false;
-  }
-
-  const addressCredentials = entry.credentials().address();
-  const address = addressCredentials.address();
-
-  if (address.switch() !== xdr.ScAddressType.scAddressTypeContract()) {
-    return false;
-  }
-
-  return Address.fromScAddress(address).toString() === contractAddress;
-};
-
 export const signSorobanAuthorizationEntries = async ({
   authEntries,
   contractAddress,
@@ -58,7 +42,7 @@ export const signSorobanAuthorizationEntries = async ({
   for (const entry of authEntries) {
     const cloned = xdr.SorobanAuthorizationEntry.fromXDR(entry.toXDR());
 
-    if (!shouldSignEntry(cloned, contractAddress)) {
+    if (!isAddressCredentialForContract(cloned, contractAddress)) {
       signedEntries.push(cloned);
       continue;
     }

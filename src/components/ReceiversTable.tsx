@@ -1,13 +1,18 @@
-import { Card, Link, Notification } from "@stellar/design-system";
+import { Card, Icon, Link, Notification } from "@stellar/design-system";
+
+import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { MultipleAmounts } from "@/components/MultipleAmounts";
+import { Table } from "@/components/Table";
+
 import { formatDateTime } from "@/helpers/formatIntlDateTime";
 import {
   getReceiverContactInfoTitle,
   renderReceiverContactInfoItems,
 } from "@/helpers/receiverContactInfo";
+
 import { useSort } from "@/hooks/useSort";
-import { MultipleAmounts } from "@/components/MultipleAmounts";
-import { Table } from "@/components/Table";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+
 import { Receiver, SortByReceivers, SortDirection } from "@/types";
 
 interface ReceiversTableProps {
@@ -64,7 +69,12 @@ export const ReceiversTable: React.FC<ReceiversTableProps> = ({
       return <div className="Note">There are no receivers matching selected filters</div>;
     }
 
-    return <div className="Note">There are no receivers</div>;
+    return (
+      <EmptyStateMessage
+        icon={<Icon.Users01 />}
+        message="No receivers yet. They appear here once you create a disbursement that pays them."
+      />
+    );
   }
 
   return (

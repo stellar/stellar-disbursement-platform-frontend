@@ -10,6 +10,7 @@ import { DisbursementsTable } from "@/components/DisbursementsTable";
 import { NewDisbursementButton } from "@/components/NewDisbursementButton";
 import { SectionHeader } from "@/components/SectionHeader";
 import { ShowForRoles } from "@/components/ShowForRoles";
+import { WalletBalancesOverview } from "@/components/WalletBalancesOverview";
 
 import { resetDisbursementDetailsAction } from "@/store/ducks/disbursementDetails";
 import { setDraftIdAction } from "@/store/ducks/disbursementDrafts";
@@ -19,6 +20,7 @@ import { Routes } from "@/constants/settings";
 
 import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
 import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
 import { AppDispatch } from "@/store";
 
@@ -35,15 +37,20 @@ export const Home = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Active distribution account comes from the global ActiveWalletBar (shared context).
+  const { selectedWalletId } = useSelectedWallet();
+
   useEffect(() => {
     if (userAccount.isAuthenticated) {
       if (isRoleAccepted) {
-        dispatch(getDisbursementsAction());
+        // Re-fetch recent disbursements scoped to the active account when it changes. The id is
+        // passed along so the reducer can drop a late response for a previously active account.
+        dispatch(getDisbursementsAction({ walletId: selectedWalletId }));
       }
       dispatch(resetDisbursementDetailsAction());
       dispatch(setDraftIdAction(undefined));
     }
-  }, [dispatch, isRoleAccepted, userAccount.isAuthenticated]);
+  }, [dispatch, isRoleAccepted, userAccount.isAuthenticated, selectedWalletId]);
 
   const apiErrorDisbursements =
     disbursements.status === "ERROR" && disbursements.errorString
@@ -66,7 +73,7 @@ export const Home = () => {
         <SectionHeader.Row>
           <SectionHeader.Content>
             <Heading as="h2" size="sm">
-              Dashboard
+              Home
             </Heading>
           </SectionHeader.Content>
           <SectionHeader.Content align="right">
@@ -78,7 +85,8 @@ export const Home = () => {
       </SectionHeader>
 
       <div className="HomeStatistics">
-        <DashboardAnalytics />
+        <DashboardAnalytics showAverageAmount={false} />
+        <WalletBalancesOverview />
       </div>
 
       <ShowForRoles

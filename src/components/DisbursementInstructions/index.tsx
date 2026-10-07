@@ -127,7 +127,7 @@ export const DisbursementInstructions: React.FC<DisbursementInstructionsProps> =
       return "Please select Registration Contact Type";
     }
 
-    if (["EMAIL", "PHONE_NUMEBR"].includes(registrationContactType)) {
+    if (["EMAIL", "PHONE_NUMBER"].includes(registrationContactType)) {
       return "Please select Verification type";
     }
 

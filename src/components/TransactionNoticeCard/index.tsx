@@ -1,18 +1,23 @@
-import { Button, Card, Icon, Notification, RadioButton, Textarea } from "@stellar/design-system";
 import { useState } from "react";
+
+import { Button, Card, Icon, Notification, RadioButton, Textarea } from "@stellar/design-system";
+
+import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
+import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { SearchInput } from "@/components/SearchInput";
+import { Table } from "@/components/Table";
 
 import { usePayments } from "@/apiQueries/usePayments";
 import {
   INTERNAL_NOTES_MAX_LENGTH,
   useTransactionNoticeExport,
 } from "@/apiQueries/useTransactionNoticeExport";
-import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMessage";
-import { ErrorWithExtras } from "@/components/ErrorWithExtras";
-import { InfoTooltip } from "@/components/InfoTooltip";
-import { SearchInput } from "@/components/SearchInput";
-import { Table } from "@/components/Table";
+
 import { formatDate, formatTime } from "@/helpers/formatIntlDateTime";
+
 import { useRedux } from "@/hooks/useRedux";
+
 import type { ApiPayment } from "@/types";
 
 import "./styles.scss";
@@ -25,6 +30,7 @@ export const TransactionNoticeCard = () => {
 
   const { data, isFetching } = usePayments(
     searchQuery ? { q: searchQuery, page: "1", page_limit: "20" } : undefined,
+    null,
     { enabled: !!searchQuery },
   );
 

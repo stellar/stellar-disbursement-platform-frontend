@@ -25,6 +25,7 @@ import { USE_SSO } from "@/constants/envVariables";
 import { Routes } from "@/constants/settings";
 import { singleUserStore } from "@/helpers/singleSingOn";
 import { userRoleText } from "@/helpers/userRoleText";
+import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet";
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { useRedux } from "@/hooks/useRedux";
 import { useIsUserRoleAccepted } from "@/hooks/useIsUserRoleAccepted";
@@ -264,6 +265,9 @@ export const Profile = () => {
       singleUserStore().then();
     }
     dispatch(resetStoreAction());
+    // Before the token: the selected-account key is derived from the signed-in user, so
+    // clearing the token first would compute a different key and orphan the entry.
+    localStorageSelectedWallet.remove();
     localStorageSessionToken.remove();
   };
 

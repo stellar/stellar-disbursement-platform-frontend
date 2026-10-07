@@ -1,30 +1,41 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button, Card, Heading, Icon, Notification } from "@stellar/design-system";
-import { useDispatch } from "react-redux";
 
-import { getApiKey } from "@/api/getApiKey";
-import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { Button, Card, Heading, Icon, Notification } from "@stellar/design-system";
+
+import { DeleteApiKeyModal } from "@/components/ApiKeyDeleteModal/DeleteApiKeyModal";
+import { EditApiKeyModal } from "@/components/ApiKeyUpdateModal/EditApiKeyModal";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SectionHeader } from "@/components/SectionHeader";
 import { CopyWithIcon } from "@/components/CopyWithIcon";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { SectionHeader } from "@/components/SectionHeader";
 import { ShowForRoles } from "@/components/ShowForRoles";
-import { EditApiKeyModal } from "@/components/ApiKeyUpdateModal/EditApiKeyModal";
-import { DeleteApiKeyModal } from "@/components/ApiKeyDeleteModal/DeleteApiKeyModal";
 import { ValuesList } from "@/components/ValueList/ValueList";
-import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
-import { Routes } from "@/constants/settings";
-import { formatDateTime } from "@/helpers/formatIntlDateTime";
-import { normalizeApiError } from "@/helpers/normalizeApiError";
-import { useRedux } from "@/hooks/useRedux";
-import { AppDispatch } from "@/store";
+
 import {
   deleteApiKeyAction,
   updateApiKeyAction,
   clearApiKeysErrorAction,
 } from "@/store/ducks/apiKeys";
+
+import { API_KEY_PERMISSION_RESOURCES } from "@/constants/apiKeyPermissions";
+import { Routes } from "@/constants/settings";
+
+import { getApiKey } from "@/api/getApiKey";
+import { UpdateApiKeyRequest } from "@/api/updateApiKey";
+
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+
+import { formatDateTime } from "@/helpers/formatIntlDateTime";
+import { normalizeApiError } from "@/helpers/normalizeApiError";
+
+import { useRedux } from "@/hooks/useRedux";
+
 import { ApiKey, UserRole, ApiError, AppError } from "@/types";
+
+import { AppDispatch } from "@/store";
 
 import "./styles.scss";
 
@@ -35,6 +46,7 @@ export const ApiKeyDetails = () => {
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
   const { apiKeys, userAccount } = useRedux("apiKeys", "userAccount");
+  const { data: allWallets } = useDistributionWallets(Boolean(userAccount.isAuthenticated), true);
 
   const [apiKey, setApiKey] = useState<ApiKey | undefined>();
   const [isLoading, setIsLoading] = useState(true);
@@ -122,6 +134,18 @@ export const ApiKeyDetails = () => {
 
     const isExpired = new Date() > new Date(apiKey.expiry_date);
     return isExpired ? "EXPIRED" : "ACTIVE";
+  };
+
+  const formatWalletScope = (walletIds: string[]): string[] => {
+    return (walletIds ?? []).map((walletId) => {
+      const wallet = allWallets?.find((w) => w.id === walletId);
+
+      if (!wallet) {
+        return walletId;
+      }
+
+      return wallet.status === "ARCHIVED" ? `${wallet.name} (archived)` : wallet.name;
+    });
   };
 
   const formatPermissions = (permissions: string[]): string[] => {
@@ -275,6 +299,28 @@ export const ApiKeyDetails = () => {
                 <ValuesList
                   values={formatPermissions(apiKey.permissions)}
                   emptyMessage="No permissions assigned"
+                />
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div className="DetailsSection DetailsSection">
+          <SectionHeader>
+            <SectionHeader.Row>
+              <SectionHeader.Content>
+                <Heading as="h4" size="xs">
+                  Distribution Accounts
+                </Heading>
+              </SectionHeader.Content>
+            </SectionHeader.Row>
+          </SectionHeader>
+          <Card noPadding>
+            <div className="StatCards__card">
+              <div className="ApiKeyDetails__permissions">
+                <ValuesList
+                  values={formatWalletScope(apiKey.distribution_wallet_ids)}
+                  emptyMessage="No distribution accounts (cannot send or report on funds)"
                 />
               </div>
             </div>
