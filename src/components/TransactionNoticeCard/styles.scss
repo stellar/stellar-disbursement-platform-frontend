@@ -63,10 +63,10 @@
     }
   }
 
-  &__notesHelp {
+  &__notesHelp.Note {
     display: block;
     margin-top: pxToRem(8px);
-    font-size: pxToRem(12px) !important;
+    font-size: pxToRem(12px);
   }
 
   &__actions {

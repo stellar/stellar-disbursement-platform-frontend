@@ -121,8 +121,9 @@ export const TransactionNoticeCard = () => {
             {showEmptyState && (
               <div className="TransactionNoticeCard__empty">
                 <EmptyStateMessage
+                  variant="stacked"
                   icon={<Icon.AlertCircle className="Icon" />}
-                  title="No transactions found"
+                  message="No transactions found"
                   description="Try searching using a full or partial SDP Transaction ID or Payment ID."
                 />
               </div>
