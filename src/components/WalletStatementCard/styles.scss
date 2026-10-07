@@ -1,23 +1,20 @@
 @use "../../styles/styles-utils.scss" as *;
 
 .WalletStatementCard {
-  &__account {
-    margin-bottom: pxToRem(16px);
-  }
-
-  &__accountHeader {
+  &__title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: pxToRem(8px);
   }
 
-  &__pickerNote {
+  &__account {
     margin-bottom: pxToRem(16px);
-  }
 
-  &__accountName {
-    font-weight: var(--sds-fw-semi-bold);
+    // The card already spaces its children; the global .Note top margin would double it.
+    .Note {
+      display: block;
+      margin: 0 0 pxToRem(8px);
+    }
   }
 
   &__period {

@@ -98,80 +98,66 @@ export const WalletStatementCard = () => {
   return (
     <Card>
       <div className="CardStack__card WalletStatementCard">
-        <div className="CardStack__title">
+        <div className="CardStack__title WalletStatementCard__title">
           <InfoTooltip infoText="Download a ledger-style PDF for one distribution account over a date range">
             Wallet Statement
           </InfoTooltip>
+          {isArchivedMode ? (
+            <Button size="sm" variant="tertiary" onClick={() => setArchived(null)}>
+              Show active accounts
+            </Button>
+          ) : !wallet && archivedWallets.length > 0 ? (
+            <Button
+              size="sm"
+              variant="tertiary"
+              onClick={() => setArchived({ underSwitcher: selectedWalletId, walletId: "" })}
+            >
+              Show archived accounts
+            </Button>
+          ) : null}
         </div>
 
-        <div className="WalletStatementCard__account">
-          {isArchivedMode ? (
-            <>
-              <div className="WalletStatementCard__accountHeader">
-                <span className="Label Label--sm">Archived distribution account</span>
-                <Button size="sm" variant="tertiary" onClick={() => setArchived(null)}>
-                  Back
+        {isArchivedMode ? (
+          <div className="WalletStatementCard__account">
+            <span className="Note">Select archived distribution account.</span>
+            <Select
+              id="statement_archived_account"
+              fieldSize="sm"
+              value={archived.walletId}
+              onChange={(e) =>
+                setArchived({ underSwitcher: selectedWalletId, walletId: e.target.value })
+              }
+            >
+              <option value="">Select an archived account</option>
+              {archivedWallets.map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+        ) : wallet ? null : (
+          // "All accounts" is selected: a statement covers one account, so offer them here, the
+          // way a new disbursement asks for its funding account.
+          <div className="WalletStatementCard__account">
+            <span className="Note">Select distribution account.</span>
+            <Box gap="md" direction="row" wrap="wrap">
+              {activeWallets.map((w) => (
+                <Button
+                  key={w.id}
+                  size="md"
+                  variant="tertiary"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedWalletId(w.id);
+                  }}
+                >
+                  <DistributionAccountLabel wallet={w} defaultMarker="text" />
                 </Button>
-              </div>
-              <Select
-                id="statement_archived_account"
-                fieldSize="sm"
-                value={archived.walletId}
-                onChange={(e) =>
-                  setArchived({ underSwitcher: selectedWalletId, walletId: e.target.value })
-                }
-              >
-                <option value="">Select an archived account</option>
-                {archivedWallets.map((w) => (
-                  <option key={w.id} value={w.id}>
-                    {w.name}
-                  </option>
-                ))}
-              </Select>
-            </>
-          ) : (
-            <>
-              <div className="WalletStatementCard__accountHeader">
-                <span className="Label Label--sm">Distribution account</span>
-                {!selectedWalletId && archivedWallets.length > 0 ? (
-                  <Button
-                    size="sm"
-                    variant="tertiary"
-                    onClick={() => setArchived({ underSwitcher: selectedWalletId, walletId: "" })}
-                  >
-                    Show archived accounts
-                  </Button>
-                ) : null}
-              </div>
-              {wallet ? (
-                <div className="WalletStatementCard__accountName">{wallet.name}</div>
-              ) : (
-                // "All accounts" is selected: a statement covers one account, so offer them here,
-                // the way a new disbursement asks for its funding account.
-                <>
-                  <div className="Note WalletStatementCard__pickerNote">
-                    Select distribution account.
-                  </div>
-                  <Box gap="md" direction="row" wrap="wrap">
-                    {activeWallets.map((w) => (
-                      <Button
-                        key={w.id}
-                        size="md"
-                        variant="tertiary"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setSelectedWalletId(w.id);
-                        }}
-                      >
-                        <DistributionAccountLabel wallet={w} defaultMarker="text" />
-                      </Button>
-                    ))}
-                  </Box>
-                </>
-              )}
-            </>
-          )}
-        </div>
+              ))}
+            </Box>
+          </div>
+        )}
 
         {unavailableReason ? (
           <Notification variant="warning" title="Statement unavailable">
