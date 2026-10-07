@@ -110,7 +110,7 @@ export const WalletStatementCard = () => {
               <div className="WalletStatementCard__accountHeader">
                 <span className="Label Label--sm">Archived distribution account</span>
                 <Button size="sm" variant="tertiary" onClick={() => setArchived(null)}>
-                  Back to selected account
+                  Back
                 </Button>
               </div>
               <Select
