@@ -1,6 +1,25 @@
 @use "../../styles/styles-utils.scss" as *;
 
 .WalletStatementCard {
+  &__account {
+    margin-bottom: pxToRem(16px);
+  }
+
+  &__accountHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: pxToRem(8px);
+  }
+
+  &__pickerNote {
+    margin-bottom: pxToRem(16px);
+  }
+
+  &__accountName {
+    font-weight: var(--sds-fw-semi-bold);
+  }
+
   &__period {
     margin-bottom: pxToRem(16px);
 

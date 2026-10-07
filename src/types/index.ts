@@ -183,13 +183,13 @@ export type SortByReceivers = "created_at";
 
 export type SortByPayments = "created_at";
 
-export type StatementPeriod = "this_month" | "last_month" | "qtd" | "ytd" | "custom";
+export type StatementPeriod = "this_month" | "last_month" | "qtd" | "ytd";
 
 export type StatementQueryParams = {
+  walletId: string;
   fromDate: string;
   toDate: string;
   assetCode?: string;
-  baseUrl?: string;
 };
 
 export type AccountBalanceItem = {
