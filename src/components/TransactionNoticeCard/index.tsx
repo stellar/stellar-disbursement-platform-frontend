@@ -6,6 +6,7 @@ import { EmptyStateMessage } from "@/components/EmptyStateMessage/EmptyStateMess
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { SearchInput } from "@/components/SearchInput";
+import { SourceAccount, useShowSourceAccountColumn } from "@/components/SourceAccount";
 import { Table } from "@/components/Table";
 
 import { usePayments } from "@/apiQueries/usePayments";
@@ -16,7 +17,7 @@ import {
 
 import { formatDate, formatTime } from "@/helpers/formatIntlDateTime";
 
-import { useRedux } from "@/hooks/useRedux";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
 import type { ApiPayment } from "@/types";
 
@@ -26,12 +27,19 @@ export const TransactionNoticeCard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
   const [internalNotes, setInternalNotes] = useState("");
-  const { organization } = useRedux("organization");
+  // The search follows the account switcher like the Payments page: one account when one is
+  // selected, otherwise every account the user may see.
+  const { selectedWalletId } = useSelectedWallet();
+  const showSourceAccount = useShowSourceAccountColumn();
 
-  const { data, isFetching } = usePayments(
+  const {
+    data,
+    isFetching,
+    error: searchError,
+  } = usePayments(
     searchQuery ? { q: searchQuery, page: "1", page_limit: "20" } : undefined,
-    null,
-    { enabled: !!searchQuery },
+    selectedWalletId,
+    Boolean(searchQuery),
   );
 
   const {
@@ -43,7 +51,7 @@ export const TransactionNoticeCard = () => {
   const payments = Array.isArray(data?.data) ? data.data : [];
   const hasResults = payments.length > 0;
   const hasSearched = (searchQuery ?? "").length > 0;
-  const showEmptyState = hasSearched && !isFetching && !hasResults;
+  const showEmptyState = hasSearched && !isFetching && !searchError && !hasResults;
   const showResults = hasSearched && !isFetching && hasResults;
 
   const getSelectedId = (): string | null => {
@@ -71,11 +79,7 @@ export const TransactionNoticeCard = () => {
       notesTrimmed.length > INTERNAL_NOTES_MAX_LENGTH
         ? notesTrimmed.slice(0, INTERNAL_NOTES_MAX_LENGTH)
         : notesTrimmed || undefined;
-    exportTransactionNotice({
-      paymentId: selectedId,
-      internalNotes: internalNotesParam,
-      baseUrl: organization.data.baseUrl ?? undefined,
-    });
+    exportTransactionNotice({ paymentId: selectedId, internalNotes: internalNotesParam });
   };
 
   return (
@@ -107,6 +111,12 @@ export const TransactionNoticeCard = () => {
                 <span className="Note">Loading…</span>
               </div>
             )}
+
+            {searchError ? (
+              <Notification variant="error" title="Error" isFilled={true}>
+                <ErrorWithExtras appError={searchError} />
+              </Notification>
+            ) : null}
 
             {showEmptyState && (
               <div className="TransactionNoticeCard__empty">
@@ -171,7 +181,14 @@ export const TransactionNoticeCard = () => {
                                 {formatTime(p.created_at)}
                               </span>
                             </Table.BodyCell>
-                            <Table.BodyCell>{p.disbursement?.name ?? "—"}</Table.BodyCell>
+                            <Table.BodyCell>
+                              {p.disbursement?.name ?? "—"}
+                              {showSourceAccount ? (
+                                <div className="TransactionNoticeCard__sourceAccount">
+                                  <SourceAccount sourceWalletId={p.source_wallet_id} />
+                                </div>
+                              ) : null}
+                            </Table.BodyCell>
                           </Table.BodyRow>
                         ))}
                       </Table.Body>

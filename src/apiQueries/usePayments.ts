@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { API_URL } from "@/constants/envVariables";
 
@@ -12,10 +12,7 @@ import { ApiPayments, AppError, PaymentsSearchParams } from "@/types";
 export const usePayments = (
   searchParams?: PaymentsSearchParams,
   selectedWalletId?: string | null,
-  options?: Omit<
-    UseQueryOptions<ApiPayments, AppError>,
-    "queryKey" | "queryFn" | "placeholderData"
-  >,
+  enabled = true,
 ) => {
   // ALL status is for UI only
   if (searchParams?.status === "ALL") {
@@ -40,7 +37,7 @@ export const usePayments = (
     // Only keep the previous rows while paging/filtering within the same account; showing
     // another account's payments during a switch is a disclosure, not a nicety.
     placeholderData: (prev, prevQuery) => (prevQuery?.queryKey[1] === walletKey ? prev : undefined),
-    ...options,
+    enabled,
   });
 
   return query;

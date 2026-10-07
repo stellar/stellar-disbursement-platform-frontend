@@ -49,6 +49,11 @@
     }
   }
 
+  &__sourceAccount {
+    margin-top: pxToRem(4px);
+    font-size: pxToRem(12px);
+  }
+
   &__notes {
     margin-bottom: pxToRem(16px);
 
