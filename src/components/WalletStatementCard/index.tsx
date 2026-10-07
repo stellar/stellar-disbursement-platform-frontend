@@ -128,7 +128,7 @@ export const WalletStatementCard = () => {
                 setArchived({ underSwitcher: selectedWalletId, walletId: e.target.value })
               }
             >
-              <option value="">Select an archived account</option>
+              <option value="">Select…</option>
               {archivedWallets.map((w) => (
                 <option key={w.id} value={w.id}>
                   {w.name}
