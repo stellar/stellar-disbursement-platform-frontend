@@ -55,10 +55,8 @@ export const AccountStatementCard = () => {
   const activeWallets = wallets?.filter((w) => w.status === "ACTIVE") ?? [];
   const archivedWallets = wallets?.filter((w) => w.status === "ARCHIVED") ?? [];
 
-  // The account comes from the account switcher. The one exception is an archived account, which
-  // the switcher never offers: under "All accounts" the card can be pointed at one. That detour is
-  // remembered against the switcher value it was taken under, so picking an account in the bar
-  // always brings the card back to the bar's choice.
+  // The card follows the account switcher; the only detour is an archived account, which the switcher never offers.
+  // The detour is keyed to the switcher value it was taken under, so a new pick in the bar always wins.
   const [archived, setArchived] = useState<{ underSwitcher: string; walletId: string } | null>(
     null,
   );

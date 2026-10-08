@@ -5,7 +5,6 @@ import "./styles.scss";
 interface EmptyStateMessageProps {
   icon?: React.ReactNode;
   message: string;
-  // "stacked" puts the icon above a bold message, with an optional line of guidance beneath.
   variant?: "inline" | "stacked";
   description?: string;
 }
