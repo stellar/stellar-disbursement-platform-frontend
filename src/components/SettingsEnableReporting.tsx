@@ -55,7 +55,7 @@ export const SettingsEnableReporting = () => {
           </div>
           <div className="Note">
             Toggle this option to enable the Reports page for this organization. When enabled, users
-            can download wallet statements and individual transaction notices as PDFs.
+            can download account statements and individual transaction notices as PDFs.
           </div>
         </div>
       </div>

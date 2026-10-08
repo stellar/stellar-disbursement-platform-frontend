@@ -43,7 +43,7 @@ const statementUnavailableReason = (wallet: DistributionWallet): string | null =
   }
 };
 
-export const WalletStatementCard = () => {
+export const AccountStatementCard = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [activePeriod, setActivePeriod] = useState<StatementPeriod | null>(null);
@@ -97,10 +97,10 @@ export const WalletStatementCard = () => {
 
   return (
     <Card>
-      <div className="CardStack__card WalletStatementCard">
-        <div className="CardStack__title WalletStatementCard__title">
+      <div className="CardStack__card AccountStatementCard">
+        <div className="CardStack__title AccountStatementCard__title">
           <InfoTooltip infoText="Download a ledger-style PDF for one distribution account over a date range">
-            Wallet Statement
+            Account Statement
           </InfoTooltip>
           {isArchivedMode ? (
             <Button size="sm" variant="tertiary" onClick={() => setArchived(null)}>
@@ -118,7 +118,7 @@ export const WalletStatementCard = () => {
         </div>
 
         {isArchivedMode ? (
-          <div className="WalletStatementCard__account">
+          <div className="AccountStatementCard__account">
             <span className="Note">Select archived distribution account.</span>
             <Select
               id="statement_archived_account"
@@ -139,7 +139,7 @@ export const WalletStatementCard = () => {
         ) : wallet ? null : (
           // "All accounts" is selected: a statement covers one account, so offer them here, the
           // way a new disbursement asks for its funding account.
-          <div className="WalletStatementCard__account">
+          <div className="AccountStatementCard__account">
             <span className="Note">Select distribution account.</span>
             <Box gap="md" direction="row" wrap="wrap">
               {activeWallets.map((w) => (
@@ -165,9 +165,9 @@ export const WalletStatementCard = () => {
           </Notification>
         ) : (
           <>
-            <div className="WalletStatementCard__period">
+            <div className="AccountStatementCard__period">
               <span className="Label Label--sm">Period</span>
-              <div className="WalletStatementCard__periodButtons">
+              <div className="AccountStatementCard__periodButtons">
                 {PERIODS.map(({ key, label }) => (
                   <Button
                     key={key}
@@ -181,8 +181,8 @@ export const WalletStatementCard = () => {
               </div>
             </div>
 
-            <div className="WalletStatementCard__dateRange">
-              <div className="WalletStatementCard__dateInput">
+            <div className="AccountStatementCard__dateRange">
+              <div className="AccountStatementCard__dateInput">
                 <Input
                   id="statement_from_date"
                   label="From date"
@@ -193,7 +193,7 @@ export const WalletStatementCard = () => {
                   onChange={handleFromDateChange}
                 />
               </div>
-              <div className="WalletStatementCard__dateInput">
+              <div className="AccountStatementCard__dateInput">
                 <Input
                   id="statement_to_date"
                   label="To date"
@@ -212,7 +212,7 @@ export const WalletStatementCard = () => {
               </Notification>
             ) : null}
 
-            <div className="WalletStatementCard__actions">
+            <div className="AccountStatementCard__actions">
               <Button
                 size="md"
                 variant="secondary"
