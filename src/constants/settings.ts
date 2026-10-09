@@ -41,6 +41,7 @@ export enum Routes {
   WALLET = "/wallet",
   WALLET_HOME = "/wallet/home",
   ANALYTICS = "/analytics",
+  REPORTS = "/reports",
   PROFILE = "/profile",
   SETTINGS = "/settings",
   API_KEYS = "/api-keys",

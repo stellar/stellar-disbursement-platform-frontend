@@ -14,4 +14,5 @@ export const API_KEY_PERMISSION_RESOURCES: PermissionResource[] = [
   { key: "distribution_wallets", label: "Distribution accounts", hasWrite: true },
   { key: "statistics", label: "Statistics", hasWrite: false },
   { key: "exports", label: "Exports", hasWrite: false },
+  { key: "reports", label: "Reports", hasWrite: false },
 ] as const;

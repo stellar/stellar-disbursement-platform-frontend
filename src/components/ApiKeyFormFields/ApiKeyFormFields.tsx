@@ -19,6 +19,7 @@ export type PermissionState = {
   distribution_wallets: PermissionLevel;
   statistics: PermissionLevel;
   exports: PermissionLevel;
+  reports: PermissionLevel;
 };
 
 export const INITIAL_PERMISSIONS: PermissionState = {
@@ -32,6 +33,7 @@ export const INITIAL_PERMISSIONS: PermissionState = {
   distribution_wallets: "none",
   statistics: "none",
   exports: "none",
+  reports: "none",
 };
 
 interface ApiKeyFormFieldsProps {
@@ -183,7 +185,7 @@ export const convertToApiPermissions = (permissions: PermissionState): string[] 
     if (level === "read") {
       apiPermissions.push(`read:${resource}`);
     } else if (level === "read_write") {
-      if (resource === "statistics" || resource === "exports") {
+      if (resource === "statistics" || resource === "exports" || resource === "reports") {
         apiPermissions.push(`read:${resource}`);
       } else {
         apiPermissions.push(`read:${resource}`, `write:${resource}`);
@@ -221,6 +223,7 @@ export const parseExistingPermissions = (permissions: string[]): PermissionState
     distribution_wallets: "distribution_wallets",
     statistics: "statistics",
     exports: "exports",
+    reports: "reports",
   };
 
   Object.entries(resourceMap).forEach(([resource, key]) => {
