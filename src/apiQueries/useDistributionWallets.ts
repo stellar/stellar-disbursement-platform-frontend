@@ -11,6 +11,7 @@ export type DistributionWallet = {
   name: string;
   description?: string;
   distribution_account_address?: string | null;
+  distribution_account_type?: string;
   status: "ACTIVE" | "ARCHIVED" | "PENDING";
   is_default: boolean;
 };

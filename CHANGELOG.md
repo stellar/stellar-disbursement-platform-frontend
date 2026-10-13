@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Add Reports page: a per-distribution account statement PDF and a per-payment transaction notice PDF. [#PR](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/PR)
 - Add distribution account label to WalletBalancesOverview. [#582](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/582)
 
 ### Changed

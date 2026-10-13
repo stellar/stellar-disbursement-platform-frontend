@@ -16,12 +16,12 @@ import { localStorageSelectedWallet } from "@/helpers/localStorageSelectedWallet
 import { localStorageSessionToken } from "@/helpers/localStorageSessionToken";
 import { singleUserStore } from "@/helpers/singleSingOn";
 
+import { useAppConfig } from "@/hooks/useAppConfig";
 import { useRedux } from "@/hooks/useRedux";
 
 import { UserRole } from "@/types";
 
 import { AppDispatch, resetStoreAction } from "@/store";
-
 
 import "./styles.scss";
 
@@ -35,6 +35,7 @@ interface InnerPageProps {
 export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) => {
   const { userAccount, organization, profile } = useRedux("userAccount", "organization", "profile");
   const dispatch: AppDispatch = useDispatch();
+  const { isReportingEnabled } = useAppConfig();
 
   const handleSignOut = () => {
     if (USE_SSO) {
@@ -112,6 +113,17 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       route: Routes.ANALYTICS,
       icon: <Icon.LineChartUp01 />,
     },
+    ...(isReportingEnabled
+      ? [
+          {
+            id: "nav-reports",
+            label: "Reports",
+            route: Routes.REPORTS,
+            icon: <Icon.File05 />,
+            acceptedRoles: DISBURSEMENT_ROLES,
+          },
+        ]
+      : []),
   ];
 
   const ITEMS_BOTTOM: NavItem[] = [

@@ -6,6 +6,7 @@ export type AppConfig = {
   captcha_type: string;
   captcha_disabled: boolean;
   captcha_site_key: string;
+  reporting_enabled: boolean;
 };
 
 export const getAppConfig = async (): Promise<AppConfig> => {
