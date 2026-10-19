@@ -2,10 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import { API_URL } from "@/constants/envVariables";
 
-import { fetchApi, sessionExpired } from "@/helpers/fetchApi";
-import { getFilenameFromContentDisposition } from "@/helpers/getFilenameFromContentDisposition";
-import { normalizeApiError } from "@/helpers/normalizeApiError";
-import { saveFile } from "@/helpers/saveFile";
+import { downloadPdf } from "@/helpers/downloadPdf";
 
 import { AppError } from "@/types";
 
@@ -31,31 +28,7 @@ export const useTransactionNoticeExport = () => {
       const queryPart = queryString ? `?${queryString}` : "";
       const url = `${API_URL}/reports/payment/${params.paymentId}${queryPart}`;
 
-      await fetchApi(
-        url,
-        {},
-        {
-          customCallback: async (response: Response) => {
-            if (response.status === 401) {
-              throw sessionExpired();
-            }
-            if (!response.ok) {
-              const err = await response.json().catch(() => ({}));
-              throw normalizeApiError(err);
-            }
-            const blob = await response.blob();
-            const fallback = `transaction_notice_${params.paymentId}.pdf`;
-            const filename = getFilenameFromContentDisposition(
-              response.headers.get("Content-Disposition"),
-              fallback,
-            );
-            saveFile({
-              file: new File([blob], filename, { type: "application/pdf" }),
-              suggestedFileName: filename,
-            });
-          },
-        },
-      );
+      await downloadPdf(url, `transaction_notice_${params.paymentId}.pdf`);
     },
   });
 

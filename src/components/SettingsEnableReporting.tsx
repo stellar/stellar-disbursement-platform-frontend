@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 
 import { Card, Loader, Notification, Toggle } from "@stellar/design-system";
@@ -19,16 +18,14 @@ export const SettingsEnableReporting = () => {
   const { organization } = useRedux("organization");
 
   const dispatch: AppDispatch = useDispatch();
-  const queryClient = useQueryClient();
 
   const { mutateAsync, isPending, error, isSuccess } = useUpdateOrgReportingEnabled();
 
   useEffect(() => {
     if (isSuccess) {
       dispatch(getOrgInfoAction());
-      queryClient.invalidateQueries({ queryKey: ["appConfig"] });
     }
-  }, [dispatch, isSuccess, queryClient]);
+  }, [dispatch, isSuccess]);
 
   const handleToggleChange = () => {
     mutateAsync(!organization.data.reporting_enabled);

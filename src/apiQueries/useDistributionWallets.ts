@@ -4,14 +4,14 @@ import { API_URL } from "@/constants/envVariables";
 
 import { fetchApi } from "@/helpers/fetchApi";
 
-import { AppError } from "@/types";
+import { AppError, DistributionAccountType } from "@/types";
 
 export type DistributionWallet = {
   id: string;
   name: string;
   description?: string;
   distribution_account_address?: string | null;
-  distribution_account_type?: string;
+  distribution_account_type: DistributionAccountType;
   status: "ACTIVE" | "ARCHIVED" | "PENDING";
   is_default: boolean;
 };

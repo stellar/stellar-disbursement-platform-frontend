@@ -7,13 +7,15 @@ import { TransactionNoticeCard } from "@/components/TransactionNoticeCard";
 
 import { NotFound } from "@/pages/NotFound";
 
-import { useAppConfig } from "@/hooks/useAppConfig";
+import { useRedux } from "@/hooks/useRedux";
 
 export const Reports = () => {
+  const { organization } = useRedux("organization");
+
   // The page exists only while the organization has reporting switched on (Settings → Enable Reports).
-  const { isReportingEnabled, isLoading } = useAppConfig();
-  if (isLoading) return <LoadingContent />;
-  if (!isReportingEnabled) return <NotFound />;
+  // The status is unset until the first organization fetch starts.
+  if (!organization.status || organization.status === "PENDING") return <LoadingContent />;
+  if (!organization.data.reporting_enabled) return <NotFound />;
 
   return (
     <>

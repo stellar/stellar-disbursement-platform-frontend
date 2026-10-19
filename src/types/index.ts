@@ -189,7 +189,6 @@ export type StatementQueryParams = {
   walletId: string;
   fromDate: string;
   toDate: string;
-  assetCode?: string;
 };
 
 export type AccountBalanceItem = {

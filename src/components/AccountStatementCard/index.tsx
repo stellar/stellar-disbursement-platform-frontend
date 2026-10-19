@@ -38,8 +38,10 @@ const statementUnavailableReason = (wallet: DistributionWallet): string | null =
         : "This distribution account has not been provisioned yet.";
     case "DISTRIBUTION_ACCOUNT.STELLAR.ENV":
       return "Statements are not available for tenants on the shared host distribution account.";
-    default:
+    case "DISTRIBUTION_ACCOUNT.CIRCLE.DB_VAULT":
       return "Statements are not available for Circle distribution accounts.";
+    default:
+      return "Statements are not available for this distribution account.";
   }
 };
 
@@ -68,7 +70,7 @@ export const AccountStatementCard = () => {
   const today = format(new Date(), "yyyy-MM-dd");
   const isValidRange = Boolean(fromDate && toDate && fromDate <= toDate);
 
-  const { mutateAsync: downloadStatement, isPending, error } = useStatementExport();
+  const { mutate: downloadStatement, isPending, error } = useStatementExport();
 
   const handlePeriodClick = (key: StatementPeriod) => {
     const dates = getStatementPeriodDates(key);

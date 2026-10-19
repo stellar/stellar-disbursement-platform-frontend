@@ -43,19 +43,19 @@ export const TransactionNoticeCard = () => {
   );
 
   const {
-    mutateAsync: exportTransactionNotice,
+    mutate: exportTransactionNotice,
     isPending: isExportPending,
     error: exportError,
   } = useTransactionNoticeExport();
 
   const payments = Array.isArray(data?.data) ? data.data : [];
   const hasResults = payments.length > 0;
-  const hasSearched = (searchQuery ?? "").length > 0;
+  const hasSearched = searchQuery.length > 0;
   const showEmptyState = hasSearched && !isFetching && !searchError && !hasResults;
   const showResults = hasSearched && !isFetching && hasResults;
 
   const getSelectedId = (): string | null => {
-    if (!hasResults || payments.length === 0) return null;
+    if (!hasResults) return null;
     if (selectedPaymentId && payments.some((p) => p.id === selectedPaymentId)) {
       return selectedPaymentId;
     }
@@ -74,12 +74,10 @@ export const TransactionNoticeCard = () => {
   const handleDownloadNotice = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!selectedId) return;
-    const notesTrimmed = internalNotes.trim();
-    const internalNotesParam =
-      notesTrimmed.length > INTERNAL_NOTES_MAX_LENGTH
-        ? notesTrimmed.slice(0, INTERNAL_NOTES_MAX_LENGTH)
-        : notesTrimmed || undefined;
-    exportTransactionNotice({ paymentId: selectedId, internalNotes: internalNotesParam });
+    exportTransactionNotice({
+      paymentId: selectedId,
+      internalNotes: internalNotes.trim() || undefined,
+    });
   };
 
   return (
@@ -144,7 +142,7 @@ export const TransactionNoticeCard = () => {
                         <Table.HeaderCell>Disbursement Name</Table.HeaderCell>
                       </Table.Header>
                       <Table.Body>
-                        {(payments || []).map((p: ApiPayment) => (
+                        {payments.map((p: ApiPayment) => (
                           <Table.BodyRow key={p.id}>
                             <Table.BodyCell width="1rem">
                               <RadioButton
