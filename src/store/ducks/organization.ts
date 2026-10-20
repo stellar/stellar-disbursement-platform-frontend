@@ -132,6 +132,7 @@ const initialState: OrganizationInitialState = {
     baseUrl: "",
     mfa_disabled: undefined,
     captcha_disabled: undefined,
+    reporting_enabled: undefined,
     receiver_invitations_disabled: undefined,
   },
   updateMessage: undefined,
@@ -177,6 +178,7 @@ const organizationSlice = createSlice({
         paymentCancellationPeriodDays: Number(action.payload.payment_cancellation_period_days || 0),
         mfa_disabled: action.payload.mfa_disabled,
         captcha_disabled: action.payload.captcha_disabled,
+        reporting_enabled: action.payload.reporting_enabled,
         receiver_invitations_disabled: action.payload.receiver_invitations_disabled,
         distributionAccount: {
           circleWalletId: action.payload.distribution_account?.circle_wallet_id || "",

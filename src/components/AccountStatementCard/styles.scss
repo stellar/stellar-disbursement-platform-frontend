@@ -1,0 +1,51 @@
+@use "../../styles/styles-utils.scss" as *;
+
+.AccountStatementCard {
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__account {
+    margin-bottom: pxToRem(16px);
+
+    // The card already spaces its children; the global .Note top margin would double it.
+    .Note {
+      display: block;
+      margin: 0 0 pxToRem(8px);
+    }
+  }
+
+  &__period {
+    margin-bottom: pxToRem(16px);
+
+    .Label {
+      display: block;
+      margin-bottom: pxToRem(8px);
+    }
+  }
+
+  &__periodButtons {
+    display: flex;
+    gap: pxToRem(8px);
+    flex-wrap: wrap;
+  }
+
+  &__dateRange {
+    display: flex;
+    gap: pxToRem(16px);
+    width: 100%;
+    margin-bottom: pxToRem(16px);
+  }
+
+  &__dateInput {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
