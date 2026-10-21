@@ -52,9 +52,11 @@ export const SelectedWalletProvider = ({ children }: { children: ReactNode }) =>
 
   // Remount on identity change so the state above is re-seeded from THIS user's namespaced
   // storage entry. Without it the provider outlives sign-out and the next user acts on the
-  // previous user's account until the ActiveWalletBar happens to reconcile.
+  // previous user's account until the ActiveWalletBar happens to reconcile. While signed out
+  // the tenant name is left out of the key: the sign-in form stores it on submit, and a change
+  // would remount the form mid-login.
   return (
-    <SelectedWalletProviderInner key={`${getSdpTenantName()}:${userId}`}>
+    <SelectedWalletProviderInner key={userId ? `${getSdpTenantName()}:${userId}` : "signed-out"}>
       {children}
     </SelectedWalletProviderInner>
   );
