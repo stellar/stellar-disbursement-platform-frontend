@@ -22,7 +22,6 @@ import { UserRole } from "@/types";
 
 import { AppDispatch, resetStoreAction } from "@/store";
 
-
 import "./styles.scss";
 
 interface InnerPageProps {
@@ -112,6 +111,17 @@ export const InnerPage = ({ children, isNarrow, isCardLayout }: InnerPageProps) 
       route: Routes.ANALYTICS,
       icon: <Icon.LineChartUp01 />,
     },
+    ...(organization.data.reporting_enabled
+      ? [
+          {
+            id: "nav-reports",
+            label: "Reports",
+            route: Routes.REPORTS,
+            icon: <Icon.File05 />,
+            acceptedRoles: DISBURSEMENT_ROLES,
+          },
+        ]
+      : []),
   ];
 
   const ITEMS_BOTTOM: NavItem[] = [
