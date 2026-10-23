@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Draft page no longer shows a previously opened draft. [607](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/607)
 - Drafts list respects distribution account switch. [#608](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/608)
 - Draft page uses its own account's balance. [#609](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/609)
+- Scope asset lists and balances to the account being shown. [#621](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/621)
 
 ### Security and Dependencies
 
