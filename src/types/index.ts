@@ -58,6 +58,7 @@ export type DisbursementDraftsInitialState = {
   status: ActionStatus | undefined;
   newDraftId?: string;
   newDraftWalletId?: string;
+  walletId?: string;
   newDraftFingerprint?: string;
   pagination?: Pagination;
   errorString?: string;
@@ -99,6 +100,7 @@ export type OrganizationInitialState = {
     paymentCancellationPeriodDays: number;
     mfa_disabled?: boolean;
     captcha_disabled?: boolean;
+    reporting_enabled?: boolean;
     receiver_invitations_disabled?: boolean;
     distributionAccount?: {
       circleWalletId?: string;
@@ -180,6 +182,14 @@ export type SortByReceivers = "created_at";
 
 export type SortByPayments = "created_at";
 
+export type StatementPeriod = "this_month" | "last_month" | "qtd" | "ytd";
+
+export type StatementQueryParams = {
+  walletId: string;
+  fromDate: string;
+  toDate: string;
+};
+
 export type AccountBalanceItem = {
   balance: string;
   assetCode: string;
@@ -216,8 +226,8 @@ export type NewUser = {
   role: UserRole;
   email: string;
   // The distribution account the new user is scoped to. Optional, because there are two cases
-  // with no scoping decision to make: the owner role is tenant-wide (the backend rejects owner
-  // + wallet_id), and a single-account tenant has only one account to land on.
+  // with no scoping decision to make: owner and developer are tenant-wide (the backend rejects
+  // them with a wallet_id), and a single-account tenant has only one account to land on.
   wallet_id?: string;
 };
 
@@ -910,6 +920,7 @@ export type ApiOrgInfo = {
   payment_cancellation_period_days: string;
   mfa_disabled?: boolean;
   captcha_disabled?: boolean;
+  reporting_enabled?: boolean;
   receiver_invitations_disabled?: boolean;
   distribution_account?: {
     address?: string;

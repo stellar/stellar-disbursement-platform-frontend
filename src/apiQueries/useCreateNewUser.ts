@@ -1,6 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
+
 import { API_URL } from "@/constants/envVariables";
+
 import { fetchApi } from "@/helpers/fetchApi";
+
 import { ApiNewUser, AppError, NewUser } from "@/types";
 
 export const useCreateNewUser = () => {
@@ -13,10 +16,8 @@ export const useCreateNewUser = () => {
           last_name: newUser.last_name,
           roles: [newUser.role],
           email: newUser.email,
-          // Scopes the new user's wallet membership to one distribution account. Omitted rather
-          // than sent empty when there was no choice to make: the backend 400s on owner +
-          // wallet_id, and on a single-account tenant its default-wallet fallback resolves to
-          // the only account anyway.
+          // Scopes the new user to one distribution account. Omitted when there was no choice: the
+          // backend 400s on a tenant-wide role + wallet_id, and defaults single-account tenants itself.
           ...(newUser.wallet_id ? { wallet_id: newUser.wallet_id } : {}),
         }),
       });

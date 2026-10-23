@@ -249,11 +249,8 @@ export const submitDisbursementSavedDraftAction = createAsyncThunk<
         await postDisbursementFile(token, draftId, file);
       }
 
-      // Start the draft on ITS OWN funding account. The details slice is only authoritative when
-      // it actually holds THIS draft — DisbursementDraftDetails skips its load effect when
-      // details.id is already set, so a back-navigation can leave another draft's wallet there.
-      // On a mismatch send nothing rather than a wallet belonging to a different disbursement:
-      // the backend rejects it on a multi-account tenant, which is the safe failure.
+      // Send the account only when the details slice holds THIS draft, never another
+      // disbursement's. The backend starts a disbursement from its stored account regardless.
       const draftWalletId = id === draftId ? sourceWalletId : undefined;
       await patchDisbursementStatus(token, draftId, "STARTED", draftWalletId);
       refreshSessionToken(dispatch);
@@ -294,9 +291,8 @@ export const confirmDisbursementAction = createAsyncThunk<
         throw new Error("No draft ID available for confirmation");
       }
 
-      // Status-only: nothing is created here. The details slice is only authoritative when it
-      // holds THIS draft (see submitDisbursementSavedDraftAction); on a mismatch send nothing
-      // rather than another disbursement's account.
+      // Status-only: nothing is created here. Account header as in
+      // submitDisbursementSavedDraftAction.
       const draftWalletId = id === draftId ? sourceWalletId : undefined;
       await patchDisbursementStatus(token, draftId, "STARTED", draftWalletId);
       refreshSessionToken(dispatch);
@@ -345,6 +341,7 @@ const initialState: DisbursementDraftsInitialState = {
   status: undefined,
   newDraftId: undefined,
   newDraftWalletId: undefined,
+  walletId: undefined,
   newDraftFingerprint: undefined,
   pagination: undefined,
   errorString: undefined,
@@ -373,10 +370,16 @@ const disbursementDraftsSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Get disbursement drafts
-    builder.addCase(getDisbursementDraftsAction.pending, (state = initialState) => {
+    builder.addCase(getDisbursementDraftsAction.pending, (state, action) => {
       state.status = "PENDING";
+      state.walletId = action.meta.arg.walletId;
     });
     builder.addCase(getDisbursementDraftsAction.fulfilled, (state, action) => {
+      // Drop results for an account the user has already switched away from.
+      if (action.meta.arg.walletId !== state.walletId) {
+        return;
+      }
+
       state.items = action.payload.items;
       state.pagination = action.payload.pagination;
       state.status = "SUCCESS";
@@ -386,6 +389,10 @@ const disbursementDraftsSlice = createSlice({
       state.actionType = undefined;
     });
     builder.addCase(getDisbursementDraftsAction.rejected, (state, action) => {
+      if (action.meta.arg.walletId !== state.walletId) {
+        return;
+      }
+
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
     });

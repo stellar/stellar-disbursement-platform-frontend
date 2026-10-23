@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Add Reports page: a per-distribution account statement PDF and a per-payment transaction notice PDF. [#612](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/612)
 - Add distribution account label to WalletBalancesOverview. [#582](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/582)
 
 ### Changed
@@ -15,12 +16,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Consolidate distribution account labels into shared component. [#583](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/583)
 - Move multi-distribution account inline styles to stylesheets. [#585](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/585), [#587](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/587), [#594](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/594)
 - Move Grant button to Manage Access modal footer. [#595](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/595)
+- Restore tenant-wide access for Developer role. [#610](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/610)
 
 ### Fixed
 
 - Left-align Total Disbursed column in DashboardAnalytics. [#581](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/581)
 - Fix the Box component's gap="custom" variant, which rendered no gap. [#586](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/586)
+- Fix unreadable Bridge setup cards in dark mode. [#604](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/604)
 - Disbursement wizard always confirms current form and selected account [#605](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/605)
+- Draft page no longer shows a previously opened draft. [607](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/607)
+- Drafts list respects distribution account switch. [#608](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/608)
+- Draft page uses its own account's balance. [#609](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/609)
+- MFA page stays on the code form after "Resend code" or a wrong code. [#619](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/619)
 
 ### Security and Dependencies
 

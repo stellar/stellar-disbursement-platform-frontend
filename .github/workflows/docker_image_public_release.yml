@@ -38,7 +38,7 @@ jobs:
             echo "TAGS=stellar/stellar-disbursement-platform-frontend:${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
           fi
 
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
       - name: Login to DockerHub
         uses: docker/login-action@v4.6.0
@@ -62,7 +62,7 @@ jobs:
     needs:
       - test-build
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
 
       - name: Login to DockerHub
         uses: docker/login-action@v4.6.0

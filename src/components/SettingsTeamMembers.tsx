@@ -11,7 +11,7 @@ import { NewUserModal } from "@/components/NewUserModal";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { Table } from "@/components/Table";
 
-import { USER_ROLES_ARRAY } from "@/constants/settings";
+import { TENANT_WIDE_ROLES, USER_ROLES_ARRAY } from "@/constants/settings";
 
 import { useCreateNewUser } from "@/apiQueries/useCreateNewUser";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
@@ -143,11 +143,18 @@ export const SettingsTeamMembers = () => {
     return "this user";
   };
 
-  // Whether this invite has an account scope to decide. Owners are tenant-wide and get no
-  // membership row at all (the backend 400s on owner + wallet_id), and on a single-account
-  // tenant there is nothing to pick — in both cases asking would be noise, the same reason
-  // ActiveWalletBar drops its switcher below two accounts.
-  const needsAccountChoice = (role: UserRole) => isMultiWallet && role !== "owner";
+  // Tenant-wide roles get no membership (the backend 400s on them + wallet_id), and a single-account
+  // tenant has nothing to pick — the same reason ActiveWalletBar drops its switcher below two accounts.
+  const needsAccountChoice = (role: UserRole) => isMultiWallet && !TENANT_WIDE_ROLES.includes(role);
+
+  // Leaving a tenant-wide role lands the user on the default account (see UpdateUserRoles).
+  const defaultWallet = distributionWallets?.find((w) => w.is_default);
+  const roleChangeGrantsDefaultAccount =
+    isMultiWallet &&
+    Boolean(defaultWallet) &&
+    (selectedUser?.roles ?? []).some((r) => TENANT_WIDE_ROLES.includes(r)) &&
+    Boolean(newRole) &&
+    !TENANT_WIDE_ROLES.includes(newRole as UserRole);
 
   const submitInvite = (newUser: NewUser) => {
     const t = setTimeout(() => {
@@ -392,6 +399,11 @@ export const SettingsTeamMembers = () => {
               selectedUser?.last_name,
             )}.`}
           </div>
+          {roleChangeGrantsDefaultAccount && defaultWallet ? (
+            <div className="Note">
+              {`They will get access to ${defaultWallet.name}, the default distribution account. You can grant more from Manage access.`}
+            </div>
+          ) : null}
         </Modal.Body>
         <Modal.Footer>
           <Button size="md" variant="tertiary" onClick={hideModal} isLoading={isRolePending}>
@@ -431,7 +443,7 @@ export const SettingsTeamMembers = () => {
             resetNewUser();
           }
 
-          // On a multi-account tenant a non-owner invite has to say which account it is for,
+          // On a multi-account tenant an invite for a scoped role has to say which account it is for,
           // otherwise the backend silently scopes the member to the tenant default.
           if (needsAccountChoice(newUser.role)) {
             setIsNewUserModalVisible(false);
