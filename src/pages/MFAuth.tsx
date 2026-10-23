@@ -36,6 +36,9 @@ export const MFAuth = () => {
   const [mfaCode, setMfaCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [deviceId, setDeviceId] = useState("");
+  const [notice, setNotice] = useState<{ variant: "success" | "error"; message: string } | null>(
+    null,
+  );
 
   useEffect(() => {
     const storedDeviceId = localStorage.getItem(LOCAL_STORAGE_DEVICE_ID);
@@ -50,14 +53,20 @@ export const MFAuth = () => {
   }, [deviceId]);
 
   useEffect(() => {
-    if (userAccount.isAuthenticated) {
+    if (userAccount.isAuthenticated && !userAccount.needsMFA) {
       mfaSignInCredentials.remove();
       navigate({
         pathname: userAccount.restoredPathname ?? Routes.HOME,
         search: location.search,
       });
     }
-  }, [location.search, navigate, userAccount.isAuthenticated, userAccount.restoredPathname]);
+  }, [
+    location.search,
+    navigate,
+    userAccount.isAuthenticated,
+    userAccount.needsMFA,
+    userAccount.restoredPathname,
+  ]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,7 +85,10 @@ export const MFAuth = () => {
       "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
-    dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
+    const result = await dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
+    if (mfaAction.rejected.match(result)) {
+      setNotice({ variant: "error", message: result.payload?.errorString ?? "" });
+    }
     captcha.resetCaptcha();
   };
 
@@ -104,7 +116,12 @@ export const MFAuth = () => {
       "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
-    dispatch(signInAction({ ...credentials, recaptchaToken, headers }));
+    const result = await dispatch(signInAction({ ...credentials, recaptchaToken, headers }));
+    setNotice(
+      signInAction.fulfilled.match(result)
+        ? { variant: "success", message: "A new verification code was sent to your email." }
+        : { variant: "error", message: result.payload?.errorString ?? "" },
+    );
     captcha.resetCaptcha();
   };
 
@@ -121,13 +138,14 @@ export const MFAuth = () => {
   return (
     <>
       <div className="CardLayout">
-        {userAccount.errorString && (
+        {notice?.variant === "success" && (
+          <Notification variant="success" title="New code sent" isFilled={true}>
+            {notice.message}
+          </Notification>
+        )}
+        {notice?.variant === "error" && (
           <Notification variant="error" title="MFA error" isFilled={true}>
-            <ErrorWithExtras
-              appError={{
-                message: userAccount.errorString,
-              }}
-            />
+            <ErrorWithExtras appError={{ message: notice.message }} />
           </Notification>
         )}
         <form onSubmit={handleSubmit}>
