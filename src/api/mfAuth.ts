@@ -21,5 +21,9 @@ export const mfAuth = async (
 
   const responseJson = await response.json();
 
+  if (responseJson.error) {
+    throw responseJson;
+  }
+
   return responseJson;
 };
