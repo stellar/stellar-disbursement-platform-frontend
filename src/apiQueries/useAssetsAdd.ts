@@ -1,7 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { API_URL } from "@/constants/envVariables";
+
 import { fetchApi } from "@/helpers/fetchApi";
+
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
+
 import { ApiAsset, AppError } from "@/types";
 
 type Asset = {
@@ -18,6 +22,7 @@ type Asset = {
 // the pre-existing default-account behaviour.
 export const useAssetsAdd = ({ onSuccess }: { onSuccess: (addedAsset: ApiAsset) => void }) => {
   const { selectedWalletId } = useSelectedWallet();
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: ({ assetCode, assetIssuer }: Asset) => {
@@ -33,7 +38,10 @@ export const useAssetsAdd = ({ onSuccess }: { onSuccess: (addedAsset: ApiAsset) 
         { walletId: selectedWalletId || null },
       );
     },
-    onSuccess,
+    onSuccess: (addedAsset: ApiAsset) => {
+      queryClient.invalidateQueries({ queryKey: ["assets"] });
+      onSuccess(addedAsset);
+    },
   });
 
   return {

@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
+
 import { useStellarAccountInfo } from "@/apiQueries/useStellarAccountInfo";
+
 import { AccountBalanceItem } from "@/types";
 
 export const useOrgAccountInfo = (
@@ -10,9 +12,6 @@ export const useOrgAccountInfo = (
   fetchAccountBalances: () => void;
   isDone: boolean;
 } => {
-  const [balances, setBalances] = useState<AccountBalanceItem[]>([]);
-  const [isDone, setIsDone] = useState(false);
-
   const {
     data: accountInfo,
     isSuccess,
@@ -20,28 +19,20 @@ export const useOrgAccountInfo = (
     refetch,
   } = useStellarAccountInfo(distributionAccountPublicKey);
 
-  useEffect(() => {
-    if (isSuccess) {
-      const formattedBalances = accountInfo.balances.map((b) => ({
+  const balances = useMemo<AccountBalanceItem[]>(
+    () =>
+      (accountInfo?.balances ?? []).map((b) => ({
         balance: b.balance,
         assetCode: b.asset_code ?? "XLM",
         assetIssuer: b.asset_issuer ?? "native",
-      }));
-
-      setBalances(formattedBalances);
-    }
-
-    if (isSuccess || isError) {
-      setIsDone(true);
-    }
-    // Not including accountInfo.balances
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess]);
+      })),
+    [accountInfo],
+  );
 
   return {
     address: accountInfo?.id || "",
     balances,
     fetchAccountBalances: refetch,
-    isDone,
+    isDone: isSuccess || isError,
   };
 };

@@ -14,7 +14,8 @@ import { useWallets } from "@/apiQueries/useWallets";
 import { formatRegistrationContactType } from "@/helpers/formatRegistrationContactType";
 import { formatUploadedFileDisplayName } from "@/helpers/formatUploadedFileDisplayName";
 
-import { useAllBalances } from "@/hooks/useAllBalances";
+import { useAccountBalances } from "@/hooks/useAccountBalances";
+import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
 import {
   AccountBalanceItem,
@@ -131,7 +132,7 @@ interface DeriveFormStateArgs {
   walletAssets?: ApiAsset[];
   registrationContactTypes?: RegistrationContactType[];
   verificationTypes?: string[];
-  allBalances?: AccountBalanceItem[];
+  accountBalances?: AccountBalanceItem[];
   loading: {
     registrationContactTypes: boolean;
     wallets: boolean;
@@ -146,7 +147,7 @@ const deriveFormState = ({
   walletAssets,
   registrationContactTypes,
   verificationTypes,
-  allBalances,
+  accountBalances,
   loading,
 }: DeriveFormStateArgs): DerivedFormState => {
   const isWalletAddressProvided = hasWallet(details.registrationContactType);
@@ -182,7 +183,7 @@ const deriveFormState = ({
       return true;
     }
 
-    return !!allBalances?.find(
+    return !!accountBalances?.find(
       (balance) => balance.assetCode === asset.code && balance.assetIssuer === asset.issuer,
     );
   });
@@ -269,7 +270,10 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     isFetching: isVerificationTypesFetching,
   } = useVerificationTypes();
 
-  const { allBalances } = useAllBalances();
+  // The asset list is filtered against the SOURCE account's trustlines, not the tenant
+  // default's: an asset the selected account does not trust cannot be disbursed from it.
+  const { selectedWalletId } = useSelectedWallet();
+  const accountBalances = useAccountBalances(selectedWalletId || undefined);
 
   const derived = deriveFormState({
     details,
@@ -277,7 +281,7 @@ export const DisbursementDetails: React.FC<DisbursementDetailsProps> = ({
     walletAssets,
     registrationContactTypes,
     verificationTypes,
-    allBalances,
+    accountBalances,
     loading: {
       registrationContactTypes: areRegistrationContactTypesLoading,
       wallets: isWalletsLoading,
