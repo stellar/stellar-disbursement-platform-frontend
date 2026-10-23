@@ -39,6 +39,7 @@ export const useAccountBalances = (stellarAddress: string | undefined) => {
       } // If the address is a Stellar contract address (starts with "C"), fetch from RPC
       else {
         const assetsUrl = new URL(`${API_URL}/assets`);
+        assetsUrl.searchParams.set("include_deleted", "true");
         const assets: ApiAsset[] = await fetchApi(assetsUrl.toString());
         const rpcServer = createAuthenticatedRpcServer("user");
 
