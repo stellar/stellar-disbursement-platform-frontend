@@ -6,10 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [7.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/7.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/7.0.0...7.1.0))
+
 ### Added
 
 - Add Reports page: a per-distribution account statement PDF and a per-payment transaction notice PDF. [#612](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/612)
 - Add distribution account label to WalletBalancesOverview. [#582](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/582)
+- Add Socket Tier 1 reachability analysis. [#552](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/552)
+- Add PR preview workflow (GitHub Actions + ArgoCD). [#579](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/579)
+- Add Socket Basics security scanning workflow (SAST, secret scanning, and Dockerfile misconfiguration scanning). [#602](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/602)
 
 ### Changed
 
@@ -36,6 +41,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Remove orphaned `brace-expansion` pin from `dependencies` and refresh the transitive 1.x copy used by ESLint from 1.1.12 to 1.1.21. [#601](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/601)
 - Keep password out of browser history during MFA sign-in. [#618](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/618)
+- Bump `actions/checkout` and `actions/setup-node` in the all-actions group. [#580](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/580)
+- Bump `qs` from 6.15.2 to 6.16.0. [#584](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/584)
+- Bump `@humanfs/node` from 0.16.7 to 0.16.8. [#588](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/588)
+- Bump `actions/checkout` from 6 to 7 in the all-actions group. [#589](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/589)
+- Bump `browserslist` from 4.28.1 to 4.29.0. [#596](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/596)
+- Bump `brace-expansion` from 5.0.9 to 5.0.11. [#598](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/598), [#600](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/600)
+- Bump `js-yaml` from 4.3.1 to 4.3.2. [#599](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/599)
+- Bump `docker/build-push-action` from 7.3.0 to 7.4.0 in the all-actions group. [#603](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/603)
+- Bump `axios` from 1.18.1 to 1.20.0. [#611](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/611)
+- Bump `actions/checkout` and `actions/setup-node` in the all-actions group. [#613](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/613)
+- Bump `pbkdf2` from 3.1.5 to 3.1.7. [#614](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/614)
+- Bump `source-map-js` from 1.2.1 to 1.2.2. [#615](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/615)
+- Bump `follow-redirects` from 1.16.0 to 1.16.1. [#616](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/616)
+- Bump `vite` from 7.3.5 to 7.3.7. [#617](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/617)
 
 ## [7.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/7.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.6.0...7.0.0))
 
