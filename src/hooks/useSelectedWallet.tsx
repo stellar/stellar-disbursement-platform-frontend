@@ -7,7 +7,7 @@ import { parseJwt } from "@/helpers/parseJwt";
 import { useRedux } from "@/hooks/useRedux";
 
 type SelectedWalletContextValue = {
-  // "" means "All accounts" (Owners: tenant-wide aggregate).
+  // "" means "All accounts" (owners and developers: tenant-wide aggregate).
   selectedWalletId: string;
   setSelectedWalletId: (walletId: string) => void;
   // False until the user (or the default-account bootstrap) has committed a selection. Lets the

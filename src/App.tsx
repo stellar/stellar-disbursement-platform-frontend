@@ -38,6 +38,7 @@ import { ReceiverDetails } from "@/pages/ReceiverDetails";
 import { ReceiverDetailsEdit } from "@/pages/ReceiverDetailsEdit";
 import { Receivers } from "@/pages/Receivers";
 import { SigninOidc } from "@/pages/Redirect";
+import { Reports } from "@/pages/Reports";
 import { ResetPassword } from "@/pages/ResetPassword";
 import { SetNewPassword } from "@/pages/SetNewPassword";
 import { Settings } from "@/pages/Settings";
@@ -372,6 +373,25 @@ export const App = () => {
                   <PrivateRoute>
                     <InnerPage isNarrow>
                       <Profile />
+                    </InnerPage>
+                  </PrivateRoute>
+                }
+              />
+              {/* Reports */}
+              <Route
+                path={Routes.REPORTS}
+                element={
+                  <PrivateRoute
+                    acceptedRoles={[
+                      "owner",
+                      "financial_controller",
+                      "business",
+                      "initiator",
+                      "approver",
+                    ]}
+                  >
+                    <InnerPage isNarrow>
+                      <Reports />
                     </InnerPage>
                   </PrivateRoute>
                 }
