@@ -114,6 +114,14 @@ export const DisbursementsNew = () => {
     }
   }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
 
+  useEffect(() => {
+    dispatch(resetDisbursementDraftsAction());
+
+    return () => {
+      dispatch(resetDisbursementDraftsAction());
+    };
+  }, [dispatch]);
+
   const effectiveBalances = useAccountBalances(selectedWalletId || undefined);
 
   // Recompute the projected post-disbursement balance whenever the CSV total, the chosen
