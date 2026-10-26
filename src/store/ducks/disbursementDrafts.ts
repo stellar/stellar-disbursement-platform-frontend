@@ -83,23 +83,15 @@ export const saveDisbursementDraftAction = createAsyncThunk<
   "disbursementDrafts/saveDisbursementDraftAction",
   async ({ details, file, sourceWalletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { newDraftId } = getState().disbursementDrafts;
 
+    // Every save creates a new draft.
+    // Saving under an existing name is rejected instead of overwriting.
     try {
-      if (file) {
-        const newDisbursement = await postDisbursementWithInstructions(
-          token,
-          details,
-          file,
-          sourceWalletId,
-        );
-        refreshSessionToken(dispatch);
-        return newDisbursement.id;
-      } else {
-        const draftId = newDraftId ?? (await postDisbursement(token, details, sourceWalletId)).id;
-        refreshSessionToken(dispatch);
-        return draftId;
-      }
+      const newDisbursement = file
+        ? await postDisbursementWithInstructions(token, details, file, sourceWalletId)
+        : await postDisbursement(token, details, sourceWalletId);
+      refreshSessionToken(dispatch);
+      return newDisbursement.id;
     } catch (error: unknown) {
       const apiError = normalizeApiError(error as ApiError);
       const errorString = apiError.message;
@@ -413,7 +405,6 @@ const disbursementDraftsSlice = createSlice({
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
       state.errorExtras = action.payload?.errorExtras;
-      state.newDraftId = action.payload?.newDraftId;
     });
     // Submit new disbursement
     builder.addCase(submitDisbursementNewDraftAction.pending, (state = initialState) => {
