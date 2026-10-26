@@ -18,7 +18,7 @@ export const useBalanceTrustline = (balances?: AccountBalanceItem[] | undefined)
   const query = useQuery<Trustline[] | undefined, AppError>({
     queryKey: ["trustlines", { balances }],
     queryFn: async () => {
-      const response = await fetchApi(`${API_URL}/assets`);
+      const response = await fetchApi(`${API_URL}/assets?include_deleted=true`);
 
       return balances?.map((b) => {
         const id =
