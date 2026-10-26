@@ -29,6 +29,9 @@ export const useCreateDistributionWallet = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["distribution-wallets"] });
       queryClient.invalidateQueries({ queryKey: ["distribution-wallet-balance"] });
+      // Provisioning restores retired assets the new account's providers support, so the
+      // catalogue may have changed.
+      queryClient.invalidateQueries({ queryKey: ["assets"] });
     },
   });
 
