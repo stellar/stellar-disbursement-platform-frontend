@@ -33,6 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Security and Dependencies
 
 - Remove orphaned `brace-expansion` pin from `dependencies` and refresh the transitive 1.x copy used by ESLint from 1.1.12 to 1.1.21. [#601](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/601)
+- Keep password out of browser history during MFA sign-in. [#618](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/618)
 
 ## [7.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/7.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.6.0...7.0.0))
 

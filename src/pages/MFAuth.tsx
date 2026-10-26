@@ -16,6 +16,7 @@ import { USE_SSO, SINGLE_TENANT_MODE } from "@/constants/envVariables";
 import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "@/constants/settings";
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { mfaSignInCredentials } from "@/helpers/mfaSignInCredentials";
 
 import { useCaptcha } from "@/hooks/useCaptcha";
 import { useRedux } from "@/hooks/useRedux";
@@ -39,8 +40,6 @@ export const MFAuth = () => {
     null,
   );
 
-  const { email, password } = location.state;
-
   useEffect(() => {
     const storedDeviceId = localStorage.getItem(LOCAL_STORAGE_DEVICE_ID);
     if (!storedDeviceId) {
@@ -55,6 +54,7 @@ export const MFAuth = () => {
 
   useEffect(() => {
     if (userAccount.isAuthenticated && !userAccount.needsMFA) {
+      mfaSignInCredentials.remove();
       navigate({
         pathname: userAccount.restoredPathname ?? Routes.HOME,
         search: location.search,
@@ -94,6 +94,13 @@ export const MFAuth = () => {
 
   const resendVerificationCode = async (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
+
+    const credentials = mfaSignInCredentials.get();
+    if (!credentials) {
+      navigate("/");
+      return;
+    }
+
     dispatch(resetStoreAction());
 
     let recaptchaToken = "";
@@ -109,14 +116,12 @@ export const MFAuth = () => {
       "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
-    if (email && password) {
-      const result = await dispatch(signInAction({ email, password, recaptchaToken, headers }));
-      setNotice(
-        signInAction.fulfilled.match(result)
-          ? { variant: "success", message: "A new verification code was sent to your email." }
-          : { variant: "error", message: result.payload?.errorString ?? "" },
-      );
-    }
+    const result = await dispatch(signInAction({ ...credentials, recaptchaToken, headers }));
+    setNotice(
+      signInAction.fulfilled.match(result)
+        ? { variant: "success", message: "A new verification code was sent to your email." }
+        : { variant: "error", message: result.payload?.errorString ?? "" },
+    );
     captcha.resetCaptcha();
   };
 
