@@ -1,19 +1,22 @@
-import { Button, Card, Input, Modal, Notification } from "@stellar/design-system";
 import { useState } from "react";
 
-import { useAssetsAdd } from "@/apiQueries/useAssetsAdd";
-import { useAssetsDelete } from "@/apiQueries/useAssetsDelete";
-import { useBalanceTrustline } from "@/apiQueries/useBalanceTrustline";
-import { useHorizonNetworkInfo } from "@/apiQueries/useHorizonNetworkInfo";
+import { Button, Card, Input, Modal, Notification } from "@stellar/design-system";
+
 import { AddPresetAssetModal } from "@/components/AddPresetAssetModal";
 import { DropdownMenu } from "@/components/DropdownMenu";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { MoreMenuButton } from "@/components/MoreMenuButton";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+
 import { getNetworkTypeFromPassphrase } from "@/constants/network";
-import { parseApiError } from "@/helpers/parseApiError";
-import { ApiError, AccountBalanceItem } from "@/types";
+
+import { useAssetsAdd } from "@/apiQueries/useAssetsAdd";
+import { useAssetsDelete } from "@/apiQueries/useAssetsDelete";
+import { useBalanceTrustline } from "@/apiQueries/useBalanceTrustline";
+import { useHorizonNetworkInfo } from "@/apiQueries/useHorizonNetworkInfo";
+
+import { AccountBalanceItem } from "@/types";
 
 import "./styles.scss";
 
@@ -296,7 +299,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
           <Modal.Body>
             {isTrustlineAddError ? (
               <Notification variant="error" title="Error" isFilled={true}>
-                {parseApiError(trustlineAddError as ApiError)}
+                <ErrorWithExtras appError={trustlineAddError} />
               </Notification>
             ) : null}
 
@@ -364,7 +367,7 @@ export const WalletTrustlines = ({ balances, onSuccess }: WalletTrustlinesProps)
           <Modal.Body>
             {trustlineRemoveIsError ? (
               <Notification variant="error" title="Error" isFilled={true}>
-                {parseApiError(trustlineRemoveError as ApiError)}
+                <ErrorWithExtras appError={trustlineRemoveError} />
               </Notification>
             ) : null}
 

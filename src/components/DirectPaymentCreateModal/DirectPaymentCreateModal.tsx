@@ -93,7 +93,15 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     directPayment.SEARCH_DEBOUNCE_MS,
   );
   const previousVisible = usePrevious(visible);
-  const { data: allAssets } = useAllAssets({ enabled: true });
+  // Single-account tenants have nothing to choose between, so they get neither selector nor banner.
+  const canChooseSource = (sourceWallets?.length ?? 0) >= 2;
+  // Assets the payment can be made in are the SOURCE's trustlines, so the list follows the
+  // modal's own source (X-Wallet-Id), not the app-wide selection. The exact balance still comes
+  // from the per-wallet endpoint further down.
+  const { data: allAssets } = useAllAssets({
+    enabled: true,
+    walletId: canChooseSource ? sourceWalletId : undefined,
+  });
 
   // Fetch full receiver details including verifications when a receiver is selected
   // Using dataFormat 'raw' to get raw API response without formatting
@@ -116,8 +124,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     // For non-verified, get all wallets (undefined = no filter)
     userManaged: isReceiverVerified ? false : undefined,
   });
-  // Single-account tenants have nothing to choose between, so they get neither selector nor banner.
-  const canChooseSource = (sourceWallets?.length ?? 0) >= 2;
   const sourceWallet = sourceWallets?.find((w) => w.id === sourceWalletId);
   // Scope the receiver search to the account this payment will actually leave from — the
   // modal's own source, NOT the app-wide selection. Under "All accounts" (or after picking a
@@ -130,10 +136,6 @@ export const DirectPaymentCreateModal: React.FC<DirectPaymentCreateModalProps> =
     !canChooseSource || Boolean(sourceWalletId),
     sourceWalletId || null,
   );
-  // GET /assets resolves its balances from the tenant's DEFAULT distribution account and
-  // ignores X-Wallet-Id (its `wallet` query param scopes to a receiver wallet provider, not a
-  // distribution account), so useAllAssets cannot be re-scoped. On a multi-account tenant the
-  // source's real balance has to come from the per-wallet endpoint instead.
   const { userAccount } = useRedux("userAccount");
   const { data: sourceWalletBalance, isError: isSourceBalanceError } = useDistributionWalletBalance(
     Boolean(userAccount.isAuthenticated) && visible && canChooseSource && Boolean(sourceWalletId),
