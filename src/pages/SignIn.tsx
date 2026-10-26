@@ -17,6 +17,7 @@ import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "@/constants
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
 import { localStorageTenantName } from "@/helpers/localStorageTenantName";
+import { mfaSignInCredentials } from "@/helpers/mfaSignInCredentials";
 import { signInRedirect } from "@/helpers/singleSingOn";
 
 import { useCaptcha } from "@/hooks/useCaptcha";
@@ -49,6 +50,10 @@ export const SignIn = () => {
   }, []);
 
   useEffect(() => {
+    mfaSignInCredentials.remove();
+  }, []);
+
+  useEffect(() => {
     const storedDeviceId = localStorage.getItem(LOCAL_STORAGE_DEVICE_ID);
     if (!storedDeviceId) {
       const newDeviceId = uuidv4();
@@ -64,13 +69,11 @@ export const SignIn = () => {
     if (userAccount.isAuthenticated && userAccount.needsMFA) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowPasswordResetSuccess(false);
-      navigate(
-        {
-          pathname: Routes.MFA,
-          search: location.search,
-        },
-        { state: { email, password } },
-      );
+      mfaSignInCredentials.set(email, password);
+      navigate({
+        pathname: Routes.MFA,
+        search: location.search,
+      });
     }
   }, [
     location.search,

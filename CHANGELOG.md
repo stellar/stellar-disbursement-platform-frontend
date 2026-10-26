@@ -23,14 +23,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Left-align Total Disbursed column in DashboardAnalytics. [#581](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/581)
 - Fix the Box component's gap="custom" variant, which rendered no gap. [#586](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/586)
 - Fix unreadable Bridge setup cards in dark mode. [#604](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/604)
-- Draft page no longer shows a previously opened draft. [607](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/607)
+- Disbursement wizard always confirms current form and selected account [#605](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/605)
+- Saving disbursement as draft always creates a new draft. [#606](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/606)
+- Draft page no longer shows a previously opened draft. [#607](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/607)
 - Drafts list respects distribution account switch. [#608](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/608)
 - Draft page uses its own account's balance. [#609](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/609)
+- MFA page stays on the code form after "Resend code" or a wrong code. [#619](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/619)
 - Support per distribution account trustline removal. [#620](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/620)
 
 ### Security and Dependencies
 
 - Remove orphaned `brace-expansion` pin from `dependencies` and refresh the transitive 1.x copy used by ESLint from 1.1.12 to 1.1.21. [#601](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/601)
+- Keep password out of browser history during MFA sign-in. [#618](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/618)
 
 ## [7.0.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/7.0.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/6.6.0...7.0.0))
 
