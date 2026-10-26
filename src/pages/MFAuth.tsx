@@ -16,6 +16,7 @@ import { USE_SSO, SINGLE_TENANT_MODE } from "@/constants/envVariables";
 import { Routes, LOCAL_STORAGE_DEVICE_ID, ORG_NAME_INFO_TEXT } from "@/constants/settings";
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { mfaSignInCredentials } from "@/helpers/mfaSignInCredentials";
 
 import { useCaptcha } from "@/hooks/useCaptcha";
 import { useRedux } from "@/hooks/useRedux";
@@ -35,8 +36,9 @@ export const MFAuth = () => {
   const [mfaCode, setMfaCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [deviceId, setDeviceId] = useState("");
-
-  const { email, password } = location.state;
+  const [notice, setNotice] = useState<{ variant: "success" | "error"; message: string } | null>(
+    null,
+  );
 
   useEffect(() => {
     const storedDeviceId = localStorage.getItem(LOCAL_STORAGE_DEVICE_ID);
@@ -51,13 +53,20 @@ export const MFAuth = () => {
   }, [deviceId]);
 
   useEffect(() => {
-    if (userAccount.isAuthenticated) {
+    if (userAccount.isAuthenticated && !userAccount.needsMFA) {
+      mfaSignInCredentials.remove();
       navigate({
         pathname: userAccount.restoredPathname ?? Routes.HOME,
         search: location.search,
       });
     }
-  }, [location.search, navigate, userAccount.isAuthenticated, userAccount.restoredPathname]);
+  }, [
+    location.search,
+    navigate,
+    userAccount.isAuthenticated,
+    userAccount.needsMFA,
+    userAccount.restoredPathname,
+  ]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,12 +85,22 @@ export const MFAuth = () => {
       "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
-    dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
+    const result = await dispatch(mfaAction({ mfaCode, rememberMe, recaptchaToken, headers }));
+    if (mfaAction.rejected.match(result)) {
+      setNotice({ variant: "error", message: result.payload?.errorString ?? "" });
+    }
     captcha.resetCaptcha();
   };
 
   const resendVerificationCode = async (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     event.preventDefault();
+
+    const credentials = mfaSignInCredentials.get();
+    if (!credentials) {
+      navigate("/");
+      return;
+    }
+
     dispatch(resetStoreAction());
 
     let recaptchaToken = "";
@@ -97,9 +116,12 @@ export const MFAuth = () => {
       "SDP-Tenant-Name": getSdpTenantName(organizationName),
     };
 
-    if (email && password) {
-      dispatch(signInAction({ email, password, recaptchaToken, headers }));
-    }
+    const result = await dispatch(signInAction({ ...credentials, recaptchaToken, headers }));
+    setNotice(
+      signInAction.fulfilled.match(result)
+        ? { variant: "success", message: "A new verification code was sent to your email." }
+        : { variant: "error", message: result.payload?.errorString ?? "" },
+    );
     captcha.resetCaptcha();
   };
 
@@ -116,13 +138,14 @@ export const MFAuth = () => {
   return (
     <>
       <div className="CardLayout">
-        {userAccount.errorString && (
+        {notice?.variant === "success" && (
+          <Notification variant="success" title="New code sent" isFilled={true}>
+            {notice.message}
+          </Notification>
+        )}
+        {notice?.variant === "error" && (
           <Notification variant="error" title="MFA error" isFilled={true}>
-            <ErrorWithExtras
-              appError={{
-                message: userAccount.errorString,
-              }}
-            />
+            <ErrorWithExtras appError={{ message: notice.message }} />
           </Notification>
         )}
         <form onSubmit={handleSubmit}>

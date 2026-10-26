@@ -31,4 +31,8 @@
   &--xxl {
     gap: var(--sds-gap-xxl);
   }
+
+  &--custom {
+    gap: var(--Box-gap);
+  }
 }

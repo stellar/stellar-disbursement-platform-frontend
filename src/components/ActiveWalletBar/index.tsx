@@ -3,11 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Floater, Icon } from "@stellar/design-system";
 
 import { AssetAmount } from "@/components/AssetAmount";
+import { DistributionAccountLabel } from "@/components/DistributionAccountLabel";
 
 import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
-import { accountColor } from "@/helpers/accountColor";
 import { parseAssetKey } from "@/helpers/parseAssetKey";
 
 import { useRedux } from "@/hooks/useRedux";
@@ -246,13 +246,7 @@ export const ActiveWalletBar = () => {
           <span className="ActiveWalletBar__labelStack">
             <span className="ActiveWalletBar__label">Distribution account</span>
             <span className="ActiveWalletBar__value">
-              <span
-                className="ActiveWalletBar__dot"
-                style={{ backgroundColor: accountColor(only.id) }}
-                aria-hidden="true"
-              />
-              {only.name}
-              {only.is_default ? " (default)" : ""}
+              <DistributionAccountLabel wallet={only} defaultMarker="text" />
             </span>
           </span>
         </div>
@@ -262,9 +256,6 @@ export const ActiveWalletBar = () => {
 
   const selectedWallet = wallets.find((w) => w.id === selectedWalletId);
   const isAllAccounts = !selectedWalletId;
-  const currentLabel = isAllAccounts
-    ? "All accounts"
-    : `${selectedWallet?.name}${selectedWallet?.is_default ? " (default)" : ""}`;
 
   const trigger = (
     <button
@@ -283,14 +274,11 @@ export const ActiveWalletBar = () => {
         <span
           className={`ActiveWalletBar__value ${isAllAccounts ? "ActiveWalletBar__value--all" : ""}`}
         >
-          {!isAllAccounts && selectedWallet ? (
-            <span
-              className="ActiveWalletBar__dot"
-              style={{ backgroundColor: accountColor(selectedWallet.id) }}
-              aria-hidden="true"
-            />
+          {selectedWallet ? (
+            <DistributionAccountLabel wallet={selectedWallet} defaultMarker="text" />
+          ) : isAllAccounts ? (
+            "All accounts"
           ) : null}
-          {currentLabel}
         </span>
       </span>
       <span className="ActiveWalletBar__chevron" aria-hidden="true">
@@ -355,15 +343,7 @@ export const ActiveWalletBar = () => {
               >
                 <span className="WalletSwitcher__main">
                   <span className="WalletSwitcher__name">
-                    <span
-                      className="WalletSwitcher__dot"
-                      style={{ backgroundColor: accountColor(wallet.id) }}
-                      aria-hidden="true"
-                    />
-                    {wallet.name}
-                    {wallet.is_default ? (
-                      <span className="WalletSwitcher__badge">default</span>
-                    ) : null}
+                    <DistributionAccountLabel wallet={wallet} defaultMarker="badge" />
                   </span>
                   {isOpen ? (
                     <RowBalance

@@ -19,7 +19,7 @@ const selectedWalletStorageKey = (): string => {
 // Stored values:
 //   null    — the user has never made a choice (fresh login) → the app defaults them to their
 //             default distribution account so write flows work immediately.
-//   "all"   — the user explicitly chose "All accounts" (Owners: tenant-wide aggregate). Kept
+//   "all"   — the user explicitly chose "All accounts" (owners and developers: tenant-wide aggregate). Kept
 //             distinct from `null` so an explicit choice sticks across reloads instead of
 //             snapping back to the default account.
 //   "<id>"  — a specific distribution wallet id.

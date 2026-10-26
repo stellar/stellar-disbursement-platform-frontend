@@ -102,7 +102,7 @@ export const NewUserModal: React.FC<NewUserModalProps> = ({
       case "business":
         return "Has read access to data, cannot submit new disbursements or manage users";
       case "developer":
-        return "Has access to help technically troubleshoot, cannot view data or submit disbursements";
+        return "Has access to help technically troubleshoot across every distribution account, cannot view data or submit disbursements";
       case "financial_controller":
         return "Has read access to data, can submit new disbursements, cannot manage users";
       case "owner":

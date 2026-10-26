@@ -8,11 +8,13 @@ import { Badge, Button, Card, Heading, Notification } from "@stellar/design-syst
 
 import { AccountBalances } from "@/components/AccountBalances";
 import { AssetAmount } from "@/components/AssetAmount";
+import { Box } from "@/components/Box";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { DisbursementButtons } from "@/components/DisbursementButtons";
 import { DisbursementDetails } from "@/components/DisbursementDetails";
 import { DisbursementInstructions } from "@/components/DisbursementInstructions";
 import { DisbursementInviteMessage } from "@/components/DisbursementInviteMessage";
+import { DistributionAccountLabel } from "@/components/DistributionAccountLabel";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { InfoTooltip } from "@/components/InfoTooltip";
 import { NotificationWithButtons } from "@/components/NotificationWithButtons";
@@ -30,18 +32,15 @@ import {
 
 import { Routes } from "@/constants/settings";
 
-import { useDistributionWalletBalance } from "@/apiQueries/useDistributionWalletBalance";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
-import { accountColor } from "@/helpers/accountColor";
 import { csvTotalAmount } from "@/helpers/csvTotalAmount";
-import { parseAssetKey } from "@/helpers/parseAssetKey";
 
-import { useAllBalances } from "@/hooks/useAllBalances";
+import { useAccountBalances } from "@/hooks/useAccountBalances";
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
 
-import { AccountBalanceItem, Disbursement, DisbursementStep, hasWallet } from "@/types";
+import { Disbursement, DisbursementStep, hasWallet } from "@/types";
 
 import { AppDispatch } from "@/store";
 
@@ -75,10 +74,6 @@ export const DisbursementsNew = () => {
   const { data: distributionWallets } = useDistributionWallets(userAccount.isAuthenticated);
   const isMultiWallet = (distributionWallets?.length ?? 0) >= 2;
   const selectedWallet = distributionWallets?.find((w) => w.id === selectedWalletId);
-  const { data: selectedWalletBalance } = useDistributionWalletBalance(
-    userAccount.isAuthenticated && isMultiWallet && Boolean(selectedWalletId),
-    selectedWalletId || null,
-  );
 
   const isDraftEnabled = isDetailsValid;
   const isReviewEnabled = isDraftEnabled && Boolean(csvFile) && !csvParseError;
@@ -104,6 +99,7 @@ export const DisbursementsNew = () => {
     if (disbursementDrafts.newDraftId && disbursementDrafts.status === "SUCCESS") {
       // Show success response page
       if (disbursementDrafts.actionType === "submit") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentStep("confirmation");
         setIsResponseSuccess(true);
 
@@ -118,49 +114,29 @@ export const DisbursementsNew = () => {
     }
   }, [disbursementDrafts.actionType, disbursementDrafts.newDraftId, disbursementDrafts.status]);
 
-  const { allBalances } = useAllBalances();
+  useEffect(() => {
+    dispatch(resetDisbursementDraftsAction());
 
-  // The balances the wizard shows AND validates against. On a multi-account tenant these are
-  // the SELECTED account's live balances; the tenant-default fallback is only correct for
-  // single-account tenants.
-  const getEffectiveBalances = (): AccountBalanceItem[] | undefined => {
-    if (isMultiWallet && selectedWalletId) {
-      if (!selectedWalletBalance) return undefined;
-      return Object.entries(selectedWalletBalance.balances).map(([assetKey, amount]) => {
-        const { code, issuer } = parseAssetKey(assetKey);
+    return () => {
+      dispatch(resetDisbursementDraftsAction());
+    };
+  }, [dispatch]);
 
-        return {
-          balance: amount || "0",
-          assetCode: code,
-          assetIssuer: issuer,
-        };
-      });
-    }
-    return allBalances;
-  };
-  const effectiveBalances = getEffectiveBalances();
+  const effectiveBalances = useAccountBalances(selectedWalletId || undefined);
 
   // Recompute the projected post-disbursement balance whenever the CSV total, the chosen
   // asset, or the account's live balance changes (previously it was only computed at upload
   // time, so switching the asset afterwards validated against a stale number).
   useEffect(() => {
-    if (!csvTotal) {
+    if (!csvTotal || !effectiveBalances) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFutureBalance(0);
       return;
     }
     const assetBalance =
-      getEffectiveBalances()?.find((a) => a.assetCode === draftDetails?.asset?.code)?.balance ??
-      "0";
+      effectiveBalances.find((a) => a.assetCode === draftDetails?.asset?.code)?.balance ?? "0";
     setFutureBalance(Number(assetBalance) - Number(csvTotal));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    csvTotal,
-    draftDetails?.asset?.code,
-    selectedWalletBalance,
-    allBalances,
-    isMultiWallet,
-    selectedWalletId,
-  ]);
+  }, [csvTotal, draftDetails?.asset?.code, effectiveBalances]);
 
   const resetState = () => {
     setCurrentStep("edit");
@@ -281,6 +257,9 @@ export const DisbursementsNew = () => {
     if (csvParseError) {
       return `The uploaded file could not be read: ${csvParseError}`;
     }
+    if (draftDetails && csvFile && !effectiveBalances) {
+      return "The available balance hasn't loaded yet.";
+    }
     if (draftDetails && csvFile && BigNumber(futureBalance).lt(0)) {
       const assetCode = draftDetails?.asset?.code ?? "";
       const accountName = isMultiWallet && selectedWallet ? ` of ${selectedWallet.name}` : "";
@@ -294,26 +273,20 @@ export const DisbursementsNew = () => {
   const renderSendingFrom = () => {
     if (!isMultiWallet || !selectedWallet) return null;
     return (
-      <div className="Note" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-        Sending from
-        <span
-          aria-hidden="true"
-          style={{
-            display: "inline-block",
-            width: "0.5rem",
-            height: "0.5rem",
-            borderRadius: "999px",
-            backgroundColor: accountColor(selectedWallet.id),
-          }}
-        />
-        <strong>{selectedWallet.name}</strong>
+      <Box gap="sm" direction="row" align="center" addlClassName="Note">
+        <span>Sending from</span>
+        <strong>
+          <DistributionAccountLabel wallet={selectedWallet} />
+        </strong>
         {selectedWallet.distribution_account_address ? (
           <span>
             ({selectedWallet.distribution_account_address.slice(0, 4)}…
             {selectedWallet.distribution_account_address.slice(-4)})
           </span>
-        ) : null}
-      </div>
+        ) : (
+          <></>
+        )}
+      </Box>
     );
   };
 
@@ -335,6 +308,7 @@ export const DisbursementsNew = () => {
           organization.data.isApprovalRequired ||
           !(draftDetails && csvFile) ||
           Boolean(csvParseError) ||
+          !effectiveBalances ||
           BigNumber(futureBalance).lt(0)
         }
         isReviewDisabled={!isReviewEnabled}
@@ -357,12 +331,12 @@ export const DisbursementsNew = () => {
         <div className="DisbursementForm">
           <Card>
             <Title size="md">Choose the account to send from</Title>
-            <div className="Note" style={{ margin: "0.5rem 0 1rem" }}>
+            <div className="Note DisbursementForm__pickerNote">
               Every disbursement is funded by a single distribution account. Pick one to continue —
               you can also use the account switcher at the top of the page.
             </div>
-            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-              {distributionWallets?.map((wallet) => (
+            <Box gap="md" direction="row" wrap="wrap">
+              {(distributionWallets ?? []).map((wallet) => (
                 <Button
                   key={wallet.id}
                   size="md"
@@ -372,22 +346,10 @@ export const DisbursementsNew = () => {
                     setSelectedWalletId(wallet.id);
                   }}
                 >
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      display: "inline-block",
-                      width: "0.5rem",
-                      height: "0.5rem",
-                      borderRadius: "999px",
-                      marginRight: "0.5rem",
-                      backgroundColor: accountColor(wallet.id),
-                    }}
-                  />
-                  {wallet.name}
-                  {wallet.is_default ? " (default)" : ""}
+                  <DistributionAccountLabel wallet={wallet} defaultMarker="text" />
                 </Button>
               ))}
-            </div>
+            </Box>
           </Card>
         </div>
       );
@@ -444,7 +406,7 @@ export const DisbursementsNew = () => {
 
             <Card>
               <Title size="md">Receipt</Title>
-              <div style={{ marginTop: "0.75rem" }}>
+              <div className="DisbursementReceipt">
                 {[
                   { label: "Disbursement name", value: draftDetails?.name ?? "-" },
                   {
@@ -466,31 +428,26 @@ export const DisbursementsNew = () => {
                     value: <SourceAccount sourceWalletId={selectedWalletId || undefined} />,
                   },
                 ].map((row) => (
-                  <div
-                    key={row.label}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: "1rem",
-                      padding: "0.5rem 0",
-                      borderBottom: "1px solid var(--sds-clr-gray-06)",
-                    }}
-                  >
+                  <div key={row.label} className="DisbursementReceipt__row">
                     <span className="Note">{row.label}</span>
-                    <span style={{ fontWeight: 500 }}>{row.value}</span>
+                    <span className="DisbursementReceipt__value">{row.value}</span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem" }}>
+              <Box
+                gap="md"
+                direction="row"
+                wrap="wrap"
+                addlClassName="DisbursementReceipt__actions"
+              >
                 <Button size="md" variant="primary" onClick={handleViewDetails}>
                   View disbursement
                 </Button>
                 <Button size="md" variant="secondary" onClick={handleStartNewDisbursement}>
                   Create another
                 </Button>
-              </div>
+              </Box>
             </Card>
           </div>
         );

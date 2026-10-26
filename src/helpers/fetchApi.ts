@@ -117,7 +117,7 @@ export const fetchApi = async (
 // Dispatches the app-wide session-expired event (UserSession signs the user out) and returns
 // an AppError for the caller to throw, so in-flight queries settle as errors instead of
 // resolving undefined and rendering blank pages.
-function sessionExpired(): AppError {
+export function sessionExpired(): AppError {
   document.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT));
   return {
     message: "Your session has expired. Please sign in again.",

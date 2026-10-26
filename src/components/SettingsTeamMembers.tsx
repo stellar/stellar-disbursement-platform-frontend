@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
+
 import { Button, Card, Icon, Modal, Notification, Select } from "@stellar/design-system";
 
-import { InfoTooltip } from "@/components/InfoTooltip";
 import { DropdownMenu } from "@/components/DropdownMenu";
-import { MoreMenuButton } from "@/components/MoreMenuButton";
-import { Table } from "@/components/Table";
-import { NewUserModal } from "@/components/NewUserModal";
-import { LoadingContent } from "@/components/LoadingContent";
-import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
+import { InfoTooltip } from "@/components/InfoTooltip";
+import { LoadingContent } from "@/components/LoadingContent";
+import { MoreMenuButton } from "@/components/MoreMenuButton";
+import { NewUserModal } from "@/components/NewUserModal";
+import { NotificationWithButtons } from "@/components/NotificationWithButtons";
+import { Table } from "@/components/Table";
 
-import { USER_ROLES_ARRAY } from "@/constants/settings";
-import { userRoleText } from "@/helpers/userRoleText";
+import { TENANT_WIDE_ROLES, USER_ROLES_ARRAY } from "@/constants/settings";
 
-import { useUsers } from "@/apiQueries/useUsers";
-import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
-import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
 import { useCreateNewUser } from "@/apiQueries/useCreateNewUser";
 import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+import { useUpdateUserRole } from "@/apiQueries/useUpdateUserRole";
+import { useUpdateUserStatus } from "@/apiQueries/useUpdateUserStatus";
+import { useUsers } from "@/apiQueries/useUsers";
+
+import { distributionAccountDisplayName } from "@/helpers/distributionAccountDisplayName";
+import { userRoleText } from "@/helpers/userRoleText";
 
 import { useRedux } from "@/hooks/useRedux";
 
@@ -78,9 +81,20 @@ export const SettingsTeamMembers = () => {
     reset: resetNewUser,
   } = useCreateNewUser();
 
+  const hideModal = () => {
+    setIsStatusModalVisible(false);
+    setIsRoleModalVisible(false);
+    setIsNewUserModalVisible(false);
+    setSelectedUser(null);
+    setNewRole(null);
+    setPendingUser(null);
+    setInviteWalletId("");
+  };
+
   useEffect(() => {
     if (isRoleSuccess || isStatusSuccess) {
       getUsers();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       hideModal();
     }
 
@@ -110,6 +124,7 @@ export const SettingsTeamMembers = () => {
   useEffect(() => {
     if (isNewUserSuccess) {
       getUsers();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       hideModal();
     }
 
@@ -128,21 +143,18 @@ export const SettingsTeamMembers = () => {
     return "this user";
   };
 
-  const hideModal = () => {
-    setIsStatusModalVisible(false);
-    setIsRoleModalVisible(false);
-    setIsNewUserModalVisible(false);
-    setSelectedUser(null);
-    setNewRole(null);
-    setPendingUser(null);
-    setInviteWalletId("");
-  };
+  // Tenant-wide roles get no membership (the backend 400s on them + wallet_id), and a single-account
+  // tenant has nothing to pick — the same reason ActiveWalletBar drops its switcher below two accounts.
+  const needsAccountChoice = (role: UserRole) => isMultiWallet && !TENANT_WIDE_ROLES.includes(role);
 
-  // Whether this invite has an account scope to decide. Owners are tenant-wide and get no
-  // membership row at all (the backend 400s on owner + wallet_id), and on a single-account
-  // tenant there is nothing to pick — in both cases asking would be noise, the same reason
-  // ActiveWalletBar drops its switcher below two accounts.
-  const needsAccountChoice = (role: UserRole) => isMultiWallet && role !== "owner";
+  // Leaving a tenant-wide role lands the user on the default account (see UpdateUserRoles).
+  const defaultWallet = distributionWallets?.find((w) => w.is_default);
+  const roleChangeGrantsDefaultAccount =
+    isMultiWallet &&
+    Boolean(defaultWallet) &&
+    (selectedUser?.roles ?? []).some((r) => TENANT_WIDE_ROLES.includes(r)) &&
+    Boolean(newRole) &&
+    !TENANT_WIDE_ROLES.includes(newRole as UserRole);
 
   const submitInvite = (newUser: NewUser) => {
     const t = setTimeout(() => {
@@ -387,6 +399,11 @@ export const SettingsTeamMembers = () => {
               selectedUser?.last_name,
             )}.`}
           </div>
+          {roleChangeGrantsDefaultAccount && defaultWallet ? (
+            <div className="Note">
+              {`They will get access to ${defaultWallet.name}, the default distribution account. You can grant more from Manage access.`}
+            </div>
+          ) : null}
         </Modal.Body>
         <Modal.Footer>
           <Button size="md" variant="tertiary" onClick={hideModal} isLoading={isRolePending}>
@@ -426,7 +443,7 @@ export const SettingsTeamMembers = () => {
             resetNewUser();
           }
 
-          // On a multi-account tenant a non-owner invite has to say which account it is for,
+          // On a multi-account tenant an invite for a scoped role has to say which account it is for,
           // otherwise the backend silently scopes the member to the tenant default.
           if (needsAccountChoice(newUser.role)) {
             setIsNewUserModalVisible(false);
@@ -479,7 +496,7 @@ export const SettingsTeamMembers = () => {
             <option value="">Select an account</option>
             {(distributionWallets ?? []).map((w) => (
               <option value={w.id} key={w.id}>
-                {`${w.name}${w.is_default ? " (default)" : ""}`}
+                {distributionAccountDisplayName(w)}
               </option>
             ))}
           </Select>

@@ -201,7 +201,7 @@ body {
         flex-shrink: 0;
       }
 
-      & > div:nth-child(2) {
+      & > div:nth-child(2):last-child {
         text-align: right;
       }
     }
@@ -319,6 +319,8 @@ body {
 }
 
 .HomeStatistics {
+  margin-bottom: pxToRem(32px);
+
   .Notification {
     margin-bottom: pxToRem(32px);
   }
@@ -348,6 +350,34 @@ body {
     font-size: pxToRem(14px);
     line-height: pxToRem(22px);
     color: var(--sds-clr-gray-11);
+  }
+
+  &__pickerNote {
+    margin-bottom: pxToRem(16px);
+  }
+}
+
+.DisbursementReceipt {
+  margin-top: pxToRem(12px);
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sds-gap-lg);
+    padding: pxToRem(8px) 0;
+
+    &:not(:last-child) {
+      border-bottom: pxToRem(1px) solid var(--sds-clr-gray-04);
+    }
+  }
+
+  &__value {
+    font-weight: var(--sds-fw-medium);
+  }
+
+  &__actions {
+    margin-top: pxToRem(16px);
   }
 }
 
@@ -694,6 +724,13 @@ body {
   }
 }
 
+// Distribution account
+.DistributionAccount {
+  &__note {
+    margin-bottom: pxToRem(24px);
+  }
+}
+
 // Circle Distribution Account
 .CircleDistributionAccountPending {
   .Banner__content {
@@ -754,6 +791,13 @@ body {
     --Link-color-default: var(--sds-clr-red-11);
     --Link-color-hover: var(--sds-clr-red-12);
     --Link-color-disabled: var(--sds-clr-red-08);
+  }
+}
+
+// Unauthorized page
+.UnauthorizedPage {
+  &__action {
+    margin-top: pxToRem(16px);
   }
 }
 

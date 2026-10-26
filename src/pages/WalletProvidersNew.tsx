@@ -167,7 +167,8 @@ export const WalletProvidersNew = () => {
 
   const navigate = useNavigate();
 
-  const { data: allAssets } = useAllAssets({ enabled: true });
+  // Provider support is tenant catalogue config, not any one account's trustlines.
+  const { data: allAssets } = useAllAssets();
 
   const selectedAssets = allAssets?.filter((a) => formFields.assetIds.includes(a.id)) ?? [];
 

@@ -1,6 +1,6 @@
-import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
+import { DistributionAccountLabel } from "@/components/DistributionAccountLabel";
 
-import { accountColor } from "@/helpers/accountColor";
+import { useDistributionWallets } from "@/apiQueries/useDistributionWallets";
 
 import { useRedux } from "@/hooks/useRedux";
 import { useSelectedWallet } from "@/hooks/useSelectedWallet";
@@ -41,24 +41,7 @@ export const SourceAccount = ({ sourceWalletId }: { sourceWalletId?: string }) =
     return <>-</>;
   }
 
-  return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-      <span
-        style={{
-          width: "0.625rem",
-          height: "0.625rem",
-          borderRadius: "50%",
-          flexShrink: 0,
-          backgroundColor: accountColor(wallet.id),
-        }}
-        aria-hidden="true"
-      />
-      {wallet.name}
-      {wallet.status === "ARCHIVED" ? (
-        <span className="Note Note--small Note--noMargin">(archived)</span>
-      ) : null}
-    </span>
-  );
+  return <DistributionAccountLabel wallet={wallet} showArchived />;
 };
 
 // A labeled "Source account" row for the detail pages. Renders nothing for single-account

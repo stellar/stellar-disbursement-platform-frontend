@@ -26,16 +26,12 @@ export const Box = ({
     "--Box-direction": direction,
     "--Box-justify": justify,
     "--Box-align": align,
+    ...(gap === "custom" ? { "--Box-gap": customValue } : {}),
     ...(wrap ? { flexWrap: wrap } : {}),
   } as React.CSSProperties;
 
   return (
-    <div
-      className={`Box Box--${gap} ${addlClassName ?? ""}`}
-      {...(gap === "custom" ? { gap: customValue } : {})}
-      style={customStyle}
-      {...props}
-    >
+    <div className={`Box Box--${gap} ${addlClassName ?? ""}`} style={customStyle} {...props}>
       {children}
     </div>
   );
