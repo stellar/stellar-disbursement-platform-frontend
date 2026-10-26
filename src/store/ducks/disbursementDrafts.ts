@@ -3,7 +3,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { deleteDisbursementDraft } from "@/api/deleteDisbursementDraft";
 import { getDisbursementDrafts } from "@/api/getDisbursementDrafts";
 import { patchDisbursementStatus } from "@/api/patchDisbursementStatus";
-import { postDisbursement } from "@/api/postDisbursement";
+import { postDisbursement, preparePostDisbursementData } from "@/api/postDisbursement";
 import { postDisbursementFile } from "@/api/postDisbursementFile";
 import { postDisbursementWithInstructions } from "@/api/postDisbursementWithInstructions";
 
@@ -64,9 +64,13 @@ export const getDisbursementDraftsAction = createAsyncThunk<
   },
 );
 
-// `sourceWalletId` is the account the user picked in the create wizard — this call CREATES the
-// disbursement, so that choice (not whatever the account switcher reads later) decides which
-// distribution account funds it.
+// What the wizard sends when it creates a disbursement: the create payload + CSV's identity
+const draftFingerprint = (details: Disbursement, file?: File) =>
+  JSON.stringify({
+    ...preparePostDisbursementData(details),
+    file: file ? [file.name, file.size, file.lastModified] : null,
+  });
+
 export const saveDisbursementDraftAction = createAsyncThunk<
   string,
   {
@@ -79,23 +83,15 @@ export const saveDisbursementDraftAction = createAsyncThunk<
   "disbursementDrafts/saveDisbursementDraftAction",
   async ({ details, file, sourceWalletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { newDraftId } = getState().disbursementDrafts;
 
+    // Every save creates a new draft.
+    // Saving under an existing name is rejected instead of overwriting.
     try {
-      if (file) {
-        const newDisbursement = await postDisbursementWithInstructions(
-          token,
-          details,
-          file,
-          sourceWalletId,
-        );
-        refreshSessionToken(dispatch);
-        return newDisbursement.id;
-      } else {
-        const draftId = newDraftId ?? (await postDisbursement(token, details, sourceWalletId)).id;
-        refreshSessionToken(dispatch);
-        return draftId;
-      }
+      const newDisbursement = file
+        ? await postDisbursementWithInstructions(token, details, file, sourceWalletId)
+        : await postDisbursement(token, details, sourceWalletId);
+      refreshSessionToken(dispatch);
+      return newDisbursement.id;
     } catch (error: unknown) {
       const apiError = normalizeApiError(error as ApiError);
       const errorString = apiError.message;
@@ -110,7 +106,7 @@ export const saveDisbursementDraftAction = createAsyncThunk<
 );
 
 // `sourceWalletId` is the account the user picked in the create wizard; it funds the disbursement
-// this thunk creates.
+// this thunk starts.
 export const submitDisbursementNewDraftAction = createAsyncThunk<
   string,
   {
@@ -123,24 +119,29 @@ export const submitDisbursementNewDraftAction = createAsyncThunk<
   "disbursementDrafts/submitDisbursementNewDraftAction",
   async ({ details, file, sourceWalletId }, { rejectWithValue, getState, dispatch }) => {
     const { token } = getState().userAccount;
-    const { id, sourceWalletId: loadedDraftWalletId } = getState().disbursementDetails.details;
-    const { newDraftId, newDraftWalletId } = getState().disbursementDrafts;
+    const { newDraftId, newDraftWalletId, newDraftFingerprint } = getState().disbursementDrafts;
+    const fingerprint = draftFingerprint(details, file);
 
-    let draftId = id && id.length > 0 ? id : newDraftId;
-    // Start the draft on ITS OWN funding account, never the ambient selection. Three cases, in
-    // order: a draft already loaded into the details slice (trust it only when it IS this draft —
-    // the slice can hold a previously viewed one); a draft saved earlier in this wizard, whose
-    // account we recorded at save time; otherwise this call is the one creating it, so the
-    // wizard's chosen account is correct.
-    //
-    // The middle case is why newDraftWalletId exists: "Save as a draft", switch the account bar,
-    // then Confirm would otherwise start a draft funded by A while sending B's header.
-    const startWalletId =
-      (id && id.length > 0 && id === draftId ? loadedDraftWalletId : undefined) ??
-      (draftId === newDraftId ? newDraftWalletId : undefined) ??
-      sourceWalletId;
+    // A disbursement this visit created is started as-is while account and form still match.
+    // Otherwise it is replaced.
+    const isReusable =
+      Boolean(newDraftId) &&
+      newDraftWalletId === sourceWalletId &&
+      newDraftFingerprint === fingerprint;
+
+    let draftId = isReusable ? newDraftId : undefined;
+    let remembered: Omit<DisbursementDraftRejectMessage, "errorString"> = {
+      newDraftId,
+      newDraftWalletId,
+      newDraftFingerprint,
+    };
 
     try {
+      if (newDraftId && !isReusable) {
+        await deleteDisbursementDraft(token, newDraftId);
+        remembered = {};
+      }
+
       if (!draftId) {
         const newDisbursement = await postDisbursementWithInstructions(
           token,
@@ -149,9 +150,14 @@ export const submitDisbursementNewDraftAction = createAsyncThunk<
           sourceWalletId,
         );
         draftId = newDisbursement.id;
+        remembered = {
+          newDraftId: draftId,
+          newDraftWalletId: sourceWalletId,
+          newDraftFingerprint: fingerprint,
+        };
       }
 
-      await patchDisbursementStatus(token, draftId, "STARTED", startWalletId);
+      await patchDisbursementStatus(token, draftId, "STARTED", sourceWalletId);
       refreshSessionToken(dispatch);
 
       return draftId;
@@ -163,8 +169,7 @@ export const submitDisbursementNewDraftAction = createAsyncThunk<
       return rejectWithValue({
         errorString: `Error submitting disbursement: ${errorString}`,
         errorExtras: apiError?.extras,
-        // Need to save draft ID if it failed because of status update
-        newDraftId: draftId,
+        ...remembered,
       });
     }
   },
@@ -329,6 +334,7 @@ const initialState: DisbursementDraftsInitialState = {
   newDraftId: undefined,
   newDraftWalletId: undefined,
   walletId: undefined,
+  newDraftFingerprint: undefined,
   pagination: undefined,
   errorString: undefined,
   errorExtras: undefined,
@@ -390,6 +396,7 @@ const disbursementDraftsSlice = createSlice({
     builder.addCase(saveDisbursementDraftAction.fulfilled, (state, action) => {
       state.newDraftId = action.payload;
       state.newDraftWalletId = action.meta.arg.sourceWalletId;
+      state.newDraftFingerprint = draftFingerprint(action.meta.arg.details, action.meta.arg.file);
       state.status = "SUCCESS";
       state.errorString = undefined;
       state.errorExtras = undefined;
@@ -398,7 +405,6 @@ const disbursementDraftsSlice = createSlice({
       state.status = "ERROR";
       state.errorString = action.payload?.errorString;
       state.errorExtras = action.payload?.errorExtras;
-      state.newDraftId = action.payload?.newDraftId;
     });
     // Submit new disbursement
     builder.addCase(submitDisbursementNewDraftAction.pending, (state = initialState) => {
@@ -415,6 +421,8 @@ const disbursementDraftsSlice = createSlice({
       state.errorString = action.payload?.errorString;
       state.errorExtras = action.payload?.errorExtras;
       state.newDraftId = action.payload?.newDraftId;
+      state.newDraftWalletId = action.payload?.newDraftWalletId;
+      state.newDraftFingerprint = action.payload?.newDraftFingerprint;
     });
     // Submit new CSV file
     builder.addCase(saveNewCsvFileAction.pending, (state = initialState) => {
