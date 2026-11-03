@@ -1,0 +1,38 @@
+name: pull-request-target-poc
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  poc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Execute harmless PoC
+        run: |
+          echo "[POC] Workflow executed"
+          echo "[POC] PR number: ${{ github.event.pull_request.number }}"
+          echo "[POC] PR SHA: ${{ github.event.pull_request.head.sha }}"
+
+          mkdir -p poc-evidence
+          echo "PR-controlled workflow execution" \
+            > poc-evidence/execution-marker.txt
+
+          cat poc-evidence/execution-marker.txt
+
+      - name: Upload PoC evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: pull-request-target-poc
+          path: poc-evidence/
