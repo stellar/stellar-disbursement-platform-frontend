@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Warn embedded wallet receivers when passkey is not backup-eligible. [#TBD](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/TBD)
+- Warn embedded wallet receivers when passkey is not backup-eligible. [#632](https://github.com/stellar/stellar-disbursement-platform-frontend/pull/632)
 
 ## [7.1.0](https://github.com/stellar/stellar-disbursement-platform-frontend/releases/tag/7.1.0) ([diff](https://github.com/stellar/stellar-disbursement-platform-frontend/compare/7.0.0...7.1.0))
 
