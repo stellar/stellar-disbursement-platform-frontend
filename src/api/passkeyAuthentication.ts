@@ -18,6 +18,7 @@ export interface PasskeyAuthenticationFinishResponse {
   token: string;
   credential_id: string;
   contract_address: string;
+  backup_eligible: boolean;
 }
 
 export const startPasskeyAuthentication = async (): Promise<PasskeyAuthenticationStartResponse> => {

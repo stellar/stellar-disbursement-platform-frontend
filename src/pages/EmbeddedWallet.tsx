@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import { Button, Heading, Notification } from "@stellar/design-system";
+import { Button, Heading, Icon, Notification } from "@stellar/design-system";
 
 import { Box } from "@/components/Box";
 import { EmbeddedWalletLayout } from "@/components/EmbeddedWalletLayout";
@@ -14,12 +14,15 @@ import { setWalletTokenAction } from "@/store/ducks/walletAccount";
 
 import { Routes } from "@/constants/settings";
 
+import type { PasskeyRegistrationFinishResponse } from "@/api/passkeyRegistration";
+
 import { useCreateEmbeddedWallet } from "@/apiQueries/useCreateEmbeddedWallet";
 import { usePasskeyAuthentication } from "@/apiQueries/usePasskeyAuthentication";
 import { usePasskeyRefresh } from "@/apiQueries/usePasskeyRefresh";
 import { usePasskeyRegistration } from "@/apiQueries/usePasskeyRegistration";
 
 import { getSdpTenantName } from "@/helpers/getSdpTenantName";
+import { localStorageWalletNotices } from "@/helpers/localStorageWalletNotices";
 
 import { useRedux } from "@/hooks/useRedux";
 
@@ -32,6 +35,8 @@ export const EmbeddedWallet = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { walletAccount, organization } = useRedux("walletAccount", "organization");
+  const [deviceBoundRegistration, setDeviceBoundRegistration] =
+    useState<PasskeyRegistrationFinishResponse | null>(null);
 
   const {
     mutateAsync: authenticatePasskey,
@@ -107,10 +112,25 @@ export const EmbeddedWallet = () => {
 
     try {
       const result = await authenticatePasskey();
+      localStorageWalletNotices.set(result.credential_id, {
+        passkeyNotBackupEligible: result.backup_eligible === false,
+      });
       goHomeWithToken(result.token);
     } catch {
       // mutation handles error state
     }
+  };
+
+  const completeSignup = async (registration: PasskeyRegistrationFinishResponse) => {
+    await createWallet({
+      token: token.trim(),
+      public_key: registration.public_key,
+      credential_id: registration.credential_id,
+    });
+
+    const refreshed = await refreshToken({ token: registration.token });
+
+    goHomeWithToken(refreshed.token);
   };
 
   const handleSignup = async () => {
@@ -124,15 +144,27 @@ export const EmbeddedWallet = () => {
     try {
       const registration = await registerPasskey({ token: trimmedToken });
 
-      await createWallet({
-        token: trimmedToken,
-        public_key: registration.public_key,
-        credential_id: registration.credential_id,
-      });
+      if (registration.backup_eligible === false) {
+        setDeviceBoundRegistration(registration);
+        return;
+      }
 
-      const refreshed = await refreshToken({ token: registration.token });
+      setDeviceBoundRegistration(null);
+      await completeSignup(registration);
+    } catch {
+      // mutation handles error state
+    }
+  };
 
-      goHomeWithToken(refreshed.token);
+  const handleContinueSignup = async () => {
+    if (!deviceBoundRegistration) {
+      return;
+    }
+
+    resetAllErrors();
+
+    try {
+      await completeSignup(deviceBoundRegistration);
     } catch {
       // mutation handles error state
     }
@@ -144,6 +176,7 @@ export const EmbeddedWallet = () => {
   const isLoading = isAuthenticating || isSignupProcessing;
   const inviteToken = token.trim();
   const hasInviteToken = Boolean(inviteToken);
+  const mode = hasInviteToken ? (deviceBoundRegistration ? "passkeyChoice" : "signup") : "login";
 
   const organizationName = useMemo(() => {
     if (organization?.data?.name) {
@@ -160,24 +193,38 @@ export const EmbeddedWallet = () => {
 
   const organizationLogo = organization?.data?.logo;
 
-  const title = hasInviteToken
-    ? "You're invited to create your wallet account"
-    : "Log in to wallet";
-  const subtitle = hasInviteToken
-    ? `Once your wallet is set up, you'll be able to receive funds sent by ${organizationName}. To begin, add a passkey to securely access your account.`
-    : "Use your passkey to log in to wallet";
-
-  const primaryCtaProps = hasInviteToken
-    ? {
-        onClick: handleSignup,
-        disabled: isLoading || !inviteToken,
-        isLoading: isSignupProcessing,
-      }
-    : {
-        onClick: handleLogin,
+  const content = {
+    login: {
+      title: "Log in to wallet",
+      subtitle: "Use your passkey to log in to wallet",
+      cta: "Log in with passkey",
+      ctaProps: { onClick: handleLogin, disabled: isLoading, isLoading: isAuthenticating },
+      secondaryCta: undefined,
+    },
+    signup: {
+      title: "You're invited to create your wallet account",
+      subtitle: `Once your wallet is set up, you'll be able to receive funds sent by ${organizationName}. To begin, add a passkey to securely access your account.`,
+      cta: "Log in with passkey",
+      ctaProps: { onClick: handleSignup, disabled: isLoading, isLoading: isSignupProcessing },
+      secondaryCta: undefined,
+    },
+    passkeyChoice: {
+      title: "This passkey only works on this device.",
+      subtitle:
+        "This passkey is not backup-eligible. If you lose this device you lose access to this wallet.",
+      cta: "Continue with this passkey",
+      ctaProps: {
+        onClick: handleContinueSignup,
         disabled: isLoading,
-        isLoading: isAuthenticating,
-      };
+        isLoading: isCreatingWallet || isRefreshing,
+      },
+      secondaryCta: {
+        label: "Use a different passkey",
+        ctaProps: { onClick: handleSignup, disabled: isLoading, isLoading: isRegistering },
+      },
+    },
+  };
+  const { title, subtitle, cta, ctaProps, secondaryCta } = content[mode];
 
   const passkeyErrorNotice = useMemo(() => {
     if (!passkeyError) {
@@ -232,15 +279,31 @@ export const EmbeddedWallet = () => {
         }
       >
         <Heading size="xs" as="h1">
-          {title}
+          {mode === "passkeyChoice" ? (
+            <span className="EmbeddedWalletCard__warningTitle">
+              <span className="EmbeddedWalletCard__warningIcon">
+                <Icon.AlertCircle />
+              </span>
+              <span>{title}</span>
+            </span>
+          ) : (
+            title
+          )}
         </Heading>
         <p className="EmbeddedWalletSubtitle">{subtitle}</p>
       </Box>
 
       <Box gap="md" align="center">
-        <Button variant="primary" size="lg" isFullWidth {...primaryCtaProps}>
-          Log in with passkey
+        <Button variant="primary" size="lg" isFullWidth {...ctaProps}>
+          {cta}
         </Button>
+        {secondaryCta ? (
+          <Button variant="tertiary" size="lg" isFullWidth {...secondaryCta.ctaProps}>
+            {secondaryCta.label}
+          </Button>
+        ) : (
+          <></>
+        )}
       </Box>
     </EmbeddedWalletLayout>
   );

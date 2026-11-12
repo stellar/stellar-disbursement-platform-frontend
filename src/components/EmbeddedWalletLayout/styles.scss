@@ -169,6 +169,32 @@
     }
   }
 
+  &__warningTitle {
+    display: inline-flex;
+    align-items: center;
+    gap: pxToRem(12px);
+  }
+
+  &__warningIcon {
+    flex-shrink: 0;
+    width: pxToRem(32px);
+    height: pxToRem(32px);
+    border-radius: pxToRem(8px);
+    border: 1px solid var(--sds-clr-gray-05);
+    background: var(--sds-clr-gray-02);
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: pxToRem(16px);
+      height: pxToRem(16px);
+      color: var(--sds-clr-amber-09);
+      stroke: currentColor;
+    }
+  }
+
   &__logo {
     width: pxToRem(44px);
     height: pxToRem(44px);

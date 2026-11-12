@@ -51,6 +51,7 @@ import { AppDispatch } from "@/store";
 import "./EmbeddedWalletHome.scss";
 
 const VERIFIED_NOTICE_ID = "embedded-wallet-verified";
+const PASSKEY_NOT_BACKUP_ELIGIBLE_NOTICE_ID = "embedded-wallet-passkey-not-backup-eligible";
 const TRANSFER_STEPS = {
   IDLE: "idle",
   TRANSFER: "transfer",
@@ -252,6 +253,30 @@ export const EmbeddedWalletHome = () => {
   }, [credentialId, isVerified]);
 
   useEmbeddedWalletNotice(VERIFIED_NOTICE_ID, verifiedNotice);
+
+  const passkeyNotBackupEligibleNotice = useMemo(() => {
+    if (!localStorageWalletNotices.get(credentialId).passkeyNotBackupEligible) {
+      return null;
+    }
+
+    return (
+      <EmbeddedWalletDismissibleNotice
+        noticeId={PASSKEY_NOT_BACKUP_ELIGIBLE_NOTICE_ID}
+        variant="warning"
+        title="Your passkey only works on this device."
+        icon={<Icon.InfoCircle />}
+        isFilled
+        role="status"
+        credentialId={credentialId}
+        noticeKey="passkeyNotBackupEligibleDismissed"
+        dismissLabel="Got it"
+      >
+        Your passkey is not backup-eligible. If you lose this device you lose access to this wallet.
+      </EmbeddedWalletDismissibleNotice>
+    );
+  }, [credentialId]);
+
+  useEmbeddedWalletNotice(PASSKEY_NOT_BACKUP_ELIGIBLE_NOTICE_ID, passkeyNotBackupEligibleNotice);
 
   const isWithdrawDisabled = !isWalletReady || sendPaymentMutation.isPending || !activeAsset;
   const isSendDisabled =
