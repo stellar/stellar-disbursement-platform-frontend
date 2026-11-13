@@ -63,6 +63,7 @@ export const TENANT_WIDE_ROLES: UserRole[] = ["owner", "developer"];
 export const WALLET_SCOPED_ROLES: UserRole[] = USER_ROLES_ARRAY.filter(
   (r) => !TENANT_WIDE_ROLES.includes(r),
 );
+export const RECEIVER_WRITE_ROLES: UserRole[] = ["owner", "financial_controller", "initiator"];
 
 export const TIME_ZONES = [
   {
