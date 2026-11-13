@@ -2,6 +2,8 @@ import { LOCAL_STORAGE_WALLET_NOTICE_STATE } from "@/constants/settings";
 
 export type WalletNoticeState = {
   verifiedDismissed?: boolean;
+  passkeyNotBackupEligible?: boolean;
+  passkeyNotBackupEligibleDismissed?: boolean;
 };
 
 type WalletNoticeStateMap = Record<string, WalletNoticeState>;
@@ -10,6 +12,8 @@ export type WalletNoticeKey = keyof WalletNoticeState;
 
 const getNoticeStateWithDefaults = (state?: WalletNoticeState): Required<WalletNoticeState> => ({
   verifiedDismissed: Boolean(state?.verifiedDismissed),
+  passkeyNotBackupEligible: Boolean(state?.passkeyNotBackupEligible),
+  passkeyNotBackupEligibleDismissed: Boolean(state?.passkeyNotBackupEligibleDismissed),
 });
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
