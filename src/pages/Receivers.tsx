@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 import { Button, Heading, Icon, Input, Notification, Select } from "@stellar/design-system";
 
-
 import { ErrorWithExtras } from "@/components/ErrorWithExtras";
 import { FilterMenu } from "@/components/FilterMenu";
 import { Pagination } from "@/components/Pagination";
@@ -14,10 +13,11 @@ import { ReceiverCreateModal } from "@/components/ReceiverCreateModal/ReceiverCr
 import { ReceiversTable } from "@/components/ReceiversTable";
 import { SearchInput } from "@/components/SearchInput";
 import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "@/components/ShowForRoles";
 
 import { exportDataAction } from "@/store/ducks/dataExport";
 
-import { PAGE_LIMIT_OPTIONS, Routes } from "@/constants/settings";
+import { PAGE_LIMIT_OPTIONS, RECEIVER_WRITE_ROLES, Routes } from "@/constants/settings";
 
 import { useCreateReceiver } from "@/apiQueries/useCreateReceiver";
 import { useReceivers } from "@/apiQueries/useReceivers";
@@ -183,14 +183,16 @@ export const Receivers = () => {
           </SectionHeader.Content>
 
           <SectionHeader.Content align="right">
-            <Button
-              variant="primary"
-              size="md"
-              onClick={handleCreateReceiver}
-              disabled={isLoading || isFetching}
-            >
-              New Receiver
-            </Button>
+            <ShowForRoles acceptedRoles={RECEIVER_WRITE_ROLES}>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleCreateReceiver}
+                disabled={isLoading || isFetching}
+              >
+                New Receiver
+              </Button>
+            </ShowForRoles>
           </SectionHeader.Content>
         </SectionHeader.Row>
 

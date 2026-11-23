@@ -23,9 +23,10 @@ import { NotificationWithButtons } from "@/components/NotificationWithButtons";
 import { ReceiverPayments } from "@/components/ReceiverPayments";
 import { ReceiverWalletBalance } from "@/components/ReceiverWalletBalance";
 import { SectionHeader } from "@/components/SectionHeader";
+import { ShowForRoles } from "@/components/ShowForRoles";
 import { WalletHistory } from "@/components/WalletHistory";
 
-import { GENERIC_ERROR_MESSAGE, Routes } from "@/constants/settings";
+import { GENERIC_ERROR_MESSAGE, RECEIVER_WRITE_ROLES, Routes } from "@/constants/settings";
 
 import { useReceiversReceiverId } from "@/apiQueries/useReceiversReceiverId";
 import { useReceiverWalletInviteSmsRetry } from "@/apiQueries/useReceiverWalletInviteSmsRetry";
@@ -379,11 +380,13 @@ export const ReceiverDetails = () => {
             </div>
           </div>
 
-          <div>
-            {selectedWallet?.stellarAddress
-              ? renderUnregisterWalletButton()
-              : renderRetryInvitationButton()}
-          </div>
+          <ShowForRoles acceptedRoles={RECEIVER_WRITE_ROLES}>
+            <div>
+              {selectedWallet?.stellarAddress
+                ? renderUnregisterWalletButton()
+                : renderRetryInvitationButton()}
+            </div>
+          </ShowForRoles>
         </div>
 
         {selectedWallet ? (
@@ -545,17 +548,19 @@ export const ReceiverDetails = () => {
                   ) : null}
                 </Heading>
               </SectionHeader.Content>
-              <Button
-                variant="tertiary"
-                size="md"
-                type="reset"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(`${Routes.RECEIVERS_EDIT}/${receiverId}`);
-                }}
-              >
-                Edit receiver info
-              </Button>
+              <ShowForRoles acceptedRoles={RECEIVER_WRITE_ROLES}>
+                <Button
+                  variant="tertiary"
+                  size="md"
+                  type="reset"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`${Routes.RECEIVERS_EDIT}/${receiverId}`);
+                  }}
+                >
+                  Edit receiver info
+                </Button>
+              </ShowForRoles>
             </SectionHeader.Row>
           </SectionHeader>
 
