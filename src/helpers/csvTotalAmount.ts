@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import Papa from "papaparse";
+
+import { readDisbursementCsv } from "@/helpers/readDisbursementCsv";
 
 type CSVTotalAmountProps = {
   csvFile?: File;
@@ -12,60 +13,30 @@ export type CsvSummary = {
   rowCount: number;
 };
 
-export const csvTotalAmount = ({
+export const csvTotalAmount = async ({
   csvFile,
   columnName = "amount",
 }: CSVTotalAmountProps): Promise<CsvSummary | null> => {
-  if (!csvFile) return Promise.resolve(null);
+  if (!csvFile) return null;
 
-  return new Promise((resolve, reject) => {
-    Papa.parse(csvFile, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (result) => {
-        try {
-          if (result.errors.length > 0) {
-            reject(new Error(`CSV parsing error: ${result.errors[0].message}`));
-            return;
-          }
+  const { rows, columns } = await readDisbursementCsv(csvFile);
+  if (rows.length === 0) {
+    return { totalAmount: new BigNumber(0), rowCount: 0 };
+  }
 
-          const data = result.data as Record<string, string>[];
-          if (data.length === 0) {
-            resolve({ totalAmount: new BigNumber(0), rowCount: 0 });
-            return;
-          }
+  const column = columns[columnName];
+  if (column === undefined) {
+    throw new Error(`Column "${columnName}" not found in CSV`);
+  }
 
-          // Check if the column exists
-          const headerRow = data[0];
-          if (!(columnName in headerRow)) {
-            reject(new Error(`Column "${columnName}" not found in CSV`));
-            return;
-          }
-
-          let totalAmount = new BigNumber(0);
-
-          for (const row of data) {
-            const amountValue = row[columnName];
-            if (!amountValue || amountValue.trim() === "") continue;
-
-            try {
-              const amount = new BigNumber(amountValue.trim());
-              if (!amount.isNaN() && amount.isFinite()) {
-                totalAmount = totalAmount.plus(amount);
-              }
-            } catch {
-              // Skipping invalid amount.
-            }
-          }
-
-          resolve({ totalAmount, rowCount: data.length });
-        } catch (error) {
-          reject(error);
-        }
-      },
-      error: (error) => {
-        reject(new Error(`Failed to parse CSV: ${error.message}`));
-      },
-    });
+  let totalAmount = new BigNumber(0);
+  rows.forEach((row, index) => {
+    const amount = new BigNumber(row[column].trim());
+    if (!amount.isFinite()) {
+      throw new Error(`Line ${index + 2} has an invalid amount: "${row[column]}"`);
+    }
+    totalAmount = totalAmount.plus(amount);
   });
+
+  return { totalAmount, rowCount: rows.length };
 };

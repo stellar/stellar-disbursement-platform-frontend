@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { parse } from "papaparse";
+
+import { DisbursementCsv, readDisbursementCsv } from "@/helpers/readDisbursementCsv";
 
 import "./styles.scss";
 
@@ -8,44 +9,38 @@ interface CsvPreviewProps {
 }
 
 export const CsvPreview = ({ file }: CsvPreviewProps) => {
-  const [fileData, setFileData] = useState<any[]>();
+  const [fileData, setFileData] = useState<DisbursementCsv>();
   const [errorMessage, setErrorMessage] = useState<string>();
 
   useEffect(() => {
-    if (file) {
-      parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          const { data } = results;
+    if (!file) return;
 
-          if (data?.length === 0) {
-            setErrorMessage("The CSV file is empty.");
-            return;
-          }
-
-          // TODO: handle errors
-
-          setErrorMessage(undefined);
-          setFileData(data);
-        },
-        error: (error) => {
-          // TODO: handle error
-          console.log(">>> error: ", error);
-        },
+    let isCurrent = true;
+    readDisbursementCsv(file)
+      .then((csv) => {
+        if (!isCurrent) return;
+        setFileData(csv);
+        setErrorMessage(csv.rows.length === 0 ? "The CSV file is empty." : undefined);
+      })
+      .catch((error: Error) => {
+        if (!isCurrent) return;
+        setFileData(undefined);
+        setErrorMessage(error.message);
       });
-    }
+
+    return () => {
+      isCurrent = false;
+    };
   }, [file]);
 
   if (errorMessage) {
     return <div className="Note">{errorMessage}</div>;
   }
 
-  if (!fileData || fileData.length === 0) {
+  if (!fileData || fileData.rows.length === 0) {
     return null;
   }
 
-  const dataCols = Object.keys(fileData?.[0]);
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   return (
@@ -56,8 +51,8 @@ export const CsvPreview = ({ file }: CsvPreviewProps) => {
           <tr>
             {/* Adding extra cell for index */}
             <th></th>
-            {dataCols.map((col, index) => (
-              <th key={`col-${col}`}>{alphabet.charAt(index)}</th>
+            {fileData.header.map((_, index) => (
+              <th key={`col-${index}`}>{alphabet.charAt(index)}</th>
             ))}
           </tr>
         </thead>
@@ -67,15 +62,15 @@ export const CsvPreview = ({ file }: CsvPreviewProps) => {
           <tr>
             {/* Adding extra cell for index */}
             <th>1</th>
-            {dataCols.map((col) => (
-              <td key={`row-${col}`}>{col}</td>
+            {fileData.header.map((col, index) => (
+              <td key={`row-${index}`}>{col}</td>
             ))}
           </tr>
           {/* Data rows with index */}
-          {fileData.map((item, rowIndex) => (
+          {fileData.rows.map((row, rowIndex) => (
             <tr key={`row-${rowIndex}`}>
               <th>{rowIndex + 2}</th>
-              {Object.values(item).map((val, valIndex) => (
+              {row.map((val, valIndex) => (
                 <td key={`val-${rowIndex}-${valIndex}`}>{`${val}`}</td>
               ))}
             </tr>
