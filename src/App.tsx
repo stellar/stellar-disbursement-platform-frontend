@@ -47,7 +47,7 @@ import { Unauthorized } from "@/pages/Unauthorized";
 import { WalletProviders } from "@/pages/WalletProviders";
 import { WalletProvidersNew } from "@/pages/WalletProvidersNew";
 
-import { Routes } from "@/constants/settings";
+import { RECEIVER_WRITE_ROLES, Routes } from "@/constants/settings";
 
 import { SelectedWalletProvider } from "@/hooks/useSelectedWallet";
 
@@ -257,7 +257,7 @@ export const App = () => {
               <Route
                 path={`${Routes.RECEIVERS_EDIT}/:id`}
                 element={
-                  <PrivateRoute acceptedRoles={["owner", "financial_controller"]}>
+                  <PrivateRoute acceptedRoles={RECEIVER_WRITE_ROLES}>
                     <InnerPage isNarrow>
                       <ReceiverDetailsEdit />
                     </InnerPage>
