@@ -40,7 +40,10 @@ export const readDisbursementCsv = async (file: File): Promise<DisbursementCsv> 
   }
 
   // Decoded here, not with FileReader, which switches to UTF-16 on a byte order mark.
-  const text = new TextDecoder("utf-8", { ignoreBOM: true }).decode(bytes).replaceAll("\r\n", "\n");
+  const text = new TextDecoder("utf-8", { ignoreBOM: true })
+    .decode(bytes)
+    .replaceAll("\r\n", "\n")
+    .replace(/\r$/, "");
   const { data, errors } = Papa.parse<string[]>(text, {
     delimiter: ",",
     newline: "\n",

@@ -13,6 +13,10 @@ export type CsvSummary = {
   rowCount: number;
 };
 
+const AMOUNT_FORMAT = /^-?[.0-9]{1,20}$/;
+const MAX_AMOUNT = new BigNumber("922337203685.4775807");
+const trimSpace = (value: string) => value.replace(/^\p{White_Space}+|\p{White_Space}+$/gu, "");
+
 export const csvTotalAmount = async ({
   csvFile,
   columnName = "amount",
@@ -31,8 +35,15 @@ export const csvTotalAmount = async ({
 
   let totalAmount = new BigNumber(0);
   rows.forEach((row, index) => {
-    const amount = new BigNumber(row[column].trim());
-    if (!amount.isFinite()) {
+    const value = trimSpace(row[column]);
+    const amount = new BigNumber(value);
+    if (
+      !AMOUNT_FORMAT.test(value) ||
+      !amount.isFinite() ||
+      amount.lte(0) ||
+      (amount.decimalPlaces() ?? 0) > 7 ||
+      amount.gt(MAX_AMOUNT)
+    ) {
       throw new Error(`Line ${index + 2} has an invalid amount: "${row[column]}"`);
     }
     totalAmount = totalAmount.plus(amount);
